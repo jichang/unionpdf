@@ -1,0 +1,26 @@
+{
+  "name": "@onepdf/models",
+  "version": "0.1.0",
+  "description": "core models of onepdf",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jichang/onepdf.git"
+  },
+  "keywords": [
+    "PDF",
+    "models"
+  ],
+  "author": "Ji Chang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jichang/onepdf/issues"
+  },
+  "homepage": "https://github.com/jichang/onepdf#readme",
+  "devDependencies": {
+    "typescript": "^4.8.3"
+  }
+}

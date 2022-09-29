@@ -1,0 +1,7 @@
+{
+  "name": "onepdf",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^5.4.0"
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+src/**/*.js
+demo/**/*.js
+dist
+.parcel-cache
