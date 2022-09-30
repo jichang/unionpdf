@@ -33,7 +33,7 @@ function App() {
                 layout={{ colsCount: 100, rowsCount: 100 }}
                 size={{ width: 100, height: 100 }}
               />
-              <PdfOutline />
+              <PdfOutlines />
             </PdfDocument>
           </PdfEngineContextProvider>
         </ThemeContextProvider>

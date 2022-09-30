@@ -49,13 +49,14 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
         );
       };
     }
-  }, [pdfNavigator]);
+  }, [pdfNavigator, setCurrPageIndex]);
 
   const gotoPage = useCallback(
     (page: PdfPageModel) => {
       pdfNavigator?.gotoPage(page.index, PDF_NAVIGATOR_SOURCE_THUMBNAILS);
+      setCurrPageIndex(page.index);
     },
-    [pdfNavigator]
+    [pdfNavigator, setCurrPageIndex]
   );
 
   return (
@@ -108,14 +109,18 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
   }, [engine, page, scale, rotation]);
 
   return (
-    <img
+    <div
+      tabIndex={0}
       className={`pdf__thumbnail ${isCurrent ? "pdf__thumbnail--current" : ""}`}
-      alt={`page ${page.index}`}
-      src={src}
-      onClick={() => {
-        onClick(page);
-      }}
-    />
+    >
+      <img
+        alt={`page ${page.index}`}
+        src={src}
+        onClick={() => {
+          onClick(page);
+        }}
+      />
+    </div>
   );
 }
 

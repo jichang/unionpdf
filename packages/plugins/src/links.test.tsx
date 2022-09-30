@@ -5,8 +5,8 @@ import { createMockPdfDocument, createMockPdfEngine } from "@onepdf/mocks";
 import { PdfPageDecoration, PdfPages } from "./pages";
 import { PdfPageLinks } from "./links";
 
-describe("PdfOutline", () => {
-  test("should render pdf outline", async () => {
+describe("PdfPageLinks", () => {
+  test("should render pdf links", async () => {
     const pdf = createMockPdfDocument();
     const engine = createMockPdfEngine();
     const result = render(

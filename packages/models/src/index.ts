@@ -29,14 +29,14 @@ export interface PdfLinkModel {
     bound: Region;
 }
 
-export interface PdfOutlineItemModel {
+export interface PdfOutlineEntryModel {
     text: string;
     pageIndex: number;
-    children?: PdfOutlineItemModel[];
+    children?: PdfOutlineEntryModel[];
 }
 
-export interface PdfOutlineModel {
-    items: PdfOutlineItemModel[];
+export interface PdfOutlinesModel {
+    entries: PdfOutlineEntryModel[];
 }
 
 export class PdfError extends Error {
@@ -63,7 +63,7 @@ export type PdfEngineFunResult<T> = T | Promise<T>;
 
 export interface PdfEngine {
     open: (url: PdfSource, signal: AbortSignal) => PdfEngineFunResult<PdfDocumentModel>;
-    getOutline: () => PdfEngineFunResult<PdfOutlineModel>;
+    getOutlines: () => PdfEngineFunResult<PdfOutlinesModel>;
     renderPage: (page: PdfPageModel, scale: number, rotation: Rotation, region?: Region) => PdfEngineFunResult<ImageData>;
     getPageLinks: (page: PdfPageModel) => PdfEngineFunResult<PdfLinkModel[]>;
     renderThumbnail: (page: PdfPageModel, scale: number, rotation: Rotation, region?: Region) => PdfEngineFunResult<ImageData>;

@@ -26,3 +26,21 @@ html, body {
     scrollbar-width: none;
     /* Firefox */
 }
+
+.pdf__page--current {
+    border: 1px solid black;
+}
+
+.pdf__thumbnails {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    width: 100%;
+
+    overflow: scroll;
+}
+
+.pdf__thumbnail--current {
+    border: 1px solid black;
+}

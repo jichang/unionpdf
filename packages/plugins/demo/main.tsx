@@ -16,7 +16,7 @@ import {
 import { PdfThumbnails } from "../src/thumbnails";
 import { PdfPageDecoration, PdfPageProps, PdfPages } from "../src/pages";
 import { PdfPageLinks } from "../src/links";
-import { PdfOutline } from "../src/outline";
+import { PdfOutlines } from "../src/outlines";
 
 function PdfPageNumber(props: PdfPageProps) {
   return (
@@ -72,20 +72,20 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         pages: pages,
       };
     },
-    getOutline: () => {
+    getOutlines: () => {
       return {
-        items: [
+        entries: [
           {
             text: "Page 1",
-            pageIndex: 1,
+            pageIndex: 0,
           },
           {
             text: "Page 2",
-            pageIndex: 2,
+            pageIndex: 1,
             children: [
               {
                 text: "Page 3",
-                pageIndex: 3,
+                pageIndex: 2,
               },
             ],
           },
@@ -178,7 +178,7 @@ function App() {
                   layout={{ colsCount: 100, rowsCount: 100 }}
                   size={{ width: 100, height: 100 }}
                 />
-                <PdfOutline />
+                <PdfOutlines />
               </PdfNavigatorContextProvider>
             </PdfDocument>
           </PdfEngineContextProvider>

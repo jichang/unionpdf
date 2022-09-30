@@ -2,7 +2,7 @@ import "@testing-library/jest-dom";
 import { act, render } from "@testing-library/react";
 import { PdfDocument, PdfEngineContextProvider } from "@onepdf/core";
 import { createMockPdfDocument, createMockPdfEngine } from "@onepdf/mocks";
-import { PdfOutline } from "./outline";
+import { PdfOutlines } from "./outlines";
 
 describe("PdfOutline", () => {
   test("should render pdf outline", async () => {
@@ -15,7 +15,7 @@ describe("PdfOutline", () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfOutline />
+          <PdfOutlines />
         </PdfDocument>
       </PdfEngineContextProvider>
     );
@@ -26,7 +26,7 @@ describe("PdfOutline", () => {
     });
 
     expect(document.querySelector(".pdf__outline")).toBeDefined();
-    expect(document.querySelectorAll(".pdf__outline__item").length).toEqual(2);
+    expect(document.querySelectorAll(".pdf__outline__entry").length).toEqual(2);
 
     result.unmount();
   });

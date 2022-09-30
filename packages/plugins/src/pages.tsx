@@ -85,6 +85,9 @@ export function PdfPages(props: PageContentProps) {
 
   const containerElemRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ top: 0, left: 0 });
+  const [currPageIndex, setCurrPageIndex] = useState(
+    pdfNavigator?.currPageIndex || 0
+  );
 
   const handleScroll = useCallback(
     (evt: Event) => {
@@ -100,13 +103,14 @@ export function PdfPages(props: PageContentProps) {
           const pageBottomY = pageOffset + page.size.height;
           if (pageBottomY > target.scrollTop) {
             pdfNavigator?.gotoPage(page.index, PDF_NAVIGATOR_SOURCE_PAGES);
+            setCurrPageIndex(page.index);
             break;
           }
           pageOffset += page.size.height;
         }
       }
     },
-    [pdfNavigator, doc?.pages]
+    [pdfNavigator, doc?.pages, setCurrPageIndex]
   );
 
   useEffect(() => {
@@ -141,6 +145,7 @@ export function PdfPages(props: PageContentProps) {
       return (
         <PdfPage
           key={page.index}
+          isCurrent={page.index === currPageIndex}
           page={page}
           needRender={isVisible}
           scale={scale}
@@ -148,7 +153,15 @@ export function PdfPages(props: PageContentProps) {
         />
       );
     });
-  }, [doc?.pages, viewport, visibleRange, scrollOffset, scale, rotation]);
+  }, [
+    doc?.pages,
+    currPageIndex,
+    viewport,
+    visibleRange,
+    scrollOffset,
+    scale,
+    rotation,
+  ]);
 
   const gotoPage = useCallback(
     (pageIndex: number) => {
@@ -159,9 +172,10 @@ export function PdfPages(props: PageContentProps) {
           pageOffset += doc.pages[i].size.height;
         }
         containerElem.scrollTo({ left: 0, top: pageOffset });
+        setCurrPageIndex(pageIndex);
       }
     },
-    [doc?.pages]
+    [doc?.pages, setCurrPageIndex]
   );
 
   useEffect(() => {
@@ -213,6 +227,7 @@ export function PdfPages(props: PageContentProps) {
 
 export interface PdfPageProps {
   page: PdfPageModel;
+  isCurrent: boolean;
   needRender: boolean;
   scale: number;
   rotation: Rotation;
@@ -220,7 +235,7 @@ export interface PdfPageProps {
 
 export function PdfPage(props: PdfPageProps) {
   const engine = usePdfEngine();
-  const { page, scale, rotation, needRender } = props;
+  const { isCurrent, page, scale, rotation, needRender } = props;
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
   const { decorations } = useContext(PageContentContext);
 
@@ -245,7 +260,8 @@ export function PdfPage(props: PdfPageProps) {
 
   return (
     <div
-      className="pdf__page"
+      tabIndex={0}
+      className={`pdf__page ${isCurrent ? "pdf__page--current" : ""}`}
       style={{
         position: "relative",
         width: page.size.width,
@@ -263,6 +279,7 @@ export function PdfPage(props: PdfPageProps) {
         {decorations.map((Decoration, index) => {
           return (
             <Decoration
+              isCurrent={isCurrent}
               key={index}
               needRender={needRender}
               page={page}

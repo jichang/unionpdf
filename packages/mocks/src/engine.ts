@@ -9,9 +9,9 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       return openDefer.promise;
     }),
     openDefer,
-    getOutline: () => {
+    getOutlines: () => {
       return {
-        items: [
+        entries: [
           {
             text: 'Page 1',
             pageIndex: 1
