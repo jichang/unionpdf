@@ -1,9 +1,10 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import {
   PdfEngine,
-  PdfPageModel,
+  PdfPageObject,
   PdfSource,
-  PdfDocumentModel,
+  PdfDocumentObject,
+  PdfLinkAnnoObject,
 } from "@onepdf/models";
 import * as ReactDOM from "react-dom/client";
 import {
@@ -15,7 +16,7 @@ import {
 } from "@onepdf/core";
 import { PdfThumbnails } from "../src/thumbnails";
 import { PdfPageDecoration, PdfPageProps, PdfPages } from "../src/pages";
-import { PdfPageLinks } from "../src/links";
+import { PdfPageAnnotations } from "../src/annotations";
 import { PdfOutlines } from "../src/outlines";
 
 function PdfPageNumber(props: PdfPageProps) {
@@ -51,7 +52,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
   const pageCount = 9;
   const pageWidth = 320;
   const pageHeight = 480;
-  const pages: PdfPageModel[] = [];
+  const pages: PdfPageObject[] = [];
   for (let i = 0; i < pageCount; i++) {
     pages.push({
       index: i,
@@ -92,7 +93,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         ],
       };
     },
-    renderPage: (page: PdfPageModel) => {
+    renderPage: (page: PdfPageObject) => {
       const pixelCount = page.size.width * page.size.height;
       const array = new Uint8ClampedArray(pixelCount * 4);
       const rgbValue = rgbValues[page.index];
@@ -105,7 +106,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
 
       return new ImageData(array, page.size.width, page.size.height);
     },
-    renderThumbnail: (page: PdfPageModel) => {
+    renderThumbnail: (page: PdfPageObject) => {
       const thumbnailWidth = page.size.width / 4;
       const thumbnailHeight = page.size.height / 4;
       const pixelCount = thumbnailWidth * thumbnailHeight;
@@ -120,21 +121,24 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
 
       return new ImageData(array, thumbnailWidth, thumbnailHeight);
     },
-    getPageLinks: (page: PdfPageModel) => {
-      return [
-        {
-          url: "https://localhost",
-          text: "localhost",
-          bound: {
-            x: 0,
-            y: 0,
-            width: 50,
-            height: 50,
-          },
+    getPageAnnotations: (page: PdfPageObject) => {
+      const pdfLinkAnnoObject: PdfLinkAnnoObject = {
+        type: "link",
+        url: "https://localhost",
+        text: "localhost",
+        rect: {
+          x: 0,
+          y: 0,
+          width: 50,
+          height: 50,
         },
+      };
+
+      return [
+        pdfLinkAnnoObject
       ];
     },
-    close: async (pdf: PdfDocumentModel) => {},
+    close: async (pdf: PdfDocumentObject) => {},
     ...engine,
   };
 }
@@ -172,7 +176,7 @@ function App() {
               <PdfNavigatorContextProvider navigator={pdfNavigator}>
                 <PdfPages visibleRange={[-1, 1]} viewport={viewport}>
                   <PdfPageDecoration decoration={PdfPageNumber} />
-                  <PdfPageDecoration decoration={PdfPageLinks} />
+                  <PdfPageDecoration decoration={PdfPageAnnotations} />
                 </PdfPages>
                 <PdfThumbnails
                   layout={{ colsCount: 100, rowsCount: 100 }}

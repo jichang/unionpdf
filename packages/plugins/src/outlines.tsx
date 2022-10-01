@@ -4,7 +4,7 @@ import {
   usePdfEngine,
   usePdfNavigator,
 } from "@onepdf/core";
-import { PdfOutlinesModel, PdfOutlineEntryModel } from "@onepdf/models";
+import { PdfOutlinesObject, PdfOutlineEntryObject } from "@onepdf/models";
 import { useCallback, useEffect, useState } from "react";
 
 export const PDF_NAVIGATOR_SOURCE_OUTLINES = "PdfOutlines";
@@ -14,7 +14,7 @@ export interface PdfOutlinesProps {}
 export function PdfOutlines(props: PdfOutlinesProps) {
   const engine = usePdfEngine();
   const doc = usePdfDocument();
-  const [outlines, setOutlines] = useState<PdfOutlinesModel>({ entries: [] });
+  const [outlines, setOutlines] = useState<PdfOutlinesObject>({ entries: [] });
 
   useEffect(() => {
     if (engine) {
@@ -56,7 +56,7 @@ export function PdfOutlines(props: PdfOutlinesProps) {
   }, [pdfNavigator, setCurrPageIndex]);
 
   const handleEntryClicked = useCallback(
-    (entry: PdfOutlineEntryModel) => {
+    (entry: PdfOutlineEntryObject) => {
       pdfNavigator?.gotoPage(entry.pageIndex, PDF_NAVIGATOR_SOURCE_OUTLINES);
     },
     [pdfNavigator]
@@ -82,8 +82,8 @@ export function PdfOutlines(props: PdfOutlinesProps) {
 
 export interface PdfOutlineEntryProps {
   currPageIndex: number;
-  entry: PdfOutlineEntryModel;
-  onClick: (entry: PdfOutlineEntryModel) => void;
+  entry: PdfOutlineEntryObject;
+  onClick: (entry: PdfOutlineEntryObject) => void;
 }
 
 export function PdfOutlineEntry(props: PdfOutlineEntryProps) {

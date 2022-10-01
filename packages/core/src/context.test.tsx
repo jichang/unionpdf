@@ -7,7 +7,7 @@ import {
 import "@testing-library/jest-dom";
 import { act, render } from "@testing-library/react";
 import { createMockPdfDocument, createMockPdfEngine } from "@onepdf/mocks";
-import { PdfDocumentModel } from "@onepdf/models";
+import { PdfDocumentObject } from "@onepdf/models";
 
 describe("PdfEngineContextProvider ", () => {
   function Consumer({ signal }: { signal: AbortSignal }) {
@@ -44,7 +44,7 @@ describe("PdfEngineContextProvider ", () => {
 });
 
 describe("PdfContextProvider ", () => {
-  let pdfInContext: PdfDocumentModel | null;
+  let pdfInContext: PdfDocumentObject | null;
   function Consumer() {
     pdfInContext = usePdfDocument();
 

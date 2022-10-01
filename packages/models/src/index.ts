@@ -4,12 +4,12 @@ export interface Size {
     height: number;
 }
 
-export interface Region extends Size {
+export interface Rect extends Size {
     x: number;
     y: number;
 }
 
-export interface PdfPageModel {
+export interface PdfPageObject {
     index: number;
     size: {
         width: number;
@@ -17,27 +17,37 @@ export interface PdfPageModel {
     }
 }
 
-export interface PdfDocumentModel {
+export interface PdfDocumentObject {
     pageCount: number;
     size: Size;
-    pages: PdfPageModel[];
+    pages: PdfPageObject[];
 }
 
-export interface PdfLinkModel {
-    url: string;
-    text: string;
-    bound: Region;
-}
-
-export interface PdfOutlineEntryModel {
+export interface PdfOutlineEntryObject {
     text: string;
     pageIndex: number;
-    children?: PdfOutlineEntryModel[];
+    children?: PdfOutlineEntryObject[];
 }
 
-export interface PdfOutlinesModel {
-    entries: PdfOutlineEntryModel[];
+export interface PdfOutlinesObject {
+    entries: PdfOutlineEntryObject[];
 }
+
+export interface PdfLinkAnnoObject  {
+  type: "link";
+  url: string;
+  text: string;
+  rect: Rect;
+}
+
+export interface PdfTextAnnoObject {
+    type: "text";
+    content: string;
+    color: string;
+    rect: Rect;
+}
+
+export type PdfAnnotationObject = PdfLinkAnnoObject | PdfTextAnnoObject;
 
 export class PdfError extends Error {
     constructor(public reason: any) {
@@ -62,10 +72,10 @@ export type PdfSource = string | Uint8Array;
 export type PdfEngineFunResult<T> = T | Promise<T>;
 
 export interface PdfEngine {
-    open: (url: PdfSource, signal: AbortSignal) => PdfEngineFunResult<PdfDocumentModel>;
-    getOutlines: () => PdfEngineFunResult<PdfOutlinesModel>;
-    renderPage: (page: PdfPageModel, scale: number, rotation: Rotation, region?: Region) => PdfEngineFunResult<ImageData>;
-    getPageLinks: (page: PdfPageModel) => PdfEngineFunResult<PdfLinkModel[]>;
-    renderThumbnail: (page: PdfPageModel, scale: number, rotation: Rotation, region?: Region) => PdfEngineFunResult<ImageData>;
-    close: (pdf: PdfDocumentModel) => Promise<void>;
+    open: (url: PdfSource, signal: AbortSignal) => PdfEngineFunResult<PdfDocumentObject>;
+    getOutlines: () => PdfEngineFunResult<PdfOutlinesObject>;
+    renderPage: (page: PdfPageObject, scale: number, rotation: Rotation, region?: Rect) => PdfEngineFunResult<ImageData>;
+    getPageAnnotations: (page: PdfPageObject) => PdfEngineFunResult<PdfAnnotationObject[]>;
+    renderThumbnail: (page: PdfPageObject, scale: number, rotation: Rotation, region?: Rect) => PdfEngineFunResult<ImageData>;
+    close: (pdf: PdfDocumentObject) => Promise<void>;
 }

@@ -8,7 +8,7 @@ import {
 } from "react";
 import { PdfDocumentContextProvider, usePdfEngine } from "./context";
 import {
-  PdfDocumentModel,
+  PdfDocumentObject,
   PdfError,
   PdfSource,
   PdfEngine,
@@ -17,13 +17,13 @@ import { useTheme } from "./theme";
 
 export interface PdfDocumentProps extends ComponentProps<"div"> {
   source: PdfSource;
-  onOpenSuccess: (pdf: PdfDocumentModel) => void;
+  onOpenSuccess: (pdf: PdfDocumentObject) => void;
   onOpenFailure: (error: Error) => void;
 }
 
 export function PdfDocument(props: PdfDocumentProps) {
   const { source, onOpenSuccess, onOpenFailure, children, ...rest } = props;
-  const [doc, setDoc] = useState<PdfDocumentModel | null>(null);
+  const [doc, setDoc] = useState<PdfDocumentObject | null>(null);
   const engine = usePdfEngine();
   const theme = useTheme();
 

@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext } from "react";
-import { PdfDocumentModel, PdfEngine } from "@onepdf/models";
+import { PdfDocumentObject, PdfEngine } from "@onepdf/models";
 import { PdfNavigator } from "./navigator";
 
 export const PdfEngineContext = React.createContext<PdfEngine | null>(null);
@@ -23,12 +23,12 @@ export function usePdfEngine() {
   return useContext(PdfEngineContext);
 }
 
-export const PdfDocumentContext = React.createContext<PdfDocumentModel | null>(
+export const PdfDocumentContext = React.createContext<PdfDocumentObject | null>(
   null
 );
 
 export interface PdfDocumentContextProviderProps {
-  doc: PdfDocumentModel;
+  doc: PdfDocumentObject;
   children: ReactNode;
 }
 

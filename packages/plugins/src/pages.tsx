@@ -1,7 +1,6 @@
 import {
   useRef,
   useState,
-  createContext,
   useContext,
   ReactNode,
   useCallback,
@@ -9,46 +8,19 @@ import {
   CSSProperties,
   useMemo,
 } from "react";
-import { PdfPageModel, Rotation, Size } from "@onepdf/models";
+import { PdfPageObject, Rotation, Size } from "@onepdf/models";
 import {
   PdfNavigatorEvent,
   usePdfDocument,
   usePdfEngine,
   usePdfNavigator,
 } from "@onepdf/core";
-
-export type Decoration = (props: PdfPageProps) => JSX.Element;
-
-export type PageContentContextValue = {
-  decorations: Decoration[];
-  addDecoration: (decoration: Decoration) => void;
-  removeDecoration: (decoration: Decoration) => void;
-};
-
-export const PageContentContext = createContext<PageContentContextValue>({
-  decorations: [],
-  addDecoration: (decoration: Decoration) => {},
-  removeDecoration: (decoration: Decoration) => {},
-});
-
-export interface PdfPagesContextProviderProps {
-  decorations: Decoration[];
-  addDecoration: (decoration: Decoration) => void;
-  removeDecoration: (decoration: Decoration) => void;
-  children: ReactNode;
-}
-
-export function PdfPagesContextProvider(props: PdfPagesContextProviderProps) {
-  const { children, decorations, addDecoration, removeDecoration } = props;
-
-  return (
-    <PageContentContext.Provider
-      value={{ decorations, addDecoration, removeDecoration }}
-    >
-      {children}
-    </PageContentContext.Provider>
-  );
-}
+import {
+  PdfPageDecorationComponent,
+  PdfPageDecorationsContext,
+  PdfPageDecorationsContextProvider,
+  usePdfPageDecorationComponents,
+} from "./pages.context";
 
 export interface PageContentProps {
   viewport: Size;
@@ -70,18 +42,6 @@ export function PdfPages(props: PageContentProps) {
   } = props;
   const doc = usePdfDocument();
   const pdfNavigator = usePdfNavigator();
-
-  const [decorations, setDecorations] = useState<Decoration[]>([]);
-  const addDecoration = useCallback((decoration: Decoration) => {
-    setDecorations((decorations) => {
-      return [...decorations, decoration];
-    });
-  }, []);
-  const removeDecoration = useCallback((decoration: Decoration) => {
-    setDecorations((decorations) => {
-      return decorations.filter((_decoration) => _decoration !== decoration);
-    });
-  }, []);
 
   const containerElemRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ top: 0, left: 0 });
@@ -211,22 +171,18 @@ export function PdfPages(props: PageContentProps) {
       }
       ref={containerElemRef}
     >
-      <div className="pdf__pages">
-        <PdfPagesContextProvider
-          decorations={decorations}
-          addDecoration={addDecoration}
-          removeDecoration={removeDecoration}
-        >
+      <PdfPageDecorationsContextProvider>
+        <div className="pdf__pages">
           {pages}
           {children}
-        </PdfPagesContextProvider>
-      </div>
+        </div>
+      </PdfPageDecorationsContextProvider>
     </div>
   );
 }
 
 export interface PdfPageProps {
-  page: PdfPageModel;
+  page: PdfPageObject;
   isCurrent: boolean;
   needRender: boolean;
   scale: number;
@@ -237,7 +193,7 @@ export function PdfPage(props: PdfPageProps) {
   const engine = usePdfEngine();
   const { isCurrent, page, scale, rotation, needRender } = props;
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
-  const { decorations } = useContext(PageContentContext);
+  const { decorationComponents } = usePdfPageDecorationComponents();
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
@@ -276,9 +232,9 @@ export function PdfPage(props: PdfPageProps) {
         />
       ) : null}
       <div className="pdf__page__decorations">
-        {decorations.map((Decoration, index) => {
+        {decorationComponents.map((DecorationComponent, index) => {
           return (
-            <Decoration
+            <DecorationComponent
               isCurrent={isCurrent}
               key={index}
               needRender={needRender}
@@ -294,12 +250,15 @@ export function PdfPage(props: PdfPageProps) {
 }
 
 export interface PdfPageDecorationProps {
-  decoration: Decoration;
+  decoration: PdfPageDecorationComponent;
 }
 
 export function PdfPageDecoration(props: PdfPageDecorationProps) {
   const { decoration } = props;
-  const { addDecoration, removeDecoration } = useContext(PageContentContext);
+  const {
+    addDecorationComponent: addDecoration,
+    removeDecorationComponent: removeDecoration,
+  } = useContext(PdfPageDecorationsContext);
 
   useEffect(() => {
     addDecoration(decoration);

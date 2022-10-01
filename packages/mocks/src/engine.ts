@@ -1,8 +1,8 @@
-import { PdfDocumentModel, PdfSource, PdfEngine, PdfPageModel } from "@onepdf/models";
+import { PdfDocumentObject, PdfSource, PdfEngine, PdfPageObject, PdfLinkAnnoObject } from "@onepdf/models";
 import { Defer } from "./defer";
 
 export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
-  const openDefer = new Defer<PdfDocumentModel>();
+  const openDefer = new Defer<PdfDocumentObject>();
 
   return {
     open: jest.fn(async (url: PdfSource) => {
@@ -29,7 +29,7 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         ]
       }
     },
-    renderPage: jest.fn(async (page: PdfPageModel) => {
+    renderPage: jest.fn(async (page: PdfPageObject) => {
       const pixelCount = page.size.width * page.size.height;
       const array = new Uint8ClampedArray(pixelCount * 4);
       const rgbValue = page.index % 255;
@@ -44,7 +44,7 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
 
       return new ImageData(array, page.size.width, page.size.height);
     }),
-    renderThumbnail: jest.fn(async (page: PdfPageModel) => {
+    renderThumbnail: jest.fn(async (page: PdfPageObject) => {
       const thumbnailWidth = page.size.width / 4;
       const thumbnailHeight = page.size.height / 4;
       const pixelCount = thumbnailWidth * thumbnailHeight;
@@ -61,26 +61,28 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
 
       return new ImageData(array, thumbnailWidth, thumbnailHeight);
     }),
-    getPageLinks: jest.fn(async (page: PdfPageModel) => {
+    getPageAnnotations: jest.fn(async (page: PdfPageObject) => {
+      const link: PdfLinkAnnoObject = {
+        type: "link",
+        url: "https://localhost",
+        text: "localhost",
+        rect: {
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+        },
+      };
       return [
-        {
-          url: 'https://localhost',
-          text: 'localhost',
-          bound: {
-            x: 0,
-            y: 0,
-            width: 100,
-            height: 100
-          }
-        }
+        link
       ]
     }),
-    close: async (pdf: PdfDocumentModel) => { },
+    close: async (pdf: PdfDocumentObject) => { },
     ...engine,
   }
 }
 
-export function createMockPdfDocument(pdf?: Partial<PdfDocumentModel>) {
+export function createMockPdfDocument(pdf?: Partial<PdfDocumentObject>) {
   const pageCount = 10;
   const pages = [];
   for (let i = 0; i < pageCount; i++) {

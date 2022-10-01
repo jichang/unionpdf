@@ -2,9 +2,9 @@ import React from "react";
 import * as ReactDOM from "react-dom/client";
 import {
   PdfEngine,
-  PdfPageModel,
+  PdfPageObject,
   PdfSource,
-  PdfDocumentModel,
+  PdfDocumentObject,
 } from "@onepdf/models";
 import { PdfEngineContextProvider, PdfDocument, usePdfDocument } from "../src";
 import { ThemeContextProvider } from "../src/theme";
@@ -13,7 +13,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
   const pageCount = 10;
   const pageWidth = 320;
   const pageHeight = 480;
-  const pages: PdfPageModel[] = [];
+  const pages: PdfPageObject[] = [];
   for (let i = 0; i < pageCount; i++) {
     pages.push({
       index: i,
@@ -34,22 +34,21 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         pages: pages,
       };
     },
-    renderPage: (page: PdfPageModel) => {
-      const pixelCount = page.size.width * page.size.height;
-      const array = new Uint8ClampedArray(pixelCount * 4);
-      const rgbValue = page.index % 255;
-      const alphaValue = 255;
-      for (let i = 0; i < pixelCount; i++) {
-        for (let j = 0; j < 3; j++) {
-          const index = i * 4 + j;
-          array[index] = rgbValue;
-        }
-        array[i * 4 + 3] = alphaValue;
-      }
-
-      return new ImageData(array, page.size.width, page.size.height);
+    renderPage: (page: PdfPageObject) => {
+      return new ImageData(page.size.width, page.size.height);
     },
-    close: async (pdf: PdfDocumentModel) => {},
+    renderThumbnail: (page: PdfPageObject) => {
+      return new ImageData(page.size.width, page.size.height);
+    },
+    getOutlines: () => {
+      return {
+        entries: []
+      }
+    },
+    getPageAnnotations: (page: PdfPageObject) => {
+      return [];
+    },
+    close: async (pdf: PdfDocumentObject) => {},
     ...engine,
   };
 }

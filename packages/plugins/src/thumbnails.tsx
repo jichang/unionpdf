@@ -4,7 +4,7 @@ import {
   usePdfEngine,
   usePdfNavigator,
 } from "@onepdf/core";
-import { PdfPageModel, Rotation, Size } from "@onepdf/models";
+import { PdfPageObject, Rotation, Size } from "@onepdf/models";
 import { useCallback, useEffect, useState } from "react";
 
 export interface Layout {
@@ -52,7 +52,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
   }, [pdfNavigator, setCurrPageIndex]);
 
   const gotoPage = useCallback(
-    (page: PdfPageModel) => {
+    (page: PdfPageObject) => {
       pdfNavigator?.gotoPage(page.index, PDF_NAVIGATOR_SOURCE_THUMBNAILS);
       setCurrPageIndex(page.index);
     },
@@ -79,11 +79,11 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
 }
 
 export interface PdfThumbnailProps {
-  page: PdfPageModel;
+  page: PdfPageObject;
   scale: number;
   rotation: Rotation;
   isCurrent: boolean;
-  onClick: (page: PdfPageModel) => void;
+  onClick: (page: PdfPageObject) => void;
 }
 
 export function PdfThumbnail(props: PdfThumbnailProps) {
