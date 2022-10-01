@@ -1,3 +1,4 @@
+import React from "react";
 import "@testing-library/jest-dom";
 import { act, render } from "@testing-library/react";
 import { PdfDocument, PdfEngineContextProvider } from "@onepdf/core";

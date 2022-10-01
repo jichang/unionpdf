@@ -1,4 +1,6 @@
+import React from "react";
 import { PdfLinkAnnoObject } from "@onepdf/models";
+import "./link.css";
 
 export interface PdfPageLinkAnnotationProps {
   anno: PdfLinkAnnoObject;
@@ -10,9 +12,6 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
   return (
     <a
       style={{
-        opacity: 0,
-        userSelect: "none",
-        position: "absolute",
         top: anno.rect.y,
         left: anno.rect.x,
         width: anno.rect.width,

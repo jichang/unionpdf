@@ -1,0 +1,8 @@
+.pdf__thumbnails {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+.pdf__thumbnail {
+  padding: 0.5rem 0;
+}

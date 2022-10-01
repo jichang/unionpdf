@@ -1,4 +1,4 @@
-import {
+import React, {
   useRef,
   useState,
   useContext,
@@ -21,6 +21,7 @@ import {
   PdfPageDecorationsContextProvider,
   usePdfPageDecorationComponents,
 } from "./pages.context";
+import "./pages.css";
 
 export interface PageContentProps {
   viewport: Size;
@@ -164,9 +165,6 @@ export function PdfPages(props: PageContentProps) {
         {
           width: viewport.width,
           height: viewport.height,
-          overflow: "scroll",
-          msOverflowStyle: "none",
-          scrollbarWidth: "none",
         } as CSSProperties
       }
       ref={containerElemRef}
@@ -219,17 +217,12 @@ export function PdfPage(props: PdfPageProps) {
       tabIndex={0}
       className={`pdf__page ${isCurrent ? "pdf__page--current" : ""}`}
       style={{
-        position: "relative",
         width: page.size.width,
         height: page.size.height,
       }}
     >
       {needRender ? (
-        <canvas
-          style={{ width: "100%", height: "100%" }}
-          className="pdf__page__canvas"
-          ref={canvasElemRef}
-        />
+        <canvas className="pdf__page__canvas" ref={canvasElemRef} />
       ) : null}
       <div className="pdf__page__decorations">
         {decorationComponents.map((DecorationComponent, index) => {

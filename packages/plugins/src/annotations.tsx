@@ -1,6 +1,6 @@
 import { usePdfEngine } from "@onepdf/core";
 import { PdfAnnotationObject } from "@onepdf/models";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { usePdfPageAnnotationComponents } from "./annotations.contex";
 import { PdfPageProps } from "./pages";
 

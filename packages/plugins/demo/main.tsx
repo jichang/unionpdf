@@ -134,9 +134,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         },
       };
 
-      return [
-        pdfLinkAnnoObject
-      ];
+      return [pdfLinkAnnoObject];
     },
     close: async (pdf: PdfDocumentObject) => {},
     ...engine,

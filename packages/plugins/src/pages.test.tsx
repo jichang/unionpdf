@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import React from "react";
 import { act, render } from "@testing-library/react";
 import { PdfEngineContextProvider } from "@onepdf/core";
 import { createMockPdfDocument, createMockPdfEngine } from "@onepdf/mocks";

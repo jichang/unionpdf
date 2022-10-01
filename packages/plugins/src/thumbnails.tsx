@@ -5,7 +5,8 @@ import {
   usePdfNavigator,
 } from "@onepdf/core";
 import { PdfPageObject, Rotation, Size } from "@onepdf/models";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import "./thumbnails.css";
 
 export interface Layout {
   colsCount: number;

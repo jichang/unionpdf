@@ -5,7 +5,8 @@ import {
   usePdfNavigator,
 } from "@onepdf/core";
 import { PdfOutlinesObject, PdfOutlineEntryObject } from "@onepdf/models";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import "./outlines.css";
 
 export const PDF_NAVIGATOR_SOURCE_OUTLINES = "PdfOutlines";
 
@@ -63,8 +64,8 @@ export function PdfOutlines(props: PdfOutlinesProps) {
   );
 
   return (
-    <div className="pdf__outline">
-      <ol style={{ listStyle: "none", paddingLeft: "1rem" }}>
+    <div className="pdf__outlines">
+      <ol>
         {outlines.entries.map((entry, index) => {
           return (
             <PdfOutlineEntry
@@ -101,7 +102,6 @@ export function PdfOutlineEntry(props: PdfOutlineEntryProps) {
 
   return (
     <li
-      style={{ padding: "0.5rem 0" }}
       tabIndex={0}
       className={`pdf__outline__entry ${
         isCurrent ? "pdf__outline__entry--current" : ""

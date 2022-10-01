@@ -1,0 +1,8 @@
+.pdf__outlines ol {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+.pdf__outlines__entry {
+  padding: 0.5rem 0;
+}

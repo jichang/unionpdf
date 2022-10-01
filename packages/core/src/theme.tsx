@@ -1,3 +1,4 @@
+import React from "react";
 import { createContext, useContext } from "react";
 
 export interface Theme extends Record<string, string> {}

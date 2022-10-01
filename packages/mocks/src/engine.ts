@@ -1,4 +1,10 @@
-import { PdfDocumentObject, PdfSource, PdfEngine, PdfPageObject, PdfLinkAnnoObject } from "@onepdf/models";
+import {
+  PdfDocumentObject,
+  PdfSource,
+  PdfEngine,
+  PdfPageObject,
+  PdfLinkAnnoObject,
+} from "@onepdf/models";
 import { Defer } from "./defer";
 
 export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
@@ -13,21 +19,21 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       return {
         entries: [
           {
-            text: 'Page 1',
-            pageIndex: 1
+            text: "Page 1",
+            pageIndex: 1,
           },
           {
-            text: 'Page 2',
+            text: "Page 2",
             pageIndex: 2,
             children: [
               {
-                text: 'Page 3',
-                pageIndex: 3
-              }
-            ]
-          }
-        ]
-      }
+                text: "Page 3",
+                pageIndex: 3,
+              },
+            ],
+          },
+        ],
+      };
     },
     renderPage: jest.fn(async (page: PdfPageObject) => {
       const pixelCount = page.size.width * page.size.height;
@@ -73,28 +79,24 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
           height: 100,
         },
       };
-      return [
-        link
-      ]
+      return [link];
     }),
-    close: async (pdf: PdfDocumentObject) => { },
+    close: async (pdf: PdfDocumentObject) => {},
     ...engine,
-  }
+  };
 }
 
 export function createMockPdfDocument(pdf?: Partial<PdfDocumentObject>) {
   const pageCount = 10;
   const pages = [];
   for (let i = 0; i < pageCount; i++) {
-    pages.push(
-      {
-        index: i,
-        size: {
-          width: 100,
-          height: 100,
-        }
-      }
-    )
+    pages.push({
+      index: i,
+      size: {
+        width: 100,
+        height: 100,
+      },
+    });
   }
 
   return {
@@ -105,5 +107,5 @@ export function createMockPdfDocument(pdf?: Partial<PdfDocumentObject>) {
     },
     pages: pages,
     ...pdf,
-  }
+  };
 }

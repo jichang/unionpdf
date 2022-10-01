@@ -3,7 +3,7 @@ import {
   PdfPageObject,
   PdfTextAnnoObject,
 } from "@onepdf/models";
-import { createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 import { PdfPageLinkAnnotation } from "./annotations/link";
 import { PdfPageTextAnnotation } from "./annotations/text";
 

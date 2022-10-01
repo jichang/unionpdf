@@ -1,12 +1,6 @@
-import {
-  PdfDocumentContextProvider,
-  PdfEngineContextProvider,
-  usePdfDocument,
-  usePdfEngine,
-} from "./context";
+import React from "react";
 import "@testing-library/jest-dom";
-import { act, render } from "@testing-library/react";
-import { createMockPdfDocument } from "@onepdf/mocks";
+import { render } from "@testing-library/react";
 import { Theme, ThemeContextProvider, useTheme } from "./theme";
 
 describe("ThemeContextProvider ", () => {

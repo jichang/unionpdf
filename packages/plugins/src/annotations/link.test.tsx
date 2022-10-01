@@ -1,8 +1,6 @@
+import React from "react";
 import "@testing-library/jest-dom";
-import { act, render } from "@testing-library/react";
-import { PdfDocument, PdfEngineContextProvider } from "@onepdf/core";
-import { createMockPdfDocument, createMockPdfEngine } from "@onepdf/mocks";
-import { PdfPageDecoration, PdfPages } from "../pages";
+import { render } from "@testing-library/react";
 import { PdfPageLinkAnnotation } from "./link";
 import { PdfLinkAnnoObject } from "@onepdf/models";
 

@@ -1,0 +1,5 @@
+.pdf__annotation--link {
+  opacity: 0;
+  user-select: none;
+  position: absolute;
+}
