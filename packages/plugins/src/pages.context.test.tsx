@@ -1,15 +1,15 @@
-import "@testing-library/jest-dom";
-import React from "react";
-import { render } from "@testing-library/react";
-import { PdfPageProps } from "./pages";
+import '@testing-library/jest-dom';
+import React from 'react';
+import { render } from '@testing-library/react';
+import { PdfPageProps } from './pages';
 import {
   PdfPageDecorationComponent,
   PdfPageDecorationsContextProvider,
   usePdfPageDecorationComponents,
-} from "./pages.context";
+} from './pages.context';
 
-describe("PdfPageAnnotationComponentsProvider", () => {
-  test("should inject customized component", async () => {
+describe('PdfPageAnnotationComponentsProvider', () => {
+  test('should inject customized component', async () => {
     function PdfPageNumber(props: PdfPageProps) {
       return <div className="pdf__page__number">{props.page.index + 1}</div>;
     }

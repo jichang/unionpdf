@@ -4,8 +4,8 @@ import React, {
   ReactNode,
   useCallback,
   useState,
-} from "react";
-import { PdfPageProps } from "./pages";
+} from 'react';
+import { PdfPageProps } from './pages';
 
 export interface PdfPageDecorationComponentProps extends PdfPageProps {}
 

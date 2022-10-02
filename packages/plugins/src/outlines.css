@@ -6,3 +6,7 @@
 .pdf__outlines__entry {
   padding: 0.5rem 0;
 }
+
+.pdf__outlines__entry.pdf__outlines__entry--current span {
+  font-weight: bold;
+}

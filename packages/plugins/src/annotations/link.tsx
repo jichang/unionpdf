@@ -1,6 +1,6 @@
-import React from "react";
-import { PdfLinkAnnoObject } from "@onepdf/models";
-import "./link.css";
+import React from 'react';
+import { PdfLinkAnnoObject } from '@onepdf/models';
+import './link.css';
 
 export interface PdfPageLinkAnnotationProps {
   anno: PdfLinkAnnoObject;

@@ -2,10 +2,10 @@ import {
   PdfLinkAnnoObject,
   PdfPageObject,
   PdfTextAnnoObject,
-} from "@onepdf/models";
-import React, { createContext, useContext } from "react";
-import { PdfPageLinkAnnotation } from "./annotations/link";
-import { PdfPageTextAnnotation } from "./annotations/text";
+} from '@onepdf/models';
+import React, { createContext, useContext } from 'react';
+import { PdfPageLinkAnnotation } from './annotations/link';
+import { PdfPageTextAnnotation } from './annotations/text';
 
 export interface PdfPageAnnotationComponentProps<T> {
   page: PdfPageObject;

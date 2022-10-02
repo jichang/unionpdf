@@ -1,16 +1,16 @@
-import "@testing-library/jest-dom";
-import { render } from "@testing-library/react";
-import React from "react";
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+import React from 'react';
 import {
   PdfPageAnnotationComponents,
   PdfPageAnnotationComponentsContextProvider,
   usePdfPageAnnotationComponents,
-} from "./annotations.contex";
-import { PdfPageLinkAnnotationProps } from "./annotations/link";
-import { PdfPageTextAnnotation } from "./annotations/text";
+} from './annotations.contex';
+import { PdfPageLinkAnnotationProps } from './annotations/link';
+import { PdfPageTextAnnotation } from './annotations/text';
 
-describe("PdfPageAnnotationComponentsProvider", () => {
-  test("should inject customized component", async () => {
+describe('PdfPageAnnotationComponentsProvider', () => {
+  test('should inject customized component', async () => {
     let annotationComponents: PdfPageAnnotationComponents | undefined;
 
     function PdfPageAnnotationComponentsConsumer() {

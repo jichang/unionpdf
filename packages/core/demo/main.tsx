@@ -1,13 +1,13 @@
-import React from "react";
-import * as ReactDOM from "react-dom/client";
+import React from 'react';
+import * as ReactDOM from 'react-dom/client';
 import {
   PdfEngine,
   PdfPageObject,
   PdfSource,
   PdfDocumentObject,
-} from "@onepdf/models";
-import { PdfEngineContextProvider, PdfDocument, usePdfDocument } from "../src";
-import { ThemeContextProvider } from "../src/theme";
+} from '@onepdf/models';
+import { PdfEngineContextProvider, PdfDocument, usePdfDocument } from '../src';
+import { ThemeContextProvider } from '../src/theme';
 
 function createMockPdfEngine(engine?: Partial<PdfEngine>) {
   const pageCount = 10;
@@ -42,8 +42,8 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     },
     getOutlines: () => {
       return {
-        entries: []
-      }
+        entries: [],
+      };
     },
     getPageAnnotations: (page: PdfPageObject) => {
       return [];
@@ -59,7 +59,7 @@ export function PdfMetadata() {
   return (
     <div
       style={{
-        whiteSpace: "pre",
+        whiteSpace: 'pre',
       }}
     >
       {JSON.stringify(pdf, null, 2)}
@@ -74,7 +74,7 @@ function App() {
     <div className="App">
       <ThemeContextProvider
         theme={{
-          background: "blue",
+          background: 'blue',
         }}
       >
         <PdfEngineContextProvider engine={engine}>
@@ -91,6 +91,6 @@ function App() {
   );
 }
 
-const appElem = document.querySelector("#app") as HTMLElement;
+const appElem = document.querySelector('#app') as HTMLElement;
 const root = ReactDOM.createRoot(appElem);
 root.render(<App />);

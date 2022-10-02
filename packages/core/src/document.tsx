@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   ComponentProps,
   CSSProperties,
@@ -6,17 +6,17 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { PdfDocumentContextProvider, usePdfEngine } from "./context";
+} from 'react';
+import { PdfDocumentContextProvider, usePdfEngine } from './context';
 import {
   PdfDocumentObject,
   PdfError,
   PdfSource,
   PdfEngine,
-} from "@onepdf/models";
-import { useTheme } from "./theme";
+} from '@onepdf/models';
+import { useTheme } from './theme';
 
-export interface PdfDocumentProps extends ComponentProps<"div"> {
+export interface PdfDocumentProps extends ComponentProps<'div'> {
   source: PdfSource;
   onOpenSuccess: (pdf: PdfDocumentObject) => void;
   onOpenFailure: (error: Error) => void;
@@ -29,10 +29,10 @@ export function PdfDocument(props: PdfDocumentProps) {
   const theme = useTheme();
 
   const onOpenSuccessRef =
-    useRef<PdfDocumentProps["onOpenSuccess"]>(onOpenSuccess);
+    useRef<PdfDocumentProps['onOpenSuccess']>(onOpenSuccess);
   onOpenSuccessRef.current = onOpenSuccess;
   const onOpenFailureRef =
-    useRef<PdfDocumentProps["onOpenFailure"]>(onOpenFailure);
+    useRef<PdfDocumentProps['onOpenFailure']>(onOpenFailure);
   onOpenFailureRef.current = onOpenFailure;
 
   useEffect(() => {

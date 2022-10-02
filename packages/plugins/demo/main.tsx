@@ -1,34 +1,34 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import {
   PdfEngine,
   PdfPageObject,
   PdfSource,
   PdfDocumentObject,
   PdfLinkAnnoObject,
-} from "@onepdf/models";
-import * as ReactDOM from "react-dom/client";
+} from '@onepdf/models';
+import * as ReactDOM from 'react-dom/client';
 import {
   PdfEngineContextProvider,
   PdfDocument,
   PdfNavigator,
   ThemeContextProvider,
   PdfNavigatorContextProvider,
-} from "@onepdf/core";
-import { PdfThumbnails } from "../src/thumbnails";
-import { PdfPageDecoration, PdfPageProps, PdfPages } from "../src/pages";
-import { PdfPageAnnotations } from "../src/annotations";
-import { PdfOutlines } from "../src/outlines";
+} from '@onepdf/core';
+import { PdfThumbnails } from '../src/thumbnails';
+import { PdfPageDecoration, PdfPageProps, PdfPages } from '../src/pages';
+import { PdfPageAnnotations } from '../src/annotations';
+import { PdfOutlines } from '../src/outlines';
 
 function PdfPageNumber(props: PdfPageProps) {
   return (
     <div
       className="pdf__page__number"
       style={{
-        color: "white",
-        position: "absolute",
+        color: 'white',
+        position: 'absolute',
         bottom: 0,
-        left: "50%",
-        transform: "translate(-50%, -50%)",
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
       }}
     >
       {props.page.index + 1}
@@ -49,7 +49,7 @@ const rgbValues = [
 ];
 
 function createMockPdfEngine(engine?: Partial<PdfEngine>) {
-  const pageCount = 9;
+  const pageCount = 10;
   const pageWidth = 320;
   const pageHeight = 480;
   const pages: PdfPageObject[] = [];
@@ -77,15 +77,15 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       return {
         entries: [
           {
-            text: "Page 1",
+            text: 'Page 1',
             pageIndex: 0,
           },
           {
-            text: "Page 2",
+            text: 'Page 2',
             pageIndex: 1,
             children: [
               {
-                text: "Page 3",
+                text: 'Page 3',
                 pageIndex: 2,
               },
             ],
@@ -96,7 +96,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     renderPage: (page: PdfPageObject) => {
       const pixelCount = page.size.width * page.size.height;
       const array = new Uint8ClampedArray(pixelCount * 4);
-      const rgbValue = rgbValues[page.index];
+      const rgbValue = rgbValues[page.index % rgbValues.length];
       for (let i = 0; i < pixelCount; i++) {
         for (let j = 0; j < 4; j++) {
           const index = i * 4 + j;
@@ -111,7 +111,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       const thumbnailHeight = page.size.height / 4;
       const pixelCount = thumbnailWidth * thumbnailHeight;
       const array = new Uint8ClampedArray(pixelCount * 4);
-      const rgbValue = rgbValues[page.index];
+      const rgbValue = rgbValues[page.index % rgbValues.length];
       for (let i = 0; i < pixelCount; i++) {
         for (let j = 0; j < 4; j++) {
           const index = i * 4 + j;
@@ -123,9 +123,9 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     },
     getPageAnnotations: (page: PdfPageObject) => {
       const pdfLinkAnnoObject: PdfLinkAnnoObject = {
-        type: "link",
-        url: "https://localhost",
-        text: "localhost",
+        type: 'link',
+        url: 'https://localhost',
+        text: 'localhost',
         rect: {
           x: 0,
           y: 0,
@@ -162,7 +162,7 @@ function App() {
       <div className="pdf__app" ref={pdfAppElemRef}>
         <ThemeContextProvider
           theme={{
-            background: "blue",
+            background: 'blue',
           }}
         >
           <PdfEngineContextProvider engine={engine}>
@@ -177,7 +177,7 @@ function App() {
                   <PdfPageDecoration decoration={PdfPageAnnotations} />
                 </PdfPages>
                 <PdfThumbnails
-                  layout={{ colsCount: 100, rowsCount: 100 }}
+                  layout={{ direction: 'vertical', itemsCount: 5 }}
                   size={{ width: 100, height: 100 }}
                 />
                 <PdfOutlines />
@@ -190,6 +190,6 @@ function App() {
   );
 }
 
-const appElem = document.querySelector("#root") as HTMLElement;
+const appElem = document.querySelector('#root') as HTMLElement;
 const root = ReactDOM.createRoot(appElem);
 root.render(<App />);

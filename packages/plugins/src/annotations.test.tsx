@@ -1,15 +1,15 @@
-import React from "react";
-import "@testing-library/jest-dom";
-import { act, render } from "@testing-library/react";
-import { PdfDocument, PdfEngineContextProvider } from "@onepdf/core";
-import { createMockPdfDocument, createMockPdfEngine } from "@onepdf/mocks";
-import { PdfPageDecoration, PdfPages } from "./pages";
-import { PdfPageAnnotations } from "./annotations";
-import { PdfPageLinkAnnotationProps } from "./annotations/link";
-import { PdfPageAnnotationComponentsContextProvider } from "./annotations.contex";
+import React from 'react';
+import '@testing-library/jest-dom';
+import { act, render } from '@testing-library/react';
+import { PdfDocument, PdfEngineContextProvider } from '@onepdf/core';
+import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
+import { PdfPageDecoration, PdfPages } from './pages';
+import { PdfPageAnnotations } from './annotations';
+import { PdfPageLinkAnnotationProps } from './annotations/link';
+import { PdfPageAnnotationComponentsContextProvider } from './annotations.contex';
 
-describe("PdfPageAnnotations", () => {
-  test("should render pdf annotations", async () => {
+describe('PdfPageAnnotations', () => {
+  test('should render pdf annotations', async () => {
     const pdf = createMockPdfDocument();
     const engine = createMockPdfEngine();
     const result = render(
@@ -31,17 +31,17 @@ describe("PdfPageAnnotations", () => {
       await engine.openDefer.promise;
     });
 
-    expect(document.querySelectorAll(".pdf__annotation").length).toEqual(
+    expect(document.querySelectorAll('.pdf__annotation').length).toEqual(
       pdf.pageCount
     );
-    expect(document.querySelectorAll(".pdf__annotation--link").length).toEqual(
+    expect(document.querySelectorAll('.pdf__annotation--link').length).toEqual(
       pdf.pageCount
     );
 
     result.unmount();
   });
 
-  test("should render pdf annotations with customized component", async () => {
+  test('should render pdf annotations with customized component', async () => {
     function PdfPageLinkAnnoCustomize(props: PdfPageLinkAnnotationProps) {
       const { anno } = props;
 
@@ -49,8 +49,8 @@ describe("PdfPageAnnotations", () => {
         <a
           style={{
             opacity: 0,
-            userSelect: "none",
-            position: "absolute",
+            userSelect: 'none',
+            position: 'absolute',
             top: anno.rect.y,
             left: anno.rect.x,
             width: anno.rect.width,
@@ -90,11 +90,11 @@ describe("PdfPageAnnotations", () => {
       await engine.openDefer.promise;
     });
 
-    expect(document.querySelectorAll(".pdf__annotation").length).toEqual(
+    expect(document.querySelectorAll('.pdf__annotation').length).toEqual(
       pdf.pageCount
     );
     expect(
-      document.querySelectorAll(".pdf__annotation--customize").length
+      document.querySelectorAll('.pdf__annotation--customize').length
     ).toEqual(pdf.pageCount);
 
     result.unmount();

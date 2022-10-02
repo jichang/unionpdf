@@ -19,7 +19,7 @@ function App() {
       <div className="pdf__app" ref={pdfAppElemRef}>
         <ThemeContextProvider
           theme={{
-            background: "blue",
+            background: 'blue',
           }}
         >
           <PdfEngineContextProvider engine={engine}>
@@ -57,11 +57,11 @@ function PdfPageNumber(props: PdfPageProps) {
     <div
       className="pdf__page__number"
       style={{
-        color: "white",
-        position: "absolute",
+        color: 'white',
+        position: 'absolute',
         bottom: 0,
-        left: "50%",
-        transform: "translate(-50%, -50%)",
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
       }}
     >
       {props.page.index + 1}

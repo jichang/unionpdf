@@ -1,5 +1,5 @@
 export type PdfNavigatorEvent = {
-  kind: "Change";
+  kind: 'Change';
   data: {
     pageIndex: number;
   };
@@ -22,7 +22,7 @@ export class PdfNavigator {
 
     this.emit(
       {
-        kind: "Change",
+        kind: 'Change',
         data: {
           pageIndex,
         },
@@ -43,7 +43,7 @@ export class PdfNavigator {
     }
   }
 
-  addEventListener(source: string, handler: PdfNavigatorListener["handler"]) {
+  addEventListener(source: string, handler: PdfNavigatorListener['handler']) {
     const index = this.listeners.findIndex((_listener) => {
       return _listener.source === source;
     });
@@ -57,7 +57,7 @@ export class PdfNavigator {
 
   removeEventListener(
     source: string,
-    handler: PdfNavigatorListener["handler"]
+    handler: PdfNavigatorListener['handler']
   ) {
     const index = this.listeners.findIndex((_listener) => {
       return _listener.source === source && _listener.handler === handler;

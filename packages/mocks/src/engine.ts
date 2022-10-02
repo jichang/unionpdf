@@ -4,8 +4,8 @@ import {
   PdfEngine,
   PdfPageObject,
   PdfLinkAnnoObject,
-} from "@onepdf/models";
-import { Defer } from "./defer";
+} from '@onepdf/models';
+import { Defer } from './defer';
 
 export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
   const openDefer = new Defer<PdfDocumentObject>();
@@ -19,15 +19,15 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       return {
         entries: [
           {
-            text: "Page 1",
+            text: 'Page 1',
             pageIndex: 1,
           },
           {
-            text: "Page 2",
+            text: 'Page 2',
             pageIndex: 2,
             children: [
               {
-                text: "Page 3",
+                text: 'Page 3',
                 pageIndex: 3,
               },
             ],
@@ -69,9 +69,9 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     }),
     getPageAnnotations: jest.fn(async (page: PdfPageObject) => {
       const link: PdfLinkAnnoObject = {
-        type: "link",
-        url: "https://localhost",
-        text: "localhost",
+        type: 'link',
+        url: 'https://localhost',
+        text: 'localhost',
         rect: {
           x: 0,
           y: 0,

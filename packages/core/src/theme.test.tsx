@@ -1,9 +1,9 @@
-import React from "react";
-import "@testing-library/jest-dom";
-import { render } from "@testing-library/react";
-import { Theme, ThemeContextProvider, useTheme } from "./theme";
+import React from 'react';
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+import { Theme, ThemeContextProvider, useTheme } from './theme';
 
-describe("ThemeContextProvider ", () => {
+describe('ThemeContextProvider ', () => {
   let themeInContext: Theme | null;
   function Consumer() {
     themeInContext = useTheme();
@@ -11,7 +11,7 @@ describe("ThemeContextProvider ", () => {
     return <div></div>;
   }
 
-  test("should assign context value", async () => {
+  test('should assign context value', async () => {
     const theme = {};
     const result = render(
       <ThemeContextProvider theme={theme}>

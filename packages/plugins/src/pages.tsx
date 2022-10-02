@@ -7,21 +7,21 @@ import React, {
   useEffect,
   CSSProperties,
   useMemo,
-} from "react";
-import { PdfPageObject, Rotation, Size } from "@onepdf/models";
+} from 'react';
+import { PdfPageObject, Rotation, Size } from '@onepdf/models';
 import {
   PdfNavigatorEvent,
   usePdfDocument,
   usePdfEngine,
   usePdfNavigator,
-} from "@onepdf/core";
+} from '@onepdf/core';
 import {
   PdfPageDecorationComponent,
   PdfPageDecorationsContext,
   PdfPageDecorationsContextProvider,
   usePdfPageDecorationComponents,
-} from "./pages.context";
-import "./pages.css";
+} from './pages.context';
+import './pages.css';
 
 export interface PageContentProps {
   viewport: Size;
@@ -31,7 +31,7 @@ export interface PageContentProps {
   children?: ReactNode;
 }
 
-export const PDF_NAVIGATOR_SOURCE_PAGES = "PdfPages";
+export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
 
 export function PdfPages(props: PageContentProps) {
   const {
@@ -77,10 +77,10 @@ export function PdfPages(props: PageContentProps) {
   useEffect(() => {
     const containerElem = containerElemRef.current;
     if (containerElem) {
-      containerElem.addEventListener("scroll", handleScroll);
+      containerElem.addEventListener('scroll', handleScroll);
 
       return () => {
-        containerElem.removeEventListener("scroll", handleScroll);
+        containerElem.removeEventListener('scroll', handleScroll);
       };
     }
   }, [containerElemRef.current, handleScroll]);
@@ -143,7 +143,7 @@ export function PdfPages(props: PageContentProps) {
     if (pdfNavigator) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
         switch (evt.kind) {
-          case "Change":
+          case 'Change':
             if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
               gotoPage(evt.data.pageIndex);
             }
@@ -197,7 +197,7 @@ export function PdfPage(props: PdfPageProps) {
     const canvasElem = canvasElemRef.current;
     if (canvasElem && engine && needRender) {
       const render = (imageData: ImageData) => {
-        const ctx = canvasElem.getContext("2d");
+        const ctx = canvasElem.getContext('2d');
         if (ctx) {
           ctx.putImageData(imageData, 0, 0);
         }
@@ -215,7 +215,7 @@ export function PdfPage(props: PdfPageProps) {
   return (
     <div
       tabIndex={0}
-      className={`pdf__page ${isCurrent ? "pdf__page--current" : ""}`}
+      className={`pdf__page ${isCurrent ? 'pdf__page--current' : ''}`}
       style={{
         width: page.size.width,
         height: page.size.height,

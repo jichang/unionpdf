@@ -4,7 +4,5 @@
   "useWorkspaces": false,
   "version": "0.1.0",
   "hoist": "*",
-  "packages": [
-    "packages/*"
-  ]
+  "packages": ["packages/*"]
 }

@@ -1,6 +1,6 @@
-import React from "react";
-import { PdfTextAnnoObject } from "@onepdf/models";
-import "./text.css";
+import React from 'react';
+import { PdfTextAnnoObject } from '@onepdf/models';
+import './text.css';
 
 export interface PdfPageTextAnnotationProps {
   anno: PdfTextAnnoObject;

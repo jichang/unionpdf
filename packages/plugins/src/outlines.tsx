@@ -3,12 +3,12 @@ import {
   usePdfDocument,
   usePdfEngine,
   usePdfNavigator,
-} from "@onepdf/core";
-import { PdfOutlinesObject, PdfOutlineEntryObject } from "@onepdf/models";
-import React, { useCallback, useEffect, useState } from "react";
-import "./outlines.css";
+} from '@onepdf/core';
+import { PdfOutlinesObject, PdfOutlineEntryObject } from '@onepdf/models';
+import React, { useCallback, useEffect, useState } from 'react';
+import './outlines.css';
 
-export const PDF_NAVIGATOR_SOURCE_OUTLINES = "PdfOutlines";
+export const PDF_NAVIGATOR_SOURCE_OUTLINES = 'PdfOutlines';
 
 export interface PdfOutlinesProps {}
 
@@ -41,7 +41,7 @@ export function PdfOutlines(props: PdfOutlinesProps) {
     if (pdfNavigator) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
         switch (evt.kind) {
-          case "Change":
+          case 'Change':
             if (source !== PDF_NAVIGATOR_SOURCE_OUTLINES) {
               setCurrPageIndex(evt.data.pageIndex);
             }
@@ -103,13 +103,13 @@ export function PdfOutlineEntry(props: PdfOutlineEntryProps) {
   return (
     <li
       tabIndex={0}
-      className={`pdf__outline__entry ${
-        isCurrent ? "pdf__outline__entry--current" : ""
+      className={`pdf__outlines__entry ${
+        isCurrent ? 'pdf__outlines__entry--current' : ''
       }`}
     >
       <span onClick={activiate}>{entry.text}</span>
       {entry.children && isUnfold ? (
-        <ol style={{ listStyle: "none", paddingLeft: "1rem" }}>
+        <ol style={{ listStyle: 'none', paddingLeft: '1rem' }}>
           {entry.children.map((entry, index) => {
             return (
               <PdfOutlineEntry

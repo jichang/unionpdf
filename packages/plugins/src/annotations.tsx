@@ -1,8 +1,8 @@
-import { usePdfEngine } from "@onepdf/core";
-import { PdfAnnotationObject } from "@onepdf/models";
-import React, { useState, useEffect } from "react";
-import { usePdfPageAnnotationComponents } from "./annotations.contex";
-import { PdfPageProps } from "./pages";
+import { usePdfEngine } from '@onepdf/core';
+import { PdfAnnotationObject } from '@onepdf/models';
+import React, { useState, useEffect } from 'react';
+import { usePdfPageAnnotationComponents } from './annotations.contex';
+import { PdfPageProps } from './pages';
 
 export interface PdfPageAnnotationsProps extends PdfPageProps {}
 
@@ -31,7 +31,7 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
     <>
       {annotations.map((annotation, index) => {
         switch (annotation.type) {
-          case "link": {
+          case 'link': {
             const PdfLinkAnno = annotationComponents.link;
             return (
               <div key={index} className="pdf__annotation">

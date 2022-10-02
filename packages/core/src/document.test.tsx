@@ -1,10 +1,10 @@
-import React from "react";
-import "@testing-library/jest-dom";
-import { render } from "@testing-library/react";
-import { PdfDocument } from "./document";
+import React from 'react';
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+import { PdfDocument } from './document';
 
-describe("PdfDocument", () => {
-  test("should render pdf document element", () => {
+describe('PdfDocument', () => {
+  test('should render pdf document element', () => {
     const onOpenSuccess = jest.fn();
     const onOpenFailure = jest.fn();
 
@@ -16,7 +16,7 @@ describe("PdfDocument", () => {
       />
     );
 
-    expect(document.querySelector(".pdf__document")).toBeDefined();
+    expect(document.querySelector('.pdf__document')).toBeDefined();
 
     result.unmount();
   });

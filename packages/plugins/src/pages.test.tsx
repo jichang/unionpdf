@@ -1,13 +1,13 @@
-import "@testing-library/jest-dom";
-import React from "react";
-import { act, render } from "@testing-library/react";
-import { PdfEngineContextProvider } from "@onepdf/core";
-import { createMockPdfDocument, createMockPdfEngine } from "@onepdf/mocks";
-import { PdfDocument } from "@onepdf/core";
-import { PdfPages, PdfPageProps, PdfPageDecoration } from "./pages";
+import '@testing-library/jest-dom';
+import React from 'react';
+import { act, render } from '@testing-library/react';
+import { PdfEngineContextProvider } from '@onepdf/core';
+import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
+import { PdfDocument } from '@onepdf/core';
+import { PdfPages, PdfPageProps, PdfPageDecoration } from './pages';
 
-describe("PdfPages", () => {
-  test("should render pdf pages with decoration", async () => {
+describe('PdfPages', () => {
+  test('should render pdf pages with decoration', async () => {
     function PdfPageNumber(props: PdfPageProps) {
       return <div className="pdf__page__number">{props.page.index + 1}</div>;
     }
@@ -36,12 +36,12 @@ describe("PdfPages", () => {
       await engine.openDefer.promise;
     });
 
-    expect(document.querySelector(".pdf__pages")).toBeDefined();
-    expect(document.querySelectorAll(".pdf__page").length).toEqual(
+    expect(document.querySelector('.pdf__pages')).toBeDefined();
+    expect(document.querySelectorAll('.pdf__page').length).toEqual(
       pdf.pageCount
     );
-    expect(document.querySelectorAll(".pdf__page__canvas").length).toEqual(3);
-    expect(document.querySelectorAll(".pdf__page__number").length).toEqual(
+    expect(document.querySelectorAll('.pdf__page__canvas').length).toEqual(3);
+    expect(document.querySelectorAll('.pdf__page__number').length).toEqual(
       pdf.pageCount
     );
 
