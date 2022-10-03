@@ -4,6 +4,10 @@ import {
   PdfEngine,
   PdfPageObject,
   PdfLinkAnnoObject,
+  Rotation,
+  rotate,
+  scale,
+  combine,
 } from '@onepdf/models';
 import { Defer } from './defer';
 
@@ -35,21 +39,26 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         ],
       };
     },
-    renderPage: jest.fn(async (page: PdfPageObject) => {
-      const pixelCount = page.size.width * page.size.height;
-      const array = new Uint8ClampedArray(pixelCount * 4);
-      const rgbValue = page.index % 255;
-      const alphaValue = 255;
-      for (let i = 0; i < pixelCount; i++) {
-        for (let j = 0; j < 3; j++) {
-          const index = i * 4 + j;
-          array[index] = rgbValue;
+    renderPage: jest.fn(
+      async (page: PdfPageObject, scaleFactor: number, rotation: Rotation) => {
+        const imageSize = combine([scale(scaleFactor), rotate(rotation)])(
+          page.size
+        );
+        const pixelCount = imageSize.width * imageSize.height;
+        const array = new Uint8ClampedArray(pixelCount * 4);
+        const rgbValue = page.index % 255;
+        const alphaValue = 255;
+        for (let i = 0; i < pixelCount; i++) {
+          for (let j = 0; j < 3; j++) {
+            const index = i * 4 + j;
+            array[index] = rgbValue;
+          }
+          array[i * 4 + 3] = alphaValue;
         }
-        array[i * 4 + 3] = alphaValue;
-      }
 
-      return new ImageData(array, page.size.width, page.size.height);
-    }),
+        return new ImageData(array, imageSize.width, imageSize.height);
+      }
+    ),
     renderThumbnail: jest.fn(async (page: PdfPageObject) => {
       const thumbnailWidth = page.size.width / 4;
       const thumbnailHeight = page.size.height / 4;
@@ -73,10 +82,14 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         url: 'https://localhost',
         text: 'localhost',
         rect: {
-          x: 0,
-          y: 0,
-          width: 100,
-          height: 100,
+          origin: {
+            x: 0,
+            y: 0,
+          },
+          size: {
+            width: 100,
+            height: 100,
+          },
         },
       };
       return [link];
@@ -86,15 +99,19 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
   };
 }
 
-export function createMockPdfDocument(pdf?: Partial<PdfDocumentObject>) {
+export function createMockPdfDocument(
+  pdf?: Partial<PdfDocumentObject>
+): PdfDocumentObject {
   const pageCount = 10;
+  const pageWidth = 100;
+  const pageHeight = 200;
   const pages = [];
   for (let i = 0; i < pageCount; i++) {
     pages.push({
       index: i,
       size: {
-        width: 100,
-        height: 100,
+        width: pageWidth,
+        height: pageHeight,
       },
     });
   }
@@ -102,8 +119,8 @@ export function createMockPdfDocument(pdf?: Partial<PdfDocumentObject>) {
   return {
     pageCount: pageCount,
     size: {
-      width: 100,
-      height: 100,
+      width: pageWidth,
+      height: pageHeight,
     },
     pages: pages,
     ...pdf,

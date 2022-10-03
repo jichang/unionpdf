@@ -2,6 +2,7 @@ import {
   PdfLinkAnnoObject,
   PdfPageObject,
   PdfTextAnnoObject,
+  Rotation,
 } from '@onepdf/models';
 import React, { createContext, useContext } from 'react';
 import { PdfPageLinkAnnotation } from './annotations/link';
@@ -10,6 +11,8 @@ import { PdfPageTextAnnotation } from './annotations/text';
 export interface PdfPageAnnotationComponentProps<T> {
   page: PdfPageObject;
   anno: T;
+  scaleFactor: number;
+  rotation: Rotation;
 }
 
 export type PdfPageAnnotationComponent<T> = (

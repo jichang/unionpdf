@@ -1,24 +1,22 @@
-import React from 'react';
-import { PdfTextAnnoObject } from '@onepdf/models';
+import React, { useMemo } from 'react';
+import { PdfPageObject, PdfTextAnnoObject, Rotation } from '@onepdf/models';
 import './text.css';
 
 export interface PdfPageTextAnnotationProps {
+  page: PdfPageObject;
   anno: PdfTextAnnoObject;
+  scaleFactor: number;
+  rotation: Rotation;
 }
 
 export function PdfPageTextAnnotation(props: PdfPageTextAnnotationProps) {
-  const { anno } = props;
+  const { page, anno, scaleFactor, rotation } = props;
 
-  return (
-    <span
-      tabIndex={0}
-      style={{
-        top: anno.rect.y,
-        left: anno.rect.x,
-        width: anno.rect.width,
-        height: anno.rect.height,
-      }}
-      className="pdf__annotation--text"
-    />
-  );
+  const style = useMemo(() => {
+    const origin = {};
+    const size = {};
+
+    return {};
+  }, [page, anno, rotation, scaleFactor]);
+  return <span tabIndex={0} style={style} className="pdf__annotation--text" />;
 }

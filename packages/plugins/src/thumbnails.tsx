@@ -18,7 +18,7 @@ export interface Layout {
 export interface PdfThumbnailsProps {
   layout?: Layout;
   size: Size;
-  scale?: number;
+  scaleFactor?: number;
   rotation?: Rotation;
 }
 
@@ -28,7 +28,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
   const {
     layout = { direction: 'vertical', itemsCount: 1 },
     size,
-    scale = 1,
+    scaleFactor = 1,
     rotation = 0,
   } = props;
   const doc = usePdfDocument();
@@ -86,7 +86,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
           <PdfThumbnail
             key={index}
             page={page}
-            scale={scale}
+            scaleFactor={scaleFactor}
             rotation={rotation}
             isCurrent={isCurrent}
             onClick={gotoPage}
@@ -99,7 +99,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
 
 export interface PdfThumbnailProps {
   page: PdfPageObject;
-  scale: number;
+  scaleFactor: number;
   rotation: Rotation;
   isCurrent: boolean;
   onClick: (page: PdfPageObject) => void;
@@ -107,13 +107,17 @@ export interface PdfThumbnailProps {
 
 export function PdfThumbnail(props: PdfThumbnailProps) {
   const engine = usePdfEngine();
-  const { page, scale, rotation, isCurrent, onClick } = props;
+  const { page, scaleFactor, rotation, isCurrent, onClick } = props;
   const [src, setSrc] = useState('');
 
   useEffect(() => {
     if (engine && page) {
       const load = async () => {
-        const result = await engine.renderThumbnail(page, scale, rotation);
+        const result = await engine.renderThumbnail(
+          page,
+          scaleFactor,
+          rotation
+        );
         if (result instanceof Promise) {
           result.then(() => {
             setSrc(imageDataToDataUrl(result));
@@ -125,7 +129,7 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
 
       load();
     }
-  }, [engine, page, scale, rotation]);
+  }, [engine, page, scaleFactor, rotation]);
 
   return (
     <div

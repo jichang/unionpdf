@@ -7,7 +7,7 @@ import { PdfPageProps } from './pages';
 export interface PdfPageAnnotationsProps extends PdfPageProps {}
 
 export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
-  const { page } = props;
+  const { page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
   const { annotationComponents } = usePdfPageAnnotationComponents();
@@ -35,7 +35,25 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
             const PdfLinkAnno = annotationComponents.link;
             return (
               <div key={index} className="pdf__annotation">
-                <PdfLinkAnno page={page} key={index} anno={annotation} />
+                <PdfLinkAnno
+                  page={page}
+                  scaleFactor={scaleFactor}
+                  rotation={rotation}
+                  anno={annotation}
+                />
+              </div>
+            );
+          }
+          case 'text': {
+            const PdfTextAnno = annotationComponents.text;
+            return (
+              <div key={index} className="pdf__annotation">
+                <PdfTextAnno
+                  page={page}
+                  scaleFactor={scaleFactor}
+                  rotation={rotation}
+                  anno={annotation}
+                />
               </div>
             );
           }

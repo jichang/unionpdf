@@ -15,3 +15,11 @@ body {
 
   width: 80rem;
 }
+
+.pdf__app__toolbar button {
+  padding: 0.5rem;
+}
+
+.pdf__app__body {
+  border: 1px solid gray;
+}

@@ -51,10 +51,10 @@ describe('PdfPageAnnotations', () => {
             opacity: 0,
             userSelect: 'none',
             position: 'absolute',
-            top: anno.rect.y,
-            left: anno.rect.x,
-            width: anno.rect.width,
-            height: anno.rect.height,
+            top: anno.rect.origin.y,
+            left: anno.rect.origin.x,
+            width: anno.rect.size.width,
+            height: anno.rect.size.height,
           }}
           className="pdf__annotation--customize"
           href={anno.url}

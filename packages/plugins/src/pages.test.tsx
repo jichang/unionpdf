@@ -22,7 +22,7 @@ describe('PdfPages', () => {
         >
           <PdfPages
             viewport={{ width: 100, height: 100 }}
-            scale={1}
+            scaleFactor={1}
             rotation={0}
           >
             <PdfPageDecoration decoration={PdfPageNumber} />
@@ -40,7 +40,7 @@ describe('PdfPages', () => {
     expect(document.querySelectorAll('.pdf__page').length).toEqual(
       pdf.pageCount
     );
-    expect(document.querySelectorAll('.pdf__page__canvas').length).toEqual(3);
+    expect(document.querySelectorAll('.pdf__page__canvas').length).toEqual(2);
     expect(document.querySelectorAll('.pdf__page__number').length).toEqual(
       pdf.pageCount
     );
