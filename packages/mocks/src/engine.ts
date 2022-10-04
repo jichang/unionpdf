@@ -5,9 +5,7 @@ import {
   PdfPageObject,
   PdfLinkAnnoObject,
   Rotation,
-  rotate,
-  scale,
-  combine,
+  swap,
 } from '@onepdf/models';
 import { Defer } from './defer';
 
@@ -41,9 +39,11 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     },
     renderPage: jest.fn(
       async (page: PdfPageObject, scaleFactor: number, rotation: Rotation) => {
-        const imageSize = combine([scale(scaleFactor), rotate(rotation)])(
-          page.size
-        );
+        const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
+        const imageSize = {
+          width: pageSize.width * scaleFactor,
+          height: pageSize.height * scaleFactor,
+        };
         const pixelCount = imageSize.width * imageSize.height;
         const array = new Uint8ClampedArray(pixelCount * 4);
         const rgbValue = page.index % 255;

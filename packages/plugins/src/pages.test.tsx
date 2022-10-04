@@ -21,7 +21,8 @@ describe('PdfPages', () => {
           onOpenFailure={jest.fn()}
         >
           <PdfPages
-            viewport={{ width: 100, height: 100 }}
+            viewport={{ width: 100, height: 200 }}
+            pageGap={8}
             scaleFactor={1}
             rotation={0}
           >

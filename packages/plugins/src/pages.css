@@ -8,12 +8,6 @@
   margin: 0 auto;
 
   overflow: scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.pdf__pages::-webkit-scrollbar {
-  display: none;
 }
 
 .pdf__page {

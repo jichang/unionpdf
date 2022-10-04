@@ -11,6 +11,7 @@
     "require": "./dist/cjs/index.js"
   },
   "scripts": {
+    "check": "tsc --noEmit",
     "start": "parcel ./demo/index.html",
     "build": "parcel build",
     "clean": "rm -rf dist && rm -rf .parcel-cache",

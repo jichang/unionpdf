@@ -6,9 +6,7 @@ import {
   PdfDocumentObject,
   PdfLinkAnnoObject,
   Rotation,
-  combine,
-  scale,
-  rotate,
+  swap,
 } from '@onepdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -102,9 +100,11 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       scaleFactor: number,
       rotation: Rotation
     ) => {
-      const imageSize = combine([scale(scaleFactor), rotate(rotation)])(
-        page.size
-      );
+      const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
+      const imageSize = {
+        width: pageSize.width * scaleFactor,
+        height: pageSize.height * scaleFactor,
+      };
       const pixelCount = imageSize.width * imageSize.height;
       const array = new Uint8ClampedArray(pixelCount * 4);
       const rgbValue = rgbValues[page.index % 9];
@@ -145,7 +145,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
             y: 0,
           },
           size: {
-            width: 50,
+            width: 100,
             height: 50,
           },
         },
@@ -211,6 +211,7 @@ function App() {
                   <PdfPages
                     visibleRange={[-1, 1]}
                     viewport={viewport}
+                    pageGap={8}
                     scaleFactor={1}
                     rotation={0}
                   >

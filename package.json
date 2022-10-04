@@ -9,6 +9,7 @@
   "scripts": {
     "format": "prettier --write .",
     "build": "lerna run build",
+    "check": "lerna run check",
     "test": "lerna run test",
     "prepare": "husky install"
   }

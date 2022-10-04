@@ -7,14 +7,7 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import {
-  combine,
-  PdfPageObject,
-  rotate,
-  Rotation,
-  scale,
-  Size,
-} from '@onepdf/models';
+import { PdfPageObject, Rotation, Size, swap } from '@onepdf/models';
 import {
   PdfNavigatorEvent,
   usePdfDocument,
@@ -31,6 +24,7 @@ import './pages.css';
 
 export interface PageContentProps {
   viewport: Size;
+  pageGap?: number;
   visibleRange?: [number, number];
   scaleFactor?: number;
   rotation?: Rotation;
@@ -39,9 +33,12 @@ export interface PageContentProps {
 
 export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
 
+export const PDF_PAGE_DEFAULT_GAP = 8;
+
 export function PdfPages(props: PageContentProps) {
   const {
     viewport,
+    pageGap = PDF_PAGE_DEFAULT_GAP,
     visibleRange = [-1, 1],
     scaleFactor = 1,
     rotation = 0,
@@ -61,21 +58,22 @@ export function PdfPages(props: PageContentProps) {
       return [];
     }
 
-    let pageOffset = 0;
-    const rotateFunc = rotate(rotation);
-    const scaleFunc = scale(scaleFactor);
+    let pageOffset = pageGap;
     return pdfDoc?.pages.map((page) => {
       const offset = pageOffset;
-      const rotatedSize = rotateFunc(page.size);
-      const scaledSize = scaleFunc(rotatedSize);
-      pageOffset = pageOffset + scaledSize.height;
+      const rotatedPageSize = rotation % 2 === 0 ? page.size : swap(page.size);
+      const scaledPageSize = {
+        width: rotatedPageSize.width * scaleFactor,
+        height: rotatedPageSize.height * scaleFactor,
+      };
+      pageOffset = pageOffset + scaledPageSize.height + pageGap;
 
       return {
         ...page,
         offset,
       };
     });
-  }, [pdfDoc, scaleFactor, rotation]);
+  }, [pdfDoc, pageGap, scaleFactor, rotation]);
 
   const handleScroll = useCallback(
     (evt: Event) => {
@@ -153,7 +151,10 @@ export function PdfPages(props: PageContentProps) {
       <PdfPageDecorationsContextProvider>
         <div
           className="pdf__pages"
-          style={{ width: viewport.width, height: viewport.height }}
+          style={{
+            width: viewport.width,
+            height: viewport.height,
+          }}
           ref={containerElemRef}
         >
           {pdfPages.map((page) => {
@@ -168,6 +169,7 @@ export function PdfPages(props: PageContentProps) {
                 isCurrent={page.index === currPageIndex}
                 page={page}
                 needRender={isVisible}
+                pageGap={pageGap}
                 scaleFactor={scaleFactor}
                 rotation={rotation}
               />
@@ -184,13 +186,14 @@ export interface PdfPageProps {
   page: PdfPageObject;
   isCurrent: boolean;
   needRender: boolean;
+  pageGap: number;
   scaleFactor: number;
   rotation: Rotation;
 }
 
 export function PdfPage(props: PdfPageProps) {
   const engine = usePdfEngine();
-  const { isCurrent, page, scaleFactor, rotation, needRender } = props;
+  const { isCurrent, page, pageGap, scaleFactor, rotation, needRender } = props;
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
   const { decorationComponents } = usePdfPageDecorationComponents();
 
@@ -222,8 +225,19 @@ export function PdfPage(props: PdfPageProps) {
   }, [page, engine, needRender, scaleFactor, rotation]);
 
   const renderSize = useMemo(() => {
-    return combine([scale(scaleFactor), rotate(rotation)])(page.size);
-  }, [scaleFactor, rotation, page.size]);
+    const rotatedPageSize = rotation % 2 === 0 ? page.size : swap(page.size);
+    const scaledPageSize = {
+      width: rotatedPageSize.width * scaleFactor,
+      height: rotatedPageSize.height * scaleFactor,
+    };
+
+    return {
+      marginTop: pageGap,
+      marginBottom: pageGap,
+      width: scaledPageSize.width,
+      height: scaledPageSize.height,
+    };
+  }, [pageGap, scaleFactor, rotation, page.size]);
 
   return (
     <div
@@ -242,6 +256,7 @@ export function PdfPage(props: PdfPageProps) {
               key={index}
               needRender={needRender}
               page={page}
+              pageGap={pageGap}
               scaleFactor={scaleFactor}
               rotation={rotation}
             />

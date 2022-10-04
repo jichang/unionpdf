@@ -27,5 +27,6 @@ jobs:
           cache: 'npm'
       - run: npm install -g lerna
       - run: lerna bootstrap --hoist
+      - run: lerna run check
       - run: lerna run build
       - run: lerna run test

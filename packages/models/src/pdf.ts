@@ -1,4 +1,4 @@
-import { Rect, Size } from './geometry';
+import { Size, Rect } from './geometry';
 
 export interface PdfPageObject {
   index: number;

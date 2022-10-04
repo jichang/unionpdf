@@ -19,7 +19,7 @@ describe('PdfPageAnnotations', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfPages viewport={{ width: 100, height: 100 }}>
+          <PdfPages pageGap={8} viewport={{ width: 100, height: 100 }}>
             <PdfPageDecoration decoration={PdfPageAnnotations} />
           </PdfPages>
         </PdfDocument>
@@ -77,7 +77,7 @@ describe('PdfPageAnnotations', () => {
             onOpenSuccess={jest.fn()}
             onOpenFailure={jest.fn()}
           >
-            <PdfPages viewport={{ width: 100, height: 100 }}>
+            <PdfPages pageGap={8} viewport={{ width: 100, height: 100 }}>
               <PdfPageDecoration decoration={PdfPageAnnotations} />
             </PdfPages>
           </PdfDocument>
