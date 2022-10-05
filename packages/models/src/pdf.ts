@@ -62,23 +62,25 @@ export type PdfEngineFunResult<T> = T | Promise<T>;
 export interface PdfEngine {
   open: (
     url: PdfSource,
-    signal: AbortSignal
+    signal?: AbortSignal
   ) => PdfEngineFunResult<PdfDocumentObject>;
-  getOutlines: () => PdfEngineFunResult<PdfOutlinesObject>;
+  getOutlines: (signal: AbortSignal) => PdfEngineFunResult<PdfOutlinesObject>;
   renderPage: (
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-    rect?: Rect
+    rect?: Rect,
+    signal?: AbortSignal
   ) => PdfEngineFunResult<ImageData>;
   getPageAnnotations: (
-    page: PdfPageObject
+    page: PdfPageObject,
+    signal?: AbortSignal
   ) => PdfEngineFunResult<PdfAnnotationObject[]>;
   renderThumbnail: (
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-    rect?: Rect
+    signal?: AbortSignal
   ) => PdfEngineFunResult<ImageData>;
-  close: (pdf: PdfDocumentObject) => Promise<void>;
+  close: (pdf: PdfDocumentObject, signal?: AbortSignal) => Promise<void>;
 }

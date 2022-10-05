@@ -19,8 +19,9 @@ export function PdfOutlines(props: PdfOutlinesProps) {
 
   useEffect(() => {
     if (engine) {
+      const abortController = new AbortController();
       const load = async () => {
-        const result = engine.getOutlines();
+        const result = engine.getOutlines(abortController.signal);
         if (result instanceof Promise) {
           result.then(setOutlines);
         } else {
@@ -29,6 +30,10 @@ export function PdfOutlines(props: PdfOutlinesProps) {
       };
 
       load();
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [engine, doc]);
 

@@ -41,8 +41,8 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       async (page: PdfPageObject, scaleFactor: number, rotation: Rotation) => {
         const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
         const imageSize = {
-          width: pageSize.width * scaleFactor,
-          height: pageSize.height * scaleFactor,
+          width: Math.ceil(pageSize.width * scaleFactor),
+          height: Math.ceil(pageSize.height * scaleFactor),
         };
         const pixelCount = imageSize.width * imageSize.height;
         const array = new Uint8ClampedArray(pixelCount * 4);

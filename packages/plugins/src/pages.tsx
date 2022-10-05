@@ -63,8 +63,8 @@ export function PdfPages(props: PageContentProps) {
       const offset = pageOffset;
       const rotatedPageSize = rotation % 2 === 0 ? page.size : swap(page.size);
       const scaledPageSize = {
-        width: rotatedPageSize.width * scaleFactor,
-        height: rotatedPageSize.height * scaleFactor,
+        width: Math.ceil(rotatedPageSize.width * scaleFactor),
+        height: Math.ceil(rotatedPageSize.height * scaleFactor),
       };
       pageOffset = pageOffset + scaledPageSize.height + pageGap;
 
@@ -200,6 +200,7 @@ export function PdfPage(props: PdfPageProps) {
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
     if (canvasElem && engine && needRender) {
+      const abortController = new AbortController();
       const render = (imageData: ImageData) => {
         const ctx = canvasElem.getContext('2d');
         if (ctx) {
@@ -215,20 +216,30 @@ export function PdfPage(props: PdfPageProps) {
         }
       };
 
-      const result = engine.renderPage(page, scaleFactor, rotation);
+      const result = engine.renderPage(
+        page,
+        scaleFactor,
+        rotation,
+        undefined,
+        abortController.signal
+      );
       if (result instanceof Promise) {
         result.then(render);
       } else {
         render(result);
       }
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [page, engine, needRender, scaleFactor, rotation]);
 
   const renderSize = useMemo(() => {
     const rotatedPageSize = rotation % 2 === 0 ? page.size : swap(page.size);
     const scaledPageSize = {
-      width: rotatedPageSize.width * scaleFactor,
-      height: rotatedPageSize.height * scaleFactor,
+      width: Math.ceil(rotatedPageSize.width * scaleFactor),
+      height: Math.ceil(rotatedPageSize.height * scaleFactor),
     };
 
     return {
@@ -246,7 +257,12 @@ export function PdfPage(props: PdfPageProps) {
       style={renderSize}
     >
       {needRender ? (
-        <canvas className="pdf__page__canvas" ref={canvasElemRef} />
+        <canvas
+          className="pdf__page__canvas"
+          width={renderSize.width}
+          height={renderSize.height}
+          ref={canvasElemRef}
+        />
       ) : null}
       <div className="pdf__page__decorations">
         {decorationComponents.map((DecorationComponent, index) => {

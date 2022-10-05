@@ -112,11 +112,13 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
 
   useEffect(() => {
     if (engine && page) {
+      const abortController = new AbortController();
       const load = async () => {
         const result = await engine.renderThumbnail(
           page,
           scaleFactor,
-          rotation
+          rotation,
+          abortController.signal
         );
         if (result instanceof Promise) {
           result.then(() => {
@@ -128,6 +130,10 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
       };
 
       load();
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [engine, page, scaleFactor, rotation]);
 

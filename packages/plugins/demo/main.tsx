@@ -102,8 +102,8 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     ) => {
       const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
       const imageSize = {
-        width: pageSize.width * scaleFactor,
-        height: pageSize.height * scaleFactor,
+        width: Math.ceil(pageSize.width * scaleFactor),
+        height: Math.ceil(pageSize.height * scaleFactor),
       };
       const pixelCount = imageSize.width * imageSize.height;
       const array = new Uint8ClampedArray(pixelCount * 4);
@@ -188,12 +188,33 @@ function App() {
     });
   }, [setThumbnailsIsVisible]);
 
+  const [rotation, setRotation] = useState<Rotation>(0);
+  const rotate = useCallback(() => {
+    setRotation((rotation) => {
+      return ((rotation + 1) % 4) as Rotation;
+    });
+  }, [setRotation]);
+
+  const [scaleFactor, setScaleFactor] = useState(1.0);
+  const scale = useCallback(() => {
+    setScaleFactor((scaleFactor) => {
+      scaleFactor += 0.1;
+      if (scaleFactor > 2.0) {
+        return 0.5;
+      }
+
+      return scaleFactor;
+    });
+  }, [setScaleFactor]);
+
   return (
     <div className="App">
       <div className="pdf__app" ref={pdfAppElemRef}>
         <div className="pdf__app__toolbar">
           <button onClick={toggleThumbnailsIsVisible}>Thumbnails</button>
           <button onClick={toggleOutlinesIsVisible}>Outlines</button>
+          <button onClick={rotate}>Rotate</button>
+          <button onClick={scale}>Scale</button>
         </div>
         <div className="pdf__app__body">
           <ThemeContextProvider
@@ -211,9 +232,8 @@ function App() {
                   <PdfPages
                     visibleRange={[-1, 1]}
                     viewport={viewport}
-                    pageGap={8}
-                    scaleFactor={1}
-                    rotation={0}
+                    scaleFactor={scaleFactor}
+                    rotation={rotation}
                   >
                     <PdfPageDecoration decoration={PdfPageNumber} />
                     <PdfPageDecoration decoration={PdfPageAnnotations} />

@@ -14,8 +14,9 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
 
   useEffect(() => {
     if (engine && page) {
+      const abortController = new AbortController();
       const load = async () => {
-        const result = engine.getPageAnnotations(page);
+        const result = engine.getPageAnnotations(page, abortController.signal);
         if (result instanceof Promise) {
           result.then(setAnnotations);
         } else {
@@ -24,6 +25,10 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
       };
 
       load();
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [engine, page]);
 
