@@ -59,7 +59,24 @@ export type PdfSource = string | Uint8Array;
 
 export type PdfEngineFunResult<T> = T | Promise<T>;
 
+export enum PdfEngineFeature {
+  Pages,
+  Thumbnails,
+  Outlines,
+  Annotations,
+}
+
+export enum PdfEngineOperation {
+  Create,
+  Read,
+  Update,
+  Delete,
+}
+
 export interface PdfEngine {
+  isSupport?: (
+    feature: PdfEngineFeature
+  ) => PdfEngineFunResult<PdfEngineOperation[]>;
   open: (
     url: PdfSource,
     signal?: AbortSignal

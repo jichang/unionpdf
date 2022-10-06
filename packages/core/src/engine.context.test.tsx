@@ -1,14 +1,8 @@
 import React from 'react';
-import {
-  PdfDocumentContextProvider,
-  PdfEngineContextProvider,
-  usePdfDocument,
-  usePdfEngine,
-} from './context';
+import { PdfEngineContextProvider, usePdfEngine } from './engine.context';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
-import { PdfDocumentObject } from '@onepdf/models';
 
 describe('PdfEngineContextProvider ', () => {
   function Consumer({ signal }: { signal: AbortSignal }) {
@@ -41,27 +35,5 @@ describe('PdfEngineContextProvider ', () => {
     );
 
     result?.unmount();
-  });
-});
-
-describe('PdfContextProvider ', () => {
-  let pdfInContext: PdfDocumentObject | null;
-  function Consumer() {
-    pdfInContext = usePdfDocument();
-
-    return <div></div>;
-  }
-
-  test('should assign context value', async () => {
-    const pdf = createMockPdfDocument();
-    const result = render(
-      <PdfDocumentContextProvider doc={pdf}>
-        <Consumer />
-      </PdfDocumentContextProvider>
-    );
-
-    expect(pdfInContext).toEqual(pdf);
-
-    result.unmount();
   });
 });

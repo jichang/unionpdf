@@ -1,4 +1,8 @@
-### Usages
+### OnePDF
+
+OnePDF contains several React components for showing PDF files on Web.
+
+### Usage
 
 ```typescript
 function App() {
@@ -75,7 +79,6 @@ Then you can register it with PdfPageDecoration, like below
 ```typescript
 <PdfPages visibleRange={[-1, 1]} viewport={viewport}>
   <PdfPageDecoration decoration={PdfPageNumber} />
-  <PdfPageDecoration decoration={PdfPageLinks} />
 </PdfPages>
 ```
 
@@ -105,7 +108,7 @@ lerna bootstrap --hoist
 lerna run build
 ```
 
-3. test
+4. test
 
 ```
 lerna run test

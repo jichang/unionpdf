@@ -7,14 +7,16 @@ import {
   useRef,
   useState,
 } from 'react';
-import { PdfDocumentContextProvider, usePdfEngine } from './context';
+import { usePdfEngine } from './engine.context';
 import {
   PdfDocumentObject,
   PdfError,
   PdfSource,
   PdfEngine,
 } from '@onepdf/models';
-import { useTheme } from './theme';
+import { useTheme } from './theme.context';
+import { PdfDocumentContextProvider } from './document.context';
+import { PdfApplicationMode, usePdfApplication } from './application.context';
 
 export interface PdfDocumentProps extends ComponentProps<'div'> {
   source: PdfSource;
@@ -27,6 +29,7 @@ export function PdfDocument(props: PdfDocumentProps) {
   const [doc, setDoc] = useState<PdfDocumentObject | null>(null);
   const engine = usePdfEngine();
   const theme = useTheme();
+  const { mode } = usePdfApplication();
 
   const onOpenSuccessRef =
     useRef<PdfDocumentProps['onOpenSuccess']>(onOpenSuccess);

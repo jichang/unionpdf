@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { Theme, ThemeContextProvider, useTheme } from './theme';
+import { Theme, ThemeContextProvider, useTheme } from './theme.context';
 
 describe('ThemeContextProvider ', () => {
   let themeInContext: Theme | null;

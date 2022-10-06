@@ -6,8 +6,14 @@ import {
   PdfSource,
   PdfDocumentObject,
 } from '@onepdf/models';
-import { PdfEngineContextProvider, PdfDocument, usePdfDocument } from '../src';
-import { ThemeContextProvider } from '../src/theme';
+import {
+  PdfEngineContextProvider,
+  PdfDocument,
+  usePdfDocument,
+  PdfApplication,
+  PdfApplicationMode,
+} from '../src';
+import { ThemeContextProvider } from '../src/theme.context';
 
 function createMockPdfEngine(engine?: Partial<PdfEngine>) {
   const pageCount = 10;
@@ -71,7 +77,7 @@ function App() {
   const engine = createMockPdfEngine();
 
   return (
-    <div className="App">
+    <PdfApplication mode={PdfApplicationMode.Read}>
       <ThemeContextProvider
         theme={{
           background: 'blue',
@@ -87,7 +93,7 @@ function App() {
           </PdfDocument>
         </PdfEngineContextProvider>
       </ThemeContextProvider>
-    </div>
+    </PdfApplication>
   );
 }
 

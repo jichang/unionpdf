@@ -16,10 +16,27 @@ body {
   width: 80rem;
 }
 
-.pdf__app__toolbar button {
+.pdf__app__toolbar {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem 0;
+}
+
+.fill {
+  flex: 1;
+}
+
+.pdf__app__toolbar button,
+.pdf__app__toolbar input {
   padding: 0.5rem;
 }
 
 .pdf__app__body {
   border: 1px solid gray;
+}
+
+.pdf__application--edit .pdf__annotation--link {
+  border: 1px solid black;
+
+  opacity: 0.5;
 }

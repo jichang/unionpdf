@@ -1,4 +1,10 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   PdfEngine,
   PdfPageObject,
@@ -10,11 +16,13 @@ import {
 } from '@onepdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
+  PdfApplicationMode,
   PdfEngineContextProvider,
   PdfDocument,
   PdfNavigator,
   ThemeContextProvider,
   PdfNavigatorContextProvider,
+  PdfApplication,
 } from '@onepdf/core';
 import { PdfThumbnails } from '../src/thumbnails';
 import { PdfPageDecoration, PdfPageProps, PdfPages } from '../src/pages';
@@ -159,6 +167,16 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
 }
 
 function App() {
+  const [mode, setMode] = useState(PdfApplicationMode.Read);
+
+  const toggleMode = useCallback(() => {
+    setMode((mode) => {
+      return mode === PdfApplicationMode.Read
+        ? PdfApplicationMode.Edit
+        : PdfApplicationMode.Read;
+    });
+  }, [setMode]);
+
   const [pdfNavigator] = useState(() => {
     return new PdfNavigator();
   });
@@ -196,61 +214,66 @@ function App() {
   }, [setRotation]);
 
   const [scaleFactor, setScaleFactor] = useState(1.0);
-  const scale = useCallback(() => {
-    setScaleFactor((scaleFactor) => {
-      scaleFactor += 0.1;
-      if (scaleFactor > 2.0) {
-        return 0.5;
-      }
-
-      return scaleFactor;
-    });
-  }, [setScaleFactor]);
+  const updateScaleFactor = useCallback(
+    (evt: ChangeEvent<HTMLInputElement>) => {
+      setScaleFactor(Number(evt.target.value));
+    },
+    [setScaleFactor]
+  );
 
   return (
     <div className="App">
-      <div className="pdf__app" ref={pdfAppElemRef}>
+      <PdfApplication mode={mode}>
         <div className="pdf__app__toolbar">
           <button onClick={toggleThumbnailsIsVisible}>Thumbnails</button>
           <button onClick={toggleOutlinesIsVisible}>Outlines</button>
           <button onClick={rotate}>Rotate</button>
-          <button onClick={scale}>Scale</button>
+          <input
+            type="number"
+            min="0.5"
+            max="3.0"
+            step="0.1"
+            value={scaleFactor}
+            onChange={updateScaleFactor}
+          />
+          <div className="fill"></div>
+          <button onClick={toggleMode}>
+            {mode === PdfApplicationMode.Read ? 'Edit' : 'Save'}
+          </button>
         </div>
-        <div className="pdf__app__body">
-          <ThemeContextProvider
-            theme={{
-              background: 'blue',
-            }}
-          >
-            <PdfEngineContextProvider engine={engine}>
-              <PdfDocument
-                source="https://localhost"
-                onOpenSuccess={() => {}}
-                onOpenFailure={() => {}}
-              >
-                <PdfNavigatorContextProvider navigator={pdfNavigator}>
-                  <PdfPages
-                    visibleRange={[-1, 1]}
-                    viewport={viewport}
-                    scaleFactor={scaleFactor}
-                    rotation={rotation}
-                  >
-                    <PdfPageDecoration decoration={PdfPageNumber} />
-                    <PdfPageDecoration decoration={PdfPageAnnotations} />
-                  </PdfPages>
-                  {thumbnailsIsVisible ? (
-                    <PdfThumbnails
-                      layout={{ direction: 'vertical', itemsCount: 5 }}
-                      size={{ width: 100, height: 100 }}
-                    />
-                  ) : null}
-                  {outlinesIsVisible ? <PdfOutlines /> : null}
-                </PdfNavigatorContextProvider>
-              </PdfDocument>
-            </PdfEngineContextProvider>
-          </ThemeContextProvider>
-        </div>
-      </div>
+        <ThemeContextProvider
+          theme={{
+            background: 'blue',
+          }}
+        >
+          <PdfEngineContextProvider engine={engine}>
+            <PdfDocument
+              source="https://localhost"
+              onOpenSuccess={() => {}}
+              onOpenFailure={() => {}}
+            >
+              <PdfNavigatorContextProvider navigator={pdfNavigator}>
+                <PdfPages
+                  visibleRange={[-1, 1]}
+                  viewport={viewport}
+                  scaleFactor={scaleFactor}
+                  rotation={rotation}
+                >
+                  <PdfPageDecoration decoration={PdfPageNumber} />
+                  <PdfPageDecoration decoration={PdfPageAnnotations} />
+                </PdfPages>
+                {thumbnailsIsVisible ? (
+                  <PdfThumbnails
+                    layout={{ direction: 'vertical', itemsCount: 5 }}
+                    size={{ width: 100, height: 100 }}
+                  />
+                ) : null}
+                {outlinesIsVisible ? <PdfOutlines /> : null}
+              </PdfNavigatorContextProvider>
+            </PdfDocument>
+          </PdfEngineContextProvider>
+        </ThemeContextProvider>
+      </PdfApplication>
     </div>
   );
 }
