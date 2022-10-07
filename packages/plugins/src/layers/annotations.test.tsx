@@ -3,10 +3,11 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { PdfDocument, PdfEngineContextProvider } from '@onepdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
-import { PdfPageDecoration, PdfPages } from './pages';
+import { PdfPages } from '../pages';
 import { PdfPageAnnotations } from './annotations';
-import { PdfPageLinkAnnotationProps } from './annotations/link';
+import { PdfPageLinkAnnotationProps } from '../annotations/link';
 import { PdfPageAnnotationComponentsContextProvider } from './annotations.contex';
+import { PdfPageLayer } from './layer';
 
 describe('PdfPageAnnotations', () => {
   test('should render pdf annotations', async () => {
@@ -20,7 +21,7 @@ describe('PdfPageAnnotations', () => {
           onOpenFailure={jest.fn()}
         >
           <PdfPages pageGap={8} viewport={{ width: 100, height: 100 }}>
-            <PdfPageDecoration decoration={PdfPageAnnotations} />
+            <PdfPageLayer layer={PdfPageAnnotations} />
           </PdfPages>
         </PdfDocument>
       </PdfEngineContextProvider>
@@ -78,7 +79,7 @@ describe('PdfPageAnnotations', () => {
             onOpenFailure={jest.fn()}
           >
             <PdfPages pageGap={8} viewport={{ width: 100, height: 100 }}>
-              <PdfPageDecoration decoration={PdfPageAnnotations} />
+              <PdfPageLayer layer={PdfPageAnnotations} />
             </PdfPages>
           </PdfDocument>
         </PdfPageAnnotationComponentsContextProvider>

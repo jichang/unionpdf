@@ -1,28 +1,26 @@
 import React, {
   useRef,
   useState,
-  useContext,
   ReactNode,
   useCallback,
   useEffect,
   useMemo,
 } from 'react';
-import { PdfPageObject, Rotation, Size, swap } from '@onepdf/models';
+import { PdfPageObject, Rotation, Size } from '@onepdf/models';
 import {
   PdfNavigatorEvent,
   usePdfDocument,
-  usePdfEngine,
   usePdfNavigator,
 } from '@onepdf/core';
 import {
-  PdfPageDecorationComponent,
-  PdfPageDecorationsContext,
-  PdfPageDecorationsContextProvider,
-  usePdfPageDecorationComponents,
+  PdfPageLayerComponent,
+  PdfPageLayersContextProvider,
+  usePdfPageLayerComponents,
 } from './pages.context';
 import './pages.css';
+import { calculatePageSize } from './helpers/page';
 
-export interface PageContentProps {
+export interface PdfPagesProps {
   viewport: Size;
   pageGap?: number;
   visibleRange?: [number, number];
@@ -35,14 +33,54 @@ export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
 
 export const PDF_PAGE_DEFAULT_GAP = 8;
 
-export function PdfPages(props: PageContentProps) {
+export function PdfPages(props: PdfPagesProps) {
+  const { children, ...rest } = props;
+
+  const [layerComponents, setLayerComponents] = useState<
+    PdfPageLayerComponent[]
+  >([]);
+  const addLayerComponent = useCallback(
+    (layerComponent: PdfPageLayerComponent) => {
+      setLayerComponents((layerComponents) => {
+        return [...layerComponents, layerComponent];
+      });
+    },
+    []
+  );
+  const removeLayerComponent = useCallback(
+    (layerComponent: PdfPageLayerComponent) => {
+      setLayerComponents((layerComponents) => {
+        return layerComponents.filter(
+          (_layerComponent) => _layerComponent !== layerComponent
+        );
+      });
+    },
+    []
+  );
+
+  return (
+    <PdfPageLayersContextProvider
+      layerComponents={layerComponents}
+      addLayerComponent={addLayerComponent}
+      removeLayerComponent={removeLayerComponent}
+    >
+      <div className="pdf__pages">
+        <PdfPagesContent {...rest} />
+        {children}
+      </div>
+    </PdfPageLayersContextProvider>
+  );
+}
+
+export interface PdfPagesContentProps extends Omit<PdfPagesProps, 'children'> {}
+
+export function PdfPagesContent(props: PdfPagesContentProps) {
   const {
     viewport,
     pageGap = PDF_PAGE_DEFAULT_GAP,
     visibleRange = [-1, 1],
     scaleFactor = 1,
     rotation = 0,
-    children,
   } = props;
   const pdfDoc = usePdfDocument();
   const pdfNavigator = usePdfNavigator();
@@ -61,16 +99,13 @@ export function PdfPages(props: PageContentProps) {
     let pageOffset = pageGap;
     return pdfDoc?.pages.map((page) => {
       const offset = pageOffset;
-      const rotatedPageSize = rotation % 2 === 0 ? page.size : swap(page.size);
-      const scaledPageSize = {
-        width: Math.ceil(rotatedPageSize.width * scaleFactor),
-        height: Math.ceil(rotatedPageSize.height * scaleFactor),
-      };
-      pageOffset = pageOffset + scaledPageSize.height + pageGap;
+      const visualSize = calculatePageSize(page.size, scaleFactor, rotation);
+      pageOffset = pageOffset + visualSize.height + pageGap;
 
       return {
         ...page,
         offset,
+        visualSize,
       };
     });
   }, [pdfDoc, pageGap, scaleFactor, rotation]);
@@ -147,37 +182,33 @@ export function PdfPages(props: PageContentProps) {
   }, [pdfNavigator, gotoPage]);
 
   return (
-    <div className="pdf__content">
-      <PdfPageDecorationsContextProvider>
-        <div
-          className="pdf__pages"
-          style={{
-            width: viewport.width,
-            height: viewport.height,
-          }}
-          ref={containerElemRef}
-        >
-          {pdfPages.map((page) => {
-            const isVisible = !(
-              page.offset > visibleRangeBottom ||
-              page.offset + page.size.height * scaleFactor < visibleRangeTop
-            );
+    <div
+      className="pdf__content"
+      style={{
+        width: viewport.width,
+        height: viewport.height,
+      }}
+      ref={containerElemRef}
+    >
+      {pdfPages.map((page) => {
+        const isVisible = !(
+          page.offset > visibleRangeBottom ||
+          page.offset + page.size.height * scaleFactor < visibleRangeTop
+        );
 
-            return (
-              <PdfPage
-                key={page.index}
-                isCurrent={page.index === currPageIndex}
-                page={page}
-                needRender={isVisible}
-                pageGap={pageGap}
-                scaleFactor={scaleFactor}
-                rotation={rotation}
-              />
-            );
-          })}
-        </div>
-        {children}
-      </PdfPageDecorationsContextProvider>
+        return (
+          <PdfPage
+            key={page.index}
+            isCurrent={page.index === currPageIndex}
+            page={page}
+            isVisible={isVisible}
+            pageGap={pageGap}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+            visualSize={page.visualSize}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -185,121 +216,54 @@ export function PdfPages(props: PageContentProps) {
 export interface PdfPageProps {
   page: PdfPageObject;
   isCurrent: boolean;
-  needRender: boolean;
+  isVisible: boolean;
   pageGap: number;
   scaleFactor: number;
   rotation: Rotation;
+  visualSize: Size;
 }
 
 export function PdfPage(props: PdfPageProps) {
-  const engine = usePdfEngine();
-  const { isCurrent, page, pageGap, scaleFactor, rotation, needRender } = props;
-  const canvasElemRef = useRef<HTMLCanvasElement>(null);
-  const { decorationComponents } = usePdfPageDecorationComponents();
+  const {
+    isCurrent,
+    page,
+    pageGap,
+    scaleFactor,
+    rotation,
+    isVisible,
+    visualSize,
+  } = props;
+  const { layerComponents } = usePdfPageLayerComponents();
 
-  useEffect(() => {
-    const canvasElem = canvasElemRef.current;
-    if (canvasElem && engine && needRender) {
-      const abortController = new AbortController();
-      const render = (imageData: ImageData) => {
-        const ctx = canvasElem.getContext('2d');
-        if (ctx) {
-          ctx.putImageData(
-            imageData,
-            0,
-            0,
-            0,
-            0,
-            imageData.width,
-            imageData.height
-          );
-        }
-      };
-
-      const result = engine.renderPage(
-        page,
-        scaleFactor,
-        rotation,
-        undefined,
-        abortController.signal
-      );
-      if (result instanceof Promise) {
-        result.then(render);
-      } else {
-        render(result);
-      }
-
-      return () => {
-        abortController.abort();
-      };
-    }
-  }, [page, engine, needRender, scaleFactor, rotation]);
-
-  const renderSize = useMemo(() => {
-    const rotatedPageSize = rotation % 2 === 0 ? page.size : swap(page.size);
-    const scaledPageSize = {
-      width: Math.ceil(rotatedPageSize.width * scaleFactor),
-      height: Math.ceil(rotatedPageSize.height * scaleFactor),
-    };
-
+  const style = useMemo(() => {
     return {
       marginTop: pageGap,
       marginBottom: pageGap,
-      width: scaledPageSize.width,
-      height: scaledPageSize.height,
+      width: visualSize.width,
+      height: visualSize.height,
     };
-  }, [pageGap, scaleFactor, rotation, page.size]);
+  }, [pageGap, visualSize]);
 
   return (
     <div
       tabIndex={0}
       className={`pdf__page ${isCurrent ? 'pdf__page--current' : ''}`}
-      style={renderSize}
+      style={style}
     >
-      {needRender ? (
-        <canvas
-          className="pdf__page__canvas"
-          width={renderSize.width}
-          height={renderSize.height}
-          ref={canvasElemRef}
-        />
-      ) : null}
-      <div className="pdf__page__decorations">
-        {decorationComponents.map((DecorationComponent, index) => {
-          return (
-            <DecorationComponent
-              isCurrent={isCurrent}
-              key={index}
-              needRender={needRender}
-              page={page}
-              pageGap={pageGap}
-              scaleFactor={scaleFactor}
-              rotation={rotation}
-            />
-          );
-        })}
-      </div>
+      {layerComponents.map((PdfPageLayerComponent, index) => {
+        return (
+          <PdfPageLayerComponent
+            isCurrent={isCurrent}
+            key={index}
+            isVisible={isVisible}
+            page={page}
+            pageGap={pageGap}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+            visualSize={visualSize}
+          />
+        );
+      })}
     </div>
   );
-}
-
-export interface PdfPageDecorationProps {
-  decoration: PdfPageDecorationComponent;
-}
-
-export function PdfPageDecoration(props: PdfPageDecorationProps) {
-  const { decoration } = props;
-  const {
-    addDecorationComponent: addDecoration,
-    removeDecorationComponent: removeDecoration,
-  } = useContext(PdfPageDecorationsContext);
-
-  useEffect(() => {
-    addDecoration(decoration);
-    return () => {
-      removeDecoration(decoration);
-    };
-  }, [decoration, addDecoration, removeDecoration]);
-
-  return null;
 }

@@ -6,8 +6,8 @@ import {
   PdfPageAnnotationComponentsContextProvider,
   usePdfPageAnnotationComponents,
 } from './annotations.contex';
-import { PdfPageLinkAnnotationProps } from './annotations/link';
-import { PdfPageTextAnnotation } from './annotations/text';
+import { PdfPageLinkAnnotationProps } from '../annotations/link';
+import { PdfPageTextAnnotation } from '../annotations/text';
 
 describe('PdfPageAnnotationComponentsProvider', () => {
   test('should inject customized component', async () => {

@@ -25,9 +25,11 @@ import {
   PdfApplication,
 } from '@onepdf/core';
 import { PdfThumbnails } from '../src/thumbnails';
-import { PdfPageDecoration, PdfPageProps, PdfPages } from '../src/pages';
-import { PdfPageAnnotations } from '../src/annotations';
+import { PdfPageProps, PdfPages } from '../src/pages';
 import { PdfOutlines } from '../src/outlines';
+import { PdfPageLayer } from '../src/layers/layer';
+import { PdfPageCanvas } from '../src/layers/canvas';
+import { PdfPageAnnotations } from '../src/layers/annotations';
 
 function PdfPageNumber(props: PdfPageProps) {
   return (
@@ -259,8 +261,9 @@ function App() {
                   scaleFactor={scaleFactor}
                   rotation={rotation}
                 >
-                  <PdfPageDecoration decoration={PdfPageNumber} />
-                  <PdfPageDecoration decoration={PdfPageAnnotations} />
+                  <PdfPageLayer layer={PdfPageCanvas} />
+                  <PdfPageLayer layer={PdfPageAnnotations} />
+                  <PdfPageLayer layer={PdfPageNumber} />
                 </PdfPages>
                 {thumbnailsIsVisible ? (
                   <PdfThumbnails

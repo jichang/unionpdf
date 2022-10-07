@@ -3,32 +3,32 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { PdfPageProps } from './pages';
 import {
-  PdfPageDecorationComponent,
-  PdfPageDecorationsContextProvider,
-  usePdfPageDecorationComponents,
+  PdfPageLayerComponent,
+  PdfPageLayersContextProvider,
+  usePdfPageLayerComponents,
 } from './pages.context';
 
-describe('PdfPageAnnotationComponentsProvider', () => {
+describe('PdfPageLayerComponentsProvider', () => {
   test('should inject customized component', async () => {
     function PdfPageNumber(props: PdfPageProps) {
       return <div className="pdf__page__number">{props.page.index + 1}</div>;
     }
 
-    let decorationComponents: PdfPageDecorationComponent[] = [];
+    let layerComponents: PdfPageLayerComponent[] = [];
 
-    function PdfDecorationComponentsConsumer() {
-      const context = usePdfPageDecorationComponents();
-      decorationComponents = context.decorationComponents;
+    function PdfLayerComponentsConsumer() {
+      const context = usePdfPageLayerComponents();
+      layerComponents = context.layerComponents;
 
       return <div></div>;
     }
 
     const result = render(
-      <PdfPageDecorationsContextProvider decorationComponents={[PdfPageNumber]}>
-        <PdfDecorationComponentsConsumer />
-      </PdfPageDecorationsContextProvider>
+      <PdfPageLayersContextProvider layerComponents={[PdfPageNumber]}>
+        <PdfLayerComponentsConsumer />
+      </PdfPageLayersContextProvider>
     );
-    expect(decorationComponents?.[0]).toBe(PdfPageNumber);
+    expect(layerComponents?.[0]).toBe(PdfPageNumber);
 
     result.unmount();
   });

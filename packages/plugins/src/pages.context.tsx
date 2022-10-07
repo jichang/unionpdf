@@ -1,84 +1,49 @@
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useCallback,
-  useState,
-} from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import { PdfPageProps } from './pages';
 
-export interface PdfPageDecorationComponentProps extends PdfPageProps {}
+export interface PdfPageLayerComponentProps extends PdfPageProps {}
 
-export type PdfPageDecorationComponent = (
-  props: PdfPageDecorationComponentProps
-) => JSX.Element;
+export type PdfPageLayerComponent = (
+  props: PdfPageLayerComponentProps
+) => JSX.Element | null;
 
-export type PdfPageDecorationsContextValue = {
-  decorationComponents: PdfPageDecorationComponent[];
-  addDecorationComponent: (
-    decorationComponent: PdfPageDecorationComponent
-  ) => void;
-  removeDecorationComponent: (
-    decorationComponent: PdfPageDecorationComponent
-  ) => void;
+export type PdfPageLayerComponentsContextValue = {
+  layerComponents: PdfPageLayerComponent[];
+  addLayerComponent?: (layerComponent: PdfPageLayerComponent) => void;
+  removeLayerComponent?: (layerComponent: PdfPageLayerComponent) => void;
 };
 
-export const PdfPageDecorationsContext =
-  createContext<PdfPageDecorationsContextValue>({
-    decorationComponents: [],
-    addDecorationComponent: (
-      decorationComponent: PdfPageDecorationComponent
-    ) => {},
-    removeDecorationComponent: (
-      decorationComponent: PdfPageDecorationComponent
-    ) => {},
+export const PdfPageLayerComponentsContext =
+  createContext<PdfPageLayerComponentsContextValue>({
+    layerComponents: [],
+    addLayerComponent: (layerComponent: PdfPageLayerComponent) => {},
+    removeLayerComponent: (layerComponent: PdfPageLayerComponent) => {},
   });
 
-export function usePdfPageDecorationComponents() {
-  return useContext(PdfPageDecorationsContext);
+export function usePdfPageLayerComponents() {
+  return useContext(PdfPageLayerComponentsContext);
 }
 
-export interface PdfPageDecorationsContextProviderProps {
-  decorationComponents?: PdfPageDecorationComponent[];
+export interface PdfPageLayersContextProviderProps
+  extends PdfPageLayerComponentsContextValue {
   children: ReactNode;
 }
 
-export function PdfPageDecorationsContextProvider(
-  props: PdfPageDecorationsContextProviderProps
+export function PdfPageLayersContextProvider(
+  props: PdfPageLayersContextProviderProps
 ) {
-  const { children } = props;
-
-  const [decorationComponents, setDecorationComponents] = useState<
-    PdfPageDecorationComponent[]
-  >(props.decorationComponents || []);
-  const addDecorationComponent = useCallback(
-    (decorationComponent: PdfPageDecorationComponent) => {
-      setDecorationComponents((decorationComponents) => {
-        return [...decorationComponents, decorationComponent];
-      });
-    },
-    []
-  );
-  const removeDecorationComponent = useCallback(
-    (decorationComponent: PdfPageDecorationComponent) => {
-      setDecorationComponents((decorationComponents) => {
-        return decorationComponents.filter(
-          (_decorationComponent) => _decorationComponent !== decorationComponent
-        );
-      });
-    },
-    []
-  );
+  const { layerComponents, addLayerComponent, removeLayerComponent, children } =
+    props;
 
   return (
-    <PdfPageDecorationsContext.Provider
+    <PdfPageLayerComponentsContext.Provider
       value={{
-        decorationComponents,
-        addDecorationComponent,
-        removeDecorationComponent,
+        layerComponents,
+        addLayerComponent,
+        removeLayerComponent,
       }}
     >
       {children}
-    </PdfPageDecorationsContext.Provider>
+    </PdfPageLayerComponentsContext.Provider>
   );
 }

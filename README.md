@@ -32,7 +32,10 @@ function App() {
               onOpenSuccess={() => {}}
               onOpenFailure={() => {}}
             >
-              <PdfPages visibleRange={[-1, 1]} viewport={viewport} />
+              <PdfPages visibleRange={[-1, 1]} viewport={viewport}>
+                <PdfPageLayer layer={PdfPageCanvas}>
+                <PdfPageLayer layer={PdfPageAnnotations}>
+              </PdfPages>
               <PdfThumbnails
                 layout={{ colsCount: 100, rowsCount: 100 }}
                 size={{ width: 100, height: 100 }}
@@ -47,16 +50,23 @@ function App() {
 }
 ```
 
-### How to write a PDF engine
+### PDF Engine
 
-Basically, you need to supply an object that contains all the methods specified in the [PdfEngine](./packages/models/src/index.ts)
+PDF engine is used for parsing and rendering PDF file. Right now, there's no PDF engine in this repo, you need to build your own engine, like providing an object that contains all the methods specified in the [PdfEngine](./packages/models/src/index.ts).
 
-### How to write a pdf page decoration
+There are several ways for building pdf engine
 
-Page decoration is a React component that will be rendered into pdf page, say if you want to display the page number in the bottom of every pdf page
+1. build it from scratch (more work, but easier to control)
+2. compiling PDFium to WASM (this should be easier)
+
+### PDF Page Layer
+
+Every pdf page contains multiple layers, like canvas layer for rendering content or annotation layer for showing differnt kinds of annotations
+
+Of course, you can build your own pdf page layer, since it's a React component that will be rendered into pdf page, say if you want to display the page number in the bottom of every pdf page
 
 ```typescript
-function PdfPageNumber(props: PdfPageProps) {
+function PdfPageNumber(props: PdfPageLayerComponentProps) {
   return (
     <div
       className="pdf__page__number"
@@ -74,11 +84,11 @@ function PdfPageNumber(props: PdfPageProps) {
 }
 ```
 
-Then you can register it with PdfPageDecoration, like below
+Then you can register it with PdfPageLayer, like below
 
 ```typescript
 <PdfPages visibleRange={[-1, 1]} viewport={viewport}>
-  <PdfPageDecoration decoration={PdfPageNumber} />
+  <PdfPageLayer layer={PdfPageNumber} />
 </PdfPages>
 ```
 
@@ -86,7 +96,7 @@ For the full code you can check the [demo app](./packages/plugins/demo/main.tsx)
 
 ### How to write a pdf plugin
 
-A PDF Plugin is a component that can add specific functionalty to PDF document. Like in the @onepdf/plugins repo, PdfPages is used to display PDF content, PdfThumbnails is to show thumbnails. To build a pdf plugin, you just need to use hooks usePdfDocument and usePdfEngine to provide functionalities. You should avoid coupling between plugins.
+A PDF Plugin is a component that can add specific functionalty to PDF document. Like in the @onepdf/plugins repo, PdfPages is used to display PDF content, PdfThumbnails is to show thumbnails. To build a pdf plugin, you just need to use hooks usePdfDocument and usePdfEngine to provide functionalities. Do note that you should avoid coupling between plugins.
 
 ### Dev
 

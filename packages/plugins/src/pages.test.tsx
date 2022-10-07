@@ -4,12 +4,15 @@ import { act, render } from '@testing-library/react';
 import { PdfEngineContextProvider } from '@onepdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
 import { PdfDocument } from '@onepdf/core';
-import { PdfPages, PdfPageProps, PdfPageDecoration } from './pages';
+import { PdfPages, PdfPageProps } from './pages';
+import { PdfPageLayer } from './layers/layer';
 
 describe('PdfPages', () => {
-  test('should render pdf pages with decoration', async () => {
+  test('should render pdf pages with layer', async () => {
     function PdfPageNumber(props: PdfPageProps) {
-      return <div className="pdf__page__number">{props.page.index + 1}</div>;
+      return (
+        <div className="pdf__page__layer--number">{props.page.index + 1}</div>
+      );
     }
     const pdf = createMockPdfDocument();
     const engine = createMockPdfEngine();
@@ -26,7 +29,7 @@ describe('PdfPages', () => {
             scaleFactor={1}
             rotation={0}
           >
-            <PdfPageDecoration decoration={PdfPageNumber} />
+            <PdfPageLayer layer={PdfPageNumber} />
           </PdfPages>
         </PdfDocument>
       </PdfEngineContextProvider>
@@ -41,10 +44,9 @@ describe('PdfPages', () => {
     expect(document.querySelectorAll('.pdf__page').length).toEqual(
       pdf.pageCount
     );
-    expect(document.querySelectorAll('.pdf__page__canvas').length).toEqual(2);
-    expect(document.querySelectorAll('.pdf__page__number').length).toEqual(
-      pdf.pageCount
-    );
+    expect(
+      document.querySelectorAll('.pdf__page__layer--number').length
+    ).toEqual(pdf.pageCount);
 
     result.unmount();
   });

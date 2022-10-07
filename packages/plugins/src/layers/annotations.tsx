@@ -1,10 +1,10 @@
 import { usePdfEngine } from '@onepdf/core';
 import { PdfAnnotationObject } from '@onepdf/models';
 import React, { useState, useEffect } from 'react';
+import { PdfPageLayerComponentProps } from '../pages.context';
 import { usePdfPageAnnotationComponents } from './annotations.contex';
-import { PdfPageProps } from './pages';
 
-export interface PdfPageAnnotationsProps extends PdfPageProps {}
+export interface PdfPageAnnotationsProps extends PdfPageLayerComponentProps {}
 
 export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
   const { page, scaleFactor, rotation } = props;
@@ -33,7 +33,7 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
   }, [engine, page]);
 
   return (
-    <>
+    <div className="pdf__page__layer pdf__page__layer--annotations">
       {annotations.map((annotation, index) => {
         switch (annotation.type) {
           case 'link': {
@@ -66,6 +66,6 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
             return null;
         }
       })}
-    </>
+    </div>
   );
 }
