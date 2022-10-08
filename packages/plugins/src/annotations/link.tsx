@@ -4,7 +4,7 @@ import {
   PdfPageObject,
   Rotation,
   swap,
-} from '@onepdf/models';
+} from '@unionpdf/models';
 import './link.css';
 
 export interface PdfPageLinkAnnotationProps {
@@ -63,8 +63,13 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
   }, [anno, rotation, scaleFactor]);
 
   return (
-    <a style={style} className="pdf__annotation--link" href={anno.url}>
+    <button
+      type="button"
+      role="link"
+      style={style}
+      className="pdf__annotation--link"
+    >
       {anno.text}
-    </a>
+    </button>
   );
 }

@@ -1,4 +1,4 @@
-import { Rotation, Size, swap } from '@onepdf/models';
+import { Rotation, Size, swap } from '@unionpdf/models';
 
 export function calculatePageSize(
   pageSize: Size,

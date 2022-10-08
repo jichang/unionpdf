@@ -3,8 +3,8 @@ import {
   usePdfDocument,
   usePdfEngine,
   usePdfNavigator,
-} from '@onepdf/core';
-import { PdfOutlinesObject, PdfOutlineEntryObject } from '@onepdf/models';
+} from '@unionpdf/core';
+import { PdfOutlinesObject, PdfOutlineEntryObject } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
 import './outlines.css';
 

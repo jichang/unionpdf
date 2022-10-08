@@ -2,4 +2,6 @@
   opacity: 0;
   user-select: none;
   position: absolute;
+
+  cursor: pointer;
 }

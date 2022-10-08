@@ -1,5 +1,5 @@
 {
-  "name": "onepdf",
+  "name": "unionpdf",
   "private": true,
   "devDependencies": {
     "husky": "^8.0.1",
@@ -9,6 +9,7 @@
   "scripts": {
     "format": "prettier --write .",
     "build": "lerna run build",
+    "clean": "lerna run clean",
     "typecheck": "lerna run typecheck",
     "test": "lerna run test",
     "prepare": "husky install"

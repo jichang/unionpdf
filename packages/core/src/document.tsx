@@ -13,7 +13,7 @@ import {
   PdfError,
   PdfSource,
   PdfEngine,
-} from '@onepdf/models';
+} from '@unionpdf/models';
 import { useTheme } from './theme.context';
 import { PdfDocumentContextProvider } from './document.context';
 import { PdfApplicationMode, usePdfApplication } from './application.context';

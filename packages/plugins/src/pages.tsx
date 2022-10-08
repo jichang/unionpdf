@@ -6,12 +6,12 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { PdfPageObject, Rotation, Size } from '@onepdf/models';
+import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
 import {
   PdfNavigatorEvent,
   usePdfDocument,
   usePdfNavigator,
-} from '@onepdf/core';
+} from '@unionpdf/core';
 import {
   PdfPageLayerComponent,
   PdfPageLayersContextProvider,

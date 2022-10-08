@@ -6,7 +6,7 @@ import {
   PdfLinkAnnoObject,
   Rotation,
   swap,
-} from '@onepdf/models';
+} from '@unionpdf/models';
 import { Defer } from './defer';
 
 export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
@@ -79,7 +79,9 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     getPageAnnotations: jest.fn(async (page: PdfPageObject) => {
       const link: PdfLinkAnnoObject = {
         type: 'link',
-        url: 'https://localhost',
+        target: {
+          url: 'https://localhost',
+        },
         text: 'localhost',
         rect: {
           origin: {

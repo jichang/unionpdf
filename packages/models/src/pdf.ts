@@ -23,14 +23,20 @@ export interface PdfOutlinesObject {
 
 export interface PdfLinkAnnoObject {
   type: 'link';
-  url: string;
   text: string;
   rect: Rect;
+  target:
+    | {
+        url: string;
+      }
+    | {
+        rect: Rect;
+      };
 }
 
 export interface PdfTextAnnoObject {
   type: 'text';
-  content: string;
+  text: string;
   color: string;
   rect: Rect;
 }

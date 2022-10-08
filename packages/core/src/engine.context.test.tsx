@@ -2,7 +2,7 @@ import React from 'react';
 import { PdfEngineContextProvider, usePdfEngine } from './engine.context';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
+import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
 
 describe('PdfEngineContextProvider ', () => {
   function Consumer({ signal }: { signal: AbortSignal }) {

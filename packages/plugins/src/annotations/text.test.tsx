@@ -1,8 +1,8 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { PdfPageLinkAnnotation } from './link';
-import { PdfLinkAnnoObject, PdfPageObject } from '@onepdf/models';
+import { PdfPageObject, PdfTextAnnoObject } from '@unionpdf/models';
+import { PdfPageTextAnnotation } from './text';
 
 describe('PdfPageLink', () => {
   test('should render pdf link', async () => {
@@ -13,10 +13,10 @@ describe('PdfPageLink', () => {
         height: 100,
       },
     };
-    const link: PdfLinkAnnoObject = {
-      type: 'link',
-      url: 'https://localhost',
+    const text: PdfTextAnnoObject = {
+      type: 'text',
       text: 'Link',
+      color: 'red',
       rect: {
         origin: {
           x: 0,
@@ -29,16 +29,16 @@ describe('PdfPageLink', () => {
       },
     };
     const result = render(
-      <PdfPageLinkAnnotation
+      <PdfPageTextAnnotation
         page={page}
-        anno={link}
+        anno={text}
         scaleFactor={1}
         rotation={0}
       />
     );
 
-    const linkElem = document.querySelector('.pdf__annotation--text');
-    expect(linkElem).toBeDefined();
+    const textElem = document.querySelector('.pdf__annotation--text');
+    expect(textElem).toBeDefined();
 
     result.unmount();
   });

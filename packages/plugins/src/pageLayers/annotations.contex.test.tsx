@@ -23,11 +23,7 @@ describe('PdfPageAnnotationComponentsProvider', () => {
     function PdfPageLinkAnnoCustomize(props: PdfPageLinkAnnotationProps) {
       const { anno } = props;
 
-      return (
-        <a className="pdf__annotation--customize" href={anno.url}>
-          {anno.text}
-        </a>
-      );
+      return <a className="pdf__annotation--customize">{anno.text}</a>;
     }
 
     const result = render(

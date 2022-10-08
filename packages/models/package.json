@@ -1,7 +1,7 @@
 {
-  "name": "@onepdf/models",
+  "name": "@unionpdf/models",
   "version": "0.1.0",
-  "description": "core models of onepdf",
+  "description": "core models of unionpdf",
   "source": "./src/index.ts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
@@ -12,13 +12,13 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist && rm -rf .parcel-cache",
+    "clean": "del-cli --force dist .parcel-cache",
     "build": "parcel build",
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jichang/onepdf.git"
+    "url": "git+https://github.com/jichang/unionpdf.git"
   },
   "keywords": [
     "PDF",
@@ -27,12 +27,13 @@
   "author": "Ji Chang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jichang/onepdf/issues"
+    "url": "https://github.com/jichang/unionpdf/issues"
   },
-  "homepage": "https://github.com/jichang/onepdf#readme",
+  "homepage": "https://github.com/jichang/unionpdf#readme",
   "devDependencies": {
     "@parcel/packager-ts": "^2.7.0",
     "@parcel/transformer-typescript-types": "^2.7.0",
+    "del-cli": "^5.0.0",
     "jest": "^29.1.2",
     "parcel": "^2.7.0",
     "ts-jest": "^29.0.3",

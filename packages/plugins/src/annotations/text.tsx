@@ -4,7 +4,7 @@ import {
   PdfTextAnnoObject,
   Rotation,
   swap,
-} from '@onepdf/models';
+} from '@unionpdf/models';
 import './text.css';
 
 export interface PdfPageTextAnnotationProps {

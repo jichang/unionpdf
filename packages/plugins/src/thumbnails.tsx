@@ -3,8 +3,8 @@ import {
   usePdfDocument,
   usePdfEngine,
   usePdfNavigator,
-} from '@onepdf/core';
-import { PdfPageObject, Rotation, Size } from '@onepdf/models';
+} from '@unionpdf/core';
+import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
 import './thumbnails.css';
 

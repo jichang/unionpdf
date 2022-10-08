@@ -1,4 +1,4 @@
-import { usePdfEngine } from '@onepdf/core';
+import { usePdfEngine } from '@unionpdf/core';
 import React, { useRef, useEffect } from 'react';
 import { PdfPageLayerComponentProps } from '../pages.context';
 

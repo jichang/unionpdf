@@ -1,4 +1,4 @@
-import { PdfDocumentObject } from '@onepdf/models';
+import { PdfDocumentObject } from '@unionpdf/models';
 import React, { ReactNode, useContext } from 'react';
 
 export const PdfDocumentContext = React.createContext<PdfDocumentObject | null>(

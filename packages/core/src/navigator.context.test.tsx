@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
+import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
 import {
   PdfNavigatorContextProvider,
   usePdfNavigator,

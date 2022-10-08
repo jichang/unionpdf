@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfPageLinkAnnotation } from './link';
-import { PdfLinkAnnoObject, PdfPageObject } from '@onepdf/models';
+import { PdfLinkAnnoObject, PdfPageObject } from '@unionpdf/models';
 
 describe('PdfPageLink', () => {
   test('should render pdf link', async () => {
@@ -15,7 +15,9 @@ describe('PdfPageLink', () => {
     };
     const link: PdfLinkAnnoObject = {
       type: 'link',
-      url: 'https://localhost',
+      target: {
+        url: 'https://localhost',
+      },
       text: 'Link',
       rect: {
         origin: {
@@ -38,7 +40,7 @@ describe('PdfPageLink', () => {
     );
 
     const linkElem = document.querySelector('.pdf__annotation--link');
-    expect(linkElem?.getAttribute('href')).toEqual(link.url);
+    expect(linkElem?.getAttribute('role')).toEqual('link');
     expect(linkElem?.textContent).toEqual(link.text);
 
     result.unmount();

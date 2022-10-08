@@ -3,7 +3,7 @@ import {
   PdfPageObject,
   PdfTextAnnoObject,
   Rotation,
-} from '@onepdf/models';
+} from '@unionpdf/models';
 import React, { createContext, useContext } from 'react';
 import { PdfPageLinkAnnotation } from '../annotations/link';
 import { PdfPageTextAnnotation } from '../annotations/text';

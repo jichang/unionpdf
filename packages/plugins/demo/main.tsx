@@ -13,7 +13,7 @@ import {
   PdfLinkAnnoObject,
   Rotation,
   swap,
-} from '@onepdf/models';
+} from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
   PdfApplicationMode,
@@ -23,7 +23,7 @@ import {
   ThemeContextProvider,
   PdfNavigatorContextProvider,
   PdfApplication,
-} from '@onepdf/core';
+} from '@unionpdf/core';
 import { PdfThumbnails } from '../src/thumbnails';
 import { PdfPageProps, PdfPages } from '../src/pages';
 import { PdfOutlines } from '../src/outlines';
@@ -147,7 +147,9 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     getPageAnnotations: (page: PdfPageObject) => {
       const pdfLinkAnnoObject: PdfLinkAnnoObject = {
         type: 'link',
-        url: 'https://localhost',
+        target: {
+          url: 'https://localhost',
+        },
         text: 'localhost',
         rect: {
           origin: {

@@ -5,7 +5,7 @@ import {
   PdfPageObject,
   PdfSource,
   PdfDocumentObject,
-} from '@onepdf/models';
+} from '@unionpdf/models';
 import {
   PdfEngineContextProvider,
   PdfDocument,

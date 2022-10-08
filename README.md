@@ -1,6 +1,6 @@
-### OnePDF
+### UnionPDF
 
-OnePDF contains several React components for showing PDF files on Web.
+UnionPDF contains several React components for showing PDF files on Web.
 
 ### Usage
 
@@ -96,14 +96,14 @@ For the full code you can check the [demo app](./packages/plugins/demo/main.tsx)
 
 ### How to write a pdf plugin
 
-A PDF Plugin is a component that can add specific functionalty to PDF document. Like in the @onepdf/plugins repo, PdfPages is used to display PDF content, PdfThumbnails is to show thumbnails. To build a pdf plugin, you just need to use hooks usePdfDocument and usePdfEngine to provide functionalities. Do note that you should avoid coupling between plugins.
+A PDF Plugin is a component that can add specific functionalty to PDF document. Like in the @unionpdf/plugins repo, PdfPages is used to display PDF content, PdfThumbnails is to show thumbnails. To build a pdf plugin, you just need to use hooks usePdfDocument and usePdfEngine to provide functionalities. Do note that you should avoid coupling between plugins.
 
 ### Dev
 
 1. clone repo
 
 ```
-git clone https://github.com/jichang/onepdf.git
+git clone https://github.com/jichang/unionpdf.git
 ```
 
 2. bootstrap

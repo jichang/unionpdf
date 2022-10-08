@@ -1,11 +1,11 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 import { act, render } from '@testing-library/react';
-import { PdfEngineContextProvider } from '@onepdf/core';
-import { createMockPdfDocument, createMockPdfEngine } from '@onepdf/mocks';
-import { PdfDocument } from '@onepdf/core';
+import { PdfEngineContextProvider } from '@unionpdf/core';
+import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
+import { PdfDocument } from '@unionpdf/core';
 import { PdfPages, PdfPageProps } from './pages';
-import { PdfPageLayer } from './layers/layer';
+import { PdfPageLayer } from './pageLayers/layer';
 
 describe('PdfPages', () => {
   test('should render pdf pages with layer', async () => {

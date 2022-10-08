@@ -1,5 +1,5 @@
-import { createMockPdfDocument } from '@onepdf/mocks';
-import { PdfDocumentObject } from '@onepdf/models';
+import { createMockPdfDocument } from '@unionpdf/mocks';
+import { PdfDocumentObject } from '@unionpdf/models';
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
