@@ -1,14 +1,16 @@
 import { usePdfEngine } from '@unionpdf/core';
+import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
 import React, { useRef, useEffect } from 'react';
-import { PdfPageLayerComponentProps } from '../pages.context';
 
-export interface PdfPageCanvasProps
-  extends Pick<
-    PdfPageLayerComponentProps,
-    'page' | 'scaleFactor' | 'rotation' | 'isVisible' | 'visualSize'
-  > {}
+export interface PdfPageCanvasLayerProps {
+  page: PdfPageObject;
+  scaleFactor: number;
+  rotation: Rotation;
+  isVisible: boolean;
+  visualSize: Size;
+}
 
-export function PdfPageCanvas(props: PdfPageCanvasProps) {
+export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
   const engine = usePdfEngine();
   const { page, scaleFactor, rotation, isVisible, visualSize } = props;
   const canvasElemRef = useRef<HTMLCanvasElement>(null);

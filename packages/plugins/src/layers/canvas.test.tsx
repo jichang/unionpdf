@@ -3,9 +3,16 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { PdfDocument, PdfEngineContextProvider } from '@unionpdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
-import { PdfPages } from '../pages';
-import { PdfPageLayer } from './layer';
+import { PdfPageContentProps, PdfPages } from '../pages';
 import { PdfPageCanvas } from './canvas';
+
+function PdfPageContent(props: PdfPageContentProps) {
+  return (
+    <>
+      <PdfPageCanvas {...props} />
+    </>
+  );
+}
 
 describe('PdfPageCanvas', () => {
   test('should render pdf canvas', async () => {
@@ -18,9 +25,11 @@ describe('PdfPageCanvas', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfPages pageGap={8} viewport={{ width: 100, height: 100 }}>
-            <PdfPageLayer layer={PdfPageCanvas} />
-          </PdfPages>
+          <PdfPages
+            pageGap={8}
+            viewport={{ width: 100, height: 100 }}
+            content={PdfPageContent}
+          />
         </PdfDocument>
       </PdfEngineContextProvider>
     );

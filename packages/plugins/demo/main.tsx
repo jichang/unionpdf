@@ -25,13 +25,18 @@ import {
   PdfApplication,
 } from '@unionpdf/core';
 import { PdfThumbnails } from '../src/thumbnails';
-import { PdfPageProps, PdfPages } from '../src/pages';
+import { PdfPageContentProps, PdfPages } from '../src/pages';
 import { PdfOutlines } from '../src/outlines';
-import { PdfPageLayer } from '../src/layers/layer';
 import { PdfPageCanvas } from '../src/layers/canvas';
-import { PdfPageAnnotations } from '../src/layers/annotations';
+import {
+  PdfPageAnnotationComponentProps,
+  PdfPageAnnotations,
+} from '../src/layers/annotations';
+import { PdfPageAnnotation } from '../src/annotations/annotation';
 
-function PdfPageNumber(props: PdfPageProps) {
+function PdfPageNumber(props: { page: PdfPageObject }) {
+  const { page } = props;
+
   return (
     <div
       className="pdf__page__number"
@@ -43,11 +48,44 @@ function PdfPageNumber(props: PdfPageProps) {
         transform: 'translate(-50%, -50%)',
       }}
     >
-      {props.page.index + 1}
+      {page.index + 1}
     </div>
   );
 }
 
+export interface PdfPageLinkAnnoTestProps
+  extends PdfPageAnnotationComponentProps<'link'> {}
+
+function PdfPageLinkAnnoTest(props: PdfPageLinkAnnoTestProps) {
+  const { annotation, scaleFactor, rotation } = props;
+
+  return (
+    <PdfPageAnnotation
+      annotation={annotation}
+      scaleFactor={scaleFactor}
+      rotation={rotation}
+    >
+      <p>{annotation.text}</p>
+    </PdfPageAnnotation>
+  );
+}
+
+const components = {
+  link: PdfPageLinkAnnoTest,
+};
+
+function PdfPageContent(props: PdfPageContentProps) {
+  return (
+    <>
+      <PdfPageCanvas {...props} />
+      <PdfPageAnnotations
+        {...props}
+        components={components}
+      ></PdfPageAnnotations>
+      <PdfPageNumber {...props} />
+    </>
+  );
+}
 const rgbValues = [
   [255, 0, 0, 255],
   [0, 255, 0, 255],
@@ -262,11 +300,8 @@ function App() {
                   viewport={viewport}
                   scaleFactor={scaleFactor}
                   rotation={rotation}
-                >
-                  <PdfPageLayer layer={PdfPageCanvas} />
-                  <PdfPageLayer layer={PdfPageAnnotations} />
-                  <PdfPageLayer layer={PdfPageNumber} />
-                </PdfPages>
+                  content={PdfPageContent}
+                />
                 {thumbnailsIsVisible ? (
                   <PdfThumbnails
                     layout={{ direction: 'vertical', itemsCount: 5 }}

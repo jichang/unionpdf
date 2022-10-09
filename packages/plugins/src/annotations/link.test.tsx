@@ -33,15 +33,17 @@ describe('PdfPageLink', () => {
     const result = render(
       <PdfPageLinkAnnotation
         page={page}
-        anno={link}
+        annotation={link}
         scaleFactor={1}
         rotation={0}
       />
     );
 
     const linkElem = document.querySelector('.pdf__annotation--link');
-    expect(linkElem?.getAttribute('role')).toEqual('link');
-    expect(linkElem?.textContent).toEqual(link.text);
+    expect(linkElem).toBeDefined();
+    const buttonElem = document.querySelector('.pdf__annotation--link button');
+    expect(buttonElem?.getAttribute('role')).toEqual('link');
+    expect(buttonElem?.textContent).toEqual(link.text);
 
     result.unmount();
   });

@@ -1,66 +1,25 @@
-import React, { useMemo } from 'react';
-import {
-  PdfPageObject,
-  PdfTextAnnoObject,
-  Rotation,
-  swap,
-} from '@unionpdf/models';
+import React from 'react';
+import { PdfPageObject, PdfTextAnnoObject, Rotation } from '@unionpdf/models';
 import './text.css';
+import { PdfPageAnnotation } from './annotation';
 
 export interface PdfPageTextAnnotationProps {
   page: PdfPageObject;
-  anno: PdfTextAnnoObject;
+  annotation: PdfTextAnnoObject;
   scaleFactor: number;
   rotation: Rotation;
 }
 
 export function PdfPageTextAnnotation(props: PdfPageTextAnnotationProps) {
-  const { anno, scaleFactor, rotation } = props;
+  const { annotation, scaleFactor, rotation } = props;
 
-  const style = useMemo(() => {
-    const { origin, size } = anno.rect;
-
-    const rotatedAnnoSize = rotation % 2 === 0 ? size : swap(size);
-    const scaledAnnoSize = {
-      width: rotatedAnnoSize.width * scaleFactor,
-      height: rotatedAnnoSize.height * scaleFactor,
-    };
-    const scaledOrigin = {
-      x: origin.x * scaleFactor,
-      y: origin.y * scaleFactor,
-    };
-
-    switch (rotation) {
-      case 0:
-        return {
-          top: scaledOrigin.y,
-          left: scaledOrigin.x,
-          width: scaledAnnoSize.width,
-          height: scaledAnnoSize.height,
-        };
-      case 1:
-        return {
-          top: scaledOrigin.x,
-          right: scaledOrigin.x,
-          width: scaledAnnoSize.width,
-          height: scaledAnnoSize.height,
-        };
-      case 2:
-        return {
-          bottom: scaledOrigin.y,
-          right: scaledOrigin.x,
-          width: scaledAnnoSize.width,
-          height: scaledAnnoSize.height,
-        };
-      case 3:
-        return {
-          bottom: scaledOrigin.x,
-          left: scaledOrigin.y,
-          width: scaledAnnoSize.width,
-          height: scaledAnnoSize.height,
-        };
-    }
-  }, [anno, rotation, scaleFactor]);
-
-  return <span tabIndex={0} style={style} className="pdf__annotation--text" />;
+  return (
+    <PdfPageAnnotation
+      annotation={annotation}
+      scaleFactor={scaleFactor}
+      rotation={rotation}
+    >
+      <span tabIndex={0}>{annotation.text}</span>
+    </PdfPageAnnotation>
+  );
 }

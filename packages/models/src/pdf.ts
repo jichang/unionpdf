@@ -21,27 +21,29 @@ export interface PdfOutlinesObject {
   entries: PdfOutlineEntryObject[];
 }
 
-export interface PdfLinkAnnoObject {
-  type: 'link';
-  text: string;
+export interface PdfAnnotationObjectBase {
   rect: Rect;
-  target:
-    | {
-        url: string;
-      }
-    | {
-        rect: Rect;
-      };
 }
 
-export interface PdfTextAnnoObject {
+export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
+  type: 'link';
+  text: string;
+  target:
+  | {
+    url: string;
+  }
+  | {
+    rect: Rect;
+  };
+}
+
+export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
   type: 'text';
   text: string;
   color: string;
-  rect: Rect;
 }
 
-export type PdfAnnotationObject = PdfLinkAnnoObject | PdfTextAnnoObject;
+export type PdfAnnotationObject = PdfTextAnnoObject | PdfLinkAnnoObject;
 
 export class PdfError extends Error {
   constructor(public reason: any) {

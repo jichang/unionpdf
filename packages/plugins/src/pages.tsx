@@ -1,7 +1,6 @@
 import React, {
   useRef,
   useState,
-  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -12,13 +11,10 @@ import {
   usePdfDocument,
   usePdfNavigator,
 } from '@unionpdf/core';
-import {
-  PdfPageLayerComponent,
-  PdfPageLayersContextProvider,
-  usePdfPageLayerComponents,
-} from './pages.context';
 import './pages.css';
 import { calculatePageSize } from './helpers/page';
+
+export type PdfPageContentProps = Omit<PdfPageProps, 'children'>;
 
 export interface PdfPagesProps {
   viewport: Size;
@@ -26,7 +22,8 @@ export interface PdfPagesProps {
   visibleRange?: [number, number];
   scaleFactor?: number;
   rotation?: Rotation;
-  children?: ReactNode;
+  content: (props: PdfPageContentProps) => JSX.Element;
+  children?: any;
 }
 
 export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
@@ -34,53 +31,13 @@ export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
 export const PDF_PAGE_DEFAULT_GAP = 8;
 
 export function PdfPages(props: PdfPagesProps) {
-  const { children, ...rest } = props;
-
-  const [layerComponents, setLayerComponents] = useState<
-    PdfPageLayerComponent[]
-  >([]);
-  const addLayerComponent = useCallback(
-    (layerComponent: PdfPageLayerComponent) => {
-      setLayerComponents((layerComponents) => {
-        return [...layerComponents, layerComponent];
-      });
-    },
-    []
-  );
-  const removeLayerComponent = useCallback(
-    (layerComponent: PdfPageLayerComponent) => {
-      setLayerComponents((layerComponents) => {
-        return layerComponents.filter(
-          (_layerComponent) => _layerComponent !== layerComponent
-        );
-      });
-    },
-    []
-  );
-
-  return (
-    <PdfPageLayersContextProvider
-      layerComponents={layerComponents}
-      addLayerComponent={addLayerComponent}
-      removeLayerComponent={removeLayerComponent}
-    >
-      <div className="pdf__pages">
-        <PdfPagesContent {...rest} />
-        {children}
-      </div>
-    </PdfPageLayersContextProvider>
-  );
-}
-
-export interface PdfPagesContentProps extends Omit<PdfPagesProps, 'children'> {}
-
-export function PdfPagesContent(props: PdfPagesContentProps) {
   const {
     viewport,
     pageGap = PDF_PAGE_DEFAULT_GAP,
     visibleRange = [-1, 1],
     scaleFactor = 1,
     rotation = 0,
+    content: Content,
   } = props;
   const pdfDoc = usePdfDocument();
   const pdfNavigator = usePdfNavigator();
@@ -182,33 +139,45 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
   }, [pdfNavigator, gotoPage]);
 
   return (
-    <div
-      className="pdf__content"
-      style={{
-        width: viewport.width,
-        height: viewport.height,
-      }}
-      ref={containerElemRef}
-    >
-      {pdfPages.map((page) => {
-        const isVisible = !(
-          page.offset > visibleRangeBottom ||
-          page.offset + page.size.height * scaleFactor < visibleRangeTop
-        );
+    <div className="pdf__pages">
+      <div
+        className="pdf__content"
+        style={{
+          width: viewport.width,
+          height: viewport.height,
+        }}
+        ref={containerElemRef}
+      >
+        {pdfPages.map((page) => {
+          const isVisible = !(
+            page.offset > visibleRangeBottom ||
+            page.offset + page.size.height * scaleFactor < visibleRangeTop
+          );
 
-        return (
-          <PdfPage
-            key={page.index}
-            isCurrent={page.index === currPageIndex}
-            page={page}
-            isVisible={isVisible}
-            pageGap={pageGap}
-            scaleFactor={scaleFactor}
-            rotation={rotation}
-            visualSize={page.visualSize}
-          />
-        );
-      })}
+          return (
+            <PdfPage
+              key={page.index}
+              isCurrent={page.index === currPageIndex}
+              page={page}
+              isVisible={isVisible}
+              pageGap={pageGap}
+              scaleFactor={scaleFactor}
+              rotation={rotation}
+              visualSize={page.visualSize}
+            >
+              <Content
+                isCurrent={page.index === currPageIndex}
+                page={page}
+                isVisible={isVisible}
+                pageGap={pageGap}
+                scaleFactor={scaleFactor}
+                rotation={rotation}
+                visualSize={page.visualSize}
+              />
+            </PdfPage>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -221,19 +190,12 @@ export interface PdfPageProps {
   scaleFactor: number;
   rotation: Rotation;
   visualSize: Size;
+  children: React.ReactNode;
 }
 
 export function PdfPage(props: PdfPageProps) {
-  const {
-    isCurrent,
-    page,
-    pageGap,
-    scaleFactor,
-    rotation,
-    isVisible,
-    visualSize,
-  } = props;
-  const { layerComponents } = usePdfPageLayerComponents();
+  const { children, ...rest } = props;
+  const { isCurrent, pageGap, visualSize } = rest;
 
   const style = useMemo(() => {
     return {
@@ -250,20 +212,7 @@ export function PdfPage(props: PdfPageProps) {
       className={`pdf__page ${isCurrent ? 'pdf__page--current' : ''}`}
       style={style}
     >
-      {layerComponents.map((PdfPageLayerComponent, index) => {
-        return (
-          <PdfPageLayerComponent
-            isCurrent={isCurrent}
-            key={index}
-            isVisible={isVisible}
-            page={page}
-            pageGap={pageGap}
-            scaleFactor={scaleFactor}
-            rotation={rotation}
-            visualSize={visualSize}
-          />
-        );
-      })}
+      {children}
     </div>
   );
 }

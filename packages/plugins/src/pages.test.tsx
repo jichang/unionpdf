@@ -4,16 +4,35 @@ import { act, render } from '@testing-library/react';
 import { PdfEngineContextProvider } from '@unionpdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
 import { PdfDocument } from '@unionpdf/core';
-import { PdfPages, PdfPageProps } from './pages';
-import { PdfPageLayer } from './pageLayers/layer';
+import { PdfPages, PdfPageProps, PdfPageContentProps } from './pages';
+
+export interface PdfPageNumberProps {
+  index: number;
+  color: string;
+}
+
+function PdfPageNumber(props: PdfPageNumberProps) {
+  const { index, color } = props;
+
+  return (
+    <div className="pdf__page__layer--number" style={{ color }}>
+      {index + 1}
+    </div>
+  );
+}
+
+function PdfPageContent(props: PdfPageContentProps) {
+  const { page } = props;
+
+  return (
+    <>
+      <PdfPageNumber index={page.index} color="blue" />
+    </>
+  );
+}
 
 describe('PdfPages', () => {
   test('should render pdf pages with layer', async () => {
-    function PdfPageNumber(props: PdfPageProps) {
-      return (
-        <div className="pdf__page__layer--number">{props.page.index + 1}</div>
-      );
-    }
     const pdf = createMockPdfDocument();
     const engine = createMockPdfEngine();
     const result = render(
@@ -28,9 +47,8 @@ describe('PdfPages', () => {
             pageGap={8}
             scaleFactor={1}
             rotation={0}
-          >
-            <PdfPageLayer layer={PdfPageNumber} />
-          </PdfPages>
+            content={PdfPageContent}
+          />
         </PdfDocument>
       </PdfEngineContextProvider>
     );

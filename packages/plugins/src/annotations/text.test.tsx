@@ -31,7 +31,7 @@ describe('PdfPageLink', () => {
     const result = render(
       <PdfPageTextAnnotation
         page={page}
-        anno={text}
+        annotation={text}
         scaleFactor={1}
         rotation={0}
       />
@@ -39,6 +39,8 @@ describe('PdfPageLink', () => {
 
     const textElem = document.querySelector('.pdf__annotation--text');
     expect(textElem).toBeDefined();
+    const spanElem = document.querySelector('.pdf__annotation--text span');
+    expect(spanElem?.textContent).toBe(text.text);
 
     result.unmount();
   });

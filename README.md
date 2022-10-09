@@ -5,6 +5,34 @@ UnionPDF contains several React components for showing PDF files on Web.
 ### Usage
 
 ```typescript
+function PdfPageNumber(props: { index: number }) {
+  return (
+    <div
+      className="pdf__page__number"
+      style={{
+        color: 'white',
+        position: 'absolute',
+        bottom: 0,
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+      }}
+    >
+      {index + 1}
+    </div>
+  );
+}
+
+// This component will be rendered in every pdf page
+function PdfPageContent(props: PdfPageContentProps) {
+  const { page } = props;
+
+  return (
+    <>
+      <PdfPageNumber index={page.index} />
+    </>
+  );
+}
+
 function App() {
   const engine = createMockPdfEngine();
   const pdfAppElemRef = useRef<HTMLDivElement>(null);
@@ -32,10 +60,11 @@ function App() {
               onOpenSuccess={() => {}}
               onOpenFailure={() => {}}
             >
-              <PdfPages visibleRange={[-1, 1]} viewport={viewport}>
-                <PdfPageLayer layer={PdfPageCanvas}>
-                <PdfPageLayer layer={PdfPageAnnotations}>
-              </PdfPages>
+              <PdfPages
+                visibleRange={[-1, 1]}
+                viewport={viewport}
+                content={PdfPageContent}
+              />
               <PdfThumbnails
                 layout={{ colsCount: 100, rowsCount: 100 }}
                 size={{ width: 100, height: 100 }}
@@ -66,7 +95,7 @@ Every pdf page contains multiple layers, like canvas layer for rendering content
 Of course, you can build your own pdf page layer, since it's a React component that will be rendered into pdf page, say if you want to display the page number in the bottom of every pdf page
 
 ```typescript
-function PdfPageNumber(props: PdfPageLayerComponentProps) {
+function PdfPageNumber(props: { index: number }) {
   return (
     <div
       className="pdf__page__number"
@@ -78,18 +107,28 @@ function PdfPageNumber(props: PdfPageLayerComponentProps) {
         transform: 'translate(-50%, -50%)',
       }}
     >
-      {props.page.index + 1}
+      {index + 1}
     </div>
   );
 }
-```
 
-Then you can register it with PdfPageLayer, like below
+// This component will be rendered in every pdf page
+function PdfPageContent(props: PdfPageContentProps) {
+  const { page } = props;
 
-```typescript
-<PdfPages visibleRange={[-1, 1]} viewport={viewport}>
-  <PdfPageLayer layer={PdfPageNumber} />
-</PdfPages>
+  return (
+    <>
+      <PdfPageCanvas />
+      <PdfPageNumber index={page.index} />
+    </>
+  );
+}
+
+<PdfPages
+  visibleRange={[-1, 1]}
+  viewport={viewport}
+  content={PdfPageContent}
+/>;
 ```
 
 For the full code you can check the [demo app](./packages/plugins/demo/main.tsx)
