@@ -22,19 +22,24 @@ export interface PdfOutlinesObject {
 }
 
 export interface PdfAnnotationObjectBase {
+  id: number;
   rect: Rect;
+  popup?: {
+    open: boolean;
+    contents: string;
+  };
 }
 
 export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
   type: 'link';
   text: string;
   target:
-  | {
-    url: string;
-  }
-  | {
-    rect: Rect;
-  };
+    | {
+        url: string;
+      }
+    | {
+        rect: Rect;
+      };
 }
 
 export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
@@ -43,7 +48,64 @@ export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
   color: string;
 }
 
-export type PdfAnnotationObject = PdfTextAnnoObject | PdfLinkAnnoObject;
+export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
+  type: 'highlight';
+}
+
+export interface PdfStrikeOutAnnoObject extends PdfAnnotationObjectBase {
+  type: 'strikeout';
+}
+
+export interface PdfUnderlineOutAnnoObject extends PdfAnnotationObjectBase {
+  type: 'underline';
+}
+
+export interface PdfSquigglyAnnoObject extends PdfAnnotationObjectBase {
+  type: 'squiggly';
+}
+
+export interface PdfSquareAnnoObject extends PdfAnnotationObjectBase {
+  type: 'square';
+}
+
+export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {
+  type: 'circle';
+}
+
+export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
+  type: 'line';
+}
+
+export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
+  type: 'polyline';
+}
+
+export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
+  type: 'polygon';
+}
+
+export interface PdfInkAnnoObject extends PdfAnnotationObjectBase {
+  type: 'ink';
+}
+
+export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
+  type: 'stamp';
+}
+
+export type PdfAnnotationObject =
+  | PdfTextAnnoObject
+  | PdfLinkAnnoObject
+  | PdfHighlightAnnoObject
+  | PdfStrikeOutAnnoObject
+  | PdfUnderlineOutAnnoObject
+  | PdfSquigglyAnnoObject
+  | PdfSquareAnnoObject
+  | PdfCircleAnnoObject
+  | PdfLineAnnoObject
+  | PdfPolylineAnnoObject
+  | PdfPolygonAnnoObject
+  | PdfInkAnnoObject
+  | PdfStampAnnoObject;
 
 export class PdfError extends Error {
   constructor(public reason: any) {

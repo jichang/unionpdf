@@ -78,6 +78,7 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     }),
     getPageAnnotations: jest.fn(async (page: PdfPageObject) => {
       const link: PdfLinkAnnoObject = {
+        id: page.index + 1,
         type: 'link',
         target: {
           url: 'https://localhost',

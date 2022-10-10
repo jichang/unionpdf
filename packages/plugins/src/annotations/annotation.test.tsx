@@ -8,6 +8,7 @@ import { PdfPageAnnotation } from './annotation';
 describe('PdfPageLink', () => {
   test('should render pdf link', async () => {
     const link: PdfLinkAnnoObject = {
+      id: 0,
       type: 'link',
       target: {
         url: 'https://localhost',

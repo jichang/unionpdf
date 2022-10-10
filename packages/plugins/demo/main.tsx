@@ -184,6 +184,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     },
     getPageAnnotations: (page: PdfPageObject) => {
       const pdfLinkAnnoObject: PdfLinkAnnoObject = {
+        id: page.index + 1,
         type: 'link',
         target: {
           url: 'https://localhost',

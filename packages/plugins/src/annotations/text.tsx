@@ -19,7 +19,7 @@ export function PdfPageTextAnnotation(props: PdfPageTextAnnotationProps) {
       scaleFactor={scaleFactor}
       rotation={rotation}
     >
-      <span tabIndex={0}>{annotation.text}</span>
+      <span>{annotation.text}</span>
     </PdfPageAnnotation>
   );
 }

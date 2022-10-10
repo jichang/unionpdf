@@ -14,6 +14,7 @@ describe('PdfPageLink', () => {
       },
     };
     const link: PdfLinkAnnoObject = {
+      id: 0,
       type: 'link',
       target: {
         url: 'https://localhost',
@@ -41,8 +42,8 @@ describe('PdfPageLink', () => {
 
     const linkElem = document.querySelector('.pdf__annotation--link');
     expect(linkElem).toBeDefined();
-    const buttonElem = document.querySelector('.pdf__annotation--link button');
-    expect(buttonElem?.getAttribute('role')).toEqual('link');
+    expect(linkElem?.getAttribute('role')).toEqual('link');
+    const buttonElem = document.querySelector('.pdf__annotation--link span');
     expect(buttonElem?.textContent).toEqual(link.text);
 
     result.unmount();

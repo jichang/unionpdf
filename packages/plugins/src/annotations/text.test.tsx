@@ -14,6 +14,7 @@ describe('PdfPageLink', () => {
       },
     };
     const text: PdfTextAnnoObject = {
+      id: 0,
       type: 'text',
       text: 'Link',
       color: 'red',

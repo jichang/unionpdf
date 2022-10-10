@@ -15,13 +15,12 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
 
   return (
     <PdfPageAnnotation
+      role="link"
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}
     >
-      <button type="button" role="link">
-        {annotation.text}
-      </button>
+      <span>{annotation.text}</span>
     </PdfPageAnnotation>
   );
 }
