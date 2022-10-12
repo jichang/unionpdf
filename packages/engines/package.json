@@ -1,0 +1,44 @@
+{
+  "name": "@unionpdf/engines",
+  "version": "0.1.0",
+  "description": "core components of unionpdf",
+  "source": "./src/index.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.mjs",
+    "require": "./dist/cjs/index.js"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "start": "parcel ./demo/index.html",
+    "build": "parcel build",
+    "clean": "del-cli --force dist .parcel-cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jichang/unionpdf.git"
+  },
+  "keywords": [
+    "PDF",
+    "Engines"
+  ],
+  "author": "Ji Chang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jichang/unionpdf/issues"
+  },
+  "homepage": "https://github.com/jichang/unionpdf#readme",
+  "devDependencies": {
+    "del-cli": "^5.0.0",
+    "parcel": "^2.7.0",
+    "typescript": "~4.7.0"
+  },
+  "dependencies": {
+    "@unionpdf/models": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@unionpdf/models": "^0.1.0"
+  }
+}

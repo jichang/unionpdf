@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { PdfEngineContextProvider } from '@unionpdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
 import { PdfDocument } from '@unionpdf/core';
-import { PdfPages, PdfPageProps, PdfPageContentProps } from './pages';
+import { PdfPages, PdfPageContentComponentProps } from './pages';
 
 export interface PdfPageNumberProps {
   index: number;
@@ -21,7 +21,7 @@ function PdfPageNumber(props: PdfPageNumberProps) {
   );
 }
 
-function PdfPageContent(props: PdfPageContentProps) {
+function PdfPageContent(props: PdfPageContentComponentProps) {
   const { page } = props;
 
   return (
@@ -47,7 +47,7 @@ describe('PdfPages', () => {
             pageGap={8}
             scaleFactor={1}
             rotation={0}
-            content={PdfPageContent}
+            pageContentComponent={PdfPageContent}
           />
         </PdfDocument>
       </PdfEngineContextProvider>

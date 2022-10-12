@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
+import { PdfPageObject, Rect, Rotation, Size } from '@unionpdf/models';
 import {
   PdfNavigatorEvent,
   usePdfDocument,
@@ -14,7 +14,11 @@ import {
 import './pages.css';
 import { calculatePageSize } from './helpers/page';
 
-export type PdfPageContentProps = Omit<PdfPageProps, 'children'>;
+export type PdfPageContentComponentProps = Omit<PdfPageProps, 'children'>;
+
+export type PdfPageContentComponent = (
+  props: PdfPageContentComponentProps
+) => JSX.Element;
 
 export interface PdfPagesProps {
   viewport: Size;
@@ -22,7 +26,7 @@ export interface PdfPagesProps {
   visibleRange?: [number, number];
   scaleFactor?: number;
   rotation?: Rotation;
-  content: (props: PdfPageContentProps) => JSX.Element;
+  pageContentComponent: PdfPageContentComponent;
   children?: any;
 }
 
@@ -37,7 +41,7 @@ export function PdfPages(props: PdfPagesProps) {
     visibleRange = [-1, 1],
     scaleFactor = 1,
     rotation = 0,
-    content: Content,
+    pageContentComponent: ContentComponent,
   } = props;
   const pdfDoc = usePdfDocument();
   const pdfNavigator = usePdfNavigator();
@@ -119,13 +123,28 @@ export function PdfPages(props: PdfPagesProps) {
     [pdfPages, setCurrPageIndex]
   );
 
+  const navigateTo = useCallback(
+    (rect: Rect) => {
+      const containerElem = containerElemRef.current;
+      if (containerElem) {
+        containerElem.scrollTo({ left: 0, top: rect.origin.y });
+      }
+    },
+    [pdfPages]
+  );
+
   useEffect(() => {
     if (pdfNavigator) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
         switch (evt.kind) {
-          case 'Change':
+          case 'GotoPage':
             if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
               gotoPage(evt.data.pageIndex);
+            }
+            break;
+          case 'NavigateTo':
+            if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
+              navigateTo(evt.data.rect);
             }
             break;
         }
@@ -165,7 +184,7 @@ export function PdfPages(props: PdfPagesProps) {
               rotation={rotation}
               visualSize={page.visualSize}
             >
-              <Content
+              <ContentComponent
                 isCurrent={page.index === currPageIndex}
                 page={page}
                 isVisible={isVisible}
@@ -190,7 +209,7 @@ export interface PdfPageProps {
   scaleFactor: number;
   rotation: Rotation;
   visualSize: Size;
-  children: React.ReactNode;
+  children: JSX.Element;
 }
 
 export function PdfPage(props: PdfPageProps) {

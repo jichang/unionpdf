@@ -81,6 +81,7 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         id: page.index + 1,
         type: 'link',
         target: {
+          type: 'url',
           url: 'https://localhost',
         },
         text: 'localhost',

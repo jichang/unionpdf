@@ -13,6 +13,7 @@ import {
   PdfLinkAnnoObject,
   Rotation,
   swap,
+  PdfTextAnnoObject,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -25,14 +26,15 @@ import {
   PdfApplication,
 } from '@unionpdf/core';
 import { PdfThumbnails } from '../src/thumbnails';
-import { PdfPageContentProps, PdfPages } from '../src/pages';
+import { PdfPageContentComponentProps, PdfPages } from '../src/pages';
 import { PdfOutlines } from '../src/outlines';
 import { PdfPageCanvas } from '../src/layers/canvas';
 import {
   PdfPageAnnotationComponentProps,
   PdfPageAnnotations,
 } from '../src/layers/annotations';
-import { PdfPageAnnotation } from '../src/annotations/annotation';
+import { PdfPageAnnotationBase } from '../src/annotations/annotation';
+import { PdfPageLinkAnnotation } from '../src/annotations/link';
 
 function PdfPageNumber(props: { page: PdfPageObject }) {
   const { page } = props;
@@ -53,35 +55,53 @@ function PdfPageNumber(props: { page: PdfPageObject }) {
   );
 }
 
-export interface PdfPageLinkAnnoTestProps
-  extends PdfPageAnnotationComponentProps<'link'> {}
-
-function PdfPageLinkAnnoTest(props: PdfPageLinkAnnoTestProps) {
+function PdfPageTextAnnotationCustomize(
+  props: PdfPageAnnotationComponentProps<PdfTextAnnoObject>
+) {
   const { annotation, scaleFactor, rotation } = props;
 
   return (
-    <PdfPageAnnotation
+    <PdfPageAnnotationBase
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}
     >
       <p>{annotation.text}</p>
-    </PdfPageAnnotation>
+    </PdfPageAnnotationBase>
   );
 }
 
-const components = {
-  link: PdfPageLinkAnnoTest,
-};
+function PdfPageAnnotation(props: PdfPageAnnotationComponentProps) {
+  const { page, annotation, rotation, scaleFactor } = props;
+  switch (annotation.type) {
+    case 'link':
+      return (
+        <PdfPageLinkAnnotation
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        />
+      );
+    case 'text':
+      return (
+        <PdfPageTextAnnotationCustomize
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        />
+      );
+    default:
+      return <PdfPageAnnotationBase {...props} />;
+  }
+}
 
-function PdfPageContent(props: PdfPageContentProps) {
+function PdfPageContent(props: PdfPageContentComponentProps) {
   return (
     <>
       <PdfPageCanvas {...props} />
-      <PdfPageAnnotations
-        {...props}
-        components={components}
-      ></PdfPageAnnotations>
+      <PdfPageAnnotations {...props} annotationComponent={PdfPageAnnotation} />
       <PdfPageNumber {...props} />
     </>
   );
@@ -183,13 +203,14 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       return new ImageData(array, thumbnailWidth, thumbnailHeight);
     },
     getPageAnnotations: (page: PdfPageObject) => {
-      const pdfLinkAnnoObject: PdfLinkAnnoObject = {
+      const pdfLinkAnnoObject1: PdfLinkAnnoObject = {
         id: page.index + 1,
         type: 'link',
         target: {
+          type: 'url',
           url: 'https://localhost',
         },
-        text: 'localhost',
+        text: 'url link',
         rect: {
           origin: {
             x: 0,
@@ -201,8 +222,36 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
           },
         },
       };
+      const pdfLinkAnnoObject2: PdfLinkAnnoObject = {
+        id: page.index + 2,
+        type: 'link',
+        target: {
+          type: 'rect',
+          rect: {
+            origin: {
+              x: 0,
+              y: 100,
+            },
+            size: {
+              width: 100,
+              height: 100,
+            },
+          },
+        },
+        text: 'rect link',
+        rect: {
+          origin: {
+            x: 0,
+            y: 100,
+          },
+          size: {
+            width: 100,
+            height: 50,
+          },
+        },
+      };
 
-      return [pdfLinkAnnoObject];
+      return [pdfLinkAnnoObject1, pdfLinkAnnoObject2];
     },
     close: async (pdf: PdfDocumentObject) => {},
     ...engine,
@@ -301,7 +350,7 @@ function App() {
                   viewport={viewport}
                   scaleFactor={scaleFactor}
                   rotation={rotation}
-                  content={PdfPageContent}
+                  pageContentComponent={PdfPageContent}
                 />
                 {thumbnailsIsVisible ? (
                   <PdfThumbnails

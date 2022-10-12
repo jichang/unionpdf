@@ -41,7 +41,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
     if (pdfNavigator) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
         switch (evt.kind) {
-          case 'Change':
+          case 'GotoPage':
             if (source !== PDF_NAVIGATOR_SOURCE_THUMBNAILS) {
               setCurrPageIndex(evt.data.pageIndex);
             }

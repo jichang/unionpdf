@@ -3,13 +3,13 @@ import { PdfAnnotationObject, Rotation } from '@unionpdf/models';
 import './annotation.css';
 import { calculateAnnotationStyle } from '../helpers/annotation';
 
-export interface PdfPageAnnotationProps extends ComponentProps<'div'> {
+export interface PdfPageAnnotationBaseProps extends ComponentProps<'div'> {
   annotation: PdfAnnotationObject;
   scaleFactor: number;
   rotation: Rotation;
 }
 
-export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
+export function PdfPageAnnotationBase(props: PdfPageAnnotationBaseProps) {
   const { annotation, scaleFactor, rotation, children, className, ...rest } =
     props;
 
@@ -21,7 +21,9 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
     <div
       tabIndex={0}
       style={style}
-      className={`pdf__annotation pdf__annotation--${annotation.type} ${className}`}
+      className={`pdf__annotation pdf__annotation--${annotation.type} ${
+        className || ''
+      }`}
       {...rest}
     >
       {children}

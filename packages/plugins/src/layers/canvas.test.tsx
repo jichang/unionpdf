@@ -3,10 +3,10 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { PdfDocument, PdfEngineContextProvider } from '@unionpdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
-import { PdfPageContentProps, PdfPages } from '../pages';
+import { PdfPageContentComponentProps, PdfPages } from '../pages';
 import { PdfPageCanvas } from './canvas';
 
-function PdfPageContent(props: PdfPageContentProps) {
+function PdfPageContent(props: PdfPageContentComponentProps) {
   return (
     <>
       <PdfPageCanvas {...props} />
@@ -28,7 +28,7 @@ describe('PdfPageCanvas', () => {
           <PdfPages
             pageGap={8}
             viewport={{ width: 100, height: 100 }}
-            content={PdfPageContent}
+            pageContentComponent={PdfPageContent}
           />
         </PdfDocument>
       </PdfEngineContextProvider>

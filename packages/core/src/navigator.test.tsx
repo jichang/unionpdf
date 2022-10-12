@@ -16,7 +16,7 @@ describe('PdfNavigator', () => {
     expect(listenerA).toBeCalledTimes(1);
     expect(listenerA).toBeCalledWith(
       {
-        kind: 'Change',
+        kind: 'GotoPage',
         data: {
           pageIndex: 1,
         },
@@ -27,7 +27,7 @@ describe('PdfNavigator', () => {
     expect(listenerB).toBeCalledTimes(1);
     expect(listenerB).toBeCalledWith(
       {
-        kind: 'Change',
+        kind: 'GotoPage',
         data: {
           pageIndex: 1,
         },

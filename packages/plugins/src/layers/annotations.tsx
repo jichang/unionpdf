@@ -1,44 +1,32 @@
 import { usePdfEngine } from '@unionpdf/core';
-import {
-  PdfAnnotationObject,
-  PdfLinkAnnoObject,
-  PdfPageObject,
-  PdfTextAnnoObject,
-  Rotation,
-} from '@unionpdf/models';
+import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 
-export interface PdfPageAnnotationObjects {
-  link: PdfLinkAnnoObject;
-  text: PdfTextAnnoObject;
-}
-
-export interface PdfPageAnnotationComponentProps<
-  T extends keyof PdfPageAnnotationObjects
-> {
+export interface PdfPageAnnotationComponentProps<T = PdfAnnotationObject> {
   page: PdfPageObject;
-  annotation: PdfPageAnnotationObjects[T];
+  annotation: T;
   scaleFactor: number;
   rotation: Rotation;
 }
 
-export type PdfPageAnnotationComponent<
-  T extends keyof PdfPageAnnotationObjects
-> = (props: PdfPageAnnotationComponentProps<T>) => JSX.Element;
-
-export type PdfPageAnnotationComponents = {
-  [T in keyof PdfPageAnnotationObjects]: PdfPageAnnotationComponent<T>;
-};
+export type PdfPageAnnotationComponent = (
+  props: PdfPageAnnotationComponentProps
+) => JSX.Element;
 
 export interface PdfPageAnnotationsProps {
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
-  components: Partial<PdfPageAnnotationComponents>;
+  annotationComponent: PdfPageAnnotationComponent;
 }
 
 export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
-  const { page, scaleFactor, rotation, components } = props;
+  const {
+    page,
+    scaleFactor,
+    rotation,
+    annotationComponent: AnnotationComponent,
+  } = props;
   const engine = usePdfEngine();
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
 
@@ -64,43 +52,16 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
 
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">
-      {annotations.map((annotation, index) => {
-        switch (annotation.type) {
-          case 'link': {
-            const PdfLinkAnno = components.link;
-            if (PdfLinkAnno) {
-              return (
-                <PdfLinkAnno
-                  key={index}
-                  page={page}
-                  scaleFactor={scaleFactor}
-                  rotation={rotation}
-                  annotation={annotation}
-                />
-              );
-            } else {
-              return null;
-            }
-          }
-          case 'text': {
-            const PdfTextAnno = components.text;
-            if (PdfTextAnno) {
-              return (
-                <PdfTextAnno
-                  key={index}
-                  page={page}
-                  scaleFactor={scaleFactor}
-                  rotation={rotation}
-                  annotation={annotation}
-                />
-              );
-            } else {
-              return null;
-            }
-          }
-          default:
-            return null;
-        }
+      {annotations.map((annotation) => {
+        return (
+          <AnnotationComponent
+            key={annotation.id}
+            page={page}
+            annotation={annotation}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+          />
+        );
       })}
     </div>
   );

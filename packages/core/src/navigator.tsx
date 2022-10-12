@@ -1,9 +1,18 @@
-export type PdfNavigatorEvent = {
-  kind: 'Change';
-  data: {
-    pageIndex: number;
-  };
-};
+import { Rect } from '@unionpdf/models';
+
+export type PdfNavigatorEvent =
+  | {
+      kind: 'GotoPage';
+      data: {
+        pageIndex: number;
+      };
+    }
+  | {
+      kind: 'NavigateTo';
+      data: {
+        rect: Rect;
+      };
+    };
 
 export type PdfNavigatorListener = {
   source: string;
@@ -22,9 +31,21 @@ export class PdfNavigator {
 
     this.emit(
       {
-        kind: 'Change',
+        kind: 'GotoPage',
         data: {
           pageIndex,
+        },
+      },
+      source
+    );
+  }
+
+  navigateTo(rect: Rect, source: string) {
+    this.emit(
+      {
+        kind: 'NavigateTo',
+        data: {
+          rect,
         },
       },
       source

@@ -46,7 +46,7 @@ export function PdfOutlines(props: PdfOutlinesProps) {
     if (pdfNavigator) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
         switch (evt.kind) {
-          case 'Change':
+          case 'GotoPage':
             if (source !== PDF_NAVIGATOR_SOURCE_OUTLINES) {
               setCurrPageIndex(evt.data.pageIndex);
             }
