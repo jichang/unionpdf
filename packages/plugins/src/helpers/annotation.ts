@@ -1,6 +1,6 @@
 import { Rect, Rotation, swap } from '@unionpdf/models';
 
-export function calculateAnnotationStyle(
+export function calculateRectStyle(
   rect: Rect,
   scaleFactor: number,
   rotation: Rotation

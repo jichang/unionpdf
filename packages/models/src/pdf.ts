@@ -39,8 +39,9 @@ export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
         url: string;
       }
     | {
-        type: 'rect';
-        rect: Rect;
+        type: 'page';
+        pageIndex: number;
+        rect?: Rect;
       };
 }
 

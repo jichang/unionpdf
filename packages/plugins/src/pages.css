@@ -4,7 +4,7 @@
   background-color: #f0f0f0;
 }
 
-.pdf__content {
+.pdf__pages__container {
   margin: 0 auto;
 
   overflow: scroll;

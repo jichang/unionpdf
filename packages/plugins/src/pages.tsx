@@ -5,14 +5,16 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { PdfPageObject, Rect, Rotation, Size } from '@unionpdf/models';
+import { PdfPageObject, Rect, Rotation, Size, swap } from '@unionpdf/models';
 import {
   PdfNavigatorEvent,
+  PdfNavigatorGotoPageEvent,
   usePdfDocument,
   usePdfNavigator,
 } from '@unionpdf/core';
 import './pages.css';
 import { calculatePageSize } from './helpers/page';
+import { calculateRectStyle } from './helpers/annotation';
 
 export type PdfPageContentComponentProps = Omit<PdfPageProps, 'children'>;
 
@@ -82,7 +84,10 @@ export function PdfPages(props: PdfPagesProps) {
       for (const page of pdfPages) {
         const pageBottomY = page.offset + page.size.height * scaleFactor;
         if (pageBottomY > target.scrollTop) {
-          pdfNavigator?.gotoPage(page.index, PDF_NAVIGATOR_SOURCE_PAGES);
+          pdfNavigator?.gotoPage(
+            { pageIndex: page.index },
+            PDF_NAVIGATOR_SOURCE_PAGES
+          );
           setCurrPageIndex(page.index);
           break;
         }
@@ -112,25 +117,61 @@ export function PdfPages(props: PdfPagesProps) {
   );
 
   const gotoPage = useCallback(
-    (pageIndex: number) => {
+    (data: PdfNavigatorGotoPageEvent['data']) => {
       const containerElem = containerElemRef.current;
       if (containerElem) {
+        const { pageIndex, rect } = data;
         const page = pdfPages[pageIndex];
-        containerElem.scrollTo({ left: 0, top: page.offset });
+        if (!page) {
+          return;
+        }
+
+        if (!rect) {
+          containerElem.scrollTo({ left: 0, top: page.offset });
+        } else {
+          const style = calculateRectStyle(rect, scaleFactor, rotation);
+          const {
+            top = 0,
+            left = 0,
+            right = 0,
+            bottom = 0,
+            width,
+            height,
+          } = style;
+          let scrollOffset: { top: number; left: number };
+          switch (rotation) {
+            case 0:
+              scrollOffset = {
+                top: page.offset + top,
+                left,
+              };
+              break;
+            case 1:
+              scrollOffset = {
+                top: page.offset + top,
+                left: page.visualSize.width - width - right,
+              };
+              break;
+            case 2:
+              scrollOffset = {
+                top: page.offset + page.visualSize.height - bottom - height,
+                left: page.visualSize.width - width - right,
+              };
+              break;
+            case 3:
+              scrollOffset = {
+                top: page.offset + page.visualSize.height - bottom - height,
+                left,
+              };
+              break;
+          }
+          console.log(scrollOffset);
+          containerElem.scrollTo(scrollOffset);
+        }
         setCurrPageIndex(pageIndex);
       }
     },
-    [pdfPages, setCurrPageIndex]
-  );
-
-  const navigateTo = useCallback(
-    (rect: Rect) => {
-      const containerElem = containerElemRef.current;
-      if (containerElem) {
-        containerElem.scrollTo({ left: 0, top: rect.origin.y });
-      }
-    },
-    [pdfPages]
+    [pdfPages, setCurrPageIndex, scaleFactor, rotation]
   );
 
   useEffect(() => {
@@ -139,12 +180,7 @@ export function PdfPages(props: PdfPagesProps) {
         switch (evt.kind) {
           case 'GotoPage':
             if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
-              gotoPage(evt.data.pageIndex);
-            }
-            break;
-          case 'NavigateTo':
-            if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
-              navigateTo(evt.data.rect);
+              gotoPage(evt.data);
             }
             break;
         }
@@ -160,7 +196,7 @@ export function PdfPages(props: PdfPagesProps) {
   return (
     <div className="pdf__pages">
       <div
-        className="pdf__content"
+        className="pdf__pages__container"
         style={{
           width: viewport.width,
           height: viewport.height,

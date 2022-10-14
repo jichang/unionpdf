@@ -61,7 +61,10 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
 
   const gotoPage = useCallback(
     (page: PdfPageObject) => {
-      pdfNavigator?.gotoPage(page.index, PDF_NAVIGATOR_SOURCE_THUMBNAILS);
+      pdfNavigator?.gotoPage(
+        { pageIndex: page.index },
+        PDF_NAVIGATOR_SOURCE_THUMBNAILS
+      );
       setCurrPageIndex(page.index);
     },
     [pdfNavigator, setCurrPageIndex]

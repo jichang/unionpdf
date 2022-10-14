@@ -63,7 +63,10 @@ export function PdfOutlines(props: PdfOutlinesProps) {
 
   const handleEntryClicked = useCallback(
     (entry: PdfOutlineEntryObject) => {
-      pdfNavigator?.gotoPage(entry.pageIndex, PDF_NAVIGATOR_SOURCE_OUTLINES);
+      pdfNavigator?.gotoPage(
+        { pageIndex: entry.pageIndex },
+        PDF_NAVIGATOR_SOURCE_OUTLINES
+      );
     },
     [pdfNavigator]
   );

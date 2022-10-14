@@ -11,7 +11,7 @@ describe('PdfNavigator', () => {
 
     expect(pdfNavigator.listeners.length).toEqual(2);
 
-    pdfNavigator.gotoPage(1, 'test');
+    pdfNavigator.gotoPage({ pageIndex: 1 }, 'test');
 
     expect(listenerA).toBeCalledTimes(1);
     expect(listenerA).toBeCalledWith(

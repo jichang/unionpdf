@@ -28,11 +28,11 @@ import {
 import { PdfThumbnails } from '../src/thumbnails';
 import { PdfPageContentComponentProps, PdfPages } from '../src/pages';
 import { PdfOutlines } from '../src/outlines';
-import { PdfPageCanvas } from '../src/layers/canvas';
+import { PdfPageCanvas } from '../src/pageLayers/canvas';
 import {
   PdfPageAnnotationComponentProps,
   PdfPageAnnotations,
-} from '../src/layers/annotations';
+} from '../src/pageLayers/annotations';
 import { PdfPageAnnotationBase } from '../src/annotations/annotation';
 import { PdfPageLinkAnnotation } from '../src/annotations/link';
 
@@ -226,10 +226,11 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         id: page.index + 2,
         type: 'link',
         target: {
-          type: 'rect',
+          type: 'page',
+          pageIndex: page.index + 1,
           rect: {
             origin: {
-              x: 0,
+              x: 100,
               y: 100,
             },
             size: {

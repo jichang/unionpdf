@@ -1,18 +1,14 @@
 import { Rect } from '@unionpdf/models';
 
-export type PdfNavigatorEvent =
-  | {
-      kind: 'GotoPage';
-      data: {
-        pageIndex: number;
-      };
-    }
-  | {
-      kind: 'NavigateTo';
-      data: {
-        rect: Rect;
-      };
-    };
+export interface PdfNavigatorGotoPageEvent {
+  kind: 'GotoPage';
+  data: {
+    pageIndex: number;
+    rect?: Rect;
+  };
+}
+
+export type PdfNavigatorEvent = PdfNavigatorGotoPageEvent;
 
 export type PdfNavigatorListener = {
   source: string;
@@ -23,30 +19,16 @@ export class PdfNavigator {
   currPageIndex = 0;
   listeners: PdfNavigatorListener[] = [];
 
-  gotoPage(pageIndex: number, source: string) {
-    if (this.currPageIndex === pageIndex) {
+  gotoPage(data: PdfNavigatorGotoPageEvent['data'], source: string) {
+    if (this.currPageIndex === data.pageIndex) {
       return;
     }
-    this.currPageIndex = pageIndex;
+    this.currPageIndex = data.pageIndex;
 
     this.emit(
       {
         kind: 'GotoPage',
-        data: {
-          pageIndex,
-        },
-      },
-      source
-    );
-  }
-
-  navigateTo(rect: Rect, source: string) {
-    this.emit(
-      {
-        kind: 'NavigateTo',
-        data: {
-          rect,
-        },
+        data,
       },
       source
     );

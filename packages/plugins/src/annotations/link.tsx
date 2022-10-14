@@ -13,7 +13,7 @@ export interface PdfPageLinkAnnotationProps {
 }
 
 export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
-  const { annotation, scaleFactor, rotation } = props;
+  const { page, annotation, scaleFactor, rotation } = props;
   const pdfNavigator = usePdfNavigator();
 
   const onClick = useCallback(() => {
@@ -23,10 +23,10 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
       if (annotation.target.type === 'url') {
         window.open(annotation.target.url, '_blank');
       } else {
-        pdfNavigator?.navigateTo(annotation.target.rect, 'annotation');
+        pdfNavigator?.gotoPage(annotation.target, 'annotation');
       }
     }
-  }, [pdfNavigator, annotation, props.onClick]);
+  }, [pdfNavigator, page, annotation, props.onClick]);
 
   return (
     <PdfPageAnnotationBase
