@@ -28,7 +28,7 @@ export function calculateRectStyle(
     case 1:
       return {
         top: scaledOrigin.x,
-        right: scaledOrigin.x,
+        right: scaledOrigin.y,
         width: scaledAnnoSize.width,
         height: scaledAnnoSize.height,
       };

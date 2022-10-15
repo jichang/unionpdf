@@ -213,8 +213,8 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         text: 'url link',
         rect: {
           origin: {
-            x: 0,
-            y: 0,
+            x: 10,
+            y: 10,
           },
           size: {
             width: 100,
@@ -242,7 +242,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         text: 'rect link',
         rect: {
           origin: {
-            x: 0,
+            x: 10,
             y: 100,
           },
           size: {
