@@ -1,0 +1,9 @@
+.pdf__toolbar {
+  display: inline-block;
+  padding: 0.25rem 0;
+}
+
+.pdf__toolbar__select,
+.pdf__toolbar__input {
+  padding: 0.5rem;
+}

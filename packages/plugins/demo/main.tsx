@@ -25,6 +25,7 @@ import {
   PdfNavigatorContextProvider,
   PdfApplication,
 } from '@unionpdf/core';
+import { PdfToolbar } from '../src/toolbar';
 import { PdfThumbnails } from '../src/thumbnails';
 import { PdfPageContentComponentProps, PdfPages } from '../src/pages';
 import { PdfOutlines } from '../src/outlines';
@@ -263,7 +264,7 @@ function App() {
   const [mode, setMode] = useState(PdfApplicationMode.Read);
 
   const toggleMode = useCallback(() => {
-    setMode((mode) => {
+    setMode((mode: PdfApplicationMode) => {
       return mode === PdfApplicationMode.Read
         ? PdfApplicationMode.Edit
         : PdfApplicationMode.Read;
@@ -300,14 +301,17 @@ function App() {
   }, [setThumbnailsIsVisible]);
 
   const [rotation, setRotation] = useState<Rotation>(0);
-  const rotate = useCallback(() => {
-    setRotation((rotation) => {
-      return ((rotation + 1) % 4) as Rotation;
-    });
-  }, [setRotation]);
+  const changeRotation = useCallback(
+    (evt: ChangeEvent<HTMLSelectElement>) => {
+      const rotation = parseInt(evt.target.value, 10) as Rotation;
+      console.log(rotation);
+      setRotation(rotation);
+    },
+    [setRotation]
+  );
 
   const [scaleFactor, setScaleFactor] = useState(1.0);
-  const updateScaleFactor = useCallback(
+  const changeScaleFactor = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       setScaleFactor(Number(evt.target.value));
     },
@@ -316,36 +320,19 @@ function App() {
 
   return (
     <div className="App">
-      <PdfApplication mode={mode}>
-        <div className="pdf__app__toolbar">
-          <button onClick={toggleThumbnailsIsVisible}>Thumbnails</button>
-          <button onClick={toggleOutlinesIsVisible}>Outlines</button>
-          <button onClick={rotate}>Rotate</button>
-          <input
-            type="number"
-            min="0.5"
-            max="3.0"
-            step="0.1"
-            value={scaleFactor}
-            onChange={updateScaleFactor}
-          />
-          <div className="fill"></div>
-          <button onClick={toggleMode}>
-            {mode === PdfApplicationMode.Read ? 'Edit' : 'Save'}
-          </button>
-        </div>
-        <ThemeContextProvider
-          theme={{
-            background: 'blue',
-          }}
-        >
-          <PdfEngineContextProvider engine={engine}>
-            <PdfDocument
-              source="https://localhost"
-              onOpenSuccess={() => {}}
-              onOpenFailure={() => {}}
-            >
-              <PdfNavigatorContextProvider navigator={pdfNavigator}>
+      <ThemeContextProvider
+        theme={{
+          background: 'blue',
+        }}
+      >
+        <PdfEngineContextProvider engine={engine}>
+          <PdfApplication mode={mode}>
+            <PdfNavigatorContextProvider navigator={pdfNavigator}>
+              <PdfDocument
+                source="https://localhost"
+                onOpenSuccess={() => {}}
+                onOpenFailure={() => {}}
+              >
                 <PdfPages
                   visibleRange={[-1, 1]}
                   viewport={viewport}
@@ -360,11 +347,19 @@ function App() {
                   />
                 ) : null}
                 {outlinesIsVisible ? <PdfOutlines /> : null}
-              </PdfNavigatorContextProvider>
-            </PdfDocument>
-          </PdfEngineContextProvider>
-        </ThemeContextProvider>
-      </PdfApplication>
+                <div className="pdf__toolbar__container">
+                  <PdfToolbar
+                    scaleFactor={scaleFactor}
+                    changeScaleFactor={changeScaleFactor}
+                    rotation={rotation}
+                    changeRotation={changeRotation}
+                  />
+                </div>
+              </PdfDocument>
+            </PdfNavigatorContextProvider>
+          </PdfApplication>
+        </PdfEngineContextProvider>
+      </ThemeContextProvider>
     </div>
   );
 }

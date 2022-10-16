@@ -165,7 +165,6 @@ export function PdfPages(props: PdfPagesProps) {
               };
               break;
           }
-          console.log(scrollOffset);
           containerElem.scrollTo(scrollOffset);
         }
         setCurrPageIndex(pageIndex);

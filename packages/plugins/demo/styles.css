@@ -10,33 +10,23 @@ body {
   width: 100%;
 }
 
-.pdf__app {
-  margin: 0 auto;
-
-  width: 80rem;
-}
-
-.pdf__app__toolbar {
-  display: flex;
-  flex-direction: row;
-  padding: 0.5rem 0;
-}
-
-.fill {
-  flex: 1;
-}
-
-.pdf__app__toolbar button,
-.pdf__app__toolbar input {
-  padding: 0.5rem;
-}
-
-.pdf__app__body {
-  border: 1px solid gray;
-}
-
 .pdf__application--edit .pdf__annotation--link {
   border: 1px solid black;
 
   opacity: 0.5;
+}
+
+.pdf__document {
+  position: relative;
+}
+
+.pdf__toolbar__container {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
 }

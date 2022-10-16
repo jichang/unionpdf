@@ -5,7 +5,7 @@
   "source": "./src/index.ts",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
-  "types": "dist/types/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     "import": "./dist/esm/index.mjs",
     "require": "./dist/cjs/index.js"
