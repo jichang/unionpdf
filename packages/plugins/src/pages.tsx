@@ -15,6 +15,7 @@ import {
 import './pages.css';
 import { calculatePageSize } from './helpers/page';
 import { calculateRectStyle } from './helpers/annotation';
+import { ErrorBoundary } from './errorboundary';
 
 export type PdfPageContentComponentProps = Omit<PdfPageProps, 'children'>;
 
@@ -193,33 +194,25 @@ export function PdfPages(props: PdfPagesProps) {
   }, [pdfNavigator, gotoPage]);
 
   return (
-    <div className="pdf__pages">
-      <div
-        className="pdf__pages__container"
-        style={{
-          width: viewport.width,
-          height: viewport.height,
-        }}
-        ref={containerElemRef}
-      >
-        {pdfPages.map((page) => {
-          const isVisible = !(
-            page.offset > visibleRangeBottom ||
-            page.offset + page.size.height * scaleFactor < visibleRangeTop
-          );
+    <ErrorBoundary>
+      <div className="pdf__pages">
+        <div
+          className="pdf__pages__container"
+          style={{
+            width: viewport.width,
+            height: viewport.height,
+          }}
+          ref={containerElemRef}
+        >
+          {pdfPages.map((page) => {
+            const isVisible = !(
+              page.offset > visibleRangeBottom ||
+              page.offset + page.size.height * scaleFactor < visibleRangeTop
+            );
 
-          return (
-            <PdfPage
-              key={page.index}
-              isCurrent={page.index === currPageIndex}
-              page={page}
-              isVisible={isVisible}
-              pageGap={pageGap}
-              scaleFactor={scaleFactor}
-              rotation={rotation}
-              visualSize={page.visualSize}
-            >
-              <ContentComponent
+            return (
+              <PdfPage
+                key={page.index}
                 isCurrent={page.index === currPageIndex}
                 page={page}
                 isVisible={isVisible}
@@ -227,12 +220,22 @@ export function PdfPages(props: PdfPagesProps) {
                 scaleFactor={scaleFactor}
                 rotation={rotation}
                 visualSize={page.visualSize}
-              />
-            </PdfPage>
-          );
-        })}
+              >
+                <ContentComponent
+                  isCurrent={page.index === currPageIndex}
+                  page={page}
+                  isVisible={isVisible}
+                  pageGap={pageGap}
+                  scaleFactor={scaleFactor}
+                  rotation={rotation}
+                  visualSize={page.visualSize}
+                />
+              </PdfPage>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }
 

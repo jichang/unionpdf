@@ -65,6 +65,7 @@ export function useInputComponent() {
 }
 
 export interface UIStrings {
+  unknownError: string;
   rotate0Deg: string;
   rotate90Deg: string;
   rotate180Deg: string;
@@ -72,6 +73,7 @@ export interface UIStrings {
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
+  unknownError: 'Unknown Error',
   rotate0Deg: '0 degree',
   rotate90Deg: '90 degree',
   rotate180Deg: '180 degree',

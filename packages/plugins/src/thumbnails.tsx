@@ -6,6 +6,7 @@ import {
 } from '@unionpdf/core';
 import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
+import { ErrorBoundary } from './errorboundary';
 import './thumbnails.css';
 
 export type Direction = 'horizontal' | 'vertical';
@@ -75,28 +76,30 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
   }
 
   return (
-    <div
-      className={`pdf__thumbnails pdf__thumbnails--${layout.direction}`}
-      style={
-        layout.direction === 'vertical'
-          ? { gridTemplateColumns: styleTemplate.join(' ') }
-          : { gridTemplateRows: styleTemplate.join(' ') }
-      }
-    >
-      {doc?.pages.map((page, index) => {
-        const isCurrent = page.index === currPageIndex;
-        return (
-          <PdfThumbnail
-            key={index}
-            page={page}
-            scaleFactor={scaleFactor}
-            rotation={rotation}
-            isCurrent={isCurrent}
-            onClick={gotoPage}
-          />
-        );
-      })}
-    </div>
+    <ErrorBoundary>
+      <div
+        className={`pdf__thumbnails pdf__thumbnails--${layout.direction}`}
+        style={
+          layout.direction === 'vertical'
+            ? { gridTemplateColumns: styleTemplate.join(' ') }
+            : { gridTemplateRows: styleTemplate.join(' ') }
+        }
+      >
+        {doc?.pages.map((page, index) => {
+          const isCurrent = page.index === currPageIndex;
+          return (
+            <PdfThumbnail
+              key={index}
+              page={page}
+              scaleFactor={scaleFactor}
+              rotation={rotation}
+              isCurrent={isCurrent}
+              onClick={gotoPage}
+            />
+          );
+        })}
+      </div>
+    </ErrorBoundary>
   );
 }
 

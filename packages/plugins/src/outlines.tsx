@@ -6,6 +6,7 @@ import {
 } from '@unionpdf/core';
 import { PdfOutlinesObject, PdfOutlineEntryObject } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
+import { ErrorBoundary } from './errorboundary';
 import './outlines.css';
 
 export const PDF_NAVIGATOR_SOURCE_OUTLINES = 'PdfOutlines';
@@ -72,20 +73,22 @@ export function PdfOutlines(props: PdfOutlinesProps) {
   );
 
   return (
-    <div className="pdf__outlines">
-      <ol>
-        {outlines.entries.map((entry, index) => {
-          return (
-            <PdfOutlineEntry
-              key={index}
-              currPageIndex={currPageIndex}
-              entry={entry}
-              onClick={handleEntryClicked}
-            />
-          );
-        })}
-      </ol>
-    </div>
+    <ErrorBoundary>
+      <div className="pdf__outlines">
+        <ol>
+          {outlines.entries.map((entry, index) => {
+            return (
+              <PdfOutlineEntry
+                key={index}
+                currPageIndex={currPageIndex}
+                entry={entry}
+                onClick={handleEntryClicked}
+              />
+            );
+          })}
+        </ol>
+      </div>
+    </ErrorBoundary>
   );
 }
 

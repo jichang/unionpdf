@@ -13,6 +13,7 @@ import React, {
 } from 'react';
 import { useUIComponents, useUIStrings } from './ui/ui.context';
 import './toolbar.css';
+import { ErrorBoundary } from './errorboundary';
 
 export const PDF_NAVIGATOR_SOURCE_TOOLBAR = 'Toolbar';
 
@@ -96,30 +97,33 @@ export function PdfToolbar(props: PdfToolbarProps) {
   ];
 
   return (
-    <ToolbarComponent className="pdf__toolbar" {...rest}>
-      <SelectComponent
-        className="pdf__toolbar__select"
-        value={rotation}
-        onChange={changeRotation}
-        options={rotationOptions}
-      ></SelectComponent>
-      <InputComponent
-        className="pdf__toolbar__input"
-        type="number"
-        min="0.5"
-        max="3.0"
-        step="0.1"
-        value={scaleFactor}
-        onChange={changeScaleFactor}
-      />
-      <InputComponent
-        className="pdf__toolbar__input"
-        value={currPageIndex + 1}
-        min="1"
-        max={pdfDoc?.pageCount}
-        type="number"
-        onChange={navigate}
-      />
-    </ToolbarComponent>
+    <ErrorBoundary>
+      {' '}
+      <ToolbarComponent className="pdf__toolbar" {...rest}>
+        <SelectComponent
+          className="pdf__toolbar__select"
+          value={rotation}
+          onChange={changeRotation}
+          options={rotationOptions}
+        ></SelectComponent>
+        <InputComponent
+          className="pdf__toolbar__input"
+          type="number"
+          min="0.5"
+          max="3.0"
+          step="0.1"
+          value={scaleFactor}
+          onChange={changeScaleFactor}
+        />
+        <InputComponent
+          className="pdf__toolbar__input"
+          value={currPageIndex + 1}
+          min="1"
+          max={pdfDoc?.pageCount}
+          type="number"
+          onChange={navigate}
+        />
+      </ToolbarComponent>
+    </ErrorBoundary>
   );
 }
