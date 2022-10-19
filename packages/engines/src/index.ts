@@ -1,1 +1,1 @@
-export * from './native/index';
+export * from './pdfium';
