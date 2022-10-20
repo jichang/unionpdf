@@ -10,7 +10,7 @@ describe('PdfDocument', () => {
 
     const result = render(
       <PdfDocument
-        source="https://localhost"
+        source={new Uint8Array()}
         onOpenSuccess={onOpenSuccess}
         onOpenFailure={onOpenFailure}
       />

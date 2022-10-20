@@ -5,9 +5,9 @@ export interface PdfPageObject {
   size: Size;
 }
 
-export interface PdfDocumentObject {
+export interface PdfDocumentObject<T = undefined> {
+  id: T;
   pageCount: number;
-  size: Size;
   pages: PdfPageObject[];
 }
 
@@ -128,7 +128,7 @@ export type Rotation = 0 | 1 | 2 | 3;
 
 // source can be a URL points to a remote pdf file or array contains
 // pdf content
-export type PdfSource = string | Uint8Array;
+export type PdfSource = Uint8Array;
 
 export type PdfEngineFunResult<T> = T | Promise<T>;
 
@@ -146,16 +146,20 @@ export enum PdfEngineOperation {
   Delete,
 }
 
-export interface PdfEngine {
+export interface PdfEngine<T = undefined> {
   isSupport?: (
     feature: PdfEngineFeature
   ) => PdfEngineFunResult<PdfEngineOperation[]>;
   open: (
-    url: PdfSource,
+    data: PdfSource,
     signal?: AbortSignal
-  ) => PdfEngineFunResult<PdfDocumentObject>;
-  getOutlines: (signal: AbortSignal) => PdfEngineFunResult<PdfOutlinesObject>;
+  ) => PdfEngineFunResult<PdfDocumentObject<T>>;
+  getOutlines: (
+    doc: PdfDocumentObject<T>,
+    signal: AbortSignal
+  ) => PdfEngineFunResult<PdfOutlinesObject>;
   renderPage: (
+    doc: PdfDocumentObject<T>,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
@@ -163,14 +167,19 @@ export interface PdfEngine {
     signal?: AbortSignal
   ) => PdfEngineFunResult<ImageData>;
   getPageAnnotations: (
+    doc: PdfDocumentObject<T>,
     page: PdfPageObject,
     signal?: AbortSignal
   ) => PdfEngineFunResult<PdfAnnotationObject[]>;
   renderThumbnail: (
+    doc: PdfDocumentObject<T>,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
     signal?: AbortSignal
   ) => PdfEngineFunResult<ImageData>;
-  close: (pdf: PdfDocumentObject, signal?: AbortSignal) => Promise<void>;
+  close: (
+    pdf: PdfDocumentObject<T>,
+    signal?: AbortSignal
+  ) => PdfEngineFunResult<void>;
 }

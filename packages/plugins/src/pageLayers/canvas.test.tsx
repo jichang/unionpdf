@@ -21,7 +21,7 @@ describe('PdfPageCanvas', () => {
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
-          source="https://localhost"
+          source={new Uint8Array()}
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >

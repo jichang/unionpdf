@@ -136,6 +136,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
   return {
     open: async (url: PdfSource) => {
       return {
+        id: undefined,
         pageCount: pageCount,
         size: {
           width: pageWidth,
@@ -144,7 +145,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         pages: pages,
       };
     },
-    getOutlines: () => {
+    getOutlines: (doc: PdfDocumentObject) => {
       return {
         entries: [
           {
@@ -165,6 +166,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       };
     },
     renderPage: (
+      doc: PdfDocumentObject,
       page: PdfPageObject,
       scaleFactor: number,
       rotation: Rotation
@@ -188,7 +190,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
 
       return new ImageData(array, imageSize.width, imageSize.height);
     },
-    renderThumbnail: (page: PdfPageObject) => {
+    renderThumbnail: (doc: PdfDocumentObject, page: PdfPageObject) => {
       const thumbnailWidth = page.size.width / 4;
       const thumbnailHeight = page.size.height / 4;
       const pixelCount = thumbnailWidth * thumbnailHeight;
@@ -203,7 +205,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
 
       return new ImageData(array, thumbnailWidth, thumbnailHeight);
     },
-    getPageAnnotations: (page: PdfPageObject) => {
+    getPageAnnotations: (doc: PdfDocumentObject, page: PdfPageObject) => {
       const pdfLinkAnnoObject1: PdfLinkAnnoObject = {
         id: page.index + 1,
         type: 'link',
@@ -329,7 +331,7 @@ function App() {
           <PdfApplication mode={mode}>
             <PdfNavigatorContextProvider navigator={pdfNavigator}>
               <PdfDocument
-                source="https://localhost"
+                source={new Uint8Array()}
                 onOpenSuccess={() => {}}
                 onOpenFailure={() => {}}
               >

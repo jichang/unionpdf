@@ -1,4 +1,4 @@
-import { usePdfEngine } from '@unionpdf/core';
+import { usePdfDocument, usePdfEngine } from '@unionpdf/core';
 import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
 import React, { useRef, useEffect } from 'react';
 
@@ -11,13 +11,14 @@ export interface PdfPageCanvasLayerProps {
 }
 
 export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
+  const doc = usePdfDocument();
   const engine = usePdfEngine();
   const { page, scaleFactor, rotation, isVisible, visualSize } = props;
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
-    if (canvasElem && engine && isVisible) {
+    if (canvasElem && engine && doc && isVisible) {
       const abortController = new AbortController();
       const render = (imageData: ImageData) => {
         const ctx = canvasElem.getContext('2d');
@@ -35,6 +36,7 @@ export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
       };
 
       const result = engine.renderPage(
+        doc,
         page,
         scaleFactor,
         rotation,
@@ -51,7 +53,7 @@ export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
         abortController.abort();
       };
     }
-  }, [page, engine, isVisible, scaleFactor, rotation]);
+  }, [page, engine, doc, isVisible, scaleFactor, rotation]);
 
   if (!isVisible) {
     return null;

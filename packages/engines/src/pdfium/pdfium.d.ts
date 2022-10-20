@@ -1,5 +1,3 @@
-export interface ModuleInit {
-  wasmBinary: ArrayBuffer;
-}
+import { ModuleInit, WasmModule } from './wasm';
 
-export function create(init: ModuleInit): void;
+export function create(init: ModuleInit): WasmModule;

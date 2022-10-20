@@ -5,22 +5,29 @@ import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
 
 describe('PdfEngineContextProvider ', () => {
-  function Consumer({ signal }: { signal: AbortSignal }) {
+  function Consumer({
+    buffer,
+    signal,
+  }: {
+    buffer: Uint8Array;
+    signal: AbortSignal;
+  }) {
     const engine = usePdfEngine();
 
     if (engine) {
-      engine.open('http://localhost', signal);
+      engine.open(buffer, signal);
     }
 
     return <div></div>;
   }
 
   test('should assign context value', () => {
+    const buffer = new Uint8Array();
     const abortController = new AbortController();
     const engine = createMockPdfEngine();
     const result = render(
       <PdfEngineContextProvider engine={engine}>
-        <Consumer signal={abortController.signal} />
+        <Consumer buffer={buffer} signal={abortController.signal} />
       </PdfEngineContextProvider>
     );
 
@@ -29,10 +36,7 @@ describe('PdfEngineContextProvider ', () => {
     });
 
     expect(engine.open).toBeCalledTimes(1);
-    expect(engine.open).toBeCalledWith(
-      'http://localhost',
-      abortController.signal
-    );
+    expect(engine.open).toBeCalledWith(buffer, abortController.signal);
 
     result?.unmount();
   });

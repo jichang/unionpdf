@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { PdfPageObject, Rect, Rotation, Size, swap } from '@unionpdf/models';
+import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
 import {
   PdfNavigatorEvent,
   PdfNavigatorGotoPageEvent,

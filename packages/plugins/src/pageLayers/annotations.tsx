@@ -1,4 +1,4 @@
-import { usePdfEngine } from '@unionpdf/core';
+import { usePdfDocument, usePdfEngine } from '@unionpdf/core';
 import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 
@@ -28,13 +28,18 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
     annotationComponent: AnnotationComponent,
   } = props;
   const engine = usePdfEngine();
+  const doc = usePdfDocument();
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
 
   useEffect(() => {
-    if (engine && page) {
+    if (engine && doc && page) {
       const abortController = new AbortController();
       const load = async () => {
-        const result = engine.getPageAnnotations(page, abortController.signal);
+        const result = engine.getPageAnnotations(
+          doc,
+          page,
+          abortController.signal
+        );
         if (result instanceof Promise) {
           result.then(setAnnotations);
         } else {
@@ -48,7 +53,7 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
         abortController.abort();
       };
     }
-  }, [engine, page]);
+  }, [engine, doc, page]);
 
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">

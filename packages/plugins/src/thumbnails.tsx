@@ -113,14 +113,16 @@ export interface PdfThumbnailProps {
 
 export function PdfThumbnail(props: PdfThumbnailProps) {
   const engine = usePdfEngine();
+  const doc = usePdfDocument();
   const { page, scaleFactor, rotation, isCurrent, onClick } = props;
   const [src, setSrc] = useState('');
 
   useEffect(() => {
-    if (engine && page) {
+    if (engine && doc && page) {
       const abortController = new AbortController();
       const load = async () => {
         const result = await engine.renderThumbnail(
+          doc,
           page,
           scaleFactor,
           rotation,
@@ -141,7 +143,7 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
         abortController.abort();
       };
     }
-  }, [engine, page, scaleFactor, rotation]);
+  }, [engine, doc, page, scaleFactor, rotation]);
 
   return (
     <div

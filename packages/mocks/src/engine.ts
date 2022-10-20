@@ -9,7 +9,13 @@ import {
 } from '@unionpdf/models';
 import { Defer } from './defer';
 
-export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
+export interface MockPdfEngine extends PdfEngine {
+  openDefer: Defer<PdfDocumentObject<undefined>>;
+}
+
+export function createMockPdfEngine(
+  engine?: Partial<PdfEngine>
+): MockPdfEngine {
   const openDefer = new Defer<PdfDocumentObject>();
 
   return {
@@ -17,7 +23,7 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       return openDefer.promise;
     }),
     openDefer,
-    getOutlines: () => {
+    getOutlines: (doc: PdfDocumentObject) => {
       return {
         entries: [
           {
@@ -38,7 +44,12 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
       };
     },
     renderPage: jest.fn(
-      async (page: PdfPageObject, scaleFactor: number, rotation: Rotation) => {
+      async (
+        doc: PdfDocumentObject,
+        page: PdfPageObject,
+        scaleFactor: number,
+        rotation: Rotation
+      ) => {
         const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
         const imageSize = {
           width: Math.ceil(pageSize.width * scaleFactor),
@@ -59,45 +70,49 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         return new ImageData(array, imageSize.width, imageSize.height);
       }
     ),
-    renderThumbnail: jest.fn(async (page: PdfPageObject) => {
-      const thumbnailWidth = page.size.width / 4;
-      const thumbnailHeight = page.size.height / 4;
-      const pixelCount = thumbnailWidth * thumbnailHeight;
-      const array = new Uint8ClampedArray(pixelCount * 4);
-      const rgbValue = page.index % 255;
-      const alphaValue = 255;
-      for (let i = 0; i < pixelCount; i++) {
-        for (let j = 0; j < 3; j++) {
-          const index = i * 4 + j;
-          array[index] = rgbValue;
+    renderThumbnail: jest.fn(
+      async (doc: PdfDocumentObject, page: PdfPageObject) => {
+        const thumbnailWidth = page.size.width / 4;
+        const thumbnailHeight = page.size.height / 4;
+        const pixelCount = thumbnailWidth * thumbnailHeight;
+        const array = new Uint8ClampedArray(pixelCount * 4);
+        const rgbValue = page.index % 255;
+        const alphaValue = 255;
+        for (let i = 0; i < pixelCount; i++) {
+          for (let j = 0; j < 3; j++) {
+            const index = i * 4 + j;
+            array[index] = rgbValue;
+          }
+          array[i * 4 + 3] = alphaValue;
         }
-        array[i * 4 + 3] = alphaValue;
-      }
 
-      return new ImageData(array, thumbnailWidth, thumbnailHeight);
-    }),
-    getPageAnnotations: jest.fn(async (page: PdfPageObject) => {
-      const link: PdfLinkAnnoObject = {
-        id: page.index + 1,
-        type: 'link',
-        target: {
-          type: 'url',
-          url: 'https://localhost',
-        },
-        text: 'localhost',
-        rect: {
-          origin: {
-            x: 0,
-            y: 0,
+        return new ImageData(array, thumbnailWidth, thumbnailHeight);
+      }
+    ),
+    getPageAnnotations: jest.fn(
+      async (doc: PdfDocumentObject, page: PdfPageObject) => {
+        const link: PdfLinkAnnoObject = {
+          id: page.index + 1,
+          type: 'link',
+          target: {
+            type: 'url',
+            url: 'https://localhost',
           },
-          size: {
-            width: 100,
-            height: 100,
+          text: 'localhost',
+          rect: {
+            origin: {
+              x: 0,
+              y: 0,
+            },
+            size: {
+              width: 100,
+              height: 100,
+            },
           },
-        },
-      };
-      return [link];
-    }),
+        };
+        return [link];
+      }
+    ),
     close: async (pdf: PdfDocumentObject) => {},
     ...engine,
   };
@@ -121,11 +136,8 @@ export function createMockPdfDocument(
   }
 
   return {
+    id: undefined,
     pageCount: pageCount,
-    size: {
-      width: pageWidth,
-      height: pageHeight,
-    },
     pages: pages,
     ...pdf,
   };

@@ -19,10 +19,10 @@ export function PdfOutlines(props: PdfOutlinesProps) {
   const [outlines, setOutlines] = useState<PdfOutlinesObject>({ entries: [] });
 
   useEffect(() => {
-    if (engine) {
+    if (engine && doc) {
       const abortController = new AbortController();
       const load = async () => {
-        const result = engine.getOutlines(abortController.signal);
+        const result = engine.getOutlines(doc, abortController.signal);
         if (result instanceof Promise) {
           result.then(setOutlines);
         } else {

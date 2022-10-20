@@ -1,11 +1,6 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import {
-  PdfEngine,
-  PdfPageObject,
-  PdfSource,
-  PdfDocumentObject,
-} from '@unionpdf/models';
+import { PdfEngine, PdfPageObject, PdfDocumentObject } from '@unionpdf/models';
 import {
   PdfEngineContextProvider,
   PdfDocument,
@@ -15,7 +10,7 @@ import {
 } from '../src';
 import { ThemeContextProvider } from '../src/theme.context';
 
-function createMockPdfEngine(engine?: Partial<PdfEngine>) {
+function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
   const pageCount = 10;
   const pageWidth = 320;
   const pageHeight = 480;
@@ -30,28 +25,25 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
     });
   }
   return {
-    open: async (url: PdfSource) => {
+    open: async (url: Uint8Array) => {
       return {
+        id: undefined,
         pageCount: pageCount,
-        size: {
-          width: pageWidth,
-          height: pageHeight,
-        },
         pages: pages,
       };
     },
-    renderPage: (page: PdfPageObject) => {
+    renderPage: (doc: PdfDocumentObject, page: PdfPageObject) => {
       return new ImageData(page.size.width, page.size.height);
     },
-    renderThumbnail: (page: PdfPageObject) => {
+    renderThumbnail: (doc: PdfDocumentObject, page: PdfPageObject) => {
       return new ImageData(page.size.width, page.size.height);
     },
-    getOutlines: () => {
+    getOutlines: (doc: PdfDocumentObject) => {
       return {
         entries: [],
       };
     },
-    getPageAnnotations: (page: PdfPageObject) => {
+    getPageAnnotations: (doc: PdfDocumentObject, page: PdfPageObject) => {
       return [];
     },
     close: async (pdf: PdfDocumentObject) => {},
@@ -85,7 +77,7 @@ function App() {
       >
         <PdfEngineContextProvider engine={engine}>
           <PdfDocument
-            source="https://localhost"
+            source={new Uint8Array()}
             onOpenSuccess={() => {}}
             onOpenFailure={() => {}}
           >
