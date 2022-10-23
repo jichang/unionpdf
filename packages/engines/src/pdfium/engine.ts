@@ -40,46 +40,48 @@ export class PdfiumEngine implements PdfEngine<number> {
     const ptr = this.wasmModuleWrapper.malloc(length);
     this.wasmModule.HEAPU8.set(array, ptr);
 
-    const doc = this.wasmModuleWrapper.FPDF_LoadMemDocument(ptr, length, '');
+    const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(ptr, length, '');
     if (this.wasmModuleWrapper.FPDF_GetLastError()) {
       this.wasmModuleWrapper.free(ptr);
       throw new PdfError('');
     }
 
-    const pageCount = this.wasmModuleWrapper.FPDF_GetPageCount(doc);
+    const pageCount = this.wasmModuleWrapper.FPDF_GetPageCount(docPtr);
 
     const pages: PdfPageObject[] = [];
-    const width = this.wasmModuleWrapper.malloc(8);
-    const height = this.wasmModuleWrapper.malloc(8);
+    const widthPtr = this.wasmModuleWrapper.malloc(8);
+    const heightPtr = this.wasmModuleWrapper.malloc(8);
     for (let index = 0; index < pageCount; index++) {
       const result = this.wasmModuleWrapper.FPDF_GetPageSizeByIndex(
-        doc,
+        docPtr,
         index,
-        width,
-        height
+        widthPtr,
+        heightPtr
       );
       if (result === 0) {
         this.wasmModuleWrapper.free(ptr);
-        this.wasmModuleWrapper.free(width);
-        this.wasmModuleWrapper.free(height);
+        this.wasmModuleWrapper.free(docPtr);
+        this.wasmModuleWrapper.free(widthPtr);
+        this.wasmModuleWrapper.free(heightPtr);
         throw new PdfError('');
       }
 
       const page = {
         index,
         size: {
-          width: this.wasmModule.getValue(width, 'double'),
-          height: this.wasmModule.getValue(height, 'double'),
+          width: this.wasmModule.getValue(widthPtr, 'double'),
+          height: this.wasmModule.getValue(heightPtr, 'double'),
         },
       };
 
       pages.push(page);
     }
-    this.wasmModuleWrapper.free(width);
-    this.wasmModuleWrapper.free(height);
+    this.wasmModuleWrapper.free(ptr);
+    this.wasmModuleWrapper.free(widthPtr);
+    this.wasmModuleWrapper.free(heightPtr);
 
     return {
-      id: doc,
+      id: docPtr,
       pageCount,
       pages,
     };
@@ -143,24 +145,17 @@ export class PdfiumEngine implements PdfEngine<number> {
     docPtr: number,
     bookmarkPtr: number
   ): PdfBookmarkObject {
-    const defaultLength = 100;
-    let buffer = this.wasmModuleWrapper.malloc(defaultLength);
-    const actualLength = this.wasmModuleWrapper.FPDFBookmark_GetTitle(
-      bookmarkPtr,
-      buffer,
-      defaultLength
+    const title = readString(
+      this.wasmModuleWrapper,
+      (buffer, bufferLength) => {
+        return this.wasmModuleWrapper.FPDFBookmark_GetTitle(
+          bookmarkPtr,
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
     );
-    if (actualLength > defaultLength) {
-      this.wasmModuleWrapper.free(buffer);
-      buffer = this.wasmModuleWrapper.malloc(actualLength);
-      this.wasmModuleWrapper.FPDFBookmark_GetTitle(
-        bookmarkPtr,
-        buffer,
-        defaultLength
-      );
-    }
-    const title = this.wasmModule.UTF16ToString(buffer);
-    this.wasmModuleWrapper.free(buffer);
 
     const bookmarks = this.readPdfBookmarks(docPtr, bookmarkPtr);
 
@@ -168,6 +163,7 @@ export class PdfiumEngine implements PdfEngine<number> {
       this.wasmModuleWrapper.FPDFBookmark_GetAction(bookmarkPtr);
     if (!actionPtr) {
       const action = this.readPdfAction(docPtr, actionPtr);
+      this.wasmModuleWrapper.free(actionPtr);
       return {
         title,
         target: {
@@ -182,6 +178,7 @@ export class PdfiumEngine implements PdfEngine<number> {
         bookmarkPtr
       );
       const destination = this.readPdfDestination(docPtr, destinationPtr);
+      this.wasmModuleWrapper.free(destinationPtr);
       return {
         title,
         target: {
@@ -208,6 +205,7 @@ export class PdfiumEngine implements PdfEngine<number> {
           actionPtr
         );
         const destination = this.readPdfDestination(docPtr, destinationPtr);
+        this.wasmModuleWrapper.free(destinationPtr);
         return {
           type: PdfActionType.Goto,
           destination,
@@ -281,7 +279,7 @@ export class PdfiumEngine implements PdfEngine<number> {
       const paramPtr = paramsPtr + i * 4;
       params.push(this.wasmModule.getValue(paramPtr, 'float'));
     }
-    this.wasmModuleWrapper.free(paramsCount);
+    this.wasmModuleWrapper.free(paramsCountPtr);
     this.wasmModuleWrapper.free(paramsPtr);
 
     return {
