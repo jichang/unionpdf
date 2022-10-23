@@ -15,7 +15,7 @@ describe('PdfEngineContextProvider ', () => {
     const engine = usePdfEngine();
 
     if (engine) {
-      engine.open(buffer, signal);
+      engine.openDocument(buffer, signal);
     }
 
     return <div></div>;
@@ -35,8 +35,8 @@ describe('PdfEngineContextProvider ', () => {
       engine.openDefer.resolve(createMockPdfDocument());
     });
 
-    expect(engine.open).toBeCalledTimes(1);
-    expect(engine.open).toBeCalledWith(buffer, abortController.signal);
+    expect(engine.openDocument).toBeCalledTimes(1);
+    expect(engine.openDocument).toBeCalledWith(buffer, abortController.signal);
 
     result?.unmount();
   });

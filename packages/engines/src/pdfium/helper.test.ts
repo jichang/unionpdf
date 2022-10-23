@@ -1,15 +1,15 @@
 import { readString } from './helper';
-import { WasmModuleWrapper } from './wrapper';
+import { WasmModule } from './wasm';
 
 describe('readString', () => {
   it('should manage memory and call callback with buffer', () => {
     const ptr = Math.random();
-    const mockWasmModuleWrapper = {
-      malloc: jest.fn(() => {
+    const mockWasmModule = {
+      _malloc: jest.fn(() => {
         return ptr;
       }),
-      free: jest.fn(),
-    } as unknown as WasmModuleWrapper;
+      _free: jest.fn(),
+    } as unknown as WasmModule;
     const readChars = jest.fn(() => {
       return 10;
     });
@@ -17,9 +17,9 @@ describe('readString', () => {
       return 'hello';
     });
 
-    const str = readString(mockWasmModuleWrapper, readChars, parseChars);
-    expect(mockWasmModuleWrapper.malloc).toBeCalledWith(100);
-    expect(mockWasmModuleWrapper.free).toBeCalledWith(ptr);
+    const str = readString(mockWasmModule, readChars, parseChars);
+    expect(mockWasmModule._malloc).toBeCalledWith(100);
+    expect(mockWasmModule._free).toBeCalledWith(ptr);
     expect(readChars).toBeCalledWith(ptr, 100);
     expect(str).toBe('hello');
   });

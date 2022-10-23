@@ -25,7 +25,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     });
   }
   return {
-    open: async (url: Uint8Array) => {
+    openDocument: async (url: Uint8Array) => {
       return {
         id: undefined,
         pageCount: pageCount,
@@ -46,7 +46,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     getPageAnnotations: (doc: PdfDocumentObject, page: PdfPageObject) => {
       return [];
     },
-    close: async (pdf: PdfDocumentObject) => {},
+    closeDocument: async (pdf: PdfDocumentObject) => {},
     ...engine,
   };
 }

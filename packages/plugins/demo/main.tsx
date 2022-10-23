@@ -135,7 +135,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     });
   }
   return {
-    open: async (url: PdfSource) => {
+    openDocument: async (url: PdfSource) => {
       return {
         id: undefined,
         pageCount: pageCount,
@@ -285,7 +285,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
 
       return [pdfLinkAnnoObject1, pdfLinkAnnoObject2];
     },
-    close: async (pdf: PdfDocumentObject) => {},
+    closeDocument: async (pdf: PdfDocumentObject) => {},
     ...engine,
   };
 }

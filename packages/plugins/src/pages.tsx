@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
+import { PdfPageObject, Rotation, Size, calculateSize } from '@unionpdf/models';
 import {
   PdfNavigatorEvent,
   PdfNavigatorGotoPageEvent,
@@ -13,7 +13,6 @@ import {
   usePdfNavigator,
 } from '@unionpdf/core';
 import './pages.css';
-import { calculatePageSize } from './helpers/page';
 import { calculateRectStyle } from './helpers/annotation';
 import { ErrorBoundary } from './errorboundary';
 
@@ -63,7 +62,7 @@ export function PdfPages(props: PdfPagesProps) {
     let pageOffset = pageGap;
     return pdfDoc?.pages.map((page) => {
       const offset = pageOffset;
-      const visualSize = calculatePageSize(page.size, scaleFactor, rotation);
+      const visualSize = calculateSize(page.size, scaleFactor, rotation);
       pageOffset = pageOffset + visualSize.height + pageGap;
 
       return {

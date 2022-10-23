@@ -203,7 +203,7 @@ export interface PdfEngine<T = undefined> {
   isSupport?: (
     feature: PdfEngineFeature
   ) => PdfEngineFunResult<PdfEngineOperation[]>;
-  open: (
+  openDocument: (
     data: PdfSource,
     signal?: AbortSignal
   ) => PdfEngineFunResult<PdfDocumentObject<T>>;
@@ -231,7 +231,7 @@ export interface PdfEngine<T = undefined> {
     rotation: Rotation,
     signal?: AbortSignal
   ) => PdfEngineFunResult<ImageData>;
-  close: (
+  closeDocument: (
     pdf: PdfDocumentObject<T>,
     signal?: AbortSignal
   ) => PdfEngineFunResult<void>;

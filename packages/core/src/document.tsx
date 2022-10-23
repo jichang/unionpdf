@@ -44,7 +44,7 @@ export function PdfDocument(props: PdfDocumentProps) {
         signal: AbortSignal
       ) => {
         try {
-          const doc = await engine.open(source, signal);
+          const doc = await engine.openDocument(source, signal);
           setDoc(doc);
           onOpenSuccessRef.current?.(doc);
         } catch (e: unknown) {
@@ -60,6 +60,14 @@ export function PdfDocument(props: PdfDocumentProps) {
       };
     }
   }, [engine, source]);
+
+  useEffect(() => {
+    return () => {
+      if (doc && engine) {
+        engine.closeDocument(doc);
+      }
+    };
+  }, [engine, doc]);
 
   const themeStyle = useMemo(() => {
     const styles = {} as Record<string, string | number>;

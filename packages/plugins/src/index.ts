@@ -6,4 +6,3 @@ export * from './pageLayers/annotations';
 export * from './annotations/annotation';
 export * from './annotations/link';
 export * from './annotations/text';
-export * from './helpers/page';

@@ -20,7 +20,7 @@ export function createMockPdfEngine(
   const openDefer = new Defer<PdfDocumentObject>();
 
   return {
-    open: jest.fn(async (url: PdfSource) => {
+    openDocument: jest.fn(async (url: PdfSource) => {
       return openDefer.promise;
     }),
     openDefer,
@@ -141,7 +141,7 @@ export function createMockPdfEngine(
         return [link];
       }
     ),
-    close: async (pdf: PdfDocumentObject) => {},
+    closeDocument: async (pdf: PdfDocumentObject) => {},
     ...engine,
   };
 }

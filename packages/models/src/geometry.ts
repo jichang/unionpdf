@@ -23,3 +23,17 @@ export interface Rect {
   origin: Position;
   size: Size;
 }
+
+export function calculateSize(
+  size: Size,
+  scaleFactor: number,
+  rotation: Rotation
+) {
+  const rotatedPageSize = rotation % 2 === 0 ? size : swap(size);
+  const scaledPageSize = {
+    width: Math.ceil(rotatedPageSize.width * scaleFactor),
+    height: Math.ceil(rotatedPageSize.height * scaleFactor),
+  };
+
+  return scaledPageSize;
+}

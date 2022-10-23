@@ -32,11 +32,31 @@ async function run() {
     if (file) {
       const abortController = new AbortController();
       const arrayBuffer = await readFile(file);
-      const result = engine.open(arrayBuffer);
-      const bookmarks = engine.getBookmarks(result, abortController.signal);
-      bookmarksElem.innerText = JSON.stringify(bookmarks, null, 2);
+      const doc = engine.openDocument(arrayBuffer);
+      const bookmarks = engine.getBookmarks(doc, abortController.signal);
+      console.log(bookmarks);
 
-      engine.close(result);
+      const page = doc.pages[0];
+
+      const imageData = engine.renderPage(doc, page, 1, 0);
+
+      canvasElem.style.width = `${page.size.width}px`;
+      canvasElem.style.height = `${page.size.height}px`;
+      canvasElem.width = imageData.width;
+      canvasElem.height = imageData.height;
+
+      const ctx = canvasElem.getContext('2d');
+      ctx?.putImageData(
+        imageData,
+        0,
+        0,
+        0,
+        0,
+        imageData.width,
+        imageData.height
+      );
+
+      engine.closeDocument(doc);
       engine.destroy();
     }
   });

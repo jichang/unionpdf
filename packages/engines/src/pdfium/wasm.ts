@@ -48,6 +48,8 @@ export type CWrap = <T extends ArgTypeStr, U extends readonly ArgTypeStr[]>(
 
 export interface WasmModule {
   cwrap: CWrap;
+  _malloc: (size: number) => number;
+  _free: (ptr: number) => void;
   HEAP8: {
     set: (source: Int8Array, target: number) => void;
   };
