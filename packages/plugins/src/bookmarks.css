@@ -1,0 +1,12 @@
+.pdf__bookmarks ol {
+  list-style: none;
+  padding-left: 1rem;
+}
+
+.pdf__bookmarks__entry {
+  padding: 0.5rem 0;
+}
+
+.pdf__bookmarks__entry.pdf__bookmarks__entry--current span {
+  font-weight: bold;
+}

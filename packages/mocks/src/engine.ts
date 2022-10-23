@@ -6,6 +6,7 @@ import {
   PdfLinkAnnoObject,
   Rotation,
   swap,
+  PdfZoomMode,
 } from '@unionpdf/models';
 import { Defer } from './defer';
 
@@ -23,20 +24,47 @@ export function createMockPdfEngine(
       return openDefer.promise;
     }),
     openDefer,
-    getOutlines: (doc: PdfDocumentObject) => {
+    getBookmarks: (doc: PdfDocumentObject) => {
       return {
-        entries: [
+        bookmarks: [
           {
-            text: 'Page 1',
-            pageIndex: 1,
+            title: 'Page 1',
+            target: {
+              type: 'destination',
+              destination: {
+                pageIndex: 1,
+                zoom: {
+                  mode: PdfZoomMode.FitPage,
+                  params: [],
+                },
+              },
+            },
           },
           {
-            text: 'Page 2',
-            pageIndex: 2,
+            title: 'Page 2',
+            target: {
+              type: 'destination',
+              destination: {
+                pageIndex: 2,
+                zoom: {
+                  mode: PdfZoomMode.FitPage,
+                  params: [],
+                },
+              },
+            },
             children: [
               {
-                text: 'Page 3',
-                pageIndex: 3,
+                title: 'Page 3',
+                target: {
+                  type: 'destination',
+                  destination: {
+                    pageIndex: 3,
+                    zoom: {
+                      mode: PdfZoomMode.FitPage,
+                      params: [],
+                    },
+                  },
+                },
               },
             ],
           },

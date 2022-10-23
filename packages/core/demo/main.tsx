@@ -38,9 +38,9 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     renderThumbnail: (doc: PdfDocumentObject, page: PdfPageObject) => {
       return new ImageData(page.size.width, page.size.height);
     },
-    getOutlines: (doc: PdfDocumentObject) => {
+    getBookmarks: (doc: PdfDocumentObject) => {
       return {
-        entries: [],
+        bookmarks: [],
       };
     },
     getPageAnnotations: (doc: PdfDocumentObject, page: PdfPageObject) => {

@@ -1,5 +1,5 @@
 export * from './thumbnails';
-export * from './outlines';
+export * from './bookmarks';
 export * from './pages';
 export * from './pageLayers/canvas';
 export * from './pageLayers/annotations';

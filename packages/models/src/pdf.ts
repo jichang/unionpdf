@@ -11,14 +11,67 @@ export interface PdfDocumentObject<T = undefined> {
   pages: PdfPageObject[];
 }
 
-export interface PdfOutlineEntryObject {
-  text: string;
-  pageIndex: number;
-  children?: PdfOutlineEntryObject[];
+export enum PdfZoomMode {
+  XYZ = 1, // Zoom level with specified offset.
+  FitPage = 2, // Fit both the width and height of the page (whichever smaller).
+  FitHorizontal = 3, // Fit the page width.
+  FitVertical = 4, // Fit the page height.
+  FitRectangle = 5, // Fit a specific rectangle area within the window.
 }
 
-export interface PdfOutlinesObject {
-  entries: PdfOutlineEntryObject[];
+export interface PdfDestinationObject {
+  pageIndex: number;
+  zoom: {
+    mode: PdfZoomMode;
+    params: number[];
+  };
+}
+
+export enum PdfActionType {
+  Unsupported = 0,
+  Goto = 1,
+  RemoteGoto = 2,
+  URI = 3,
+  LaunchAppOrOpenFile = 4,
+}
+
+export type PdfActionObject =
+  | {
+      type: PdfActionType.Unsupported;
+    }
+  | {
+      type: PdfActionType.Goto;
+      destination: PdfDestinationObject;
+    }
+  | {
+      type: PdfActionType.RemoteGoto;
+      destination: PdfDestinationObject;
+    }
+  | {
+      type: PdfActionType.URI;
+      uri: string;
+    }
+  | {
+      type: PdfActionType.LaunchAppOrOpenFile;
+      path: string;
+    };
+
+export interface PdfBookmarkObject {
+  title: string;
+  target:
+    | {
+        type: 'action';
+        action: PdfActionObject;
+      }
+    | {
+        type: 'destination';
+        destination: PdfDestinationObject;
+      };
+  children?: PdfBookmarkObject[];
+}
+
+export interface PdfBookmarksObject {
+  bookmarks: PdfBookmarkObject[];
 }
 
 export interface PdfAnnotationObjectBase {
@@ -135,7 +188,7 @@ export type PdfEngineFunResult<T> = T | Promise<T>;
 export enum PdfEngineFeature {
   Pages,
   Thumbnails,
-  Outlines,
+  Bookmarks,
   Annotations,
 }
 
@@ -154,10 +207,10 @@ export interface PdfEngine<T = undefined> {
     data: PdfSource,
     signal?: AbortSignal
   ) => PdfEngineFunResult<PdfDocumentObject<T>>;
-  getOutlines: (
+  getBookmarks: (
     doc: PdfDocumentObject<T>,
-    signal: AbortSignal
-  ) => PdfEngineFunResult<PdfOutlinesObject>;
+    signal?: AbortSignal
+  ) => PdfEngineFunResult<PdfBookmarksObject>;
   renderPage: (
     doc: PdfDocumentObject<T>,
     page: PdfPageObject,

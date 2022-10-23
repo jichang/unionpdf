@@ -14,6 +14,7 @@ import {
   Rotation,
   swap,
   PdfTextAnnoObject,
+  PdfZoomMode,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -28,7 +29,7 @@ import {
 import { PdfToolbar } from '../src/toolbar';
 import { PdfThumbnails } from '../src/thumbnails';
 import { PdfPageContentComponentProps, PdfPages } from '../src/pages';
-import { PdfOutlines } from '../src/outlines';
+import { PdfBookmarks } from '../src/bookmarks';
 import { PdfPageCanvas } from '../src/pageLayers/canvas';
 import {
   PdfPageAnnotationComponentProps,
@@ -119,7 +120,7 @@ const rgbValues = [
   [0, 0, 63, 255],
 ];
 
-function createMockPdfEngine(engine?: Partial<PdfEngine>) {
+function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
   const pageCount = 10;
   const pageWidth = 640;
   const pageHeight = 480;
@@ -145,20 +146,47 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>) {
         pages: pages,
       };
     },
-    getOutlines: (doc: PdfDocumentObject) => {
+    getBookmarks: (doc: PdfDocumentObject) => {
       return {
-        entries: [
+        bookmarks: [
           {
-            text: 'Page 1',
-            pageIndex: 0,
+            title: 'Page 1',
+            target: {
+              type: 'destination',
+              destination: {
+                pageIndex: 1,
+                zoom: {
+                  mode: PdfZoomMode.FitPage,
+                  params: [],
+                },
+              },
+            },
           },
           {
-            text: 'Page 2',
-            pageIndex: 1,
+            title: 'Page 2',
+            target: {
+              type: 'destination',
+              destination: {
+                pageIndex: 2,
+                zoom: {
+                  mode: PdfZoomMode.FitPage,
+                  params: [],
+                },
+              },
+            },
             children: [
               {
-                text: 'Page 3',
-                pageIndex: 2,
+                title: 'Page 3',
+                target: {
+                  type: 'destination',
+                  destination: {
+                    pageIndex: 3,
+                    zoom: {
+                      mode: PdfZoomMode.FitPage,
+                      params: [],
+                    },
+                  },
+                },
               },
             ],
           },
@@ -288,12 +316,12 @@ function App() {
     }
   }, [pdfAppElemRef.current]);
 
-  const [outlinesIsVisible, setOutlinesIsVisible] = useState(false);
-  const toggleOutlinesIsVisible = useCallback(() => {
-    setOutlinesIsVisible((isVisible) => {
+  const [bookmarksIsVisible, setBookmarksIsVisible] = useState(false);
+  const toggleBookmarksIsVisible = useCallback(() => {
+    setBookmarksIsVisible((isVisible) => {
       return !isVisible;
     });
-  }, [setOutlinesIsVisible]);
+  }, [setBookmarksIsVisible]);
 
   const [thumbnailsIsVisible, setThumbnailsIsVisible] = useState(false);
   const toggleThumbnailsIsVisible = useCallback(() => {
@@ -348,7 +376,7 @@ function App() {
                     size={{ width: 100, height: 100 }}
                   />
                 ) : null}
-                {outlinesIsVisible ? <PdfOutlines /> : null}
+                {bookmarksIsVisible ? <PdfBookmarks /> : null}
                 <div className="pdf__toolbar__container">
                   <PdfToolbar
                     scaleFactor={scaleFactor}

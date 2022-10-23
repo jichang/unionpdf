@@ -3,10 +3,10 @@ import React from 'react';
 import { act, render } from '@testing-library/react';
 import { PdfDocument, PdfEngineContextProvider } from '@unionpdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
-import { PdfOutlines } from './outlines';
+import { PdfBookmarks } from './bookmarks';
 
-describe('PdfOutline', () => {
-  test('should render pdf outline', async () => {
+describe('PdfBookmark', () => {
+  test('should render pdf bookmark', async () => {
     const pdf = createMockPdfDocument();
     const engine = createMockPdfEngine();
     const result = render(
@@ -16,7 +16,7 @@ describe('PdfOutline', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfOutlines />
+          <PdfBookmarks />
         </PdfDocument>
       </PdfEngineContextProvider>
     );
@@ -26,8 +26,8 @@ describe('PdfOutline', () => {
       await engine.openDefer.promise;
     });
 
-    expect(document.querySelector('.pdf__outlines')).toBeDefined();
-    expect(document.querySelectorAll('.pdf__outlines__entry').length).toEqual(
+    expect(document.querySelector('.pdf__bookmarks')).toBeDefined();
+    expect(document.querySelectorAll('.pdf__bookmarks__entry').length).toEqual(
       2
     );
 

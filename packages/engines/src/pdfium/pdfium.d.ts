@@ -1,3 +1,3 @@
 import { ModuleInit, WasmModule } from './wasm';
 
-export function create(init: ModuleInit): WasmModule;
+export function createPdfiumModule(init: ModuleInit): Promise<WasmModule>;

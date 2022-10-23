@@ -1,5 +1,6 @@
 import { PdfiumEngine } from '../src/index';
 import wasmFile from 'url:../src/pdfium/pdfium.wasm';
+import { createPdfiumModule } from '../src/pdfium/pdfium';
 
 async function readFile(file: File): Promise<ArrayBuffer> {
   return new Promise((resolve) => {
@@ -14,19 +15,29 @@ async function readFile(file: File): Promise<ArrayBuffer> {
 
 async function run() {
   const response = await fetch(wasmFile);
-  const body = await response.arrayBuffer();
-  const engine = new PdfiumEngine();
-  engine.initialize({ wasmBinary: body });
+  const wasmBinary = await response.arrayBuffer();
+  const wasmModule = await createPdfiumModule({ wasmBinary });
+  const engine = new PdfiumEngine(wasmModule);
 
-  const input = document.getElementById('pdf-file') as HTMLInputElement;
-  const canvas = document.getElementById('pdf-canvas') as HTMLCanvasElement;
+  engine.initialize();
 
-  input?.addEventListener('input', async (evt) => {
+  const inputElem = document.getElementById('pdf-file') as HTMLInputElement;
+  const bookmarksElem = document.getElementById(
+    'pdf-bookmarks'
+  ) as HTMLParagraphElement;
+  const canvasElem = document.getElementById('pdf-canvas') as HTMLCanvasElement;
+
+  inputElem?.addEventListener('input', async (evt) => {
     const file = (evt.target as HTMLInputElement).files?.[0];
     if (file) {
+      const abortController = new AbortController();
       const arrayBuffer = await readFile(file);
       const result = engine.open(arrayBuffer);
-      console.log(result);
+      const bookmarks = engine.getBookmarks(result, abortController.signal);
+      bookmarksElem.innerText = JSON.stringify(bookmarks, null, 2);
+
+      engine.close(result);
+      engine.destroy();
     }
   });
 }

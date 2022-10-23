@@ -81,12 +81,7 @@ function App() {
 
 ### PDF Engine
 
-PDF engine is used for parsing and rendering PDF file. Right now, there's no PDF engine in this repo, you need to build your own engine, like providing an object that contains all the methods specified in the [PdfEngine](./packages/models/src/index.ts).
-
-There are several ways for building pdf engine
-
-1. build it from scratch (more work, but easier to control)
-2. compiling PDFium to WASM (this should be easier)
+PDF engine is used for parsing and rendering PDF file. Right now, there's Pdfium-based engine which is not completed yet. Welcome to contribute to it.
 
 ### PDF Page Layer
 
