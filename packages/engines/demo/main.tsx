@@ -25,36 +25,39 @@ async function run() {
   const bookmarksElem = document.getElementById(
     'pdf-bookmarks'
   ) as HTMLParagraphElement;
-  const canvasElem = document.getElementById('pdf-canvas') as HTMLCanvasElement;
 
   inputElem?.addEventListener('input', async (evt) => {
     const file = (evt.target as HTMLInputElement).files?.[0];
     if (file) {
-      const abortController = new AbortController();
       const arrayBuffer = await readFile(file);
       const doc = engine.openDocument(arrayBuffer);
-      const bookmarks = engine.getBookmarks(doc, abortController.signal);
-      console.log(bookmarks);
 
-      const page = doc.pages[0];
+      for (let i = 0; i < doc.pageCount; i++) {
+        const page = doc.pages[i];
 
-      const imageData = engine.renderPage(doc, page, 1, 0);
+        const imageData = engine.renderPage(doc, page, 2, 0);
 
-      canvasElem.style.width = `${page.size.width}px`;
-      canvasElem.style.height = `${page.size.height}px`;
-      canvasElem.width = imageData.width;
-      canvasElem.height = imageData.height;
+        const canvasElem = document.createElement(
+          'canvas'
+        ) as HTMLCanvasElement;
+        const rootElem = document.getElementById('root') as HTMLDivElement;
+        rootElem.appendChild(canvasElem);
+        canvasElem.style.width = `${page.size.width}px`;
+        canvasElem.style.height = `${page.size.height}px`;
+        canvasElem.width = imageData.width;
+        canvasElem.height = imageData.height;
 
-      const ctx = canvasElem.getContext('2d');
-      ctx?.putImageData(
-        imageData,
-        0,
-        0,
-        0,
-        0,
-        imageData.width,
-        imageData.height
-      );
+        const ctx = canvasElem.getContext('2d');
+        ctx?.putImageData(
+          imageData,
+          0,
+          0,
+          0,
+          0,
+          imageData.width,
+          imageData.height
+        );
+      }
 
       engine.closeDocument(doc);
       engine.destroy();

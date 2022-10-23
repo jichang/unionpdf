@@ -25,9 +25,9 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     });
   }
   return {
-    openDocument: async (url: Uint8Array) => {
+    openDocument: async (url: ArrayBuffer) => {
       return {
-        id: undefined,
+        id: 'id',
         pageCount: pageCount,
         pages: pages,
       };

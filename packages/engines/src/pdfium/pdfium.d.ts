@@ -1,3 +1,7 @@
-import { ModuleInit, WasmModule } from './wasm';
+import { Module, ModuleRuntimeMethods } from './emscripten';
 
-export function createPdfiumModule(init: ModuleInit): Promise<WasmModule>;
+export interface PdfiumModule extends Module, ModuleRuntimeMethods {}
+
+export function createPdfiumModule(
+  init: Partial<PdfiumModule>
+): Promise<PdfiumModule>;

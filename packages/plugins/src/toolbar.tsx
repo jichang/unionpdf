@@ -98,7 +98,6 @@ export function PdfToolbar(props: PdfToolbarProps) {
 
   return (
     <ErrorBoundary>
-      {' '}
       <ToolbarComponent className="pdf__toolbar" {...rest}>
         <SelectComponent
           className="pdf__toolbar__select"

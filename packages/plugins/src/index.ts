@@ -1,3 +1,4 @@
+export * from './toolbar';
 export * from './thumbnails';
 export * from './bookmarks';
 export * from './pages';

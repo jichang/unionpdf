@@ -137,7 +137,7 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
   return {
     openDocument: async (url: PdfSource) => {
       return {
-        id: undefined,
+        id: 'id',
         pageCount: pageCount,
         size: {
           width: pageWidth,

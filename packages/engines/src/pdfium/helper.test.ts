@@ -1,5 +1,5 @@
 import { readString } from './helper';
-import { WasmModule } from './wasm';
+import { PdfiumModule } from './pdfium';
 
 describe('readString', () => {
   it('should manage memory and call callback with buffer', () => {
@@ -9,7 +9,7 @@ describe('readString', () => {
         return ptr;
       }),
       _free: jest.fn(),
-    } as unknown as WasmModule;
+    } as unknown as PdfiumModule;
     const readChars = jest.fn(() => {
       return 10;
     });

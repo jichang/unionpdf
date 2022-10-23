@@ -15,11 +15,11 @@ import {
   Rect,
   Rotation,
 } from '@unionpdf/models';
-import { WasmModule } from './wasm';
 import { WrappedModule, wrap } from './wrapper';
 import { readString } from './helper';
+import { PdfiumModule } from './pdfium';
 
-export type PdfiumPdfDocumentObject = PdfDocumentObject<number>;
+export type PdfiumPdfDocumentObject = PdfDocumentObject;
 
 export enum BitmapFormat {
   Bitmap_Gray = 1,
@@ -42,64 +42,63 @@ export enum RenderFlag {
 }
 
 export const wrappedModuleMethods = {
-  UTF8ToString: ['string' as const, ['number'] as const] as const,
-  UTF16ToString: ['string', ['number'] as const] as const,
-  UTF32ToString: ['string', ['number'] as const] as const,
-  AsciiToString: ['string', ['number'] as const] as const,
-  PDFium_Init: ['', [] as const] as const,
+  UTF8ToString: [['number'] as const, 'string' as const] as const,
+  UTF16ToString: [['number'] as const, 'string'] as const,
+  UTF32ToString: [['number'] as const, 'string'] as const,
+  AsciiToString: [['number'] as const, 'string'] as const,
+  PDFium_Init: [[] as const, ''] as const,
   FPDF_LoadMemDocument: [
-    'number' as const,
     ['number', 'number', 'string'] as const,
+    'number' as const,
   ] as const,
   FPDF_GetPageSizeByIndex: [
-    'number',
     ['number', 'number', 'number', 'number'] as const,
+    'number',
   ] as const,
-  FPDF_GetLastError: ['number', [] as const] as const,
-  FPDF_GetPageCount: ['number', ['number'] as const] as const,
-  FPDF_CloseDocument: ['', ['number'] as const] as const,
-  FPDF_DestroyLibrary: ['', [] as const] as const,
+  FPDF_GetLastError: [[] as const, 'number'] as const,
+  FPDF_GetPageCount: [['number'] as const, 'number'] as const,
+  FPDF_CloseDocument: [['number'] as const, ''] as const,
+  FPDF_DestroyLibrary: [[] as const, ''] as const,
   FPDFBitmap_FillRect: [
-    '',
     ['number', 'number', 'number', 'number', 'number', 'number'] as const,
+    '',
   ] as const,
   FPDFBitmap_CreateEx: [
-    'number',
     ['number', 'number', 'number', 'number', 'number'] as const,
-  ] as const,
-  FPDFBitmap_Destroy: ['', ['number'] as const] as const,
-  FPDFBookmark_GetFirstChild: [
     'number',
+  ] as const,
+  FPDFBitmap_Destroy: [['number'] as const, ''] as const,
+  FPDFBookmark_GetFirstChild: [
     ['number', 'number'] as const,
+    'number',
   ] as const,
   FPDFBookmark_GetNextSibling: [
-    'number',
     ['number', 'number'] as const,
+    'number',
   ] as const,
   FPDFBookmark_GetTitle: [
-    'number',
     ['number', 'number', 'number'] as const,
+    'number',
   ] as const,
-  FPDFBookmark_GetAction: ['number', ['number'] as const] as const,
-  FPDFBookmark_GetDest: ['number', ['number', 'number'] as const] as const,
-  FPDFAction_GetType: ['number', ['number'] as const] as const,
+  FPDFBookmark_GetAction: [['number'] as const, 'number'] as const,
+  FPDFBookmark_GetDest: [['number', 'number'] as const, 'number'] as const,
+  FPDFAction_GetType: [['number'] as const, 'number'] as const,
   FPDFAction_GetFilePath: [
-    'number',
     ['number', 'number', 'number'] as const,
+    'number',
   ] as const,
-  FPDFAction_GetDest: ['number', ['number', 'number'] as const] as const,
+  FPDFAction_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFAction_GetURIPath: [
-    'number',
     ['number', 'number', 'number'] as const,
+    'number',
   ] as const,
-  FPDFDest_GetDestPageIndex: ['number', ['number', 'number'] as const] as const,
+  FPDFDest_GetDestPageIndex: [['number', 'number'] as const, 'number'] as const,
   FPDFDest_GetView: [
-    'number',
     ['number', 'number', 'number'] as const,
+    'number',
   ] as const,
-  FPDF_LoadPage: ['number', ['number', 'number'] as const] as const,
+  FPDF_LoadPage: [['number', 'number'] as const, 'number'] as const,
   FPDF_RenderPageBitmap: [
-    '',
     [
       'number',
       'number',
@@ -110,19 +109,27 @@ export const wrappedModuleMethods = {
       'number',
       'number',
     ] as const,
+    '',
   ] as const,
-  FPDFPage_GetAnnotCount: ['number', ['number'] as const] as const,
-  FPDFPage_GetAnnot: ['number', ['number', 'number'] as const] as const,
-  FPDF_ClosePage: ['', ['number'] as const] as const,
-  FPDFAnnot_GetSubtype: ['number', ['number'] as const] as const,
-  FPDFPage_CloseAnnot: ['', ['number'] as const] as const,
+  FPDFPage_GetAnnotCount: [['number'] as const, 'number'] as const,
+  FPDFPage_GetAnnot: [['number', 'number'] as const, 'number'] as const,
+  FPDF_ClosePage: [['number'] as const, ''] as const,
+  FPDFAnnot_GetSubtype: [['number'] as const, 'number'] as const,
+  FPDFPage_CloseAnnot: [['number'] as const, ''] as const,
 };
 
-export class PdfiumEngine implements PdfEngine<number> {
+export class PdfiumEngine implements PdfEngine {
   wasmModuleWrapper: WrappedModule<typeof wrappedModuleMethods>;
+  docs: Record<
+    string,
+    {
+      filePtr: number;
+      docPtr: number;
+    }
+  > = {};
 
-  constructor(private wasmModule: WasmModule) {
-    this.wasmModuleWrapper = wrap(wasmModule, wrappedModuleMethods);
+  constructor(private wasmModule: PdfiumModule) {
+    this.wasmModuleWrapper = wrap(wasmModule.cwrap, wrappedModuleMethods);
   }
 
   initialize() {
@@ -139,12 +146,16 @@ export class PdfiumEngine implements PdfEngine<number> {
   ): PdfiumPdfDocumentObject {
     const array = new Uint8Array(arrayBuffer);
     const length = array.length;
-    const ptr = this.wasmModule._malloc(length);
-    this.wasmModule.HEAPU8.set(array, ptr);
+    const filePtr = this.wasmModule._malloc(length);
+    this.wasmModule.HEAPU8.set(array, filePtr);
 
-    const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(ptr, length, '');
+    const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(
+      filePtr,
+      length,
+      ''
+    );
     if (this.wasmModuleWrapper.FPDF_GetLastError()) {
-      this.wasmModule._free(ptr);
+      this.wasmModule._free(filePtr);
       throw new PdfError('');
     }
 
@@ -161,7 +172,7 @@ export class PdfiumEngine implements PdfEngine<number> {
         heightPtr
       );
       if (result === 0) {
-        this.wasmModule._free(ptr);
+        this.wasmModule._free(filePtr);
         this.wasmModule._free(docPtr);
         this.wasmModule._free(widthPtr);
         this.wasmModule._free(heightPtr);
@@ -178,44 +189,50 @@ export class PdfiumEngine implements PdfEngine<number> {
 
       pages.push(page);
     }
-    this.wasmModule._free(ptr);
     this.wasmModule._free(widthPtr);
     this.wasmModule._free(heightPtr);
 
+    const id = `${Date.now()}.${Math.random()}`;
+    this.docs[id] = {
+      filePtr,
+      docPtr,
+    };
+
     return {
-      id: docPtr,
+      id,
       pageCount,
       pages,
     };
   }
 
   getBookmarks(doc: PdfiumPdfDocumentObject, signal?: AbortSignal) {
-    const bookmarks = this.readPdfBookmarks(doc.id, 0);
+    const { docPtr } = this.docs[doc.id];
+    const bookmarks = this.readPdfBookmarks(docPtr, 0);
     return {
       bookmarks,
     };
   }
 
   renderPage(
-    doc: PdfDocumentObject<number>,
+    doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
     rect?: Rect | undefined,
     signal?: AbortSignal | undefined
   ) {
-    const format = BitmapFormat.Bitmap_BGRA; // RGBA
+    const { docPtr } = this.docs[doc.id];
+    const format = BitmapFormat.Bitmap_BGRA;
     const bytesPerPixel = 4;
-    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(doc.id, page.index);
     const bitmapSize = calculateSize(page.size, scaleFactor, rotation);
     const bitmapHeapLength =
       bitmapSize.width * bitmapSize.height * bytesPerPixel;
-    const bitmapHeap = this.wasmModule._malloc(bitmapHeapLength);
+    const bitmapHeapPtr = this.wasmModule._malloc(bitmapHeapLength);
     const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
       bitmapSize.width,
       bitmapSize.height,
       format,
-      bitmapHeap,
+      bitmapHeapPtr,
       bitmapSize.width * bytesPerPixel
     );
     this.wasmModuleWrapper.FPDFBitmap_FillRect(
@@ -227,6 +244,7 @@ export class PdfiumEngine implements PdfEngine<number> {
       0xffffffff
     );
     const flags = RenderFlag.REVERSE_BYTE_ORDER | RenderFlag.ANNOT;
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
     this.wasmModuleWrapper.FPDF_RenderPageBitmap(
       bitmapPtr,
       pagePtr,
@@ -237,27 +255,30 @@ export class PdfiumEngine implements PdfEngine<number> {
       rotation,
       flags
     );
-
     this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
-    const arrayBuffer = new ArrayBuffer(bitmapHeapLength);
-    const view = new DataView(arrayBuffer);
+    const buffer = new ArrayBuffer(bitmapHeapLength);
+    const dataView = new DataView(buffer);
     for (let i = 0; i < bitmapHeapLength; i++) {
-      view.setUint8(i, this.wasmModule.getValue(bitmapHeap + i, 'i8'));
+      dataView.setInt8(i, this.wasmModule.getValue(bitmapHeapPtr + i, 'i8'));
     }
-    this.wasmModule._free(bitmapHeap);
+    this.wasmModule._free(bitmapHeapPtr);
 
-    const uint8Array = new Uint8ClampedArray(arrayBuffer);
-    return new ImageData(uint8Array, bitmapSize.width, bitmapSize.height);
+    const array = new Uint8ClampedArray(buffer);
+    const imageData = new ImageData(bitmapSize.width, bitmapSize.height);
+    imageData.data.set(array);
+
+    return imageData;
   }
 
   getPageAnnotations(
-    doc: PdfDocumentObject<number>,
+    doc: PdfDocumentObject,
     page: PdfPageObject,
     signal?: AbortSignal | undefined
   ) {
-    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(doc.id, page.index);
+    const { docPtr } = this.docs[doc.id];
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
     const annotationCount =
       this.wasmModuleWrapper.FPDFPage_GetAnnotCount(pagePtr);
 
@@ -275,7 +296,7 @@ export class PdfiumEngine implements PdfEngine<number> {
   }
 
   renderThumbnail(
-    doc: PdfDocumentObject<number>,
+    doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
@@ -285,11 +306,13 @@ export class PdfiumEngine implements PdfEngine<number> {
   }
 
   closeDocument(
-    pdf: PdfiumPdfDocumentObject,
+    doc: PdfiumPdfDocumentObject,
     signal?: AbortSignal | undefined
   ) {
-    this.wasmModuleWrapper.FPDF_CloseDocument(pdf.id);
-    this.wasmModule._free(pdf.id);
+    const { docPtr, filePtr } = this.docs[doc.id];
+    this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
+    this.wasmModule._free(filePtr);
+    delete this.docs[doc.id];
   }
 
   readPdfBookmarks(docPtr: number, rootBookmarkPtr = 0) {

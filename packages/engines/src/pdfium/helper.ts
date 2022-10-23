@@ -1,7 +1,7 @@
-import { WasmModule } from './wasm';
+import { PdfiumModule } from './pdfium';
 
 export function readString(
-  wasmModule: WasmModule,
+  wasmModule: PdfiumModule,
   readChars: (buffer: number, bufferLength: number) => number,
   parseChars: (buffer: number) => string,
   defaultLength: number = 100

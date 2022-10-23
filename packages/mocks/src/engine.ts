@@ -11,7 +11,7 @@ import {
 import { Defer } from './defer';
 
 export interface MockPdfEngine extends PdfEngine {
-  openDefer: Defer<PdfDocumentObject<undefined>>;
+  openDefer: Defer<PdfDocumentObject>;
 }
 
 export function createMockPdfEngine(
@@ -164,7 +164,7 @@ export function createMockPdfDocument(
   }
 
   return {
-    id: undefined,
+    id: 'id',
     pageCount: pageCount,
     pages: pages,
     ...pdf,

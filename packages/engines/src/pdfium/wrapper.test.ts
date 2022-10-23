@@ -1,21 +1,19 @@
-import { WasmModule } from './wasm';
 import { wrap } from './wrapper';
 
 describe('wrap', () => {
   it('should return module with cwrap function', () => {
-    const fakeModule = {
-      cwrap: (identity: any, returnType: any, argTypes: any) => {
-        return {
-          identity,
-          returnType,
-          argTypes,
-        };
-      },
-    } as unknown as WasmModule;
+    const cwrap = (identity: any, returnType: any, argTypes: any) => {
+      return {
+        identity,
+        returnType,
+        argTypes,
+      };
+    };
 
-    const result = wrap(fakeModule, {
-      A: ['number', ['number', 'number'] as const] as const,
-      B: ['number', ['number', 'number'] as const] as const,
+    // @ts-ignore
+    const result = wrap(cwrap, {
+      A: [['number', 'number'] as const, 'number'] as const,
+      B: [['number', 'number', 'number'] as const, ''] as const,
     });
     expect(result).toEqual({
       A: {
@@ -24,9 +22,9 @@ describe('wrap', () => {
         returnType: 'number',
       },
       B: {
-        argTypes: ['number', 'number'],
+        argTypes: ['number', 'number', 'number'],
         identity: 'B',
-        returnType: 'number',
+        returnType: '',
       },
     });
   });

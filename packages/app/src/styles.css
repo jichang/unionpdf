@@ -31,8 +31,7 @@ body {
   width: 100%;
 }
 
-canvas {
-  display: block;
-  margin: 4px auto;
-  border: 1px solid black;
+.app__toolbar button,
+.app__toolbar input {
+  padding: 0.5rem;
 }
