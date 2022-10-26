@@ -1,6 +1,7 @@
 import { usePdfDocument, usePdfEngine } from '@unionpdf/core';
 import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
 import React, { useRef, useEffect } from 'react';
+import './canvas.css';
 
 export interface PdfPageCanvasLayerProps {
   page: PdfPageObject;
@@ -21,6 +22,8 @@ export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
     if (canvasElem && engine && doc && isVisible) {
       const abortController = new AbortController();
       const render = (imageData: ImageData) => {
+        canvasElem.width = imageData.width;
+        canvasElem.height = imageData.height;
         const ctx = canvasElem.getContext('2d');
         if (ctx) {
           ctx.putImageData(
@@ -62,8 +65,6 @@ export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
   return (
     <canvas
       className="pdf__page__layer pdf__page__layer--canvas"
-      width={visualSize.width}
-      height={visualSize.height}
       ref={canvasElemRef}
     />
   );

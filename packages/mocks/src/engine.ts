@@ -3,10 +3,12 @@ import {
   PdfSource,
   PdfEngine,
   PdfPageObject,
+  PdfAnnotationSubtype,
   PdfLinkAnnoObject,
   Rotation,
   swap,
   PdfZoomMode,
+  PdfActionType,
 } from '@unionpdf/models';
 import { Defer } from './defer';
 
@@ -118,13 +120,21 @@ export function createMockPdfEngine(
       }
     ),
     getPageAnnotations: jest.fn(
-      async (doc: PdfDocumentObject, page: PdfPageObject) => {
+      async (
+        doc: PdfDocumentObject,
+        page: PdfPageObject,
+        scaleFactor: number,
+        rotation: Rotation
+      ) => {
         const link: PdfLinkAnnoObject = {
           id: page.index + 1,
-          type: 'link',
+          type: PdfAnnotationSubtype.LINK,
           target: {
-            type: 'url',
-            url: 'https://localhost',
+            type: 'action',
+            action: {
+              type: PdfActionType.URI,
+              uri: 'https://localhost',
+            },
           },
           text: 'localhost',
           rect: {

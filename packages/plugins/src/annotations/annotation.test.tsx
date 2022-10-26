@@ -1,19 +1,29 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { PdfLinkAnnoObject } from '@unionpdf/models';
+import {
+  PdfAnnotationSubtype,
+  PdfLinkAnnoObject,
+  PdfZoomMode,
+} from '@unionpdf/models';
 import { PdfPageAnnotationBase } from './annotation';
 
 describe('PdfPageLink', () => {
   test('should render pdf link', async () => {
     const link: PdfLinkAnnoObject = {
       id: 0,
-      type: 'link',
+      type: PdfAnnotationSubtype.LINK,
       target: {
-        type: 'url',
-        url: 'https://localhost',
+        type: 'destination',
+        destination: {
+          pageIndex: 1,
+          zoom: {
+            mode: PdfZoomMode.XYZ,
+            params: [],
+          },
+        },
       },
-      text: 'Link',
+      text: 'rect link',
       rect: {
         origin: {
           x: 0,

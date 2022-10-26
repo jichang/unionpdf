@@ -1,6 +1,10 @@
-import { PdfiumEngine } from '../src/index';
-import wasmFile from 'url:../src/pdfium/pdfium.wasm';
-import { createPdfiumModule } from '../src/pdfium/pdfium';
+import {
+  pdfiumDebugWasm,
+  createDebugPdfiumModule,
+  pdfiumWasm,
+  createPdfiumModule,
+  PdfiumEngine,
+} from '../src/index';
 
 async function readFile(file: File): Promise<ArrayBuffer> {
   return new Promise((resolve) => {
@@ -14,9 +18,13 @@ async function readFile(file: File): Promise<ArrayBuffer> {
 }
 
 async function run() {
-  const response = await fetch(wasmFile);
+  const url = new URL(window.location.href);
+  const isDebug = !!url.searchParams.get('debug');
+  const response = await fetch(isDebug ? pdfiumDebugWasm : pdfiumWasm);
   const wasmBinary = await response.arrayBuffer();
-  const wasmModule = await createPdfiumModule({ wasmBinary });
+  const wasmModule = await (isDebug
+    ? createDebugPdfiumModule(pdfiumDebugWasm)
+    : createPdfiumModule({ wasmBinary }));
   const engine = new PdfiumEngine(wasmModule);
 
   engine.initialize();
@@ -32,10 +40,13 @@ async function run() {
       const arrayBuffer = await readFile(file);
       const doc = engine.openDocument(arrayBuffer);
 
+      const bookmarks = engine.getBookmarks(doc);
+      console.log(bookmarks);
+
       for (let i = 0; i < doc.pageCount; i++) {
         const page = doc.pages[i];
 
-        const imageData = engine.renderPage(doc, page, 2, 0);
+        const imageData = engine.renderPage(doc, page, 1, 0);
 
         const canvasElem = document.createElement(
           'canvas'
@@ -57,6 +68,9 @@ async function run() {
           imageData.width,
           imageData.height
         );
+
+        const annotations = engine.getPageAnnotations(doc, page, 1, 0);
+        console.log(page.index, annotations);
       }
 
       engine.closeDocument(doc);

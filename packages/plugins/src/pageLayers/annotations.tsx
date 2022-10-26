@@ -14,6 +14,7 @@ export type PdfPageAnnotationComponent = (
 ) => JSX.Element;
 
 export interface PdfPageAnnotationsProps {
+  isVisible: boolean;
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
@@ -22,6 +23,7 @@ export interface PdfPageAnnotationsProps {
 
 export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
   const {
+    isVisible,
     page,
     scaleFactor,
     rotation,
@@ -32,12 +34,14 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
 
   useEffect(() => {
-    if (engine && doc && page) {
+    if (engine && doc && page && isVisible) {
       const abortController = new AbortController();
       const load = async () => {
         const result = engine.getPageAnnotations(
           doc,
           page,
+          scaleFactor,
+          rotation,
           abortController.signal
         );
         if (result instanceof Promise) {
@@ -53,7 +57,7 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
         abortController.abort();
       };
     }
-  }, [engine, doc, page]);
+  }, [isVisible, engine, doc, page, scaleFactor, rotation]);
 
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">

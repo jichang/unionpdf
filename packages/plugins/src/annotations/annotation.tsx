@@ -19,11 +19,8 @@ export function PdfPageAnnotationBase(props: PdfPageAnnotationBaseProps) {
 
   return (
     <div
-      tabIndex={0}
       style={style}
-      className={`pdf__annotation pdf__annotation--${annotation.type} ${
-        className || ''
-      }`}
+      className={`pdf__annotation ${className || ''}`}
       {...rest}
     >
       {children}

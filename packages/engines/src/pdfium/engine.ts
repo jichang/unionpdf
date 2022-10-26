@@ -2,6 +2,9 @@ import {
   calculateSize,
   PdfActionObject,
   PdfAnnotationObject,
+  PdfAnnotationSubtype,
+  PdfLinkAnnoObject,
+  PdfTarget,
   PdfZoomMode,
 } from '@unionpdf/models';
 import { PdfDestinationObject } from '@unionpdf/models';
@@ -41,6 +44,8 @@ export enum RenderFlag {
   REVERSE_BYTE_ORDER = 0x10, // Set whether render in a reverse Byte order, this flag only.
 }
 
+export const DPR = window.devicePixelRatio || 1;
+
 export const wrappedModuleMethods = {
   UTF8ToString: [['number'] as const, 'string' as const] as const,
   UTF16ToString: [['number'] as const, 'string'] as const,
@@ -51,8 +56,8 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'string'] as const,
     'number' as const,
   ] as const,
-  FPDF_GetPageSizeByIndex: [
-    ['number', 'number', 'number', 'number'] as const,
+  FPDF_GetPageSizeByIndexF: [
+    ['number', 'number', 'number'] as const,
     'number',
   ] as const,
   FPDF_GetLastError: [[] as const, 'number'] as const,
@@ -89,7 +94,7 @@ export const wrappedModuleMethods = {
   ] as const,
   FPDFAction_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFAction_GetURIPath: [
-    ['number', 'number', 'number'] as const,
+    ['number', 'number', 'number', 'number'] as const,
     'number',
   ] as const,
   FPDFDest_GetDestPageIndex: [['number', 'number'] as const, 'number'] as const,
@@ -111,10 +116,50 @@ export const wrappedModuleMethods = {
     ] as const,
     '',
   ] as const,
+  FPDF_PageToDevice: [
+    [
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+    ] as const,
+    '',
+  ] as const,
+  FPDF_DeviceToPage: [
+    [
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+    ] as const,
+    'boolean',
+  ] as const,
   FPDFPage_GetAnnotCount: [['number'] as const, 'number'] as const,
   FPDFPage_GetAnnot: [['number', 'number'] as const, 'number'] as const,
   FPDF_ClosePage: [['number'] as const, ''] as const,
   FPDFAnnot_GetSubtype: [['number'] as const, 'number'] as const,
+  FPDFAnnot_GetRect: [['number', 'number'] as const, 'boolean'] as const,
+  FPDFAnnot_GetLink: [['number'], 'number'] as const,
+  FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
+  FPDFLink_GetAction: [['number'] as const, 'number'] as const,
+  FPDFText_LoadPage: [['number'] as const, 'number'] as const,
+  FPDFText_GetBoundedText: [
+    ['number', 'number', 'number', 'number', 'number', 'number', 'number'],
+    'number',
+  ] as const,
+  FPDFText_ClosePage: [['number'] as const, ''] as const,
   FPDFPage_CloseAnnot: [['number'] as const, ''] as const,
 };
 
@@ -162,35 +207,34 @@ export class PdfiumEngine implements PdfEngine {
     const pageCount = this.wasmModuleWrapper.FPDF_GetPageCount(docPtr);
 
     const pages: PdfPageObject[] = [];
-    const widthPtr = this.wasmModule._malloc(8);
-    const heightPtr = this.wasmModule._malloc(8);
+    const sizePtr = this.wasmModule._malloc(8);
+    for (let i = 0; i < 8; i++) {
+      this.wasmModule.HEAP8[sizePtr + i] = 0;
+    }
     for (let index = 0; index < pageCount; index++) {
-      const result = this.wasmModuleWrapper.FPDF_GetPageSizeByIndex(
+      const result = this.wasmModuleWrapper.FPDF_GetPageSizeByIndexF(
         docPtr,
         index,
-        widthPtr,
-        heightPtr
+        sizePtr
       );
       if (result === 0) {
+        this.wasmModule._free(sizePtr);
+        this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
         this.wasmModule._free(filePtr);
-        this.wasmModule._free(docPtr);
-        this.wasmModule._free(widthPtr);
-        this.wasmModule._free(heightPtr);
         throw new PdfError('');
       }
 
       const page = {
         index,
         size: {
-          width: this.wasmModule.getValue(widthPtr, 'double'),
-          height: this.wasmModule.getValue(heightPtr, 'double'),
+          width: this.wasmModule.getValue(sizePtr, 'float'),
+          height: this.wasmModule.getValue(sizePtr + 4, 'float'),
         },
       };
 
       pages.push(page);
     }
-    this.wasmModule._free(widthPtr);
-    this.wasmModule._free(heightPtr);
+    this.wasmModule._free(sizePtr);
 
     const id = `${Date.now()}.${Math.random()}`;
     this.docs[id] = {
@@ -224,10 +268,13 @@ export class PdfiumEngine implements PdfEngine {
     const { docPtr } = this.docs[doc.id];
     const format = BitmapFormat.Bitmap_BGRA;
     const bytesPerPixel = 4;
-    const bitmapSize = calculateSize(page.size, scaleFactor, rotation);
+    const bitmapSize = calculateSize(page.size, scaleFactor * DPR, rotation);
     const bitmapHeapLength =
       bitmapSize.width * bitmapSize.height * bytesPerPixel;
     const bitmapHeapPtr = this.wasmModule._malloc(bitmapHeapLength);
+    for (let i = 0; i < bitmapHeapLength; i++) {
+      this.wasmModule.HEAP8[bitmapHeapPtr + i] = 0;
+    }
     const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
       bitmapSize.width,
       bitmapSize.height,
@@ -275,22 +322,23 @@ export class PdfiumEngine implements PdfEngine {
   getPageAnnotations(
     doc: PdfDocumentObject,
     page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation,
     signal?: AbortSignal | undefined
   ) {
     const { docPtr } = this.docs[doc.id];
     const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
-    const annotationCount =
-      this.wasmModuleWrapper.FPDFPage_GetAnnotCount(pagePtr);
+    const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
 
-    const annotations: PdfAnnotationObject[] = [];
-    for (let i = 0; i < annotationCount; i++) {
-      const annotationPtr = this.wasmModuleWrapper.FPDFPage_GetAnnot(
-        pagePtr,
-        i
-      );
+    const annotations = this.readPageAnnotations(
+      page,
+      docPtr,
+      pagePtr,
+      textPagePtr
+    );
 
-      this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
-    }
+    this.wasmModuleWrapper.FPDFText_ClosePage(textPagePtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return annotations;
   }
@@ -302,6 +350,7 @@ export class PdfiumEngine implements PdfEngine {
     rotation: Rotation,
     signal?: AbortSignal | undefined
   ) {
+    scaleFactor = Math.max(scaleFactor, 0.5);
     return this.renderPage(doc, page, scaleFactor, rotation, undefined, signal);
   }
 
@@ -329,8 +378,6 @@ export class PdfiumEngine implements PdfEngine {
       const nextBookmarkPtr =
         this.wasmModuleWrapper.FPDFBookmark_GetNextSibling(docPtr, bookmarkPtr);
 
-      this.wasmModule._free(bookmarkPtr);
-
       bookmarkPtr = nextBookmarkPtr;
     }
 
@@ -355,34 +402,229 @@ export class PdfiumEngine implements PdfEngine {
 
     const bookmarks = this.readPdfBookmarks(docPtr, bookmarkPtr);
 
-    const actionPtr =
-      this.wasmModuleWrapper.FPDFBookmark_GetAction(bookmarkPtr);
-    if (!actionPtr) {
+    const target = this.readPdfBookmarkTarget(
+      docPtr,
+      () => {
+        return this.wasmModuleWrapper.FPDFBookmark_GetAction(bookmarkPtr);
+      },
+      () => {
+        return this.wasmModuleWrapper.FPDFBookmark_GetDest(docPtr, bookmarkPtr);
+      }
+    );
+
+    return {
+      title,
+      target,
+      children: bookmarks,
+    };
+  }
+
+  private readPageAnnotations(
+    page: PdfPageObject,
+    docPtr: number,
+    pagePtr: number,
+    textPagePtr: number
+  ) {
+    const annotationCount =
+      this.wasmModuleWrapper.FPDFPage_GetAnnotCount(pagePtr);
+
+    const annotations: PdfAnnotationObject[] = [];
+    for (let i = 0; i < annotationCount; i++) {
+      const annotation = this.readPageAnnotion(
+        page,
+        docPtr,
+        pagePtr,
+        textPagePtr,
+        i
+      );
+      if (annotation) {
+        annotations.push(annotation);
+      }
+    }
+
+    return annotations;
+  }
+
+  private readPageAnnotion(
+    page: PdfPageObject,
+    docPtr: number,
+    pagePtr: number,
+    textPagePtr: number,
+    index: number
+  ) {
+    const annotationPtr = this.wasmModuleWrapper.FPDFPage_GetAnnot(
+      pagePtr,
+      index
+    );
+    const subType = this.wasmModuleWrapper.FPDFAnnot_GetSubtype(
+      annotationPtr
+    ) as PdfAnnotationObject['type'];
+    let annotation: PdfAnnotationObject | undefined;
+    switch (subType) {
+      case PdfAnnotationSubtype.LINK:
+        {
+          annotation = this.readPdfLinkAnno(
+            page,
+            docPtr,
+            pagePtr,
+            textPagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+    }
+    this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+
+    return annotation;
+  }
+
+  private readPdfLinkAnno(
+    page: PdfPageObject,
+    docPtr: number,
+    pagePtr: number,
+    textPagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfLinkAnnoObject | undefined {
+    const linkPtr = this.wasmModuleWrapper.FPDFAnnot_GetLink(annotationPtr);
+    if (!linkPtr) {
+      return;
+    }
+
+    const annoRect = this.readAnnoRect(annotationPtr);
+    const { left, top, right, bottom } = annoRect;
+
+    const deviceXPtr = this.wasmModule._malloc(4);
+    for (let i = 0; i < 4; i++) {
+      this.wasmModule.HEAP8[deviceXPtr + i] = 0;
+    }
+    const deviceYPtr = this.wasmModule._malloc(4);
+    for (let i = 0; i < 4; i++) {
+      this.wasmModule.HEAP8[deviceYPtr + i] = 0;
+    }
+    this.wasmModuleWrapper.FPDF_PageToDevice(
+      pagePtr,
+      0,
+      0,
+      page.size.width,
+      page.size.height,
+      0,
+      left,
+      top,
+      deviceXPtr,
+      deviceYPtr
+    );
+    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
+    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
+    this.wasmModule._free(deviceXPtr);
+    this.wasmModule._free(deviceYPtr);
+
+    const rect = {
+      origin: {
+        x,
+        y,
+      },
+      size: {
+        width: Math.abs(right - left),
+        height: Math.abs(top - bottom),
+      },
+    };
+
+    const utf16Length = this.wasmModuleWrapper.FPDFText_GetBoundedText(
+      textPagePtr,
+      left,
+      top,
+      right,
+      bottom,
+      0,
+      0
+    );
+    const bytesCount = (utf16Length + 1) * 2; // include NIL
+    const textBuffer = this.wasmModule._malloc(bytesCount);
+    for (let i = 0; i < bytesCount; i++) {
+      this.wasmModule.HEAP8[textBuffer + i] = 0;
+    }
+    this.wasmModuleWrapper.FPDFText_GetBoundedText(
+      textPagePtr,
+      left,
+      top,
+      right,
+      bottom,
+      textBuffer,
+      utf16Length
+    );
+    const text = this.wasmModule.UTF16ToString(textBuffer);
+    this.wasmModule._free(textBuffer);
+
+    const target = this.readPdfLinkAnnoTarget(
+      docPtr,
+      () => {
+        return this.wasmModuleWrapper.FPDFLink_GetAction(linkPtr);
+      },
+      () => {
+        return this.wasmModuleWrapper.FPDFLink_GetDest(docPtr, linkPtr);
+      }
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.LINK,
+      text,
+      target,
+      rect,
+    };
+  }
+
+  private readPdfBookmarkTarget(
+    docPtr: number,
+    getActionPtr: () => number,
+    getDestinationPtr: () => number
+  ): PdfTarget | undefined {
+    const actionPtr = getActionPtr();
+    if (actionPtr) {
       const action = this.readPdfAction(docPtr, actionPtr);
-      this.wasmModule._free(actionPtr);
+
       return {
-        title,
-        target: {
-          type: 'action',
-          action,
-        },
-        children: bookmarks,
+        type: 'action',
+        action,
       };
     } else {
-      const destinationPtr = this.wasmModuleWrapper.FPDFBookmark_GetDest(
-        docPtr,
-        bookmarkPtr
-      );
-      const destination = this.readPdfDestination(docPtr, destinationPtr);
-      this.wasmModule._free(destinationPtr);
-      return {
-        title,
-        target: {
+      const destinationPtr = getDestinationPtr();
+      if (destinationPtr) {
+        const destination = this.readPdfDestination(docPtr, destinationPtr);
+
+        return {
           type: 'destination',
           destination,
-        },
-        children: bookmarks,
+        };
+      }
+    }
+  }
+
+  private readPdfLinkAnnoTarget(
+    docPtr: number,
+    getActionPtr: () => number,
+    getDestinationPtr: () => number
+  ): PdfTarget | undefined {
+    const destinationPtr = getDestinationPtr();
+    if (destinationPtr) {
+      const destination = this.readPdfDestination(docPtr, destinationPtr);
+
+      return {
+        type: 'destination',
+        destination,
       };
+    } else {
+      const actionPtr = getActionPtr();
+      if (actionPtr) {
+        const action = this.readPdfAction(docPtr, actionPtr);
+
+        return {
+          type: 'action',
+          action,
+        };
+      }
     }
   }
 
@@ -390,48 +632,60 @@ export class PdfiumEngine implements PdfEngine {
     const actionType = this.wasmModuleWrapper.FPDFAction_GetType(
       actionPtr
     ) as PdfActionType;
+    let action: PdfActionObject;
     switch (actionType) {
       case PdfActionType.Unsupported:
-        return {
+        action = {
           type: PdfActionType.Unsupported,
         };
+        break;
       case PdfActionType.Goto: {
         const destinationPtr = this.wasmModuleWrapper.FPDFAction_GetDest(
           docPtr,
           actionPtr
         );
-        const destination = this.readPdfDestination(docPtr, destinationPtr);
-        this.wasmModule._free(destinationPtr);
-        return {
-          type: PdfActionType.Goto,
-          destination,
-        };
+        if (destinationPtr) {
+          const destination = this.readPdfDestination(docPtr, destinationPtr);
+
+          action = {
+            type: PdfActionType.Goto,
+            destination,
+          };
+        } else {
+          action = {
+            type: PdfActionType.Unsupported,
+          };
+        }
       }
       case PdfActionType.RemoteGoto: {
         // In case of remote goto action,
         // the application should first use FPDFAction_GetFilePath
         // to get file path, then load that particular document,
         // and use its document handle to call this
-        return {
+        action = {
           type: PdfActionType.Unsupported,
         };
+        break;
       }
       case PdfActionType.URI: {
         const uri = readString(
           this.wasmModule,
           (buffer, bufferLength) => {
             return this.wasmModuleWrapper.FPDFAction_GetURIPath(
+              docPtr,
               actionPtr,
               buffer,
               bufferLength
             );
           },
-          this.wasmModuleWrapper.UTF16ToString
+          this.wasmModule.AsciiToString
         );
-        return {
+
+        action = {
           type: PdfActionType.URI,
           uri,
         };
+        break;
       }
       case PdfActionType.LaunchAppOrOpenFile: {
         const path = readString(
@@ -443,14 +697,16 @@ export class PdfiumEngine implements PdfEngine {
               bufferLength
             );
           },
-          this.wasmModuleWrapper.UTF16ToString
+          this.wasmModule.UTF8ToString
         );
-        return {
+        action = {
           type: PdfActionType.LaunchAppOrOpenFile,
           path,
         };
       }
     }
+
+    return action;
   }
 
   private readPdfDestination(
@@ -462,8 +718,12 @@ export class PdfiumEngine implements PdfEngine {
       destinationPtr
     );
     // Every params is a float value
-    const paramsCountPtr = this.wasmModule._malloc(4);
-    const paramsPtr = this.wasmModule._malloc(4 * 4);
+    const maxParmamsCount = 4;
+    const paramsCountPtr = this.wasmModule._malloc(maxParmamsCount);
+    const paramsPtr = this.wasmModule._malloc(maxParmamsCount * 4);
+    for (let i = 0; i < maxParmamsCount * 4; i++) {
+      this.wasmModule.HEAP8[paramsPtr + i] = 0;
+    }
     const zoomMode = this.wasmModuleWrapper.FPDFDest_GetView(
       destinationPtr,
       paramsCountPtr,
@@ -485,5 +745,24 @@ export class PdfiumEngine implements PdfEngine {
         params,
       },
     };
+  }
+
+  private readAnnoRect(annotationPtr: number) {
+    const rectPtr = this.wasmModule._malloc(4 * 4);
+    const rect = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+    };
+    if (this.wasmModuleWrapper.FPDFAnnot_GetRect(annotationPtr, rectPtr)) {
+      rect.left = this.wasmModule.getValue(rectPtr, 'float');
+      rect.top = this.wasmModule.getValue(rectPtr + 4, 'float');
+      rect.right = this.wasmModule.getValue(rectPtr + 8, 'float');
+      rect.bottom = this.wasmModule.getValue(rectPtr + 12, 'float');
+    }
+    this.wasmModule._free(rectPtr);
+
+    return rect;
   }
 }

@@ -70,6 +70,10 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
 
   const handleEntryClicked = useCallback(
     (bookmark: PdfBookmarkObject) => {
+      if (!bookmark.target) {
+        return;
+      }
+
       switch (bookmark.target.type) {
         case 'action':
           {
@@ -125,20 +129,23 @@ export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
   const { currPageIndex, bookmark, onClick } = props;
 
   let isCurrent = false;
-  switch (bookmark.target.type) {
-    case 'destination':
-      isCurrent = currPageIndex === bookmark.target.destination.pageIndex;
-      break;
-    case 'action':
-      {
-        switch (bookmark.target.action.type) {
-          case PdfActionType.Goto:
-            isCurrent =
-              bookmark.target.action.destination.pageIndex === currPageIndex;
-            break;
+
+  if (bookmark.target) {
+    switch (bookmark.target.type) {
+      case 'destination':
+        isCurrent = currPageIndex === bookmark.target.destination.pageIndex;
+        break;
+      case 'action':
+        {
+          switch (bookmark.target.action.type) {
+            case PdfActionType.Goto:
+              isCurrent =
+                bookmark.target.action.destination.pageIndex === currPageIndex;
+              break;
+          }
         }
-      }
-      break;
+        break;
+    }
   }
   const [isUnfold, setIsUnfold] = useState(false);
 

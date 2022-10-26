@@ -15,6 +15,8 @@ import {
   swap,
   PdfTextAnnoObject,
   PdfZoomMode,
+  PdfAnnotationSubtype,
+  PdfActionType,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -76,7 +78,7 @@ function PdfPageTextAnnotationCustomize(
 function PdfPageAnnotation(props: PdfPageAnnotationComponentProps) {
   const { page, annotation, rotation, scaleFactor } = props;
   switch (annotation.type) {
-    case 'link':
+    case PdfAnnotationSubtype.LINK:
       return (
         <PdfPageLinkAnnotation
           page={page}
@@ -85,7 +87,7 @@ function PdfPageAnnotation(props: PdfPageAnnotationComponentProps) {
           scaleFactor={scaleFactor}
         />
       );
-    case 'text':
+    case PdfAnnotationSubtype.TEXT:
       return (
         <PdfPageTextAnnotationCustomize
           page={page}
@@ -233,13 +235,21 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
 
       return new ImageData(array, thumbnailWidth, thumbnailHeight);
     },
-    getPageAnnotations: (doc: PdfDocumentObject, page: PdfPageObject) => {
+    getPageAnnotations: (
+      doc: PdfDocumentObject,
+      page: PdfPageObject,
+      scaleFactor: number,
+      rotation: Rotation
+    ) => {
       const pdfLinkAnnoObject1: PdfLinkAnnoObject = {
         id: page.index + 1,
-        type: 'link',
+        type: PdfAnnotationSubtype.LINK,
         target: {
-          type: 'url',
-          url: 'https://localhost',
+          type: 'action',
+          action: {
+            type: PdfActionType.URI,
+            uri: 'https://localhost',
+          },
         },
         text: 'url link',
         rect: {
@@ -255,18 +265,14 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
       };
       const pdfLinkAnnoObject2: PdfLinkAnnoObject = {
         id: page.index + 2,
-        type: 'link',
+        type: PdfAnnotationSubtype.LINK,
         target: {
-          type: 'page',
-          pageIndex: page.index + 1,
-          rect: {
-            origin: {
-              x: 100,
-              y: 100,
-            },
-            size: {
-              width: 100,
-              height: 100,
+          type: 'destination',
+          destination: {
+            pageIndex: page.index + 1,
+            zoom: {
+              mode: PdfZoomMode.XYZ,
+              params: [],
             },
           },
         },

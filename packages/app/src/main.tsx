@@ -15,6 +15,7 @@ import {
   swap,
   PdfTextAnnoObject,
   PdfZoomMode,
+  PdfAnnotationSubtype,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -40,7 +41,7 @@ import {
 } from '@unionpdf/plugins';
 import {
   PdfiumEngine,
-  pdfiumWasmFile,
+  pdfiumWasm,
   createPdfiumModule,
 } from '@unionpdf/engines';
 
@@ -82,7 +83,7 @@ function PdfPageTextAnnotationCustomize(
 function PdfPageAnnotation(props: PdfPageAnnotationComponentProps) {
   const { page, annotation, rotation, scaleFactor } = props;
   switch (annotation.type) {
-    case 'link':
+    case PdfAnnotationSubtype.LINK:
       return (
         <PdfPageLinkAnnotation
           page={page}
@@ -91,7 +92,7 @@ function PdfPageAnnotation(props: PdfPageAnnotationComponentProps) {
           scaleFactor={scaleFactor}
         />
       );
-    case 'text':
+    case PdfAnnotationSubtype.TEXT:
       return (
         <PdfPageTextAnnotationCustomize
           page={page}
@@ -255,7 +256,7 @@ async function readFile(file: File): Promise<ArrayBuffer> {
 }
 
 async function run() {
-  const response = await fetch(pdfiumWasmFile);
+  const response = await fetch(pdfiumWasm);
   const wasmBinary = await response.arrayBuffer();
   const wasmModule = await createPdfiumModule({ wasmBinary });
   const engine = new PdfiumEngine(wasmModule);

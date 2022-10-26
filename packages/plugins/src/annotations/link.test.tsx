@@ -2,7 +2,12 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { act, fireEvent, render } from '@testing-library/react';
 import { PdfPageLinkAnnotation } from './link';
-import { PdfLinkAnnoObject, PdfPageObject } from '@unionpdf/models';
+import {
+  PdfActionType,
+  PdfAnnotationSubtype,
+  PdfLinkAnnoObject,
+  PdfPageObject,
+} from '@unionpdf/models';
 
 describe('PdfPageLink', () => {
   test('should render pdf link', async () => {
@@ -15,10 +20,13 @@ describe('PdfPageLink', () => {
     };
     const link: PdfLinkAnnoObject = {
       id: 0,
-      type: 'link',
+      type: PdfAnnotationSubtype.LINK,
       target: {
-        type: 'url',
-        url: 'https://localhost',
+        type: 'action',
+        action: {
+          type: PdfActionType.URI,
+          uri: 'https://localhost',
+        },
       },
       text: 'Link',
       rect: {
@@ -47,13 +55,14 @@ describe('PdfPageLink', () => {
       '.pdf__annotation--link'
     ) as HTMLDivElement;
     expect(linkElem).toBeDefined();
-    expect(linkElem?.getAttribute('role')).toEqual('link');
 
-    const spanElem = document.querySelector('.pdf__annotation--link span');
-    expect(spanElem?.textContent).toEqual(link.text);
+    const aElem = document.querySelector(
+      '.pdf__annotation--link a'
+    ) as HTMLAnchorElement;
+    expect(aElem?.textContent).toEqual(link.text);
 
     await act(async () => {
-      fireEvent.click(linkElem);
+      fireEvent.click(aElem);
     });
 
     expect(onClick).toBeCalledWith(link);

@@ -1,6 +1,8 @@
 export * from './wrapper';
 export * from './engine';
-export { createPdfiumModule } from './pdfium';
-import * as _pdfiumWasm from 'url:./pdfium.wasm';
+export * from './helper';
+export { default as createPdfiumModule } from './pdfium';
+export { default as pdfiumWasm } from 'url:./pdfium.wasm';
 
-export const pdfiumWasmFile = _pdfiumWasm;
+export { default as createDebugPdfiumModule } from './debug/pdfium';
+export { default as pdfiumDebugWasm } from 'url:./debug/pdfium.wasm';

@@ -1,7 +1,11 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { PdfPageObject, PdfTextAnnoObject } from '@unionpdf/models';
+import {
+  PdfAnnotationSubtype,
+  PdfPageObject,
+  PdfTextAnnoObject,
+} from '@unionpdf/models';
 import { PdfPageTextAnnotation } from './text';
 
 describe('PdfPageLink', () => {
@@ -15,7 +19,7 @@ describe('PdfPageLink', () => {
     };
     const text: PdfTextAnnoObject = {
       id: 0,
-      type: 'text',
+      type: PdfAnnotationSubtype.TEXT,
       text: 'Link',
       color: 'red',
       rect: {

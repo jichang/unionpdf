@@ -1,5 +1,10 @@
-import React, { useCallback } from 'react';
-import { PdfLinkAnnoObject, PdfPageObject, Rotation } from '@unionpdf/models';
+import React, { useCallback, useMemo } from 'react';
+import {
+  PdfActionType,
+  PdfLinkAnnoObject,
+  PdfPageObject,
+  Rotation,
+} from '@unionpdf/models';
 import './link.css';
 import { PdfPageAnnotationBase } from './annotation';
 import { usePdfNavigator } from '@unionpdf/core';
@@ -16,27 +21,67 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
   const pdfNavigator = usePdfNavigator();
 
-  const onClick = useCallback(() => {
-    if (props.onClick) {
-      props.onClick(annotation);
-    } else {
-      if (annotation.target.type === 'url') {
-        window.open(annotation.target.url, '_blank');
-      } else {
-        pdfNavigator?.gotoPage(annotation.target, 'annotation');
-      }
+  const href = useMemo(() => {
+    if (!annotation.target) {
+      return '#';
     }
-  }, [pdfNavigator, page, annotation, props.onClick]);
+
+    if (annotation.target.type === 'action') {
+      switch (annotation.target.action.type) {
+        case PdfActionType.Goto:
+          return `#${annotation.target.action.destination.pageIndex}`;
+        case PdfActionType.URI:
+          return annotation.target.action.uri;
+      }
+    } else {
+      return `#${annotation.target.destination.pageIndex}`;
+    }
+  }, [annotation]);
+
+  const onClick = useCallback(
+    (evt: React.MouseEvent) => {
+      if (props.onClick) {
+        props.onClick(annotation);
+      } else {
+        evt.preventDefault();
+
+        if (!annotation.target) {
+          return;
+        }
+
+        if (annotation.target.type === 'action') {
+          switch (annotation.target.action.type) {
+            case PdfActionType.Goto:
+              pdfNavigator?.gotoPage(
+                { pageIndex: annotation.target.action.destination.pageIndex },
+                'annotation'
+              );
+              break;
+            case PdfActionType.URI:
+              window.open(annotation.target.action.uri, '_blank');
+              break;
+          }
+        } else {
+          pdfNavigator?.gotoPage(
+            { pageIndex: annotation.target.destination.pageIndex },
+            'annotation'
+          );
+        }
+      }
+    },
+    [pdfNavigator, page, annotation, props.onClick]
+  );
 
   return (
     <PdfPageAnnotationBase
-      role="link"
+      className="pdf__annotation--link"
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}
-      onClick={onClick}
     >
-      <span>{annotation.text}</span>
+      <a target="_blank" href={href} onClick={onClick}>
+        {annotation.text}
+      </a>
     </PdfPageAnnotationBase>
   );
 }

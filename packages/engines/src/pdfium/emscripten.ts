@@ -284,6 +284,8 @@ export interface ModuleRuntimeMethods {
   stackSave(): number;
   stackRestore(ptr: number): void;
 
+  AsciiToString(ptr: number, maxBytesToRead?: number): string;
+  stringToAscii(str: string, outPtr: number, maxBytesToRead?: number): void;
   UTF8ToString(ptr: number, maxBytesToRead?: number): string;
   stringToUTF8(str: string, outPtr: number, maxBytesToRead?: number): void;
   lengthBytesUTF8(str: string): number;

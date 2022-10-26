@@ -1,6 +1,11 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { PdfEngine, PdfPageObject, PdfDocumentObject } from '@unionpdf/models';
+import {
+  PdfEngine,
+  PdfPageObject,
+  PdfDocumentObject,
+  Rotation,
+} from '@unionpdf/models';
 import {
   PdfEngineContextProvider,
   PdfDocument,
@@ -43,7 +48,12 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
         bookmarks: [],
       };
     },
-    getPageAnnotations: (doc: PdfDocumentObject, page: PdfPageObject) => {
+    getPageAnnotations: (
+      doc: PdfDocumentObject,
+      page: PdfPageObject,
+      scaleFactor: number,
+      rotation: Rotation
+    ) => {
       return [];
     },
     closeDocument: async (pdf: PdfDocumentObject) => {},

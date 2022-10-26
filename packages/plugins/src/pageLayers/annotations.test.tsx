@@ -45,9 +45,7 @@ describe('PdfPageAnnotations', () => {
       await engine.openDefer.promise;
     });
 
-    expect(document.querySelectorAll('.pdf__annotation').length).toEqual(
-      pdf.pageCount
-    );
+    expect(document.querySelectorAll('.pdf__annotation').length).toEqual(1);
 
     result.unmount();
   });

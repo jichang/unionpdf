@@ -56,17 +56,19 @@ export type PdfActionObject =
       path: string;
     };
 
+export type PdfTarget =
+  | {
+      type: 'action';
+      action: PdfActionObject;
+    }
+  | {
+      type: 'destination';
+      destination: PdfDestinationObject;
+    };
+
 export interface PdfBookmarkObject {
   title: string;
-  target:
-    | {
-        type: 'action';
-        action: PdfActionObject;
-      }
-    | {
-        type: 'destination';
-        destination: PdfDestinationObject;
-      };
+  target?: PdfTarget | undefined;
   children?: PdfBookmarkObject[];
 }
 
@@ -74,8 +76,41 @@ export interface PdfBookmarksObject {
   bookmarks: PdfBookmarkObject[];
 }
 
+export enum PdfAnnotationSubtype {
+  UNKNOWN = 0,
+  TEXT,
+  LINK,
+  FREETEXT,
+  LINE,
+  SQUARE,
+  CIRCLE,
+  POLYGON,
+  POLYLINE,
+  HIGHLIGHT,
+  UNDERLINE,
+  SQUIGGLY,
+  STRIKEOUT,
+  STAMP,
+  CARET,
+  INK,
+  POPUP,
+  FILEATTACHMENT,
+  SOUND,
+  MOVIE,
+  WIDGET,
+  SCREEN,
+  PRINTERMARK,
+  TRAPNET,
+  WATERMARK,
+  THREED,
+  RICHMEDIA,
+  XFAWIDGET,
+  REDACT,
+}
+
 export interface PdfAnnotationObjectBase {
   id: number;
+  type: PdfAnnotationSubtype;
   rect: Rect;
   popup?: {
     open: boolean;
@@ -84,68 +119,59 @@ export interface PdfAnnotationObjectBase {
 }
 
 export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
-  type: 'link';
+  type: PdfAnnotationSubtype.LINK;
   text: string;
-  target:
-    | {
-        type: 'url';
-        url: string;
-      }
-    | {
-        type: 'page';
-        pageIndex: number;
-        rect?: Rect;
-      };
+  target: PdfTarget | undefined;
 }
 
 export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
-  type: 'text';
+  type: PdfAnnotationSubtype.TEXT;
   text: string;
   color: string;
 }
 
 export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
-  type: 'highlight';
+  type: PdfAnnotationSubtype.HIGHLIGHT;
 }
 
 export interface PdfStrikeOutAnnoObject extends PdfAnnotationObjectBase {
-  type: 'strikeout';
+  type: PdfAnnotationSubtype.STRIKEOUT;
 }
 
 export interface PdfUnderlineOutAnnoObject extends PdfAnnotationObjectBase {
-  type: 'underline';
+  type: PdfAnnotationSubtype.UNDERLINE;
 }
 
 export interface PdfSquigglyAnnoObject extends PdfAnnotationObjectBase {
-  type: 'squiggly';
+  type: PdfAnnotationSubtype.SQUIGGLY;
 }
 
 export interface PdfSquareAnnoObject extends PdfAnnotationObjectBase {
-  type: 'square';
+  type: PdfAnnotationSubtype.SQUARE;
 }
 
 export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {
-  type: 'circle';
+  type: PdfAnnotationSubtype.CIRCLE;
 }
 
 export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
-  type: 'line';
+  type: PdfAnnotationSubtype.LINE;
 }
 
 export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
-  type: 'polyline';
+  type: PdfAnnotationSubtype.POLYLINE;
 }
 
 export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
-  type: 'polygon';
+  type: PdfAnnotationSubtype.POLYGON;
 }
 
 export interface PdfInkAnnoObject extends PdfAnnotationObjectBase {
-  type: 'ink';
+  type: PdfAnnotationSubtype.INK;
 }
 
 export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
-  type: 'stamp';
+  type: PdfAnnotationSubtype.STAMP;
 }
 
 export type PdfAnnotationObject =
@@ -222,6 +248,8 @@ export interface PdfEngine {
   getPageAnnotations: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation,
     signal?: AbortSignal
   ) => PdfEngineFunResult<PdfAnnotationObject[]>;
   renderThumbnail: (

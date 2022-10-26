@@ -12,7 +12,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "start": "parcel ./demo/index.html",
+    "start": "parcel --no-cache ./demo/index.html",
     "build": "parcel build",
     "clean": "del-cli --force dist .parcel-cache",
     "test": "jest"

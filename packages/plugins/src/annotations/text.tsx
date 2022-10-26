@@ -15,6 +15,7 @@ export function PdfPageTextAnnotation(props: PdfPageTextAnnotationProps) {
 
   return (
     <PdfPageAnnotationBase
+      className="pdf__annotation--text"
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}
