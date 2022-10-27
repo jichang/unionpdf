@@ -81,7 +81,14 @@ function App() {
 
 ### PDF Engine
 
-PDF engine is used for parsing and rendering PDF file. Right now, there's Pdfium-based engine which is not completed yet. Welcome to contribute to it.
+PDF engine is used for parsing and rendering PDF file. Right now, there's Pdfium-based engine which is not completed yet. Currently, it supports
+
+1. Bookmarks
+2. Thumbnails
+3. Render pages
+4. Get link annotations
+
+Welcome to contribute to it.
 
 ### PDF Page Layer
 
