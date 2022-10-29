@@ -20,8 +20,6 @@ import {
   ThemeContextProvider,
   PdfNavigatorContextProvider,
   PdfApplication,
-} from '@unionpdf/core';
-import {
   PdfToolbar,
   PdfThumbnails,
   PdfPageContentComponentProps,
@@ -32,7 +30,7 @@ import {
   PdfPageAnnotationBase,
   PdfPageLinkAnnotation,
   PdfBookmarks,
-} from '@unionpdf/plugins';
+} from '@unionpdf/react';
 import {
   PdfiumEngine,
   pdfiumWasm,

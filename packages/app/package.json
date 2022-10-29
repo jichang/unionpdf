@@ -40,8 +40,7 @@
   },
   "dependencies": {
     "@unionpdf/models": "^0.1.0",
-    "@unionpdf/plugins": "^0.1.0",
-    "@unionpdf/core": "^0.1.0",
+    "@unionpdf/react": "^0.1.0",
     "@unionpdf/engines": "^0.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

@@ -1,143 +1,14 @@
 ### UnionPDF
 
-UnionPDF contains several React components for showing PDF files on Web.
+UnionPDF contains several packages for displaying PDF files in browser
 
-### Usage
-
-```typescript
-function PdfPageNumber(props: { index: number }) {
-  return (
-    <div
-      className="pdf__page__number"
-      style={{
-        color: 'white',
-        position: 'absolute',
-        bottom: 0,
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      {index + 1}
-    </div>
-  );
-}
-
-// This component will be rendered in every pdf page
-function PdfPageContent(props: PdfPageContentProps) {
-  const { page } = props;
-
-  return (
-    <>
-      <PdfPageNumber index={page.index} />
-    </>
-  );
-}
-
-function App() {
-  const engine = createMockPdfEngine();
-  const pdfAppElemRef = useRef<HTMLDivElement>(null);
-  const [viewport, setViewport] = useState({ x: 0, y: 0 });
-
-  useLayoutEffect(() => {
-    const pdfAppElem = pdfAppElemRef.current;
-    if (pdfAppElem) {
-      const style = getComputedStyle(pdfAppElem);
-      console.log(style.height, style.width);
-    }
-  }, [pdfAppElemRef.current]);
-
-  return (
-    <div className="App">
-      <div className="pdf__app" ref={pdfAppElemRef}>
-        <ThemeContextProvider
-          theme={{
-            background: 'blue',
-          }}
-        >
-          <PdfEngineContextProvider engine={engine}>
-            <PdfDocument
-              source="https://localhost"
-              onOpenSuccess={() => {}}
-              onOpenFailure={() => {}}
-            >
-              <PdfPages
-                visibleRange={[-1, 1]}
-                viewport={viewport}
-                content={PdfPageContent}
-              />
-              <PdfThumbnails
-                layout={{ colsCount: 100, rowsCount: 100 }}
-                size={{ width: 100, height: 100 }}
-              />
-              <PdfOutlines />
-            </PdfDocument>
-          </PdfEngineContextProvider>
-        </ThemeContextProvider>
-      </div>
-    </div>
-  );
-}
-```
-
-### PDF Engine
-
-PDF engine is used for parsing and rendering PDF file. Right now, there's Pdfium-based engine which is not completed yet. Currently, it supports
-
-1. Bookmarks
-2. Thumbnails
-3. Render pages
-4. Get link annotations
-
-Welcome to contribute to it.
-
-### PDF Page Layer
-
-Every pdf page contains multiple layers, like canvas layer for rendering content or annotation layer for showing differnt kinds of annotations
-
-Of course, you can build your own pdf page layer, since it's a React component that will be rendered into pdf page, say if you want to display the page number in the bottom of every pdf page
-
-```typescript
-function PdfPageNumber(props: { index: number }) {
-  return (
-    <div
-      className="pdf__page__number"
-      style={{
-        color: 'white',
-        position: 'absolute',
-        bottom: 0,
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      {index + 1}
-    </div>
-  );
-}
-
-// This component will be rendered in every pdf page
-function PdfPageContent(props: PdfPageContentProps) {
-  const { page } = props;
-
-  return (
-    <>
-      <PdfPageCanvas />
-      <PdfPageNumber index={page.index} />
-    </>
-  );
-}
-
-<PdfPages
-  visibleRange={[-1, 1]}
-  viewport={viewport}
-  content={PdfPageContent}
-/>;
-```
-
-For the full code you can check the [demo app](./packages/plugins/demo/main.tsx)
-
-### How to write a pdf plugin
-
-A PDF Plugin is a component that can add specific functionalty to PDF document. Like in the @unionpdf/plugins repo, PdfPages is used to display PDF content, PdfThumbnails is to show thumbnails. To build a pdf plugin, you just need to use hooks usePdfDocument and usePdfEngine to provide functionalities. Do note that you should avoid coupling between plugins.
+| Package           | Description                                 |
+| ----------------- | ------------------------------------------- |
+| @unionpdf/models  | Definition of common data types             |
+| @unionpdf/engines | PDF engine for parsing PDF files            |
+| @unionpdf/react   | React components for displaying PDF content |
+| @unionpdf/mocks   | Mocks for UI components development         |
+| @unionpdf/app     | Demo apps for showing usages                |
 
 ### Dev
 
@@ -157,6 +28,12 @@ lerna bootstrap --hoist
 
 ```
 lerna run build
+```
+
+3. type checking
+
+```
+lerna run typecheck
 ```
 
 4. test
