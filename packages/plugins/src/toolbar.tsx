@@ -100,13 +100,13 @@ export function PdfToolbar(props: PdfToolbarProps) {
     <ErrorBoundary>
       <ToolbarComponent className="pdf__toolbar" {...rest}>
         <SelectComponent
-          className="pdf__toolbar__select"
+          className="pdf__toolbar__select pdf__toolbar__select--rotation"
           value={rotation}
           onChange={changeRotation}
           options={rotationOptions}
         ></SelectComponent>
         <InputComponent
-          className="pdf__toolbar__input"
+          className="pdf__toolbar__input pdf__toolbar__input--scalefactor"
           type="number"
           min="0.5"
           max="3.0"
@@ -115,7 +115,7 @@ export function PdfToolbar(props: PdfToolbarProps) {
           onChange={changeScaleFactor}
         />
         <InputComponent
-          className="pdf__toolbar__input"
+          className="pdf__toolbar__input pdf__toolbar__input--page"
           value={currPageIndex + 1}
           min="1"
           max={pdfDoc?.pageCount}

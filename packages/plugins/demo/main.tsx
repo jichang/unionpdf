@@ -17,6 +17,9 @@ import {
   PdfZoomMode,
   PdfAnnotationSubtype,
   PdfActionType,
+  TaskBase,
+  PdfBookmarkObject,
+  PdfAnnotationObject,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -137,63 +140,60 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     });
   }
   return {
-    openDocument: async (url: PdfSource) => {
-      return {
-        id: 'id',
+    openDocument: (id: string, url: PdfSource) => {
+      return TaskBase.resolve({
+        id,
         pageCount: pageCount,
-        size: {
-          width: pageWidth,
-          height: pageHeight,
-        },
         pages: pages,
-      };
+      });
     },
     getBookmarks: (doc: PdfDocumentObject) => {
-      return {
-        bookmarks: [
-          {
-            title: 'Page 1',
-            target: {
-              type: 'destination',
-              destination: {
-                pageIndex: 1,
-                zoom: {
-                  mode: PdfZoomMode.FitPage,
-                  params: [],
-                },
+      const bookmarks: PdfBookmarkObject[] = [
+        {
+          title: 'Page 1',
+          target: {
+            type: 'destination',
+            destination: {
+              pageIndex: 1,
+              zoom: {
+                mode: PdfZoomMode.FitPage,
+                params: [],
               },
             },
           },
-          {
-            title: 'Page 2',
-            target: {
-              type: 'destination',
-              destination: {
-                pageIndex: 2,
-                zoom: {
-                  mode: PdfZoomMode.FitPage,
-                  params: [],
-                },
+        },
+        {
+          title: 'Page 2',
+          target: {
+            type: 'destination',
+            destination: {
+              pageIndex: 2,
+              zoom: {
+                mode: PdfZoomMode.FitPage,
+                params: [],
               },
             },
-            children: [
-              {
-                title: 'Page 3',
-                target: {
-                  type: 'destination',
-                  destination: {
-                    pageIndex: 3,
-                    zoom: {
-                      mode: PdfZoomMode.FitPage,
-                      params: [],
-                    },
+          },
+          children: [
+            {
+              title: 'Page 3',
+              target: {
+                type: 'destination',
+                destination: {
+                  pageIndex: 3,
+                  zoom: {
+                    mode: PdfZoomMode.FitPage,
+                    params: [],
                   },
                 },
               },
-            ],
-          },
-        ],
-      };
+            },
+          ],
+        },
+      ];
+      return TaskBase.resolve({
+        bookmarks,
+      });
     },
     renderPage: (
       doc: PdfDocumentObject,
@@ -218,7 +218,9 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
         array[i * 4 + 3] = alphaValue;
       }
 
-      return new ImageData(array, imageSize.width, imageSize.height);
+      return TaskBase.resolve(
+        new ImageData(array, imageSize.width, imageSize.height)
+      );
     },
     renderThumbnail: (doc: PdfDocumentObject, page: PdfPageObject) => {
       const thumbnailWidth = page.size.width / 4;
@@ -233,7 +235,9 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
         }
       }
 
-      return new ImageData(array, thumbnailWidth, thumbnailHeight);
+      return TaskBase.resolve(
+        new ImageData(array, thumbnailWidth, thumbnailHeight)
+      );
     },
     getPageAnnotations: (
       doc: PdfDocumentObject,
@@ -289,9 +293,15 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
         },
       };
 
-      return [pdfLinkAnnoObject1, pdfLinkAnnoObject2];
+      const annotations: PdfAnnotationObject[] = [
+        pdfLinkAnnoObject1,
+        pdfLinkAnnoObject2,
+      ];
+      return TaskBase.resolve(annotations);
     },
-    closeDocument: async (pdf: PdfDocumentObject) => {},
+    closeDocument: (pdf: PdfDocumentObject) => {
+      return TaskBase.resolve(true);
+    },
     ...engine,
   };
 }
@@ -365,6 +375,7 @@ function App() {
           <PdfApplication mode={mode}>
             <PdfNavigatorContextProvider navigator={pdfNavigator}>
               <PdfDocument
+                id="test"
                 source={new Uint8Array()}
                 onOpenSuccess={() => {}}
                 onOpenFailure={() => {}}

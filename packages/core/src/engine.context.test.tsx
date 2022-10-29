@@ -1,42 +1,27 @@
 import React from 'react';
 import { PdfEngineContextProvider, usePdfEngine } from './engine.context';
 import '@testing-library/jest-dom';
-import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
+import { render } from '@testing-library/react';
+import { createMockPdfEngine } from '@unionpdf/mocks';
+import { PdfEngine } from '@unionpdf/models';
 
 describe('PdfEngineContextProvider ', () => {
-  function Consumer({
-    buffer,
-    signal,
-  }: {
-    buffer: Uint8Array;
-    signal: AbortSignal;
-  }) {
-    const engine = usePdfEngine();
-
-    if (engine) {
-      engine.openDocument(buffer, signal);
-    }
+  let engineInContext: PdfEngine | null;
+  function Consumer() {
+    engineInContext = usePdfEngine();
 
     return <div></div>;
   }
 
   test('should assign context value', () => {
-    const buffer = new Uint8Array();
-    const abortController = new AbortController();
     const engine = createMockPdfEngine();
     const result = render(
       <PdfEngineContextProvider engine={engine}>
-        <Consumer buffer={buffer} signal={abortController.signal} />
+        <Consumer />
       </PdfEngineContextProvider>
     );
 
-    act(() => {
-      engine.openDefer.resolve(createMockPdfDocument());
-    });
-
-    expect(engine.openDocument).toBeCalledTimes(1);
-    expect(engine.openDocument).toBeCalledWith(buffer, abortController.signal);
+    expect(engineInContext).toBe(engine);
 
     result?.unmount();
   });

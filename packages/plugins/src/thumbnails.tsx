@@ -28,7 +28,6 @@ export const PDF_NAVIGATOR_SOURCE_THUMBNAILS = 'PdfThumbnails';
 export function PdfThumbnails(props: PdfThumbnailsProps) {
   const {
     layout = { direction: 'vertical', itemsCount: 1 },
-    size,
     scaleFactor = 1,
     rotation = 0,
   } = props;
@@ -119,28 +118,16 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
 
   useEffect(() => {
     if (engine && doc && page) {
-      const abortController = new AbortController();
-      const load = async () => {
-        const result = await engine.renderThumbnail(
-          doc,
-          page,
-          scaleFactor,
-          rotation,
-          abortController.signal
-        );
-        if (result instanceof Promise) {
-          result.then(() => {
-            setSrc(imageDataToDataUrl(result));
-          });
-        } else {
-          setSrc(imageDataToDataUrl(result));
-        }
-      };
-
-      load();
+      const task = engine.renderThumbnail(doc, page, scaleFactor, rotation);
+      task.wait(
+        (imageData) => {
+          setSrc(imageDataToDataUrl(imageData));
+        },
+        () => {}
+      );
 
       return () => {
-        abortController.abort();
+        task.abort();
       };
     }
   }, [engine, doc, page, scaleFactor, rotation]);

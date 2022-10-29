@@ -9,72 +9,67 @@ import {
   swap,
   PdfZoomMode,
   PdfActionType,
+  TaskBase,
+  PdfAnnotationObject,
+  PdfBookmarkObject,
 } from '@unionpdf/models';
-import { Defer } from './defer';
 
-export interface MockPdfEngine extends PdfEngine {
-  openDefer: Defer<PdfDocumentObject>;
-}
-
-export function createMockPdfEngine(
-  engine?: Partial<PdfEngine>
-): MockPdfEngine {
-  const openDefer = new Defer<PdfDocumentObject>();
-
+export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
   return {
-    openDocument: jest.fn(async (url: PdfSource) => {
-      return openDefer.promise;
+    openDocument: jest.fn((id: string, url: PdfSource) => {
+      return new TaskBase();
     }),
-    openDefer,
     getBookmarks: (doc: PdfDocumentObject) => {
-      return {
-        bookmarks: [
-          {
-            title: 'Page 1',
-            target: {
-              type: 'destination',
-              destination: {
-                pageIndex: 1,
-                zoom: {
-                  mode: PdfZoomMode.FitPage,
-                  params: [],
-                },
+      const bookmarks: PdfBookmarkObject[] = [];
+      bookmarks.push(
+        {
+          title: 'Page 1',
+          target: {
+            type: 'destination',
+            destination: {
+              pageIndex: 1,
+              zoom: {
+                mode: PdfZoomMode.FitPage,
+                params: [],
               },
             },
           },
-          {
-            title: 'Page 2',
-            target: {
-              type: 'destination',
-              destination: {
-                pageIndex: 2,
-                zoom: {
-                  mode: PdfZoomMode.FitPage,
-                  params: [],
-                },
+        },
+        {
+          title: 'Page 2',
+          target: {
+            type: 'destination',
+            destination: {
+              pageIndex: 2,
+              zoom: {
+                mode: PdfZoomMode.FitPage,
+                params: [],
               },
             },
-            children: [
-              {
-                title: 'Page 3',
-                target: {
-                  type: 'destination',
-                  destination: {
-                    pageIndex: 3,
-                    zoom: {
-                      mode: PdfZoomMode.FitPage,
-                      params: [],
-                    },
+          },
+          children: [
+            {
+              title: 'Page 3',
+              target: {
+                type: 'destination',
+                destination: {
+                  pageIndex: 3,
+                  zoom: {
+                    mode: PdfZoomMode.FitPage,
+                    params: [],
                   },
                 },
               },
-            ],
-          },
-        ],
-      };
+            },
+          ],
+        }
+      );
+      return TaskBase.resolve({
+        bookmarks,
+      });
     },
     renderPage: jest.fn(
-      async (
+      (
         doc: PdfDocumentObject,
         page: PdfPageObject,
         scaleFactor: number,
@@ -97,30 +92,32 @@ export function createMockPdfEngine(
           array[i * 4 + 3] = alphaValue;
         }
 
-        return new ImageData(array, imageSize.width, imageSize.height);
+        return TaskBase.resolve(
+          new ImageData(array, imageSize.width, imageSize.height)
+        );
       }
     ),
-    renderThumbnail: jest.fn(
-      async (doc: PdfDocumentObject, page: PdfPageObject) => {
-        const thumbnailWidth = page.size.width / 4;
-        const thumbnailHeight = page.size.height / 4;
-        const pixelCount = thumbnailWidth * thumbnailHeight;
-        const array = new Uint8ClampedArray(pixelCount * 4);
-        const rgbValue = page.index % 255;
-        const alphaValue = 255;
-        for (let i = 0; i < pixelCount; i++) {
-          for (let j = 0; j < 3; j++) {
-            const index = i * 4 + j;
-            array[index] = rgbValue;
-          }
-          array[i * 4 + 3] = alphaValue;
+    renderThumbnail: jest.fn((doc: PdfDocumentObject, page: PdfPageObject) => {
+      const thumbnailWidth = page.size.width / 4;
+      const thumbnailHeight = page.size.height / 4;
+      const pixelCount = thumbnailWidth * thumbnailHeight;
+      const array = new Uint8ClampedArray(pixelCount * 4);
+      const rgbValue = page.index % 255;
+      const alphaValue = 255;
+      for (let i = 0; i < pixelCount; i++) {
+        for (let j = 0; j < 3; j++) {
+          const index = i * 4 + j;
+          array[index] = rgbValue;
         }
-
-        return new ImageData(array, thumbnailWidth, thumbnailHeight);
+        array[i * 4 + 3] = alphaValue;
       }
-    ),
+
+      return TaskBase.resolve(
+        new ImageData(array, thumbnailWidth, thumbnailHeight)
+      );
+    }),
     getPageAnnotations: jest.fn(
-      async (
+      (
         doc: PdfDocumentObject,
         page: PdfPageObject,
         scaleFactor: number,
@@ -148,10 +145,14 @@ export function createMockPdfEngine(
             },
           },
         };
-        return [link];
+        const annotations: PdfAnnotationObject[] = [];
+        annotations.push(link);
+        return TaskBase.resolve(annotations);
       }
     ),
-    closeDocument: async (pdf: PdfDocumentObject) => {},
+    closeDocument: (pdf: PdfDocumentObject) => {
+      return TaskBase.resolve(true);
+    },
     ...engine,
   };
 }

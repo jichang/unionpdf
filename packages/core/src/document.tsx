@@ -8,23 +8,19 @@ import {
   useState,
 } from 'react';
 import { usePdfEngine } from './engine.context';
-import {
-  PdfDocumentObject,
-  PdfError,
-  PdfSource,
-  PdfEngine,
-} from '@unionpdf/models';
+import { PdfDocumentObject, PdfSource } from '@unionpdf/models';
 import { useTheme } from './theme.context';
 import { PdfDocumentContextProvider } from './document.context';
 
 export interface PdfDocumentProps extends ComponentProps<'div'> {
+  id: string;
   source: PdfSource;
-  onOpenSuccess: (pdf: PdfDocumentObject) => void;
-  onOpenFailure: (error: Error) => void;
+  onOpenSuccess?: (pdf: PdfDocumentObject) => void;
+  onOpenFailure?: (error: Error) => void;
 }
 
 export function PdfDocument(props: PdfDocumentProps) {
-  const { source, onOpenSuccess, onOpenFailure, children, ...rest } = props;
+  const { id, source, onOpenSuccess, onOpenFailure, children, ...rest } = props;
   const [doc, setDoc] = useState<PdfDocumentObject | null>(null);
   const engine = usePdfEngine();
   const theme = useTheme();
@@ -37,37 +33,31 @@ export function PdfDocument(props: PdfDocumentProps) {
   onOpenFailureRef.current = onOpenFailure;
 
   useEffect(() => {
-    if (engine) {
-      const load = async (
-        engine: PdfEngine,
-        source: PdfSource,
-        signal: AbortSignal
-      ) => {
-        try {
-          const doc = await engine.openDocument(source, signal);
+    if (engine && id && source) {
+      setDoc(null);
+
+      let doc: PdfDocumentObject | undefined;
+      const task = engine.openDocument(id, source);
+
+      task.wait(
+        (_doc) => {
+          doc = _doc;
           setDoc(doc);
           onOpenSuccessRef.current?.(doc);
-        } catch (e: unknown) {
-          onOpenFailureRef.current(new PdfError(e));
+        },
+        (error: Error) => {
+          onOpenFailureRef.current?.(error);
         }
-      };
-
-      const abortController = new AbortController();
-      load(engine, source, abortController.signal);
+      );
 
       return () => {
-        abortController.abort();
+        task.abort();
+        if (doc) {
+          engine.closeDocument(doc);
+        }
       };
     }
-  }, [engine, source]);
-
-  useEffect(() => {
-    return () => {
-      if (doc && engine) {
-        engine.closeDocument(doc);
-      }
-    };
-  }, [engine, doc]);
+  }, [engine, id, source]);
 
   const themeStyle = useMemo(() => {
     const styles = {} as Record<string, string | number>;

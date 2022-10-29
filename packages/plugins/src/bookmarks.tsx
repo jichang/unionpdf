@@ -26,20 +26,11 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
 
   useEffect(() => {
     if (engine && doc) {
-      const abortController = new AbortController();
-      const load = async () => {
-        const result = engine.getBookmarks(doc, abortController.signal);
-        if (result instanceof Promise) {
-          result.then(setBookmarks);
-        } else {
-          setBookmarks(result);
-        }
-      };
-
-      load();
+      const task = engine.getBookmarks(doc);
+      task.wait(setBookmarks, () => {});
 
       return () => {
-        abortController.abort();
+        task.abort();
       };
     }
   }, [engine, doc]);

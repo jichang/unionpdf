@@ -35,26 +35,11 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
 
   useEffect(() => {
     if (engine && doc && page && isVisible) {
-      const abortController = new AbortController();
-      const load = async () => {
-        const result = engine.getPageAnnotations(
-          doc,
-          page,
-          scaleFactor,
-          rotation,
-          abortController.signal
-        );
-        if (result instanceof Promise) {
-          result.then(setAnnotations);
-        } else {
-          setAnnotations(result);
-        }
-      };
-
-      load();
+      const task = engine.getPageAnnotations(doc, page, scaleFactor, rotation);
+      task.wait(setAnnotations, () => {});
 
       return () => {
-        abortController.abort();
+        task.abort();
       };
     }
   }, [isVisible, engine, doc, page, scaleFactor, rotation]);

@@ -8,52 +8,40 @@ export interface PdfPageCanvasLayerProps {
   scaleFactor: number;
   rotation: Rotation;
   isVisible: boolean;
-  visualSize: Size;
 }
 
 export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
   const doc = usePdfDocument();
   const engine = usePdfEngine();
-  const { page, scaleFactor, rotation, isVisible, visualSize } = props;
+  const { page, scaleFactor, rotation, isVisible } = props;
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
     if (canvasElem && engine && doc && isVisible) {
-      const abortController = new AbortController();
-      const render = (imageData: ImageData) => {
-        canvasElem.width = imageData.width;
-        canvasElem.height = imageData.height;
-        const ctx = canvasElem.getContext('2d');
-        if (ctx) {
-          ctx.putImageData(
-            imageData,
-            0,
-            0,
-            0,
-            0,
-            imageData.width,
-            imageData.height
-          );
-        }
-      };
-
-      const result = engine.renderPage(
-        doc,
-        page,
-        scaleFactor,
-        rotation,
-        undefined,
-        abortController.signal
+      const task = engine.renderPage(doc, page, scaleFactor, rotation);
+      task.wait(
+        (imageData) => {
+          canvasElem.width = imageData.width;
+          canvasElem.height = imageData.height;
+          const ctx = canvasElem.getContext('2d');
+          if (ctx) {
+            ctx.putImageData(
+              imageData,
+              0,
+              0,
+              0,
+              0,
+              imageData.width,
+              imageData.height
+            );
+          }
+        },
+        () => {}
       );
-      if (result instanceof Promise) {
-        result.then(render);
-      } else {
-        render(result);
-      }
 
       return () => {
-        abortController.abort();
+        task.abort();
       };
     }
   }, [page, engine, doc, isVisible, scaleFactor, rotation]);

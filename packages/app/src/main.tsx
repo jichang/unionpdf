@@ -6,15 +6,9 @@ import React, {
   useState,
 } from 'react';
 import {
-  PdfEngine,
   PdfPageObject,
-  PdfSource,
-  PdfDocumentObject,
-  PdfLinkAnnoObject,
   Rotation,
-  swap,
   PdfTextAnnoObject,
-  PdfZoomMode,
   PdfAnnotationSubtype,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
@@ -178,16 +172,31 @@ function App(props: AppProps) {
     [setScaleFactor]
   );
 
-  const [pdfSource, setPdfSource] = useState<ArrayBuffer | null>(null);
+  const [file, setFile] = useState<{
+    id: string;
+    source: ArrayBuffer;
+  } | null>(null);
   const selectFile = useCallback(
     async (evt: ChangeEvent<HTMLInputElement>) => {
       const files = evt.target.files;
       if (files?.[0]) {
-        const arrayBuffer = await readFile(files[0]);
-        setPdfSource(arrayBuffer);
+        const file = files[0];
+        const arrayBuffer = await readFile(file);
+        setFile({
+          id: file.name,
+          source: arrayBuffer,
+        });
+        setRotation(0);
+        setScaleFactor(1);
+        pdfNavigator.gotoPage(
+          {
+            pageIndex: 0,
+          },
+          'App'
+        );
       }
     },
-    [setPdfSource]
+    [setFile, pdfNavigator]
   );
 
   return (
@@ -197,7 +206,7 @@ function App(props: AppProps) {
         <button onClick={toggleThumbnailsIsVisible}>Thumbnails</button>
         <button onClick={toggleBookmarksIsVisible}>Bookmarks</button>
       </div>
-      {pdfSource ? (
+      {file ? (
         <ThemeContextProvider
           theme={{
             background: 'blue',
@@ -207,7 +216,8 @@ function App(props: AppProps) {
             <PdfApplication mode={mode}>
               <PdfNavigatorContextProvider navigator={pdfNavigator}>
                 <PdfDocument
-                  source={pdfSource}
+                  id={file.id}
+                  source={file.source}
                   onOpenSuccess={() => {}}
                   onOpenFailure={() => {}}
                 >

@@ -1,3 +1,4 @@
+import { PdfDocumentObject, TaskBase } from '@unionpdf/models';
 import {
   pdfiumDebugWasm,
   createDebugPdfiumModule,
@@ -17,13 +18,17 @@ async function readFile(file: File): Promise<ArrayBuffer> {
   });
 }
 
+function logError(error: Error) {
+  console.error(error);
+}
+
 async function run() {
   const url = new URL(window.location.href);
   const isDebug = !!url.searchParams.get('debug');
   const response = await fetch(isDebug ? pdfiumDebugWasm : pdfiumWasm);
   const wasmBinary = await response.arrayBuffer();
   const wasmModule = await (isDebug
-    ? createDebugPdfiumModule(pdfiumDebugWasm)
+    ? createDebugPdfiumModule({ wasmBinary })
     : createPdfiumModule({ wasmBinary }));
   const engine = new PdfiumEngine(wasmModule);
 
@@ -34,48 +39,62 @@ async function run() {
     'pdf-bookmarks'
   ) as HTMLParagraphElement;
 
+  let currDoc: PdfDocumentObject | null = null;
   inputElem?.addEventListener('input', async (evt) => {
-    const file = (evt.target as HTMLInputElement).files?.[0];
-    if (file) {
-      const arrayBuffer = await readFile(file);
-      const doc = engine.openDocument(arrayBuffer);
+    const closeTask = currDoc
+      ? engine.closeDocument(currDoc)
+      : TaskBase.resolve(true);
 
-      const bookmarks = engine.getBookmarks(doc);
-      console.log(bookmarks);
+    closeTask.wait(async () => {
+      const file = (evt.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const arrayBuffer = await readFile(file);
+        const task = engine.openDocument(file.name, arrayBuffer);
+        task.wait((doc) => {
+          currDoc = doc;
 
-      for (let i = 0; i < doc.pageCount; i++) {
-        const page = doc.pages[i];
+          const task = engine.getBookmarks(doc);
+          task.wait((bookmarks) => {
+            console.log(bookmarks);
+          }, logError);
 
-        const imageData = engine.renderPage(doc, page, 1, 0);
+          for (let i = 0; i < doc.pageCount; i++) {
+            const page = doc.pages[i];
 
-        const canvasElem = document.createElement(
-          'canvas'
-        ) as HTMLCanvasElement;
-        const rootElem = document.getElementById('root') as HTMLDivElement;
-        rootElem.appendChild(canvasElem);
-        canvasElem.style.width = `${page.size.width}px`;
-        canvasElem.style.height = `${page.size.height}px`;
-        canvasElem.width = imageData.width;
-        canvasElem.height = imageData.height;
+            const renderTask = engine.renderPage(doc, page, 1, 0);
+            renderTask.wait((imageData) => {
+              const canvasElem = document.createElement(
+                'canvas'
+              ) as HTMLCanvasElement;
+              const rootElem = document.getElementById(
+                'root'
+              ) as HTMLDivElement;
+              rootElem.appendChild(canvasElem);
+              canvasElem.style.width = `${page.size.width}px`;
+              canvasElem.style.height = `${page.size.height}px`;
+              canvasElem.width = imageData.width;
+              canvasElem.height = imageData.height;
 
-        const ctx = canvasElem.getContext('2d');
-        ctx?.putImageData(
-          imageData,
-          0,
-          0,
-          0,
-          0,
-          imageData.width,
-          imageData.height
-        );
+              const ctx = canvasElem.getContext('2d');
+              ctx?.putImageData(
+                imageData,
+                0,
+                0,
+                0,
+                0,
+                imageData.width,
+                imageData.height
+              );
+            }, logError);
 
-        const annotations = engine.getPageAnnotations(doc, page, 1, 0);
-        console.log(page.index, annotations);
+            const annotationsTask = engine.getPageAnnotations(doc, page, 1, 0);
+            annotationsTask.wait((annotations) => {
+              console.log(page.index, annotations);
+            }, logError);
+          }
+        }, logError);
       }
-
-      engine.closeDocument(doc);
-      engine.destroy();
-    }
+    }, logError);
   });
 }
 

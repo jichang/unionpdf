@@ -5,6 +5,7 @@ import { PdfDocument, PdfEngineContextProvider } from '@unionpdf/core';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
 import { PdfPageContentComponentProps, PdfPages } from '../pages';
 import { PdfPageCanvas } from './canvas';
+import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
 
 function PdfPageContent(props: PdfPageContentComponentProps) {
   return (
@@ -17,10 +18,20 @@ function PdfPageContent(props: PdfPageContentComponentProps) {
 describe('PdfPageCanvas', () => {
   test('should render pdf canvas', async () => {
     const pdf = createMockPdfDocument();
-    const engine = createMockPdfEngine();
+    const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
+    const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
+    const engine = createMockPdfEngine({
+      openDocument: jest.fn(() => {
+        return openDocumentTask;
+      }),
+      closeDocument: jest.fn(() => {
+        return closeDocumentTask;
+      }),
+    });
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
+          id="test"
           source={new Uint8Array()}
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
@@ -34,9 +45,8 @@ describe('PdfPageCanvas', () => {
       </PdfEngineContextProvider>
     );
 
-    await act(async () => {
-      engine.openDefer.resolve(pdf);
-      await engine.openDefer.promise;
+    act(() => {
+      openDocumentTask.resolve(pdf);
     });
 
     expect(

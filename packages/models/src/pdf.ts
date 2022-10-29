@@ -189,12 +189,6 @@ export type PdfAnnotationObject =
   | PdfInkAnnoObject
   | PdfStampAnnoObject;
 
-export class PdfError extends Error {
-  constructor(public reason: any) {
-    super();
-  }
-}
-
 /*
  * Clockwise direction
  *
@@ -209,10 +203,9 @@ export type Rotation = 0 | 1 | 2 | 3;
 // pdf content
 export type PdfSource = ArrayBuffer;
 
-export type PdfEngineFunResult<T> = T | Promise<T>;
-
 export enum PdfEngineFeature {
-  Pages,
+  RenderPage,
+  RenderPageRect,
   Thumbnails,
   Bookmarks,
   Annotations,
@@ -225,42 +218,166 @@ export enum PdfEngineOperation {
   Delete,
 }
 
+export enum TaskStage {
+  Pending = 0,
+  Resolved = 1,
+  Rejected = 2,
+  Aborted = 3,
+}
+
+export type ResolvedCallback<R> = (r: R) => void;
+export type RejectedCallback<E> = (e: E | TaskAbortError) => void;
+
+export class TaskAbortError extends Error {}
+
+export type TaskState<R, E> =
+  | {
+      stage: TaskStage.Pending;
+    }
+  | {
+      stage: TaskStage.Resolved;
+      result: R;
+    }
+  | {
+      stage: TaskStage.Rejected;
+      error: E;
+    }
+  | {
+      stage: TaskStage.Aborted;
+      error: TaskAbortError | E;
+    };
+
+export interface Task<R, E = Error> {
+  state: TaskState<R, E>;
+
+  wait: (
+    doneCallback: ResolvedCallback<R>,
+    failedCallback: RejectedCallback<E>
+  ) => void;
+  resolve: (r: R) => void;
+  reject: (e: E) => void;
+  abort: (error?: E | TaskAbortError) => void;
+}
+
+export class TaskBase<R, E = Error> implements Task<R, E> {
+  state: TaskState<R, E> = {
+    stage: TaskStage.Pending,
+  };
+  resolvedCallbacks: ResolvedCallback<R>[] = [];
+  rejectedCallbacks: RejectedCallback<E>[] = [];
+
+  static resolve<R, E = Error>(result: R): TaskBase<R, E> {
+    const task = new TaskBase<R, E>();
+    task.resolve(result);
+
+    return task;
+  }
+
+  static reject<R, E = Error>(error: E): TaskBase<R, E> {
+    const task = new TaskBase<R, E>();
+    task.reject(error);
+
+    return task;
+  }
+
+  wait(
+    resolvedCallback: ResolvedCallback<R>,
+    rejectedCallback: RejectedCallback<E>
+  ) {
+    switch (this.state.stage) {
+      case TaskStage.Pending:
+        this.resolvedCallbacks.push(resolvedCallback);
+        this.rejectedCallbacks.push(rejectedCallback);
+        break;
+      case TaskStage.Resolved:
+        resolvedCallback(this.state.result);
+        break;
+      case TaskStage.Rejected:
+        rejectedCallback(this.state.error);
+        break;
+      case TaskStage.Aborted:
+        rejectedCallback(this.state.error);
+        break;
+    }
+  }
+
+  resolve(result: R) {
+    if (this.state.stage === TaskStage.Pending) {
+      this.state = {
+        stage: TaskStage.Resolved,
+        result,
+      };
+      for (const resolvedCallback of this.resolvedCallbacks) {
+        try {
+          resolvedCallback(result);
+        } catch (e) {}
+      }
+      this.resolvedCallbacks = [];
+      this.rejectedCallbacks = [];
+    }
+  }
+
+  reject(error: E) {
+    if (this.state.stage === TaskStage.Pending) {
+      this.state = {
+        stage: TaskStage.Rejected,
+        error,
+      };
+      for (const rejectedCallback of this.rejectedCallbacks) {
+        try {
+          rejectedCallback(error);
+        } catch (e) {}
+      }
+      this.resolvedCallbacks = [];
+      this.rejectedCallbacks = [];
+    }
+  }
+
+  abort(error?: E | TaskAbortError) {
+    if (this.state.stage === TaskStage.Pending) {
+      this.state = {
+        stage: TaskStage.Aborted,
+        error: error || new TaskAbortError(),
+      };
+      for (const rejectedCallback of this.rejectedCallbacks) {
+        try {
+          rejectedCallback(this.state.error);
+        } catch (e) {}
+      }
+      this.resolvedCallbacks = [];
+      this.rejectedCallbacks = [];
+    }
+  }
+}
+
 export interface PdfEngine {
-  isSupport?: (
-    feature: PdfEngineFeature
-  ) => PdfEngineFunResult<PdfEngineOperation[]>;
-  openDocument: (
-    data: PdfSource,
-    signal?: AbortSignal
-  ) => PdfEngineFunResult<PdfDocumentObject>;
-  getBookmarks: (
-    doc: PdfDocumentObject,
-    signal?: AbortSignal
-  ) => PdfEngineFunResult<PdfBookmarksObject>;
+  isSupport?: (feature: PdfEngineFeature) => Task<PdfEngineOperation[], Error>;
+  openDocument: (id: string, data: PdfSource) => Task<PdfDocumentObject, Error>;
+  getBookmarks: (doc: PdfDocumentObject) => Task<PdfBookmarksObject, Error>;
   renderPage: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
+    rotation: Rotation
+  ) => Task<ImageData, Error>;
+  renderPageRect?: (
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    scaleFactor: number,
     rotation: Rotation,
-    rect?: Rect,
-    signal?: AbortSignal
-  ) => PdfEngineFunResult<ImageData>;
+    rect: Rect
+  ) => Task<ImageData, Error>;
   getPageAnnotations: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation,
-    signal?: AbortSignal
-  ) => PdfEngineFunResult<PdfAnnotationObject[]>;
+    rotation: Rotation
+  ) => Task<PdfAnnotationObject[], Error>;
   renderThumbnail: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation,
-    signal?: AbortSignal
-  ) => PdfEngineFunResult<ImageData>;
-  closeDocument: (
-    pdf: PdfDocumentObject,
-    signal?: AbortSignal
-  ) => PdfEngineFunResult<void>;
+    rotation: Rotation
+  ) => Task<ImageData, Error>;
+  closeDocument: (pdf: PdfDocumentObject) => Task<boolean, Error>;
 }

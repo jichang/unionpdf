@@ -6,23 +6,20 @@ import {
   PdfLinkAnnoObject,
   PdfTarget,
   PdfZoomMode,
+  TaskBase,
 } from '@unionpdf/models';
 import { PdfDestinationObject } from '@unionpdf/models';
 import {
   PdfBookmarkObject,
   PdfDocumentObject,
   PdfEngine,
-  PdfError,
   PdfPageObject,
   PdfActionType,
-  Rect,
   Rotation,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readString } from './helper';
 import { PdfiumModule } from './pdfium';
-
-export type PdfiumPdfDocumentObject = PdfDocumentObject;
 
 export enum BitmapFormat {
   Bitmap_Gray = 1,
@@ -185,10 +182,7 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDF_DestroyLibrary();
   }
 
-  openDocument(
-    arrayBuffer: ArrayBuffer,
-    signal?: AbortSignal
-  ): PdfiumPdfDocumentObject {
+  openDocument(id: string, arrayBuffer: ArrayBuffer) {
     const array = new Uint8Array(arrayBuffer);
     const length = array.length;
     const filePtr = this.wasmModule._malloc(length);
@@ -201,7 +195,9 @@ export class PdfiumEngine implements PdfEngine {
     );
     if (this.wasmModuleWrapper.FPDF_GetLastError()) {
       this.wasmModule._free(filePtr);
-      throw new PdfError('');
+      return TaskBase.reject<PdfDocumentObject>(
+        new Error('can not open document')
+      );
     }
 
     const pageCount = this.wasmModuleWrapper.FPDF_GetPageCount(docPtr);
@@ -221,7 +217,9 @@ export class PdfiumEngine implements PdfEngine {
         this.wasmModule._free(sizePtr);
         this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
         this.wasmModule._free(filePtr);
-        throw new PdfError('');
+        return TaskBase.reject<PdfDocumentObject>(
+          new Error('can not get page size')
+        );
       }
 
       const page = {
@@ -236,25 +234,25 @@ export class PdfiumEngine implements PdfEngine {
     }
     this.wasmModule._free(sizePtr);
 
-    const id = `${Date.now()}.${Math.random()}`;
+    const pdfDoc = {
+      id,
+      pageCount,
+      pages,
+    };
     this.docs[id] = {
       filePtr,
       docPtr,
     };
 
-    return {
-      id,
-      pageCount,
-      pages,
-    };
+    return TaskBase.resolve(pdfDoc);
   }
 
-  getBookmarks(doc: PdfiumPdfDocumentObject, signal?: AbortSignal) {
+  getBookmarks(doc: PdfDocumentObject) {
     const { docPtr } = this.docs[doc.id];
     const bookmarks = this.readPdfBookmarks(docPtr, 0);
-    return {
+    return TaskBase.resolve({
       bookmarks,
-    };
+    });
   }
 
   renderPage(
@@ -262,7 +260,6 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-    rect?: Rect | undefined,
     signal?: AbortSignal | undefined
   ) {
     const { docPtr } = this.docs[doc.id];
@@ -316,7 +313,7 @@ export class PdfiumEngine implements PdfEngine {
     const imageData = new ImageData(bitmapSize.width, bitmapSize.height);
     imageData.data.set(array);
 
-    return imageData;
+    return TaskBase.resolve(imageData);
   }
 
   getPageAnnotations(
@@ -340,28 +337,30 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDFText_ClosePage(textPagePtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
-    return annotations;
+    return TaskBase.resolve(annotations);
   }
 
   renderThumbnail(
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation,
-    signal?: AbortSignal | undefined
+    rotation: Rotation
   ) {
     scaleFactor = Math.max(scaleFactor, 0.5);
-    return this.renderPage(doc, page, scaleFactor, rotation, undefined, signal);
+    return this.renderPage(doc, page, scaleFactor, rotation);
   }
 
-  closeDocument(
-    doc: PdfiumPdfDocumentObject,
-    signal?: AbortSignal | undefined
-  ) {
+  closeDocument(doc: PdfDocumentObject) {
+    const docData = this.docs[doc.id];
+    if (!docData) {
+      return TaskBase.reject<boolean>(new Error('can not found document data'));
+    }
+
     const { docPtr, filePtr } = this.docs[doc.id];
     this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
     this.wasmModule._free(filePtr);
     delete this.docs[doc.id];
+    return TaskBase.resolve(true);
   }
 
   readPdfBookmarks(docPtr: number, rootBookmarkPtr = 0) {

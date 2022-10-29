@@ -6,9 +6,9 @@ import { render } from '@testing-library/react';
 import { PdfDocumentContextProvider, usePdfDocument } from './document.context';
 
 describe('PdfDocumentContextProvider ', () => {
-  let pdfInContext: PdfDocumentObject | null;
+  let pdfDocInContext: PdfDocumentObject | null;
   function Consumer() {
-    pdfInContext = usePdfDocument();
+    pdfDocInContext = usePdfDocument();
 
     return <div></div>;
   }
@@ -21,7 +21,7 @@ describe('PdfDocumentContextProvider ', () => {
       </PdfDocumentContextProvider>
     );
 
-    expect(pdfInContext).toEqual(pdf);
+    expect(pdfDocInContext).toEqual(pdf);
 
     result.unmount();
   });

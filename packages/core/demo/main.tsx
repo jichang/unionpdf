@@ -5,6 +5,9 @@ import {
   PdfPageObject,
   PdfDocumentObject,
   Rotation,
+  TaskBase,
+  PdfBookmarkObject,
+  PdfAnnotationObject,
 } from '@unionpdf/models';
 import {
   PdfEngineContextProvider,
@@ -30,23 +33,24 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     });
   }
   return {
-    openDocument: async (url: ArrayBuffer) => {
-      return {
+    openDocument: (id: string, data: ArrayBuffer) => {
+      return TaskBase.resolve({
         id: 'id',
         pageCount: pageCount,
         pages: pages,
-      };
+      });
     },
     renderPage: (doc: PdfDocumentObject, page: PdfPageObject) => {
-      return new ImageData(page.size.width, page.size.height);
+      return TaskBase.resolve(new ImageData(page.size.width, page.size.height));
     },
     renderThumbnail: (doc: PdfDocumentObject, page: PdfPageObject) => {
-      return new ImageData(page.size.width, page.size.height);
+      return TaskBase.resolve(new ImageData(page.size.width, page.size.height));
     },
     getBookmarks: (doc: PdfDocumentObject) => {
-      return {
-        bookmarks: [],
-      };
+      const bookmarks: PdfBookmarkObject[] = [];
+      return TaskBase.resolve({
+        bookmarks,
+      });
     },
     getPageAnnotations: (
       doc: PdfDocumentObject,
@@ -54,9 +58,12 @@ function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
       scaleFactor: number,
       rotation: Rotation
     ) => {
-      return [];
+      const annotations: PdfAnnotationObject[] = [];
+      return TaskBase.resolve(annotations);
     },
-    closeDocument: async (pdf: PdfDocumentObject) => {},
+    closeDocument: (pdf: PdfDocumentObject) => {
+      return TaskBase.resolve(true);
+    },
     ...engine,
   };
 }
@@ -87,6 +94,7 @@ function App() {
       >
         <PdfEngineContextProvider engine={engine}>
           <PdfDocument
+            id="test"
             source={new Uint8Array()}
             onOpenSuccess={() => {}}
             onOpenFailure={() => {}}
