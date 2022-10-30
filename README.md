@@ -7,7 +7,6 @@ UnionPDF contains several packages for displaying PDF files in browser
 | @unionpdf/models  | Definition of common data types             |
 | @unionpdf/engines | PDF engine for parsing PDF files            |
 | @unionpdf/react   | React components for displaying PDF content |
-| @unionpdf/mocks   | Mocks for UI components development         |
 | @unionpdf/app     | Demo apps for showing usages                |
 
 ### Dev

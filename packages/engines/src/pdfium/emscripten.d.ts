@@ -340,13 +340,3 @@ export type CCall = <I extends readonly JSTypeName[], R extends JSTypeName>(
   args: NamesToType<I>,
   opts?: CCallOpts
 ) => NameToType<R>;
-
-export type ValueType = 'i8' | 'i16' | 'i32' | 'float' | 'i64' | 'double';
-export const ValueTypeBytes: Record<ValueType, number> = {
-  i8: 1,
-  i16: 2,
-  i32: 4,
-  i64: 8,
-  float: 4,
-  double: 8,
-};

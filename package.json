@@ -1,21 +1,19 @@
 {
   "name": "unionpdf",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
     "eslint": "^8.25.0",
     "husky": "^8.0.1",
-    "lerna": "^5.4.0",
     "prettier": "^2.7.1"
   },
   "scripts": {
     "format": "prettier --write .",
-    "build": "lerna run build",
     "lint": "eslint",
-    "clean": "lerna run clean",
-    "typecheck": "lerna run typecheck",
-    "test": "lerna run test",
     "prepare": "husky install"
   }
 }

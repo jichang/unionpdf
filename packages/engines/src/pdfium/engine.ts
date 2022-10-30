@@ -176,10 +176,12 @@ export class PdfiumEngine implements PdfEngine {
 
   initialize() {
     this.wasmModuleWrapper.PDFium_Init();
+    return TaskBase.resolve(true);
   }
 
   destroy() {
     this.wasmModuleWrapper.FPDF_DestroyLibrary();
+    return TaskBase.resolve(true);
   }
 
   openDocument(id: string, arrayBuffer: ArrayBuffer) {
@@ -259,8 +261,7 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation,
-    signal?: AbortSignal | undefined
+    rotation: Rotation
   ) {
     const { docPtr } = this.docs[doc.id];
     const format = BitmapFormat.Bitmap_BGRA;

@@ -9,7 +9,7 @@ describe('readString', () => {
         return ptr;
       }),
       _free: jest.fn(),
-      HEAP8: new Int8Array(),
+      HEAP8: new Int8Array(100),
     } as unknown as PdfiumModule;
     const readChars = jest.fn(() => {
       return 10;

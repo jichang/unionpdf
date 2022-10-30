@@ -1,11 +1,7 @@
 import { PdfDocumentObject, TaskBase } from '@unionpdf/models';
-import {
-  pdfiumDebugWasm,
-  createDebugPdfiumModule,
-  pdfiumWasm,
-  createPdfiumModule,
-  PdfiumEngine,
-} from '../src/index';
+import { pdfiumWasm, createPdfiumModule, PdfiumEngine } from '../src/index';
+import pdfiumDebugWasm from '../src/pdfium/debug/pdfium.wasm';
+import createDebugPdfiumModule from '../src/pdfium/debug/pdfium';
 
 async function readFile(file: File): Promise<ArrayBuffer> {
   return new Promise((resolve) => {

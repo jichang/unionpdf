@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/mocks';
+import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
 import { PdfBookmarks } from './bookmarks';
 import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
 import { PdfDocument } from '../core/document';

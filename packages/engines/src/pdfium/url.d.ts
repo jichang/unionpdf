@@ -1,4 +1,4 @@
-declare module 'url:*.wasm' {
+declare module 'url:./pdfium.wasm' {
   const url: string;
   export = url;
 }

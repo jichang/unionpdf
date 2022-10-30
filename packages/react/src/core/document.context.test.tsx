@@ -1,4 +1,4 @@
-import { createMockPdfDocument } from '@unionpdf/mocks';
+import { createMockPdfDocument } from '@unionpdf/engines';
 import { PdfDocumentObject } from '@unionpdf/models';
 import React from 'react';
 import '@testing-library/jest-dom';

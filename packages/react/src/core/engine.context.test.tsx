@@ -2,7 +2,7 @@ import React from 'react';
 import { PdfEngineContextProvider, usePdfEngine } from './engine.context';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { createMockPdfEngine } from '@unionpdf/mocks';
+import { createMockPdfEngine } from '@unionpdf/engines';
 import { PdfEngine } from '@unionpdf/models';
 
 describe('PdfEngineContextProvider ', () => {
