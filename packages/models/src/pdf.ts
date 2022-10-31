@@ -352,7 +352,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
 
 export interface PdfEngine {
   isSupport?: (feature: PdfEngineFeature) => Task<PdfEngineOperation[], Error>;
-  initalize?: () => Task<boolean, Error>;
+  initialize?: () => Task<boolean, Error>;
   destroy?: () => Task<boolean, Error>;
   openDocument: (id: string, data: PdfSource) => Task<PdfDocumentObject, Error>;
   getBookmarks: (doc: PdfDocumentObject) => Task<PdfBookmarksObject, Error>;

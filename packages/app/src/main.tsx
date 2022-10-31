@@ -1,3 +1,5 @@
+/// <reference path="./global.d.ts" />
+
 import React, {
   ChangeEvent,
   useCallback,
@@ -31,11 +33,9 @@ import {
   PdfPageLinkAnnotation,
   PdfBookmarks,
 } from '@unionpdf/react';
-import {
-  PdfiumEngine,
-  pdfiumWasm,
-  createPdfiumModule,
-} from '@unionpdf/engines';
+import { PdfiumEngine, WebWorkerEngine } from '@unionpdf/engines';
+import webworker from 'url:./webworker';
+import { PdfEngine } from '@unionpdf/models';
 
 function PdfPageNumber(props: { page: PdfPageObject }) {
   const { page } = props;
@@ -109,7 +109,7 @@ function PdfPageContent(props: PdfPageContentComponentProps) {
 }
 
 export interface AppProps {
-  engine: PdfiumEngine;
+  engine: PdfEngine;
 }
 
 function App(props: AppProps) {
@@ -264,12 +264,9 @@ async function readFile(file: File): Promise<ArrayBuffer> {
 }
 
 async function run() {
-  const response = await fetch(pdfiumWasm);
-  const wasmBinary = await response.arrayBuffer();
-  const wasmModule = await createPdfiumModule({ wasmBinary });
-  const engine = new PdfiumEngine(wasmModule);
-
+  const engine = new WebWorkerEngine(new URL(webworker));
   engine.initialize();
+
   const appElem = document.querySelector('#root') as HTMLElement;
   const root = ReactDOM.createRoot(appElem);
   root.render(<App engine={engine} />);

@@ -1,7 +1,8 @@
+/// <reference path="./global.d.ts" />
+
 import { PdfDocumentObject, TaskBase } from '@unionpdf/models';
-import { pdfiumWasm, createPdfiumModule, PdfiumEngine } from '../src/index';
-import pdfiumDebugWasm from '../src/pdfium/debug/pdfium.wasm';
-import createDebugPdfiumModule from '../src/pdfium/debug/pdfium';
+import { WebWorkerEngine } from '../src/index';
+import webworker from 'url:./webworker';
 
 async function readFile(file: File): Promise<ArrayBuffer> {
   return new Promise((resolve) => {
@@ -19,14 +20,7 @@ function logError(error: Error) {
 }
 
 async function run() {
-  const url = new URL(window.location.href);
-  const isDebug = !!url.searchParams.get('debug');
-  const response = await fetch(isDebug ? pdfiumDebugWasm : pdfiumWasm);
-  const wasmBinary = await response.arrayBuffer();
-  const wasmModule = await (isDebug
-    ? createDebugPdfiumModule({ wasmBinary })
-    : createPdfiumModule({ wasmBinary }));
-  const engine = new PdfiumEngine(wasmModule);
+  const engine = new WebWorkerEngine(new URL(webworker));
 
   engine.initialize();
 

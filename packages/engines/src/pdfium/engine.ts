@@ -41,7 +41,7 @@ export enum RenderFlag {
   REVERSE_BYTE_ORDER = 0x10, // Set whether render in a reverse Byte order, this flag only.
 }
 
-export const DPR = window.devicePixelRatio || 1;
+export const DPR = self.devicePixelRatio || 1;
 
 export const wrappedModuleMethods = {
   UTF8ToString: [['number'] as const, 'string' as const] as const,
