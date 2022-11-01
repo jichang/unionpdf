@@ -1,4 +1,4 @@
-import { PdfEngine, Task } from '@unionpdf/models';
+import { Logger, NoopLogger, PdfEngine, Task } from '@unionpdf/models';
 
 export type PdfEngineMethodName = keyof Required<PdfEngine>;
 export type PdfEngineMethodArgs<P extends PdfEngineMethodName> = Readonly<
@@ -55,17 +55,24 @@ export type Request = ExecuteRequest | AbortRequest;
 
 export type Response = ExecuteResponse | ReadyResponse;
 
+const LOG_SOURCE = 'WebWorkerEngineRunner';
+const LOG_CATEGORY = 'Engine';
+
 export class EngineRunner {
   engine: PdfEngine | undefined;
+
+  constructor(public logger: Logger = new NoopLogger()) {}
 
   ready() {
     this.respond({
       id: '0',
       type: 'ReadyResponse',
     });
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner is ready');
   }
 
   execute = (request: ExecuteRequest) => {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner start exeucte request');
     if (!this.engine) {
       const response: ExecuteResponse = {
         id: request.id,
@@ -155,14 +162,22 @@ export class EngineRunner {
   };
 
   respond(response: Response) {
-    console.log('send response: ', response);
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner respond: ', response);
     self.postMessage(response);
   }
 }
 
-export function handler(runner: EngineRunner) {
+export function handler(
+  runner: EngineRunner,
+  logger: Logger = new NoopLogger()
+) {
   return (evt: MessageEvent<Request>) => {
-    console.log('receive request: ', evt.data);
+    logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'webworker receive message event: ',
+      evt.data
+    );
     try {
       const request = evt.data as Request;
       switch (request.type) {
@@ -171,7 +186,12 @@ export function handler(runner: EngineRunner) {
           break;
       }
     } catch (e) {
-      console.log(e);
+      logger.info(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        'webworker met error when processing message event:',
+        e
+      );
     }
   };
 }

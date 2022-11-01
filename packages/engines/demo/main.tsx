@@ -1,6 +1,6 @@
-/// <reference path="./global.d.ts" />
+/// <reference path="./url.d.ts" />
 
-import { PdfDocumentObject, TaskBase } from '@unionpdf/models';
+import { ConsoleLogger, PdfDocumentObject, TaskBase } from '@unionpdf/models';
 import { WebWorkerEngine } from '../src/index';
 import webworker from 'url:./webworker';
 
@@ -20,7 +20,7 @@ function logError(error: Error) {
 }
 
 async function run() {
-  const engine = new WebWorkerEngine(new URL(webworker));
+  const engine = new WebWorkerEngine(new URL(webworker), new ConsoleLogger());
 
   engine.initialize();
 

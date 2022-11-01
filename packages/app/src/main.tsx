@@ -12,6 +12,7 @@ import {
   Rotation,
   PdfTextAnnoObject,
   PdfAnnotationSubtype,
+  ConsoleLogger,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -264,7 +265,7 @@ async function readFile(file: File): Promise<ArrayBuffer> {
 }
 
 async function run() {
-  const engine = new WebWorkerEngine(new URL(webworker));
+  const engine = new WebWorkerEngine(new URL(webworker), new ConsoleLogger());
   engine.initialize();
 
   const appElem = document.querySelector('#root') as HTMLElement;

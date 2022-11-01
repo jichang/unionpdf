@@ -7,6 +7,8 @@ import {
   PdfTarget,
   PdfZoomMode,
   TaskBase,
+  Logger,
+  NoopLogger,
 } from '@unionpdf/models';
 import { PdfDestinationObject } from '@unionpdf/models';
 import {
@@ -160,6 +162,9 @@ export const wrappedModuleMethods = {
   FPDFPage_CloseAnnot: [['number'] as const, ''] as const,
 };
 
+const LOG_SOURCE = 'PdfiumEngine';
+const LOG_CATEGORY = 'Engine';
+
 export class PdfiumEngine implements PdfEngine {
   wasmModuleWrapper: WrappedModule<typeof wrappedModuleMethods>;
   docs: Record<
@@ -170,21 +175,27 @@ export class PdfiumEngine implements PdfEngine {
     }
   > = {};
 
-  constructor(private wasmModule: PdfiumModule) {
+  constructor(
+    private wasmModule: PdfiumModule,
+    private logger: Logger = new NoopLogger()
+  ) {
     this.wasmModuleWrapper = wrap(wasmModule.cwrap, wrappedModuleMethods);
   }
 
   initialize() {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'initialize');
     this.wasmModuleWrapper.PDFium_Init();
     return TaskBase.resolve(true);
   }
 
   destroy() {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'destroy');
     this.wasmModuleWrapper.FPDF_DestroyLibrary();
     return TaskBase.resolve(true);
   }
 
   openDocument(id: string, arrayBuffer: ArrayBuffer) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', arguments);
     const array = new Uint8Array(arrayBuffer);
     const length = array.length;
     const filePtr = this.wasmModule._malloc(length);
@@ -195,10 +206,16 @@ export class PdfiumEngine implements PdfEngine {
       length,
       ''
     );
-    if (this.wasmModuleWrapper.FPDF_GetLastError()) {
+    const lastError = this.wasmModuleWrapper.FPDF_GetLastError();
+    if (lastError) {
+      this.logger.error(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `FPDF_LoadMemDocument failed with ${lastError}`
+      );
       this.wasmModule._free(filePtr);
       return TaskBase.reject<PdfDocumentObject>(
-        new Error('can not open document')
+        new Error(`FPDF_LoadMemDocument failed with ${lastError}`)
       );
     }
 
@@ -216,11 +233,16 @@ export class PdfiumEngine implements PdfEngine {
         sizePtr
       );
       if (result === 0) {
+        this.logger.error(
+          LOG_SOURCE,
+          LOG_CATEGORY,
+          `FPDF_GetPageSizeByIndexF failed with ${lastError}`
+        );
         this.wasmModule._free(sizePtr);
         this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
         this.wasmModule._free(filePtr);
         return TaskBase.reject<PdfDocumentObject>(
-          new Error('can not get page size')
+          new Error(`FPDF_GetPageSizeByIndexF failed with ${lastError}`)
         );
       }
 
@@ -250,6 +272,7 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   getBookmarks(doc: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getBookmarks', arguments);
     const { docPtr } = this.docs[doc.id];
     const bookmarks = this.readPdfBookmarks(docPtr, 0);
     return TaskBase.resolve({
@@ -263,6 +286,7 @@ export class PdfiumEngine implements PdfEngine {
     scaleFactor: number,
     rotation: Rotation
   ) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'renderPage', arguments);
     const { docPtr } = this.docs[doc.id];
     const format = BitmapFormat.Bitmap_BGRA;
     const bytesPerPixel = 4;
@@ -324,6 +348,12 @@ export class PdfiumEngine implements PdfEngine {
     rotation: Rotation,
     signal?: AbortSignal | undefined
   ) {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'getPageAnnotations',
+      arguments
+    );
     const { docPtr } = this.docs[doc.id];
     const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
     const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
@@ -347,14 +377,23 @@ export class PdfiumEngine implements PdfEngine {
     scaleFactor: number,
     rotation: Rotation
   ) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'renderThumbnail', arguments);
     scaleFactor = Math.max(scaleFactor, 0.5);
     return this.renderPage(doc, page, scaleFactor, rotation);
   }
 
   closeDocument(doc: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', arguments);
     const docData = this.docs[doc.id];
     if (!docData) {
-      return TaskBase.reject<boolean>(new Error('can not found document data'));
+      this.logger.error(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `can not close document ${doc.id}`
+      );
+      return TaskBase.reject<boolean>(
+        new Error(`can not close document ${doc.id}`)
+      );
     }
 
     const { docPtr, filePtr } = this.docs[doc.id];
