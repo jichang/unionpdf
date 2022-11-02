@@ -1,4 +1,4 @@
-import { Rect } from '@unionpdf/models';
+import { Logger, NoopLogger, Rect } from '@unionpdf/models';
 
 export interface PdfNavigatorGotoPageEvent {
   kind: 'GotoPage';
@@ -10,6 +10,9 @@ export interface PdfNavigatorGotoPageEvent {
 
 export type PdfNavigatorEvent = PdfNavigatorGotoPageEvent;
 
+const LOG_SOURCE = 'PdfNavigator';
+const LOG_CATEGORY = 'Navigate';
+
 export type PdfNavigatorListener = {
   source: string;
   handler: (event: PdfNavigatorEvent, source: string) => void;
@@ -19,7 +22,15 @@ export class PdfNavigator {
   currPageIndex = 0;
   listeners: PdfNavigatorListener[] = [];
 
+  constructor(private logger: Logger = new NoopLogger()) {}
+
   gotoPage(data: PdfNavigatorGotoPageEvent['data'], source: string) {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      `${source} try to navigate to `,
+      data
+    );
     if (this.currPageIndex === data.pageIndex) {
       return;
     }
@@ -41,7 +52,12 @@ export class PdfNavigator {
           listener.handler(evt, source);
         }
       } catch (e) {
-        console.log(e);
+        this.logger.error(
+          LOG_SOURCE,
+          LOG_CATEGORY,
+          'error happens when calling navigator listener: ',
+          e
+        );
       }
     }
   }

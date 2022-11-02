@@ -3,7 +3,7 @@ import {
   PdfBookmarkObject,
   PdfActionType,
 } from '@unionpdf/models';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from './errorboundary';
 import './bookmarks.css';
 import { usePdfDocument } from '../core/document.context';
@@ -59,6 +59,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
 
   const handleEntryClicked = useCallback(
     (bookmark: PdfBookmarkObject) => {
+      console.log(bookmark);
       if (!bookmark.target) {
         return;
       }
@@ -153,7 +154,7 @@ export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
       }`}
     >
       <span onClick={activiate}>{bookmark.title}</span>
-      {bookmark.children && isUnfold ? (
+      {bookmark.children && bookmark.children.length !== 0 && isUnfold ? (
         <ol style={{ listStyle: 'none', paddingLeft: '1rem' }}>
           {bookmark.children.map((entry, index) => {
             return (

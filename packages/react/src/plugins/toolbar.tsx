@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { useUIComponents, useUIStrings } from './ui/ui.context';
+import { useUIComponents, useUIStrings } from '../ui/ui.context';
 import './toolbar.css';
 import { ErrorBoundary } from './errorboundary';
 import { usePdfDocument } from '../core/document.context';

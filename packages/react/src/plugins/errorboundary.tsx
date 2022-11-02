@@ -1,5 +1,5 @@
 import React from 'react';
-import { UIStringsContext } from './ui/ui.context';
+import { UIStringsContext } from '../ui/ui.context';
 
 export interface ErrorBoundaryProps {
   children: React.ReactNode;

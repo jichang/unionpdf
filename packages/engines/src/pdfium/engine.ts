@@ -678,71 +678,77 @@ export class PdfiumEngine implements PdfEngine {
           type: PdfActionType.Unsupported,
         };
         break;
-      case PdfActionType.Goto: {
-        const destinationPtr = this.wasmModuleWrapper.FPDFAction_GetDest(
-          docPtr,
-          actionPtr
-        );
-        if (destinationPtr) {
-          const destination = this.readPdfDestination(docPtr, destinationPtr);
+      case PdfActionType.Goto:
+        {
+          const destinationPtr = this.wasmModuleWrapper.FPDFAction_GetDest(
+            docPtr,
+            actionPtr
+          );
+          if (destinationPtr) {
+            const destination = this.readPdfDestination(docPtr, destinationPtr);
 
-          action = {
-            type: PdfActionType.Goto,
-            destination,
-          };
-        } else {
+            action = {
+              type: PdfActionType.Goto,
+              destination,
+            };
+          } else {
+            action = {
+              type: PdfActionType.Unsupported,
+            };
+          }
+        }
+        break;
+      case PdfActionType.RemoteGoto:
+        {
+          // In case of remote goto action,
+          // the application should first use FPDFAction_GetFilePath
+          // to get file path, then load that particular document,
+          // and use its document handle to call this
           action = {
             type: PdfActionType.Unsupported,
           };
         }
-      }
-      case PdfActionType.RemoteGoto: {
-        // In case of remote goto action,
-        // the application should first use FPDFAction_GetFilePath
-        // to get file path, then load that particular document,
-        // and use its document handle to call this
-        action = {
-          type: PdfActionType.Unsupported,
-        };
         break;
-      }
-      case PdfActionType.URI: {
-        const uri = readString(
-          this.wasmModule,
-          (buffer, bufferLength) => {
-            return this.wasmModuleWrapper.FPDFAction_GetURIPath(
-              docPtr,
-              actionPtr,
-              buffer,
-              bufferLength
-            );
-          },
-          this.wasmModule.AsciiToString
-        );
+      case PdfActionType.URI:
+        {
+          const uri = readString(
+            this.wasmModule,
+            (buffer, bufferLength) => {
+              return this.wasmModuleWrapper.FPDFAction_GetURIPath(
+                docPtr,
+                actionPtr,
+                buffer,
+                bufferLength
+              );
+            },
+            this.wasmModule.AsciiToString
+          );
 
-        action = {
-          type: PdfActionType.URI,
-          uri,
-        };
+          action = {
+            type: PdfActionType.URI,
+            uri,
+          };
+        }
         break;
-      }
-      case PdfActionType.LaunchAppOrOpenFile: {
-        const path = readString(
-          this.wasmModule,
-          (buffer, bufferLength) => {
-            return this.wasmModuleWrapper.FPDFAction_GetFilePath(
-              actionPtr,
-              buffer,
-              bufferLength
-            );
-          },
-          this.wasmModule.UTF8ToString
-        );
-        action = {
-          type: PdfActionType.LaunchAppOrOpenFile,
-          path,
-        };
-      }
+      case PdfActionType.LaunchAppOrOpenFile:
+        {
+          const path = readString(
+            this.wasmModule,
+            (buffer, bufferLength) => {
+              return this.wasmModuleWrapper.FPDFAction_GetFilePath(
+                actionPtr,
+                buffer,
+                bufferLength
+              );
+            },
+            this.wasmModule.UTF8ToString
+          );
+          action = {
+            type: PdfActionType.LaunchAppOrOpenFile,
+            path,
+          };
+        }
+        break;
     }
 
     return action;

@@ -29,6 +29,9 @@ body {
   align-items: center;
 
   width: 100%;
+  height: 0;
+
+  overflow: visible;
 }
 
 .app__toolbar button,

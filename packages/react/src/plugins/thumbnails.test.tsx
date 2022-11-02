@@ -6,9 +6,12 @@ import { PdfThumbnails } from './thumbnails';
 import { PdfDocumentObject, TaskBase } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../core/engine.context';
 import { PdfDocument } from '../core/document';
+import { intersectionObserver } from '@shopify/jest-dom-mocks';
 
 describe('PdfThumbnails', () => {
   test('should render pdf thumbnails', async () => {
+    intersectionObserver.mock();
+
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
     const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
@@ -47,5 +50,7 @@ describe('PdfThumbnails', () => {
     );
 
     result.unmount();
+
+    intersectionObserver.restore();
   });
 });
