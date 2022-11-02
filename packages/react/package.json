@@ -17,6 +17,9 @@
     "clean": "del-cli --force dist .parcel-cache",
     "test": "jest"
   },
+  "files": [
+    "./dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jichang/unionpdf.git"

@@ -24,6 +24,9 @@
     "PDF",
     "models"
   ],
+  "files": [
+    "./dist"
+  ],
   "author": "Ji Chang",
   "license": "MIT",
   "bugs": {

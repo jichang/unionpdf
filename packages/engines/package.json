@@ -27,6 +27,9 @@
     "PDF",
     "Engines"
   ],
+  "files": [
+    "./dist"
+  ],
   "author": "Ji Chang",
   "license": "MIT",
   "bugs": {
