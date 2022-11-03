@@ -1,6 +1,10 @@
 {
   "name": "@unionpdf/engines",
   "version": "0.1.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "core components of unionpdf",
   "source": "./src/index.ts",
   "main": "./dist/cjs/index.js",
@@ -28,7 +32,9 @@
     "Engines"
   ],
   "files": [
-    "./dist"
+    "dist/cjs",
+    "dist/esm",
+    "dist/types"
   ],
   "author": "Ji Chang",
   "license": "MIT",
