@@ -7,6 +7,7 @@ import { PdfPageCanvas } from './canvas';
 import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
+import { intersectionObserver } from '@shopify/jest-dom-mocks';
 
 function PdfPageContent(props: PdfPageContentComponentProps) {
   return (
@@ -18,6 +19,7 @@ function PdfPageContent(props: PdfPageContentComponentProps) {
 
 describe('PdfPageCanvas', () => {
   test('should render pdf canvas', async () => {
+    intersectionObserver.mock();
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
     const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
@@ -37,11 +39,7 @@ describe('PdfPageCanvas', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfPages
-            pageGap={8}
-            viewport={{ width: 100, height: 100 }}
-            pageContentComponent={PdfPageContent}
-          />
+          <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
         </PdfDocument>
       </PdfEngineContextProvider>
     );
@@ -50,10 +48,15 @@ describe('PdfPageCanvas', () => {
       openDocumentTask.resolve(pdf);
     });
 
+    act(() => {
+      intersectionObserver.simulate([{ isIntersecting: true }]);
+    });
+
     expect(
       document.querySelectorAll('.pdf__page__layer--canvas').length
-    ).toEqual(1);
+    ).toEqual(pdf.pageCount);
 
     result.unmount();
+    intersectionObserver.restore();
   });
 });

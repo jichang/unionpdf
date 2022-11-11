@@ -3,8 +3,8 @@ import {
   PdfBookmarkObject,
   PdfActionType,
 } from '@unionpdf/models';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ErrorBoundary } from './errorboundary';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ErrorBoundary } from '../ui/errorboundary';
 import './bookmarks.css';
 import { usePdfDocument } from '../core/document.context';
 import { usePdfEngine } from '../core/engine.context';
@@ -59,7 +59,6 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
 
   const handleEntryClicked = useCallback(
     (bookmark: PdfBookmarkObject) => {
-      console.log(bookmark);
       if (!bookmark.target) {
         return;
       }

@@ -7,6 +7,7 @@ import { PdfPageAnnotations } from './annotations';
 import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
+import { intersectionObserver } from '@shopify/jest-dom-mocks';
 
 describe('PdfPageAnnotations', () => {
   function PdfPageAnnotation() {
@@ -25,6 +26,7 @@ describe('PdfPageAnnotations', () => {
   }
 
   test('should render pdf annotations', async () => {
+    intersectionObserver.mock();
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
     const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
@@ -45,11 +47,7 @@ describe('PdfPageAnnotations', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfPages
-            pageGap={8}
-            viewport={{ width: 100, height: 100 }}
-            pageContentComponent={PdfPageContent}
-          />
+          <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
         </PdfDocument>
       </PdfEngineContextProvider>
     );
@@ -58,8 +56,15 @@ describe('PdfPageAnnotations', () => {
       openDocumentTask.resolve(pdf);
     });
 
-    expect(document.querySelectorAll('.pdf__annotation').length).toEqual(1);
+    act(() => {
+      intersectionObserver.simulate([{ isIntersecting: true }]);
+    });
+
+    expect(document.querySelectorAll('.pdf__annotation').length).toEqual(
+      pdf.pageCount
+    );
 
     result.unmount();
+    intersectionObserver.restore();
   });
 });

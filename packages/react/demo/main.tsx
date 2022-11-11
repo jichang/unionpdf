@@ -32,12 +32,12 @@ import {
   PdfPageAnnotationBase,
   PdfPageLinkAnnotation,
   PdfBookmarks,
+  LoggerContextProvider,
 } from '../src/index';
 import {
   createPdfiumModule,
   PdfiumEngine,
   pdfiumWasm,
-  WebWorkerEngine,
 } from '@unionpdf/engines';
 import { PdfEngine } from '@unionpdf/models';
 
@@ -210,48 +210,47 @@ function App(props: AppProps) {
         <button onClick={toggleBookmarksIsVisible}>Bookmarks</button>
       </div>
       {file ? (
-        <ThemeContextProvider
-          theme={{
-            background: 'blue',
-          }}
-        >
-          <PdfEngineContextProvider engine={engine}>
-            <PdfApplication mode={mode}>
-              <PdfNavigatorContextProvider navigator={pdfNavigator}>
-                <PdfDocument
-                  id={file.id}
-                  source={file.source}
-                  onOpenSuccess={() => {}}
-                  onOpenFailure={() => {}}
-                >
-                  <PdfPages
-                    visibleRange={[-1, 1]}
-                    viewport={viewport}
-                    scaleFactor={scaleFactor}
-                    rotation={rotation}
-                    pageContentComponent={PdfPageContent}
-                  />
-                  {thumbnailsIsVisible ? (
-                    <PdfThumbnails
-                      layout={{ direction: 'vertical', itemsCount: 2 }}
-                      size={{ width: 100, height: 100 }}
-                      scaleFactor={0.25}
+        <LoggerContextProvider logger={logger}>
+          <ThemeContextProvider
+            theme={{
+              background: 'blue',
+            }}
+          >
+            <PdfEngineContextProvider engine={engine}>
+              <PdfApplication mode={mode}>
+                <PdfNavigatorContextProvider navigator={pdfNavigator}>
+                  <PdfDocument
+                    id={file.id}
+                    source={file.source}
+                    onOpenSuccess={() => {}}
+                    onOpenFailure={() => {}}
+                  >
+                    <PdfPages
+                      visibleRange={[100, 100]}
+                      scaleFactor={scaleFactor}
+                      rotation={rotation}
+                      pageContentComponent={PdfPageContent}
                     />
-                  ) : null}
-                  {bookmarksIsVisible ? <PdfBookmarks /> : null}
-                  <div className="pdf__toolbar__container">
+                    {thumbnailsIsVisible ? (
+                      <PdfThumbnails
+                        layout={{ direction: 'vertical', itemsCount: 2 }}
+                        size={{ width: 100, height: 100 }}
+                        scaleFactor={0.25}
+                      />
+                    ) : null}
+                    {bookmarksIsVisible ? <PdfBookmarks /> : null}
                     <PdfToolbar
                       scaleFactor={scaleFactor}
                       changeScaleFactor={changeScaleFactor}
                       rotation={rotation}
                       changeRotation={changeRotation}
                     />
-                  </div>
-                </PdfDocument>
-              </PdfNavigatorContextProvider>
-            </PdfApplication>
-          </PdfEngineContextProvider>
-        </ThemeContextProvider>
+                  </PdfDocument>
+                </PdfNavigatorContextProvider>
+              </PdfApplication>
+            </PdfEngineContextProvider>
+          </ThemeContextProvider>
+        </LoggerContextProvider>
       ) : null}
     </div>
   );

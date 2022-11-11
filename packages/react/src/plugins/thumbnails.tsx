@@ -1,10 +1,20 @@
-import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
+import {
+  PdfDocumentObject,
+  PdfPageObject,
+  Rotation,
+  Size,
+} from '@unionpdf/models';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePdfDocument } from '../core/document.context';
 import { usePdfEngine } from '../core/engine.context';
 import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
-import { ErrorBoundary } from './errorboundary';
+import { ErrorBoundary } from '../ui/errorboundary';
+import {
+  IntersectionObserverContextProvider,
+  useIntersectionObserver,
+} from '../ui/intersectionobserver.context';
+import { IntersectionObserverEntry } from '../ui/intersectionobserver.entry';
 import './thumbnails.css';
 
 export type Direction = 'horizontal' | 'vertical';
@@ -67,46 +77,15 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
     },
     [pdfNavigator, setCurrPageIndex]
   );
+
   const styleTemplate: string[] = [];
   for (let i = 0; i < layout.itemsCount; i++) {
     styleTemplate.push('1fr');
   }
 
-  const [visiblePageIndexes, setVisiblePageIndexed] = useState<number[]>([]);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const [observer, setObserver] = useState<IntersectionObserver | null>(null);
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const visiblePageIndexes = entries
-            .filter((entry) => {
-              return entry.isIntersecting;
-            })
-            .map((entry) => {
-              return Number((entry.target as HTMLDivElement).dataset.pageIndex);
-            });
-          setVisiblePageIndexed(visiblePageIndexes);
-        },
-        {
-          root: container,
-          rootMargin: '0px 0px',
-          threshold: 0,
-        }
-      );
-      setObserver(observer);
-
-      return () => {
-        observer?.disconnect();
-      };
-    }
-  }, [containerRef.current]);
-
   return (
     <ErrorBoundary>
-      <div
-        ref={containerRef}
+      <IntersectionObserverContextProvider
         className={`pdf__thumbnails pdf__thumbnails--${layout.direction}`}
         style={
           layout.direction === 'vertical'
@@ -114,29 +93,53 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
             : { gridTemplateRows: styleTemplate.join(' ') }
         }
       >
-        {doc?.pages.map((page, index) => {
-          const isCurrent = page.index === currPageIndex;
-          const isVisible = visiblePageIndexes.indexOf(page.index) !== -1;
-          return (
-            <PdfThumbnail
-              observer={observer}
-              key={index}
-              page={page}
-              isVisible={isVisible}
-              scaleFactor={scaleFactor}
-              rotation={rotation}
-              isCurrent={isCurrent}
-              onClick={gotoPage}
-            />
-          );
-        })}
-      </div>
+        <PdfThumbnailsContent
+          doc={doc}
+          currPageIndex={currPageIndex}
+          scaleFactor={scaleFactor}
+          rotation={rotation}
+          gotoPage={gotoPage}
+        />
+      </IntersectionObserverContextProvider>
     </ErrorBoundary>
   );
 }
 
+export interface PdfThumbnailsContentProps {
+  doc: PdfDocumentObject | null;
+  currPageIndex: number;
+  scaleFactor: number;
+  rotation: Rotation;
+  gotoPage: (page: PdfPageObject) => void;
+}
+
+export function PdfThumbnailsContent(props: PdfThumbnailsContentProps) {
+  const { doc, currPageIndex, scaleFactor, rotation, gotoPage } = props;
+  const { visibleEntryIds } = useIntersectionObserver();
+
+  return (
+    <>
+      {doc?.pages.map((page, index) => {
+        const isCurrent = page.index === currPageIndex;
+        const isVisible = visibleEntryIds.has(page.index);
+
+        return (
+          <PdfThumbnail
+            key={index}
+            page={page}
+            isVisible={isVisible}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+            isCurrent={isCurrent}
+            onClick={gotoPage}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 export interface PdfThumbnailProps {
-  observer: IntersectionObserver | null;
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
@@ -148,15 +151,7 @@ export interface PdfThumbnailProps {
 export function PdfThumbnail(props: PdfThumbnailProps) {
   const engine = usePdfEngine();
   const doc = usePdfDocument();
-  const {
-    observer,
-    page,
-    scaleFactor,
-    rotation,
-    isVisible,
-    isCurrent,
-    onClick,
-  } = props;
+  const { page, scaleFactor, rotation, isVisible, isCurrent, onClick } = props;
   const [src, setSrc] = useState('');
 
   useEffect(() => {
@@ -175,22 +170,9 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
     }
   }, [src, engine, doc, page, scaleFactor, rotation, isVisible]);
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const container = containerRef.current;
-    if (observer && container) {
-      observer.observe(container);
-
-      return () => {
-        observer.unobserve(container);
-      };
-    }
-  }, [observer, containerRef.current]);
-
   return (
-    <div
-      ref={containerRef}
-      data-page-index={page.index}
+    <IntersectionObserverEntry
+      entryId={`${page.index}`}
       tabIndex={0}
       className={`pdf__thumbnail ${isCurrent ? 'pdf__thumbnail--current' : ''}`}
     >
@@ -204,7 +186,7 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
         height={page.size.height * scaleFactor}
       />
       <span>{page.index + 1}</span>
-    </div>
+    </IntersectionObserverEntry>
   );
 }
 

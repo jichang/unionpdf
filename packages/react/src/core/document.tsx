@@ -11,6 +11,7 @@ import { usePdfEngine } from './engine.context';
 import { PdfDocumentObject, PdfSource } from '@unionpdf/models';
 import { useTheme } from './theme.context';
 import { PdfDocumentContextProvider } from './document.context';
+import './document.css';
 
 export interface PdfDocumentProps extends ComponentProps<'div'> {
   id: string;

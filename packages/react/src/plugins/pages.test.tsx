@@ -6,6 +6,7 @@ import { PdfPages, PdfPageContentComponentProps } from './pages';
 import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
 import { PdfDocument } from '../core/document';
 import { PdfEngineContextProvider } from '../core/engine.context';
+import { intersectionObserver } from '@shopify/jest-dom-mocks';
 
 export interface PdfPageNumberProps {
   index: number;
@@ -34,6 +35,7 @@ function PdfPageContent(props: PdfPageContentComponentProps) {
 
 describe('PdfPages', () => {
   test('should render pdf pages with layer', async () => {
+    intersectionObserver.mock();
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
     const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
@@ -54,7 +56,6 @@ describe('PdfPages', () => {
           onOpenFailure={jest.fn()}
         >
           <PdfPages
-            viewport={{ width: 100, height: 200 }}
             pageGap={8}
             scaleFactor={1}
             rotation={0}
@@ -77,5 +78,7 @@ describe('PdfPages', () => {
     ).toEqual(pdf.pageCount);
 
     result.unmount();
+
+    intersectionObserver.restore();
   });
 });

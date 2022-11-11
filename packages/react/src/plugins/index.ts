@@ -1,4 +1,3 @@
-export * from './errorboundary';
 export * from './toolbar';
 export * from './thumbnails';
 export * from './bookmarks';

@@ -2,6 +2,12 @@
 
 This pacakge contains several React components for showing PDF files on Web.
 
+#### Install
+
+```bash
+npm install @unionpdf/react
+```
+
 ### Usage
 
 ```typescript

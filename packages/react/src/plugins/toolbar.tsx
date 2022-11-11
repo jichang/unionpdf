@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useUIComponents, useUIStrings } from '../ui/ui.context';
 import './toolbar.css';
-import { ErrorBoundary } from './errorboundary';
+import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument } from '../core/document.context';
 import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';

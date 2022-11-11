@@ -8,13 +8,23 @@ import React, {
 import { PdfPageObject, Rotation, Size, calculateSize } from '@unionpdf/models';
 import './pages.css';
 import { calculateRectStyle } from './helpers/annotation';
-import { ErrorBoundary } from './errorboundary';
+import {
+  calculateScrollOffset,
+  findScollableContainer,
+} from './helpers/scrollable';
+import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument } from '../core/document.context';
 import {
   PdfNavigatorGotoPageEvent,
   PdfNavigatorEvent,
 } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
+import {
+  IntersectionObserverContextProvider,
+  useIntersectionObserver,
+} from '../ui/intersectionobserver.context';
+import { IntersectionObserverEntry } from '../ui/intersectionobserver.entry';
+import { useLogger } from '../core';
 
 export type PdfPageContentComponentProps = Omit<PdfPageProps, 'children'>;
 
@@ -23,9 +33,9 @@ export type PdfPageContentComponent = (
 ) => JSX.Element;
 
 export interface PdfPagesProps {
-  viewport: Size;
   pageGap?: number;
   visibleRange?: [number, number];
+  cacheRange?: [number, number];
   scaleFactor?: number;
   rotation?: Rotation;
   pageContentComponent: PdfPageContentComponent;
@@ -33,33 +43,28 @@ export interface PdfPagesProps {
 }
 
 export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
+export const LOG_SOURCE = 'PdfPages';
 
 export const PDF_PAGE_DEFAULT_GAP = 8;
 
 export function PdfPages(props: PdfPagesProps) {
   const {
-    viewport,
     pageGap = PDF_PAGE_DEFAULT_GAP,
-    visibleRange = [-1, 1],
+    visibleRange = [0, 0],
+    cacheRange = [0, 0],
     scaleFactor = 1,
     rotation = 0,
-    pageContentComponent: ContentComponent,
+    pageContentComponent,
   } = props;
   const pdfDoc = usePdfDocument();
-  const pdfNavigator = usePdfNavigator();
+  const logger = useLogger();
 
-  const containerElemRef = useRef<HTMLDivElement>(null);
-  const [scrollOffset, setScrollOffset] = useState({ top: 0, left: 0 });
-  const [currPageIndex, setCurrPageIndex] = useState(
-    pdfNavigator?.currPageIndex || 0
-  );
-
-  const pdfPages = useMemo(() => {
+  const pdfPages: PdfPage[] = useMemo(() => {
     if (!pdfDoc) {
       return [];
     }
 
-    let pageOffset = pageGap;
+    let pageOffset = pageGap / 2;
     return pdfDoc?.pages.map((page) => {
       const offset = pageOffset;
       const visualSize = calculateSize(page.size, scaleFactor, rotation);
@@ -73,49 +78,7 @@ export function PdfPages(props: PdfPagesProps) {
     });
   }, [pdfDoc, pageGap, scaleFactor, rotation]);
 
-  const handleScroll = useCallback(
-    (evt: Event) => {
-      const target = evt.target as HTMLDivElement;
-      setScrollOffset({
-        top: target.scrollTop,
-        left: target.scrollLeft,
-      });
-
-      for (const page of pdfPages) {
-        const pageBottomY = page.offset + page.size.height * scaleFactor;
-        if (pageBottomY > target.scrollTop) {
-          pdfNavigator?.gotoPage(
-            { pageIndex: page.index },
-            PDF_NAVIGATOR_SOURCE_PAGES
-          );
-          setCurrPageIndex(page.index);
-          break;
-        }
-      }
-    },
-    [pdfNavigator, pdfPages, setCurrPageIndex]
-  );
-
-  useEffect(() => {
-    const containerElem = containerElemRef.current;
-    if (containerElem) {
-      containerElem.addEventListener('scroll', handleScroll);
-
-      return () => {
-        containerElem.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, [containerElemRef.current, handleScroll]);
-
-  const visibleRangeTop = Math.max(
-    0,
-    scrollOffset.top + visibleRange[0] * viewport.height
-  );
-  const visibleRangeBottom = Math.max(
-    0,
-    scrollOffset.top + viewport.height + visibleRange[1] * viewport.height
-  );
-
+  const containerElemRef = useRef<HTMLDivElement | null>(null);
   const gotoPage = useCallback(
     (data: PdfNavigatorGotoPageEvent['data']) => {
       const containerElem = containerElemRef.current;
@@ -126,8 +89,16 @@ export function PdfPages(props: PdfPagesProps) {
           return;
         }
 
+        const scrollableContainer = findScollableContainer(containerElem);
+        const scrollOffsetBase =
+          calculateScrollOffset(containerElem, scrollableContainer) +
+          pageGap / 2;
+
         if (!rect) {
-          containerElem.scrollTo({ left: 0, top: page.offset });
+          scrollableContainer.scrollTo({
+            left: 0,
+            top: page.offset + scrollOffsetBase,
+          });
         } else {
           const style = calculateRectStyle(rect, scaleFactor, rotation);
           const {
@@ -165,14 +136,17 @@ export function PdfPages(props: PdfPagesProps) {
               };
               break;
           }
-          containerElem.scrollTo(scrollOffset);
+          scrollableContainer.scrollTo({
+            top: scrollOffsetBase + scrollOffset.top,
+            left: scrollOffset.left,
+          });
         }
-        setCurrPageIndex(pageIndex);
       }
     },
-    [pdfPages, setCurrPageIndex, scaleFactor, rotation]
+    [logger, pageGap, pdfPages, scaleFactor, rotation]
   );
 
+  const pdfNavigator = usePdfNavigator();
   useEffect(() => {
     if (pdfNavigator) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
@@ -194,47 +168,115 @@ export function PdfPages(props: PdfPagesProps) {
 
   return (
     <ErrorBoundary>
-      <div className="pdf__pages">
-        <div
+      <div className="pdf__pages" ref={containerElemRef}>
+        <IntersectionObserverContextProvider
           className="pdf__pages__container"
-          style={{
-            width: viewport.width,
-            height: viewport.height,
-          }}
-          ref={containerElemRef}
+          style={{ paddingTop: pageGap / 2, paddingBottom: pageGap / 2 }}
         >
-          {pdfPages.map((page) => {
-            const isVisible = !(
-              page.offset > visibleRangeBottom ||
-              page.offset + page.size.height * scaleFactor < visibleRangeTop
-            );
-
-            return (
-              <PdfPage
-                key={page.index}
-                isCurrent={page.index === currPageIndex}
-                page={page}
-                isVisible={isVisible}
-                pageGap={pageGap}
-                scaleFactor={scaleFactor}
-                rotation={rotation}
-                visualSize={page.visualSize}
-              >
-                <ContentComponent
-                  isCurrent={page.index === currPageIndex}
-                  page={page}
-                  isVisible={isVisible}
-                  pageGap={pageGap}
-                  scaleFactor={scaleFactor}
-                  rotation={rotation}
-                  visualSize={page.visualSize}
-                />
-              </PdfPage>
-            );
-          })}
-        </div>
+          <PdfPagesContent
+            pdfPages={pdfPages}
+            pageGap={pageGap}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+            visibleRange={visibleRange}
+            cacheRange={cacheRange}
+            pageContentComponent={pageContentComponent}
+          />
+        </IntersectionObserverContextProvider>
       </div>
     </ErrorBoundary>
+  );
+}
+
+export interface PdfPage extends PdfPageObject {
+  offset: number;
+  visualSize: Size;
+}
+
+export interface PdfPagesContentProps {
+  pageGap: number;
+  pdfPages: PdfPage[];
+  visibleRange: [number, number];
+  cacheRange: [number, number];
+  scaleFactor: number;
+  rotation: Rotation;
+  pageContentComponent: PdfPageContentComponent;
+}
+
+export function PdfPagesContent(props: PdfPagesContentProps) {
+  const {
+    pdfPages,
+    pageGap,
+    rotation,
+    scaleFactor,
+    visibleRange,
+    cacheRange,
+    pageContentComponent: ContentComponent,
+  } = props;
+  const pdfNavigator = usePdfNavigator();
+
+  const { visibleEntryIds } = useIntersectionObserver();
+
+  const [currPageIndex, setCurrPageIndex] = useState(
+    pdfNavigator?.currPageIndex || 0
+  );
+
+  useEffect(() => {
+    let currPageIndex = Number.MAX_SAFE_INTEGER;
+    for (const entryId of visibleEntryIds) {
+      if (currPageIndex > entryId) {
+        currPageIndex = entryId;
+      }
+    }
+
+    if (pdfNavigator?.currPageIndex !== currPageIndex) {
+      pdfNavigator?.gotoPage(
+        { pageIndex: currPageIndex },
+        PDF_NAVIGATOR_SOURCE_PAGES
+      );
+    }
+    setCurrPageIndex(currPageIndex);
+  }, [visibleEntryIds, pdfNavigator, setCurrPageIndex]);
+
+  return (
+    <>
+      {pdfPages.map((page) => {
+        const isVisible = visibleEntryIds.has(page.index);
+        const inVisibleRange =
+          page.index >= currPageIndex + visibleRange[0] &&
+          page.index <= currPageIndex + visibleRange[1];
+        const inCacheRange =
+          page.index >= currPageIndex + cacheRange[0] &&
+          page.index <= currPageIndex + cacheRange[1];
+
+        return (
+          <PdfPage
+            key={page.index}
+            isCurrent={page.index === currPageIndex}
+            page={page}
+            isVisible={isVisible}
+            inVisibleRange={inVisibleRange}
+            inCacheRange={inCacheRange}
+            pageGap={pageGap}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+            visualSize={page.visualSize}
+          >
+            <ContentComponent
+              isCurrent={page.index === currPageIndex}
+              page={page}
+              isVisible={isVisible}
+              inVisibleRange={inVisibleRange}
+              inCacheRange={inCacheRange}
+              pageGap={pageGap}
+              scaleFactor={scaleFactor}
+              rotation={rotation}
+              visualSize={page.visualSize}
+            />
+          </PdfPage>
+        );
+      })}
+    </>
   );
 }
 
@@ -242,6 +284,8 @@ export interface PdfPageProps {
   page: PdfPageObject;
   isCurrent: boolean;
   isVisible: boolean;
+  inVisibleRange: boolean;
+  inCacheRange: boolean;
   pageGap: number;
   scaleFactor: number;
   rotation: Rotation;
@@ -251,24 +295,25 @@ export interface PdfPageProps {
 
 export function PdfPage(props: PdfPageProps) {
   const { children, ...rest } = props;
-  const { isCurrent, pageGap, visualSize } = rest;
-
-  const style = useMemo(() => {
-    return {
-      marginTop: pageGap,
-      marginBottom: pageGap,
-      width: visualSize.width,
-      height: visualSize.height,
-    };
-  }, [pageGap, visualSize]);
+  const { isCurrent, page, pageGap, visualSize } = rest;
 
   return (
-    <div
+    <IntersectionObserverEntry
+      entryId={`${page.index}`}
       tabIndex={0}
       className={`pdf__page ${isCurrent ? 'pdf__page--current' : ''}`}
-      style={style}
+      style={{ paddingTop: pageGap / 2, paddingBottom: pageGap / 2 }}
+      data-page-index={page.index}
     >
-      {children}
-    </div>
+      <div
+        className="pdf__page__content"
+        style={{
+          width: visualSize.width,
+          height: visualSize.height,
+        }}
+      >
+        {children}
+      </div>
+    </IntersectionObserverEntry>
   );
 }
