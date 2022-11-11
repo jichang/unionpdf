@@ -2,6 +2,7 @@ import {
   PdfBookmarksObject,
   PdfBookmarkObject,
   PdfActionType,
+  ignore,
 } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ErrorBoundary } from '../ui/errorboundary';
@@ -25,7 +26,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
   useEffect(() => {
     if (engine && doc) {
       const task = engine.getBookmarks(doc);
-      task.wait(setBookmarks, () => {});
+      task.wait(setBookmarks, ignore);
 
       return () => {
         task.abort();

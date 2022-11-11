@@ -1,5 +1,5 @@
-import { PdfPageObject, Rotation } from '@unionpdf/models';
-import React, { useRef, useEffect } from 'react';
+import { ignore, PdfPageObject, Rotation } from '@unionpdf/models';
+import React, { useRef, useEffect, useState } from 'react';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import './canvas.css';
@@ -8,46 +8,56 @@ export interface PdfPageCanvasLayerProps {
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
-  isVisible: boolean;
+  inVisibleRange: boolean;
+  inCacheRange: boolean;
 }
 
 export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
   const doc = usePdfDocument();
   const engine = usePdfEngine();
-  const { page, scaleFactor, rotation, isVisible } = props;
+  const { page, scaleFactor, rotation, inVisibleRange, inCacheRange } = props;
+  const [imageData, setImageData] = useState<ImageData | null>(null);
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
-    if (canvasElem && engine && doc && isVisible) {
+    if (!imageData && canvasElem && engine && doc && inVisibleRange) {
       const task = engine.renderPage(doc, page, scaleFactor, rotation);
-      task.wait(
-        (imageData) => {
-          canvasElem.width = imageData.width;
-          canvasElem.height = imageData.height;
-          const ctx = canvasElem.getContext('2d');
-          if (ctx) {
-            ctx.putImageData(
-              imageData,
-              0,
-              0,
-              0,
-              0,
-              imageData.width,
-              imageData.height
-            );
-          }
-        },
-        () => {}
-      );
+      task.wait(setImageData, ignore);
 
       return () => {
         task.abort();
       };
     }
-  }, [page, engine, doc, isVisible, scaleFactor, rotation]);
+  }, [page, engine, doc, inVisibleRange, scaleFactor, rotation, imageData]);
 
-  if (!isVisible) {
+  useEffect(() => {
+    const canvasElem = canvasElemRef.current;
+    if (canvasElem && imageData) {
+      canvasElem.width = imageData.width;
+      canvasElem.height = imageData.height;
+      const ctx = canvasElem.getContext('2d');
+      if (ctx) {
+        ctx.putImageData(
+          imageData,
+          0,
+          0,
+          0,
+          0,
+          imageData.width,
+          imageData.height
+        );
+      }
+    }
+  }, [imageData]);
+
+  useEffect(() => {
+    if (!inCacheRange) {
+      setImageData(null);
+    }
+  }, [inCacheRange]);
+
+  if (!inVisibleRange) {
     return null;
   }
 

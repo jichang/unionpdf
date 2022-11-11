@@ -1,4 +1,9 @@
-import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
+import {
+  ignore,
+  PdfAnnotationObject,
+  PdfPageObject,
+  Rotation,
+} from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
@@ -37,7 +42,7 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
   useEffect(() => {
     if (engine && doc && page && isVisible) {
       const task = engine.getPageAnnotations(doc, page, scaleFactor, rotation);
-      task.wait(setAnnotations, () => {});
+      task.wait(setAnnotations, ignore);
 
       return () => {
         task.abort();

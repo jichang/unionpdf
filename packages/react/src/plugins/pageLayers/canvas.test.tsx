@@ -54,7 +54,7 @@ describe('PdfPageCanvas', () => {
 
     expect(
       document.querySelectorAll('.pdf__page__layer--canvas').length
-    ).toEqual(pdf.pageCount);
+    ).toEqual(1);
 
     result.unmount();
     intersectionObserver.restore();

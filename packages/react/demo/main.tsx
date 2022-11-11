@@ -226,7 +226,8 @@ function App(props: AppProps) {
                     onOpenFailure={() => {}}
                   >
                     <PdfPages
-                      visibleRange={[100, 100]}
+                      prerenderRange={[-5, 5]}
+                      cacheRange={[-10, 10]}
                       scaleFactor={scaleFactor}
                       rotation={rotation}
                       pageContentComponent={PdfPageContent}

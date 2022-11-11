@@ -34,7 +34,7 @@ export type PdfPageContentComponent = (
 
 export interface PdfPagesProps {
   pageGap?: number;
-  visibleRange?: [number, number];
+  prerenderRange?: [number, number];
   cacheRange?: [number, number];
   scaleFactor?: number;
   rotation?: Rotation;
@@ -50,7 +50,7 @@ export const PDF_PAGE_DEFAULT_GAP = 8;
 export function PdfPages(props: PdfPagesProps) {
   const {
     pageGap = PDF_PAGE_DEFAULT_GAP,
-    visibleRange = [0, 0],
+    prerenderRange = [0, 0],
     cacheRange = [0, 0],
     scaleFactor = 1,
     rotation = 0,
@@ -178,7 +178,7 @@ export function PdfPages(props: PdfPagesProps) {
             pageGap={pageGap}
             scaleFactor={scaleFactor}
             rotation={rotation}
-            visibleRange={visibleRange}
+            prerenderRange={prerenderRange}
             cacheRange={cacheRange}
             pageContentComponent={pageContentComponent}
           />
@@ -196,7 +196,7 @@ export interface PdfPage extends PdfPageObject {
 export interface PdfPagesContentProps {
   pageGap: number;
   pdfPages: PdfPage[];
-  visibleRange: [number, number];
+  prerenderRange: [number, number];
   cacheRange: [number, number];
   scaleFactor: number;
   rotation: Rotation;
@@ -209,7 +209,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
     pageGap,
     rotation,
     scaleFactor,
-    visibleRange,
+    prerenderRange,
     cacheRange,
     pageContentComponent: ContentComponent,
   } = props;
@@ -243,8 +243,8 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
       {pdfPages.map((page) => {
         const isVisible = visibleEntryIds.has(page.index);
         const inVisibleRange =
-          page.index >= currPageIndex + visibleRange[0] &&
-          page.index <= currPageIndex + visibleRange[1];
+          page.index >= currPageIndex + prerenderRange[0] &&
+          page.index <= currPageIndex + prerenderRange[1];
         const inCacheRange =
           page.index >= currPageIndex + cacheRange[0] &&
           page.index <= currPageIndex + cacheRange[1];

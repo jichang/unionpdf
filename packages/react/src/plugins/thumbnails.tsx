@@ -1,4 +1,5 @@
 import {
+  ignore,
   PdfDocumentObject,
   PdfPageObject,
   Rotation,
@@ -157,12 +158,9 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
   useEffect(() => {
     if (!src && engine && doc && page && isVisible) {
       const task = engine.renderThumbnail(doc, page, scaleFactor, rotation);
-      task.wait(
-        (imageData) => {
-          setSrc(imageDataToDataUrl(imageData));
-        },
-        () => {}
-      );
+      task.wait((imageData) => {
+        setSrc(imageDataToDataUrl(imageData));
+      }, ignore);
 
       return () => {
         task.abort();
