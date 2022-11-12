@@ -1,5 +1,4 @@
-.pdf__annotation--link {
-  opacity: 0;
+.pdf__annotation--text {
   user-select: none;
   position: absolute;
 }

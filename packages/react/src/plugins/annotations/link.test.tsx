@@ -59,7 +59,7 @@ describe('PdfPageLink', () => {
     const aElem = document.querySelector(
       '.pdf__annotation--link a'
     ) as HTMLAnchorElement;
-    expect(aElem?.textContent).toEqual(link.text);
+    expect(aElem?.getAttribute('title')).toEqual(link.text);
 
     await act(async () => {
       fireEvent.click(aElem);

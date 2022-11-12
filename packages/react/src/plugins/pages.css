@@ -10,11 +10,11 @@
 }
 
 .pdf__page {
-  position: relative;
   margin: 0 auto;
 }
 
 .pdf__page__content {
+  position: relative;
   margin: 0 auto;
   background-color: white;
 }

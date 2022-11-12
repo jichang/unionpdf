@@ -79,9 +79,12 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
       scaleFactor={scaleFactor}
       rotation={rotation}
     >
-      <a target="_blank" href={href} onClick={onClick}>
-        {annotation.text}
-      </a>
+      <a
+        target="_blank"
+        title={annotation.text}
+        href={href}
+        onClick={onClick}
+      />
     </PdfPageAnnotationBase>
   );
 }

@@ -300,12 +300,12 @@ export function PdfPage(props: PdfPageProps) {
   return (
     <IntersectionObserverEntry
       entryId={`${page.index}`}
-      tabIndex={0}
       className={`pdf__page ${isCurrent ? 'pdf__page--current' : ''}`}
       style={{ paddingTop: pageGap / 2, paddingBottom: pageGap / 2 }}
       data-page-index={page.index}
     >
       <div
+        tabIndex={0}
         className="pdf__page__content"
         style={{
           width: visualSize.width,
