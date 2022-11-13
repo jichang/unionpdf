@@ -2,6 +2,7 @@ export * from './toolbar';
 export * from './thumbnails';
 export * from './bookmarks';
 export * from './pages';
+export * from './pages.toolbar';
 export * from './pageLayers/canvas';
 export * from './pageLayers/annotations';
 export * from './annotations/annotation';

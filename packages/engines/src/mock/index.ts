@@ -30,8 +30,8 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
               pageIndex: 1,
               zoom: {
                 mode: PdfZoomMode.FitPage,
-                params: [],
               },
+              view: [],
             },
           },
         },
@@ -43,8 +43,8 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
               pageIndex: 2,
               zoom: {
                 mode: PdfZoomMode.FitPage,
-                params: [],
               },
+              view: [],
             },
           },
           children: [
@@ -56,8 +56,8 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
                   pageIndex: 3,
                   zoom: {
                     mode: PdfZoomMode.FitPage,
-                    params: [],
                   },
+                  view: [],
                 },
               },
             },

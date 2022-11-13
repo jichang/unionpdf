@@ -1,0 +1,23 @@
+.pdf__ui__button,
+.pdf__ui__select,
+.pdf__ui__input {
+  padding: 0.5rem;
+}
+
+.pdf__ui__toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  padding: 0.25rem;
+
+  width: 100%;
+
+  background-color: white;
+}
+
+.pdf__ui__toolbar__item__group {
+  flex: 1;
+}

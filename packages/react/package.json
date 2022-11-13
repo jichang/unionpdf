@@ -63,7 +63,9 @@
     "typescript": "~4.7.0"
   },
   "dependencies": {
-    "@unionpdf/models": "^0.2.1"
+    "@types/classnames": "^2.3.1",
+    "@unionpdf/models": "^0.2.1",
+    "classnames": "^2.3.2"
   },
   "peerDependencies": {
     "react": "^18.2.0",

@@ -10,21 +10,14 @@ body {
   width: 100%;
 }
 
-.pdf__application--edit .pdf__annotation--link {
-  border: 1px solid black;
-
-  opacity: 0.5;
-}
-
-.app__toolbar button,
-.app__toolbar input {
-  padding: 0.5rem;
-}
-
-.pdf__toolbar {
+.app__toolbar {
   position: fixed;
   bottom: 0;
-  left: 50%;
+  left: 0;
+  z-index: 999;
+  padding: 1rem;
 
-  transform: translateX(-50%);
+  width: 100%;
+
+  background-color: rgba(0, 0, 0, 0.25);
 }

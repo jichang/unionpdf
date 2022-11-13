@@ -21,7 +21,7 @@ export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
-    if (!imageData && canvasElem && engine && doc && inVisibleRange) {
+    if (canvasElem && engine && doc && inVisibleRange) {
       const task = engine.renderPage(doc, page, scaleFactor, rotation);
       task.wait(setImageData, ignore);
 
@@ -29,7 +29,7 @@ export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
         task.abort();
       };
     }
-  }, [page, engine, doc, inVisibleRange, scaleFactor, rotation, imageData]);
+  }, [page, engine, doc, inVisibleRange, scaleFactor, rotation]);
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
@@ -57,7 +57,7 @@ export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
     }
   }, [inCacheRange]);
 
-  if (!inVisibleRange) {
+  if (!inVisibleRange && !inCacheRange) {
     return null;
   }
 

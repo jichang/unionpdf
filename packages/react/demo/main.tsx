@@ -12,6 +12,7 @@ import {
   PdfAnnotationSubtype,
   ConsoleLogger,
   Logger,
+  PdfZoomMode,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -23,6 +24,8 @@ import {
   PdfNavigatorContextProvider,
   PdfApplication,
   PdfToolbar,
+  PdfPagesToolbar,
+  PdfToolbarDocItemGroup,
   PdfThumbnails,
   PdfPageContentComponentProps,
   PdfPages,
@@ -33,6 +36,7 @@ import {
   PdfPageLinkAnnotation,
   PdfBookmarks,
   LoggerContextProvider,
+  PdfToolbarNavigationtemGroup,
 } from '../src/index';
 import {
   createPdfiumModule,
@@ -193,7 +197,13 @@ function App(props: AppProps) {
         setScaleFactor(1);
         pdfNavigator.gotoPage(
           {
-            pageIndex: 0,
+            destination: {
+              pageIndex: 0,
+              zoom: {
+                mode: PdfZoomMode.Unknown,
+              },
+              view: [],
+            },
           },
           'App'
         );
@@ -206,8 +216,6 @@ function App(props: AppProps) {
     <div className="App">
       <div className="app__toolbar">
         <input type="file" onChange={selectFile} />
-        <button onClick={toggleThumbnailsIsVisible}>Thumbnails</button>
-        <button onClick={toggleBookmarksIsVisible}>Bookmarks</button>
       </div>
       {file ? (
         <LoggerContextProvider logger={logger}>
@@ -225,9 +233,22 @@ function App(props: AppProps) {
                     onOpenSuccess={() => {}}
                     onOpenFailure={() => {}}
                   >
+                    <PdfToolbar>
+                      <PdfToolbarNavigationtemGroup
+                        onToggleOutlines={toggleBookmarksIsVisible}
+                        onToggleThumbnails={toggleThumbnailsIsVisible}
+                      />
+                      <PdfPagesToolbar
+                        scaleFactor={scaleFactor}
+                        changeScaleFactor={changeScaleFactor}
+                        rotation={rotation}
+                        changeRotation={changeRotation}
+                      />
+                      <PdfToolbarDocItemGroup />
+                    </PdfToolbar>
                     <PdfPages
-                      prerenderRange={[-5, 5]}
-                      cacheRange={[-10, 10]}
+                      prerenderRange={[-1, 1]}
+                      cacheRange={[-5, 5]}
                       scaleFactor={scaleFactor}
                       rotation={rotation}
                       pageContentComponent={PdfPageContent}
@@ -240,12 +261,6 @@ function App(props: AppProps) {
                       />
                     ) : null}
                     {bookmarksIsVisible ? <PdfBookmarks /> : null}
-                    <PdfToolbar
-                      scaleFactor={scaleFactor}
-                      changeScaleFactor={changeScaleFactor}
-                      rotation={rotation}
-                      changeRotation={changeRotation}
-                    />
                   </PdfDocument>
                 </PdfNavigatorContextProvider>
               </PdfApplication>

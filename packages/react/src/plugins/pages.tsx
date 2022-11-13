@@ -5,7 +5,13 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { PdfPageObject, Rotation, Size, calculateSize } from '@unionpdf/models';
+import {
+  PdfPageObject,
+  Rotation,
+  Size,
+  calculateSize,
+  PdfZoomMode,
+} from '@unionpdf/models';
 import './pages.css';
 import { calculateRectStyle } from './helpers/annotation';
 import {
@@ -83,8 +89,8 @@ export function PdfPages(props: PdfPagesProps) {
     (data: PdfNavigatorGotoPageEvent['data']) => {
       const containerElem = containerElemRef.current;
       if (containerElem) {
-        const { pageIndex, rect } = data;
-        const page = pdfPages[pageIndex];
+        const { destination } = data;
+        const page = pdfPages[destination.pageIndex];
         if (!page) {
           return;
         }
@@ -94,52 +100,61 @@ export function PdfPages(props: PdfPagesProps) {
           calculateScrollOffset(containerElem, scrollableContainer) +
           pageGap / 2;
 
-        if (!rect) {
-          scrollableContainer.scrollTo({
-            left: 0,
-            top: page.offset + scrollOffsetBase,
-          });
-        } else {
-          const style = calculateRectStyle(rect, scaleFactor, rotation);
-          const {
-            top = 0,
-            left = 0,
-            right = 0,
-            bottom = 0,
-            width,
-            height,
-          } = style;
-          let scrollOffset: { top: number; left: number };
-          switch (rotation) {
-            case 0:
-              scrollOffset = {
-                top: page.offset + top,
-                left,
-              };
-              break;
-            case 1:
-              scrollOffset = {
-                top: page.offset + top,
-                left: page.visualSize.width - width - right,
-              };
-              break;
-            case 2:
-              scrollOffset = {
-                top: page.offset + page.visualSize.height - bottom - height,
-                left: page.visualSize.width - width - right,
-              };
-              break;
-            case 3:
-              scrollOffset = {
-                top: page.offset + page.visualSize.height - bottom - height,
-                left,
-              };
-              break;
-          }
-          scrollableContainer.scrollTo({
-            top: scrollOffsetBase + scrollOffset.top,
-            left: scrollOffset.left,
-          });
+        switch (destination.zoom.mode) {
+          case PdfZoomMode.XYZ:
+            {
+              const { x, y } = destination.zoom.params;
+              const style = calculateRectStyle(
+                { origin: { x, y }, size: { width: 0, height: 0 } },
+                scaleFactor,
+                rotation
+              );
+              const {
+                top = 0,
+                left = 0,
+                right = 0,
+                bottom = 0,
+                width,
+                height,
+              } = style;
+              let scrollOffset: { top: number; left: number };
+              switch (rotation) {
+                case 0:
+                  scrollOffset = {
+                    top: page.offset + top,
+                    left,
+                  };
+                  break;
+                case 1:
+                  scrollOffset = {
+                    top: page.offset + top,
+                    left: page.visualSize.width - width - right,
+                  };
+                  break;
+                case 2:
+                  scrollOffset = {
+                    top: page.offset + page.visualSize.height - bottom - height,
+                    left: page.visualSize.width - width - right,
+                  };
+                  break;
+                case 3:
+                  scrollOffset = {
+                    top: page.offset + page.visualSize.height - bottom - height,
+                    left,
+                  };
+                  break;
+              }
+              scrollableContainer.scrollTo({
+                top: scrollOffsetBase + scrollOffset.top,
+                left: scrollOffset.left,
+              });
+            }
+            break;
+          default:
+            scrollableContainer.scrollTo({
+              left: 0,
+              top: page.offset + scrollOffsetBase,
+            });
         }
       }
     },
@@ -231,7 +246,15 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
 
     if (pdfNavigator?.currPageIndex !== currPageIndex) {
       pdfNavigator?.gotoPage(
-        { pageIndex: currPageIndex },
+        {
+          destination: {
+            pageIndex: currPageIndex,
+            zoom: {
+              mode: PdfZoomMode.Unknown,
+            },
+            view: [],
+          },
+        },
         PDF_NAVIGATOR_SOURCE_PAGES
       );
     }

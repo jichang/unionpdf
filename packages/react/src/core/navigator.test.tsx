@@ -1,3 +1,4 @@
+import { PdfZoomMode } from '@unionpdf/models';
 import { PdfNavigator } from './navigator';
 
 describe('PdfNavigator', () => {
@@ -11,14 +12,31 @@ describe('PdfNavigator', () => {
 
     expect(pdfNavigator.listeners.length).toEqual(2);
 
-    pdfNavigator.gotoPage({ pageIndex: 1 }, 'test');
+    pdfNavigator.gotoPage(
+      {
+        destination: {
+          pageIndex: 1,
+          zoom: {
+            mode: PdfZoomMode.Unknown,
+          },
+          view: [],
+        },
+      },
+      'test'
+    );
 
     expect(listenerA).toBeCalledTimes(1);
     expect(listenerA).toBeCalledWith(
       {
         kind: 'GotoPage',
         data: {
-          pageIndex: 1,
+          destination: {
+            pageIndex: 1,
+            zoom: {
+              mode: PdfZoomMode.Unknown,
+            },
+            view: [],
+          },
         },
       },
       'test'
@@ -29,7 +47,13 @@ describe('PdfNavigator', () => {
       {
         kind: 'GotoPage',
         data: {
-          pageIndex: 1,
+          destination: {
+            pageIndex: 1,
+            zoom: {
+              mode: PdfZoomMode.Unknown,
+            },
+            view: [],
+          },
         },
       },
       'test'

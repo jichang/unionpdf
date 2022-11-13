@@ -1,16 +1,35 @@
 import React, { ComponentProps } from 'react';
 import './ui.css';
+import classNames from 'classnames';
 
 export interface ButtonProps extends ComponentProps<'button'> {}
 
 export function Button(props: ButtonProps) {
-  return <button {...props} />;
+  const { className, ...rest } = props;
+  return (
+    <button className={classNames('pdf__ui__button', className)} {...rest} />
+  );
 }
 
 export interface ToolbarProps extends ComponentProps<'div'> {}
 
 export function Toolbar(props: ToolbarProps) {
-  return <div {...props} />;
+  const { className, ...rest } = props;
+  return (
+    <div className={classNames('pdf__ui__toolbar', className)} {...rest} />
+  );
+}
+
+export interface ToolbarItemGroupProps extends ComponentProps<'div'> {}
+
+export function ToolbarItemGroup(props: ToolbarItemGroupProps) {
+  const { className, ...rest } = props;
+  return (
+    <div
+      className={classNames('pdf__ui__toolbar__item__group', className)}
+      {...rest}
+    />
+  );
 }
 
 export interface SelectProps extends ComponentProps<'select'> {
@@ -21,10 +40,10 @@ export interface SelectProps extends ComponentProps<'select'> {
 }
 
 export function Select(props: SelectProps) {
-  const { options, ...rest } = props;
+  const { className, options, ...rest } = props;
 
   return (
-    <select {...rest}>
+    <select className={classNames('pdf__ui__select', className)} {...rest}>
       {options.map((option, index) => {
         return (
           <option value={option.value} key={index}>
@@ -39,5 +58,8 @@ export function Select(props: SelectProps) {
 export interface InputProps extends ComponentProps<'input'> {}
 
 export function Input(props: InputProps) {
-  return <input {...props} />;
+  const { className, ...rest } = props;
+  return (
+    <input className={classNames('pdf__ui__input', className)} {...rest} />
+  );
 }

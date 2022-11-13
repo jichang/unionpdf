@@ -1,10 +1,9 @@
-import { Logger, NoopLogger, Rect } from '@unionpdf/models';
+import { Logger, NoopLogger, PdfDestinationObject } from '@unionpdf/models';
 
 export interface PdfNavigatorGotoPageEvent {
   kind: 'GotoPage';
   data: {
-    pageIndex: number;
-    rect?: Rect;
+    destination: PdfDestinationObject;
   };
 }
 
@@ -31,10 +30,11 @@ export class PdfNavigator {
       `${source} try to navigate to `,
       data
     );
-    if (this.currPageIndex === data.pageIndex) {
+
+    if (this.currPageIndex === data.destination.pageIndex) {
       return;
     }
-    this.currPageIndex = data.pageIndex;
+    this.currPageIndex = data.destination.pageIndex;
 
     this.emit(
       {

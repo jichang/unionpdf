@@ -53,7 +53,7 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
           switch (annotation.target.action.type) {
             case PdfActionType.Goto:
               pdfNavigator?.gotoPage(
-                { pageIndex: annotation.target.action.destination.pageIndex },
+                { destination: annotation.target.action.destination },
                 'annotation'
               );
               break;
@@ -63,7 +63,7 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
           }
         } else {
           pdfNavigator?.gotoPage(
-            { pageIndex: annotation.target.destination.pageIndex },
+            { destination: annotation.target.destination },
             'annotation'
           );
         }

@@ -2,6 +2,7 @@ import {
   ignore,
   PdfDocumentObject,
   PdfPageObject,
+  PdfZoomMode,
   Rotation,
   Size,
 } from '@unionpdf/models';
@@ -52,7 +53,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
         switch (evt.kind) {
           case 'GotoPage':
             if (source !== PDF_NAVIGATOR_SOURCE_THUMBNAILS) {
-              setCurrPageIndex(evt.data.pageIndex);
+              setCurrPageIndex(evt.data.destination.pageIndex);
             }
             break;
         }
@@ -71,7 +72,15 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
   const gotoPage = useCallback(
     (page: PdfPageObject) => {
       pdfNavigator?.gotoPage(
-        { pageIndex: page.index },
+        {
+          destination: {
+            pageIndex: page.index,
+            zoom: {
+              mode: PdfZoomMode.Unknown,
+            },
+            view: [],
+          },
+        },
         PDF_NAVIGATOR_SOURCE_THUMBNAILS
       );
       setCurrPageIndex(page.index);

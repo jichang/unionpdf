@@ -45,7 +45,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
         switch (evt.kind) {
           case 'GotoPage':
             if (source !== PDF_NAVIGATOR_SOURCE_OUTLINES) {
-              setCurrPageIndex(evt.data.pageIndex);
+              setCurrPageIndex(evt.data.destination.pageIndex);
             }
             break;
         }
@@ -63,6 +63,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
       if (!bookmark.target) {
         return;
       }
+      console.log(bookmark);
 
       switch (bookmark.target.type) {
         case 'action':
@@ -70,7 +71,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
             switch (bookmark.target.action.type) {
               case PdfActionType.Goto:
                 pdfNavigator?.gotoPage(
-                  { pageIndex: bookmark.target.action.destination.pageIndex },
+                  { destination: bookmark.target.action.destination },
                   PDF_NAVIGATOR_SOURCE_OUTLINES
                 );
 
@@ -80,7 +81,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
           break;
         case 'destination':
           pdfNavigator?.gotoPage(
-            { pageIndex: bookmark.target.destination.pageIndex },
+            { destination: bookmark.target.destination },
             PDF_NAVIGATOR_SOURCE_OUTLINES
           );
           break;

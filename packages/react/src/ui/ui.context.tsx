@@ -1,9 +1,10 @@
 import React from 'react';
 import { createContext, useContext } from 'react';
-import { Button, Input, Select, Toolbar } from './ui';
+import { Button, Input, Select, Toolbar, ToolbarItemGroup } from './ui';
 
 export interface UIComponents {
   ToolbarComponent: typeof Toolbar;
+  ToolbarItemGroupComponent: typeof ToolbarItemGroup;
   ButtonComponent: typeof Button;
   SelectComponent: typeof Select;
   InputComponent: typeof Input;
@@ -11,6 +12,7 @@ export interface UIComponents {
 
 export const DEFAULT_UI_COMPONENTS: UIComponents = {
   ToolbarComponent: Toolbar,
+  ToolbarItemGroupComponent: ToolbarItemGroup,
   ButtonComponent: Button,
   SelectComponent: Select,
   InputComponent: Input,
@@ -70,6 +72,10 @@ export interface UIStrings {
   rotate90Deg: string;
   rotate180Deg: string;
   rotate270Deg: string;
+  thumbnails: string;
+  outlines: string;
+  save: string;
+  print: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -78,6 +84,10 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   rotate90Deg: '90 degree',
   rotate180Deg: '180 degree',
   rotate270Deg: '270 degree',
+  thumbnails: 'Thumbnails',
+  outlines: 'Outlines',
+  save: 'Save',
+  print: 'Print',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

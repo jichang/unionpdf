@@ -101,6 +101,18 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'number'] as const,
     'number',
   ] as const,
+  FPDFDest_GetLocationInPage: [
+    [
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+    ] as const,
+    'boolean',
+  ] as const,
   FPDF_LoadPage: [['number', 'number'] as const, 'number'] as const,
   FPDF_RenderPageBitmap: [
     [
@@ -775,20 +787,88 @@ export class PdfiumEngine implements PdfEngine {
       paramsPtr
     ) as PdfZoomMode;
     const paramsCount = this.wasmModule.getValue(paramsCountPtr, 'i32');
-    const params: number[] = [];
+    const view: number[] = [];
     for (let i = 0; i < paramsCount; i++) {
       const paramPtr = paramsPtr + i * 4;
-      params.push(this.wasmModule.getValue(paramPtr, 'float'));
+      view.push(this.wasmModule.getValue(paramPtr, 'float'));
     }
     this.wasmModule._free(paramsCountPtr);
     this.wasmModule._free(paramsPtr);
+
+    if (zoomMode === PdfZoomMode.XYZ) {
+      const hasXPtr = this.wasmModule._malloc(1);
+      const hasYPtr = this.wasmModule._malloc(1);
+      const hasZPtr = this.wasmModule._malloc(1);
+      const xPtr = this.wasmModule._malloc(4);
+      const yPtr = this.wasmModule._malloc(4);
+      const zPtr = this.wasmModule._malloc(4);
+
+      const isSucceed = this.wasmModuleWrapper.FPDFDest_GetLocationInPage(
+        destinationPtr,
+        hasXPtr,
+        hasYPtr,
+        hasZPtr,
+        xPtr,
+        yPtr,
+        zPtr
+      );
+      if (isSucceed) {
+        const hasX = this.wasmModule.getValue(hasXPtr, 'i8');
+        const hasY = this.wasmModule.getValue(hasYPtr, 'i8');
+        const hasZ = this.wasmModule.getValue(hasZPtr, 'i8');
+
+        const x = !!hasX ? this.wasmModule.getValue(xPtr, 'float') : 0;
+        const y = !!hasY ? this.wasmModule.getValue(yPtr, 'float') : 0;
+        const zoom = !!hasZ ? this.wasmModule.getValue(zPtr, 'float') : 0;
+
+        this.wasmModule._free(hasXPtr);
+        this.wasmModule._free(hasYPtr);
+        this.wasmModule._free(hasZPtr);
+        this.wasmModule._free(xPtr);
+        this.wasmModule._free(yPtr);
+        this.wasmModule._free(zPtr);
+
+        return {
+          pageIndex,
+          zoom: {
+            mode: zoomMode,
+            params: {
+              x,
+              y,
+              zoom,
+            },
+          },
+          view,
+        };
+      }
+
+      this.wasmModule._free(hasXPtr);
+      this.wasmModule._free(hasYPtr);
+      this.wasmModule._free(hasZPtr);
+      this.wasmModule._free(xPtr);
+      this.wasmModule._free(yPtr);
+      this.wasmModule._free(zPtr);
+
+      return {
+        pageIndex,
+        zoom: {
+          mode: zoomMode,
+          params: {
+            x: 0,
+            y: 0,
+            zoom: 0,
+          },
+        },
+        view,
+      };
+    }
 
     return {
       pageIndex,
       zoom: {
         mode: zoomMode,
-        params,
       },
+      view,
     };
   }
 

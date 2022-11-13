@@ -12,6 +12,7 @@ export interface PdfDocumentObject {
 }
 
 export enum PdfZoomMode {
+  Unknown = 0,
   XYZ = 1, // Zoom level with specified offset.
   FitPage = 2, // Fit both the width and height of the page (whichever smaller).
   FitHorizontal = 3, // Fit the page width.
@@ -21,10 +22,24 @@ export enum PdfZoomMode {
 
 export interface PdfDestinationObject {
   pageIndex: number;
-  zoom: {
-    mode: PdfZoomMode;
-    params: number[];
-  };
+  zoom:
+    | {
+        mode: PdfZoomMode.Unknown;
+      }
+    | { mode: PdfZoomMode.XYZ; params: { x: number; y: number; zoom: number } }
+    | {
+        mode: PdfZoomMode.FitPage;
+      }
+    | {
+        mode: PdfZoomMode.FitHorizontal;
+      }
+    | {
+        mode: PdfZoomMode.FitVertical;
+      }
+    | {
+        mode: PdfZoomMode.FitRectangle;
+      };
+  view: number[];
 }
 
 export enum PdfActionType {
