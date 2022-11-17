@@ -19,8 +19,13 @@ describe('PdfPageLink', () => {
           pageIndex: 1,
           zoom: {
             mode: PdfZoomMode.XYZ,
-            params: [],
+            params: {
+              x: 0,
+              y: 0,
+              zoom: 0,
+            },
           },
+          view: [],
         },
       },
       text: 'rect link',
