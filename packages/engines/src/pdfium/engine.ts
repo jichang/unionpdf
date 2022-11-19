@@ -9,6 +9,8 @@ import {
   TaskBase,
   Logger,
   NoopLogger,
+  PdfMetadataObject,
+  Task,
 } from '@unionpdf/models';
 import { PdfDestinationObject } from '@unionpdf/models';
 import {
@@ -63,6 +65,10 @@ export const wrappedModuleMethods = {
   FPDF_GetPageCount: [['number'] as const, 'number'] as const,
   FPDF_CloseDocument: [['number'] as const, ''] as const,
   FPDF_DestroyLibrary: [[] as const, ''] as const,
+  FPDF_GetMetaText: [
+    ['number', 'string', 'number', 'number'] as const,
+    'number',
+  ] as const,
   FPDFBitmap_FillRect: [
     ['number', 'number', 'number', 'number', 'number', 'number'] as const,
     '',
@@ -283,6 +289,21 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(pdfDoc);
   }
 
+  getMetadata(doc: PdfDocumentObject) {
+    const { docPtr } = this.docs[doc.id];
+
+    return TaskBase.resolve({
+      title: this.readMetaText(docPtr, 'Title'),
+      author: this.readMetaText(docPtr, 'Author'),
+      subject: this.readMetaText(docPtr, 'Subject'),
+      keywords: this.readMetaText(docPtr, 'Keywords'),
+      producer: this.readMetaText(docPtr, 'Producer'),
+      creator: this.readMetaText(docPtr, 'Creator'),
+      creationDate: this.readMetaText(docPtr, 'CreationDate'),
+      modificationDate: this.readMetaText(docPtr, 'ModDate'),
+    });
+  }
+
   getBookmarks(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getBookmarks', arguments);
     const { docPtr } = this.docs[doc.id];
@@ -339,16 +360,14 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
-    const buffer = new ArrayBuffer(bitmapHeapLength);
-    const dataView = new DataView(buffer);
+    const array = new Uint8ClampedArray(bitmapHeapLength);
+    const dataView = new DataView(array.buffer);
     for (let i = 0; i < bitmapHeapLength; i++) {
       dataView.setInt8(i, this.wasmModule.getValue(bitmapHeapPtr + i, 'i8'));
     }
     this.wasmModule._free(bitmapHeapPtr);
 
-    const array = new Uint8ClampedArray(buffer);
-    const imageData = new ImageData(bitmapSize.width, bitmapSize.height);
-    imageData.data.set(array);
+    const imageData = new ImageData(array, bitmapSize.width, bitmapSize.height);
 
     return TaskBase.resolve(imageData);
   }
@@ -413,6 +432,21 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModule._free(filePtr);
     delete this.docs[doc.id];
     return TaskBase.resolve(true);
+  }
+
+  readMetaText(docPtr: number, key: string) {
+    return readString(
+      this.wasmModule,
+      (buffer, bufferLength) => {
+        return this.wasmModuleWrapper.FPDF_GetMetaText(
+          docPtr,
+          key,
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
+    );
   }
 
   readPdfBookmarks(docPtr: number, rootBookmarkPtr = 0) {

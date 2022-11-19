@@ -76,6 +76,15 @@ export interface UIStrings {
   outlines: string;
   save: string;
   print: string;
+  metadata: string;
+  title: string;
+  author: string;
+  subject: string;
+  keywords: string;
+  producer: string;
+  creator: string;
+  creationDate: string;
+  modificationDate: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -88,6 +97,15 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   outlines: 'Outlines',
   save: 'Save',
   print: 'Print',
+  metadata: 'Metadata',
+  title: 'Title',
+  author: 'Author',
+  subject: 'Subject',
+  keywords: 'Keywords',
+  producer: 'Producer',
+  creator: 'Creator',
+  creationDate: 'Creation Date',
+  modificationDate: 'Modification Date',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

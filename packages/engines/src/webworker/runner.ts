@@ -115,6 +115,9 @@ export class EngineRunner {
       case 'openDocument':
         task = this.engine[name]!(...args);
         break;
+      case 'getMetadata':
+        task = this.engine[name]!(...args);
+        break;
       case 'getBookmarks':
         task = this.engine[name]!(...args);
         break;

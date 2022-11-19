@@ -1,3 +1,4 @@
+import { PdfMetadataObject } from '@unionpdf/models';
 import {
   Logger,
   NoopLogger,
@@ -149,6 +150,24 @@ export class WebWorkerEngine implements PdfEngine {
       data: {
         name: 'openDocument',
         args: [id, data],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  getMetadata(doc: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getMetadata', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<PdfMetadataObject>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'getMetadata',
+        args: [doc],
       },
     };
     this.proxy(task, request);

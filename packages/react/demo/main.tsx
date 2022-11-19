@@ -23,6 +23,7 @@ import {
   ThemeContextProvider,
   PdfNavigatorContextProvider,
   PdfApplication,
+  PdfMetadata,
   PdfToolbar,
   PdfPagesToolbar,
   PdfToolbarDocItemGroup,
@@ -137,7 +138,6 @@ function App(props: AppProps) {
     return new PdfNavigator(logger);
   });
   const pdfAppElemRef = useRef<HTMLDivElement>(null);
-  const [viewport, setViewport] = useState({ width: 640, height: 480 });
 
   useLayoutEffect(() => {
     const pdfAppElem = pdfAppElemRef.current;
@@ -146,6 +146,13 @@ function App(props: AppProps) {
       console.log(style.height, style.width);
     }
   }, [pdfAppElemRef.current]);
+
+  const [metadataIsVisible, setMetadataIsVisible] = useState(false);
+  const toggleMetadataIsVisible = useCallback(() => {
+    setMetadataIsVisible((isVisible) => {
+      return !isVisible;
+    });
+  }, [setMetadataIsVisible]);
 
   const [bookmarksIsVisible, setBookmarksIsVisible] = useState(false);
   const toggleBookmarksIsVisible = useCallback(() => {
@@ -235,6 +242,7 @@ function App(props: AppProps) {
                   >
                     <PdfToolbar>
                       <PdfToolbarNavigationtemGroup
+                        onToggleMetadata={toggleMetadataIsVisible}
                         onToggleOutlines={toggleBookmarksIsVisible}
                         onToggleThumbnails={toggleThumbnailsIsVisible}
                       />
@@ -246,6 +254,7 @@ function App(props: AppProps) {
                       />
                       <PdfToolbarDocItemGroup />
                     </PdfToolbar>
+                    {metadataIsVisible ? <PdfMetadata /> : null}
                     <PdfPages
                       prerenderRange={[-1, 1]}
                       cacheRange={[-5, 5]}

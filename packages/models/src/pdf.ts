@@ -11,6 +11,17 @@ export interface PdfDocumentObject {
   pages: PdfPageObject[];
 }
 
+export interface PdfMetadataObject {
+  title: string;
+  author: string;
+  subject: string;
+  keywords: string;
+  producer: string;
+  creator: string;
+  creationDate: string;
+  modificationDate: string;
+}
+
 export enum PdfZoomMode {
   Unknown = 0,
   XYZ = 1, // Zoom level with specified offset.
@@ -370,6 +381,7 @@ export interface PdfEngine {
   initialize?: () => Task<boolean, Error>;
   destroy?: () => Task<boolean, Error>;
   openDocument: (id: string, data: PdfSource) => Task<PdfDocumentObject, Error>;
+  getMetadata: (doc: PdfDocumentObject) => Task<PdfMetadataObject, Error>;
   getBookmarks: (doc: PdfDocumentObject) => Task<PdfBookmarksObject, Error>;
   renderPage: (
     doc: PdfDocumentObject,

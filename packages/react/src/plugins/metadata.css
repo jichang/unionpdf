@@ -1,0 +1,11 @@
+.pdf__metadata table {
+  width: 100%;
+}
+
+.pdf__metadata table td {
+  padding: 0.5rem;
+}
+
+.pdf__metadata td:last-child {
+  font-weight: bold;
+}

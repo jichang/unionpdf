@@ -1,8 +1,15 @@
 /// <reference path="./url.d.ts" />
 
 import { ConsoleLogger, PdfDocumentObject, TaskBase } from '@unionpdf/models';
-import { WebWorkerEngine } from '../src/index';
-import webworker from 'url:./webworker';
+import { createPdfiumModule, PdfiumEngine } from '../src/index';
+
+import { pdfiumWasm } from '../src/index';
+
+async function loadWasmBinary() {
+  const response = await fetch(pdfiumWasm);
+  const wasmBinary = await response.arrayBuffer();
+  return wasmBinary;
+}
 
 async function readFile(file: File): Promise<ArrayBuffer> {
   return new Promise((resolve) => {
@@ -20,7 +27,9 @@ function logError(error: Error) {
 }
 
 async function run() {
-  const engine = new WebWorkerEngine(new URL(webworker), new ConsoleLogger());
+  const wasmBinary = await loadWasmBinary();
+  const wasmModule = await createPdfiumModule({ wasmBinary });
+  const engine = new PdfiumEngine(wasmModule, new ConsoleLogger());
 
   engine.initialize();
 
@@ -53,6 +62,7 @@ async function run() {
 
             const renderTask = engine.renderPage(doc, page, 1, 0);
             renderTask.wait((imageData) => {
+              /*
               const canvasElem = document.createElement(
                 'canvas'
               ) as HTMLCanvasElement;
@@ -75,6 +85,8 @@ async function run() {
                 imageData.width,
                 imageData.height
               );
+              */
+              console.log(imageData);
             }, logError);
 
             const annotationsTask = engine.getPageAnnotations(doc, page, 1, 0);

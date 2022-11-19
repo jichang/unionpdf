@@ -19,6 +19,18 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     openDocument: jest.fn((id: string, url: PdfSource) => {
       return new TaskBase();
     }),
+    getMetadata: () => {
+      return TaskBase.resolve({
+        title: 'title',
+        author: 'author',
+        subject: 'subject',
+        keywords: 'keywords',
+        producer: 'producer',
+        creator: 'creator',
+        creationDate: 'creationDate',
+        modificationDate: 'modificationDate',
+      });
+    },
     getBookmarks: (doc: PdfDocumentObject) => {
       const bookmarks: PdfBookmarkObject[] = [];
       bookmarks.push(

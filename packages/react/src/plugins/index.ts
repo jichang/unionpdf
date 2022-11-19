@@ -1,4 +1,5 @@
 export * from './toolbar';
+export * from './metadata';
 export * from './thumbnails';
 export * from './bookmarks';
 export * from './pages';
