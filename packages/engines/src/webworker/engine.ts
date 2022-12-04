@@ -1,4 +1,4 @@
-import { PdfMetadataObject } from '@unionpdf/models';
+import { PdfMetadataObject, Task } from '@unionpdf/models';
 import {
   Logger,
   NoopLogger,
@@ -284,6 +284,24 @@ export class WebWorkerEngine implements PdfEngine {
       data: {
         name: 'renderThumbnail',
         args: [doc, page, scaleFactor, rotation],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  saveAsCopy(pdf: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<ArrayBuffer>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'saveAsCopy',
+        args: [pdf],
       },
     };
     this.proxy(task, request);

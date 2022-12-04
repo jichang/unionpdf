@@ -165,6 +165,9 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     closeDocument: (pdf: PdfDocumentObject) => {
       return TaskBase.resolve(true);
     },
+    saveAsCopy: (pdf: PdfDocumentObject) => {
+      return TaskBase.resolve(new ArrayBuffer(0));
+    },
     ...engine,
   };
 }

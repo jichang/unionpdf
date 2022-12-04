@@ -409,4 +409,5 @@ export interface PdfEngine {
     rotation: Rotation
   ) => Task<ImageData, Error>;
   closeDocument: (pdf: PdfDocumentObject) => Task<boolean, Error>;
+  saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, Error>;
 }

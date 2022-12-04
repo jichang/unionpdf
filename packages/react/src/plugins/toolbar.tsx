@@ -1,7 +1,9 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, useCallback } from 'react';
 import { useUIComponents, useUIStrings } from '../ui/ui.context';
 import './toolbar.css';
 import { ErrorBoundary } from '../ui/errorboundary';
+import { usePdfDocument, usePdfEngine } from '../core';
+import { ignore } from '@unionpdf/models';
 
 export interface PdfToolbarProps extends ComponentProps<'div'> {}
 
@@ -55,11 +57,27 @@ export function PdfToolbarDocItemGroup(props: PdfToolbarDocItemGroupProps) {
   const { children } = props;
   const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
   const strings = useUIStrings();
+  const doc = usePdfDocument();
+  const engine = usePdfEngine();
+
+  const saveAs = useCallback(() => {
+    if (engine && doc) {
+      engine.saveAsCopy(doc).wait((buffer) => {
+        const url = URL.createObjectURL(new Blob([buffer]));
+        const linkElem = document.createElement('a');
+        linkElem.download = `${doc.id}`;
+        linkElem.href = url;
+        linkElem.click();
+      }, ignore);
+    }
+  }, [engine, doc]);
+
+  const print = useCallback(() => {}, [engine, doc]);
 
   return (
     <ToolbarItemGroupComponent>
-      <ButtonComponent>{strings.save}</ButtonComponent>
-      <ButtonComponent>{strings.print}</ButtonComponent>
+      <ButtonComponent onClick={saveAs}>{strings.saveAs}</ButtonComponent>
+      <ButtonComponent onClick={print}>{strings.print}</ButtonComponent>
       {children}
     </ToolbarItemGroupComponent>
   );

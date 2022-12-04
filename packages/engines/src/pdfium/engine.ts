@@ -9,7 +9,6 @@ import {
   TaskBase,
   Logger,
   NoopLogger,
-  PdfMetadataObject,
   Task,
 } from '@unionpdf/models';
 import { PdfDestinationObject } from '@unionpdf/models';
@@ -53,6 +52,11 @@ export const wrappedModuleMethods = {
   UTF32ToString: [['number'] as const, 'string'] as const,
   AsciiToString: [['number'] as const, 'string'] as const,
   PDFium_Init: [[] as const, ''] as const,
+  PDFium_OpenFileWriter: [[] as const, 'number'] as const,
+  PDFium_CloseFileWriter: [['number'] as const, ''] as const,
+  PDFium_ReadFileWriterSize: [['number'] as const, 'number'] as const,
+  PDFium_ReadFileWriter: [['number', 'number', 'number'] as const, ''] as const,
+  FPDF_SaveAsCopy: [['number', 'number', 'number'] as const, ''] as const,
   FPDF_LoadMemDocument: [
     ['number', 'number', 'string'] as const,
     'number' as const,
@@ -411,6 +415,25 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'renderThumbnail', arguments);
     scaleFactor = Math.max(scaleFactor, 0.5);
     return this.renderPage(doc, page, scaleFactor, rotation);
+  }
+
+  saveAsCopy(doc: PdfDocumentObject) {
+    const { docPtr } = this.docs[doc.id];
+
+    const writerPtr = this.wasmModuleWrapper.PDFium_OpenFileWriter();
+    this.wasmModuleWrapper.FPDF_SaveAsCopy(docPtr, writerPtr, 0);
+    const size = this.wasmModuleWrapper.PDFium_ReadFileWriterSize(writerPtr);
+    const dataPtr = this.wasmModule._malloc(size);
+    this.wasmModuleWrapper.PDFium_ReadFileWriter(writerPtr, dataPtr, size);
+    const buffer = new ArrayBuffer(size);
+    const view = new DataView(buffer);
+    for (let i = 0; i < size; i++) {
+      view.setInt8(i, this.wasmModule.getValue(dataPtr + i, 'i8'));
+    }
+    this.wasmModule._free(dataPtr);
+    this.wasmModuleWrapper.PDFium_CloseFileWriter(writerPtr);
+
+    return TaskBase.resolve(buffer);
   }
 
   closeDocument(doc: PdfDocumentObject) {

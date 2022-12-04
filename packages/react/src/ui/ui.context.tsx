@@ -74,7 +74,7 @@ export interface UIStrings {
   rotate270Deg: string;
   thumbnails: string;
   outlines: string;
-  save: string;
+  saveAs: string;
   print: string;
   metadata: string;
   title: string;
@@ -95,7 +95,7 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   rotate270Deg: '270 degree',
   thumbnails: 'Thumbnails',
   outlines: 'Outlines',
-  save: 'Save',
+  saveAs: 'Save As',
   print: 'Print',
   metadata: 'Metadata',
   title: 'Title',

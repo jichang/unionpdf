@@ -136,6 +136,9 @@ export class EngineRunner {
       case 'closeDocument':
         task = this.engine[name]!(...args);
         break;
+      case 'saveAsCopy':
+        task = this.engine[name]!(...args);
+        break;
     }
 
     task.wait(

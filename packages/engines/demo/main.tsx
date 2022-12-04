@@ -1,6 +1,11 @@
 /// <reference path="./url.d.ts" />
 
-import { ConsoleLogger, PdfDocumentObject, TaskBase } from '@unionpdf/models';
+import {
+  ConsoleLogger,
+  ignore,
+  PdfDocumentObject,
+  TaskBase,
+} from '@unionpdf/models';
 import { createPdfiumModule, PdfiumEngine } from '../src/index';
 
 import { pdfiumWasm } from '../src/index';
@@ -29,6 +34,7 @@ function logError(error: Error) {
 async function run() {
   const wasmBinary = await loadWasmBinary();
   const wasmModule = await createPdfiumModule({ wasmBinary });
+  console.log(wasmModule);
   const engine = new PdfiumEngine(wasmModule, new ConsoleLogger());
 
   engine.initialize();
@@ -37,6 +43,7 @@ async function run() {
   const bookmarksElem = document.getElementById(
     'pdf-bookmarks'
   ) as HTMLParagraphElement;
+  const saveElem = document.getElementById('save') as HTMLInputElement;
 
   let currDoc: PdfDocumentObject | null = null;
   inputElem?.addEventListener('input', async (evt) => {
@@ -62,7 +69,6 @@ async function run() {
 
             const renderTask = engine.renderPage(doc, page, 1, 0);
             renderTask.wait((imageData) => {
-              /*
               const canvasElem = document.createElement(
                 'canvas'
               ) as HTMLCanvasElement;
@@ -85,7 +91,6 @@ async function run() {
                 imageData.width,
                 imageData.height
               );
-              */
               console.log(imageData);
             }, logError);
 
@@ -97,6 +102,17 @@ async function run() {
         }, logError);
       }
     }, logError);
+  });
+
+  saveElem.addEventListener('click', async () => {
+    if (currDoc) {
+      engine.saveAsCopy(currDoc).wait((buffer) => {
+        const aElem = document.createElement('a');
+        aElem.download = `copy-${Date.now()}.pdf`;
+        aElem.href = URL.createObjectURL(new Blob([buffer]));
+        aElem.click();
+      }, ignore);
+    }
   });
 }
 
