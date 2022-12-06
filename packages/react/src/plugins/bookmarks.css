@@ -13,20 +13,24 @@
   padding: 0.5rem 1rem;
 }
 
-.pdf__bookmarks__entry {
+.pdf__bookmarks__entry__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem;
 
   cursor: pointer;
 }
 
-.pdf__bookmarks__entry:hover {
+.pdf__bookmarks__entry__header:hover {
   color: white;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-.pdf__bookmarks__entry span {
+.pdf__bookmarks__entry .title {
+  flex: 1;
   display: inline-block;
-  width: 100%;
 }
 
 .pdf__bookmarks__entry.pdf__bookmarks__entry--current span {

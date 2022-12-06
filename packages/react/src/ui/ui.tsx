@@ -2,6 +2,51 @@ import React, { ComponentProps } from 'react';
 import './ui.css';
 import classNames from 'classnames';
 
+export interface IconProps extends ComponentProps<'span'> {
+  name: string;
+}
+
+export function Icon(props: IconProps) {
+  const { name, className, ...rest } = props;
+
+  let svg = null;
+  switch (name) {
+    case 'ArrowRight':
+      svg = (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 2048 2048"
+          focusable="false"
+        >
+          <path d="M512 0l1024 1024L512 2048V0z"></path>
+        </svg>
+      );
+      break;
+    case 'ArrowDown':
+      svg = (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 2048 2048"
+          focusable="false"
+        >
+          <path d="M0 640h2048L1024 1664 0 640z"></path>
+        </svg>
+      );
+      break;
+  }
+
+  return (
+    <span
+      role="img"
+      className={classNames('pdf__ui__icon', className)}
+      data-name={name}
+      {...rest}
+    >
+      {svg}
+    </span>
+  );
+}
+
 export interface ButtonProps extends ComponentProps<'button'> {}
 
 export function Button(props: ButtonProps) {

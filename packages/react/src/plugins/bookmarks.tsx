@@ -11,6 +11,7 @@ import { usePdfDocument } from '../core/document.context';
 import { usePdfEngine } from '../core/engine.context';
 import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
+import { useUIComponents } from '../ui';
 
 export const PDF_NAVIGATOR_SOURCE_OUTLINES = 'PdfBookmarks';
 
@@ -118,6 +119,7 @@ export interface PdfBookmarkEntryProps {
 
 export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
   const { currPageIndex, bookmark, onClick } = props;
+  const { IconComponent } = useUIComponents();
 
   let isCurrent = false;
 
@@ -140,13 +142,22 @@ export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
   }
   const [isUnfold, setIsUnfold] = useState(false);
 
-  const activiate = useCallback(() => {
+  const toggleIsFold = useCallback(() => {
     setIsUnfold((isUnfold) => {
       return !isUnfold;
     });
-    onClick(bookmark);
   }, [setIsUnfold, onClick, bookmark]);
 
+  const activiate = useCallback(() => {
+    onClick(bookmark);
+  }, [onClick, bookmark]);
+
+  const iconName =
+    bookmark.children && bookmark.children.length > 0
+      ? isUnfold
+        ? 'ArrowDown'
+        : 'ArrowRight'
+      : 'Empty';
   return (
     <li
       tabIndex={0}
@@ -154,7 +165,12 @@ export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
         isCurrent ? 'pdf__bookmarks__entry--current' : ''
       }`}
     >
-      <span onClick={activiate}>{bookmark.title}</span>
+      <div className="pdf__bookmarks__entry__header">
+        <IconComponent name={iconName} onClick={toggleIsFold} />
+        <span className="title" onClick={activiate}>
+          {bookmark.title}
+        </span>
+      </div>
       {bookmark.children && bookmark.children.length !== 0 && isUnfold ? (
         <ol style={{ listStyle: 'none', paddingLeft: '1rem' }}>
           {bookmark.children.map((entry, index) => {

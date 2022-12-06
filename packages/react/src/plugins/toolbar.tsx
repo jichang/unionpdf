@@ -41,7 +41,7 @@ export function PdfToolbarNavigationtemGroup(
         {strings.metadata}
       </ButtonComponent>
       <ButtonComponent onClick={onToggleOutlines}>
-        {strings.outlines}
+        {strings.bookmarks}
       </ButtonComponent>
       <ButtonComponent onClick={onToggleThumbnails}>
         {strings.thumbnails}

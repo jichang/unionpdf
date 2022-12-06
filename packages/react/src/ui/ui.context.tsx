@@ -1,6 +1,6 @@
 import React from 'react';
 import { createContext, useContext } from 'react';
-import { Button, Input, Select, Toolbar, ToolbarItemGroup } from './ui';
+import { Button, Icon, Input, Select, Toolbar, ToolbarItemGroup } from './ui';
 
 export interface UIComponents {
   ToolbarComponent: typeof Toolbar;
@@ -8,6 +8,7 @@ export interface UIComponents {
   ButtonComponent: typeof Button;
   SelectComponent: typeof Select;
   InputComponent: typeof Input;
+  IconComponent: typeof Icon;
 }
 
 export const DEFAULT_UI_COMPONENTS: UIComponents = {
@@ -16,6 +17,7 @@ export const DEFAULT_UI_COMPONENTS: UIComponents = {
   ButtonComponent: Button,
   SelectComponent: Select,
   InputComponent: Input,
+  IconComponent: Icon,
 };
 
 export const UIComponentsContext = createContext<UIComponents>(
@@ -73,7 +75,7 @@ export interface UIStrings {
   rotate180Deg: string;
   rotate270Deg: string;
   thumbnails: string;
-  outlines: string;
+  bookmarks: string;
   saveAs: string;
   print: string;
   metadata: string;
@@ -94,7 +96,7 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   rotate180Deg: '180 degree',
   rotate270Deg: '270 degree',
   thumbnails: 'Thumbnails',
-  outlines: 'Outlines',
+  bookmarks: 'Bookmarks',
   saveAs: 'Save As',
   print: 'Print',
   metadata: 'Metadata',
