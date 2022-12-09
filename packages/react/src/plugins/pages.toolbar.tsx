@@ -32,8 +32,12 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
     ...rest
   } = props;
   const strings = useUIStrings();
-  const { ToolbarItemGroupComponent, InputComponent, SelectComponent } =
-    useUIComponents();
+  const {
+    ButtonComponent,
+    ToolbarItemGroupComponent,
+    InputComponent,
+    SelectComponent,
+  } = useUIComponents();
 
   const pdfDoc = usePdfDocument();
 
@@ -102,6 +106,14 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
     },
   ];
 
+  const [isSearchPanelOpened, setIsSearchPanelOpened] = useState(false);
+
+  const toggleIsSearchPanelOpened = useCallback(() => {
+    setIsSearchPanelOpened((isSearchPanelOpened) => {
+      return !isSearchPanelOpened;
+    });
+  }, [setIsSearchPanelOpened]);
+
   return (
     <ErrorBoundary>
       <ToolbarItemGroupComponent {...rest}>
@@ -128,7 +140,11 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
           type="number"
           onChange={navigate}
         />
+        <ButtonComponent onClick={toggleIsSearchPanelOpened}>
+          {strings.search}
+        </ButtonComponent>
       </ToolbarItemGroupComponent>
+      {isSearchPanelOpened ? <p>Search Panel</p> : null}
     </ErrorBoundary>
   );
 }

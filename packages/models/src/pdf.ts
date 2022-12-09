@@ -82,7 +82,7 @@ export type PdfActionObject =
       path: string;
     };
 
-export type PdfTarget =
+export type PdfLinkTarget =
   | {
       type: 'action';
       action: PdfActionObject;
@@ -94,12 +94,20 @@ export type PdfTarget =
 
 export interface PdfBookmarkObject {
   title: string;
-  target?: PdfTarget | undefined;
+  target?: PdfLinkTarget | undefined;
   children?: PdfBookmarkObject[];
 }
 
 export interface PdfBookmarksObject {
   bookmarks: PdfBookmarkObject[];
+}
+
+export interface PdfTextRectObject {
+  font: {
+    size: number;
+  };
+  content: string;
+  rect: Rect;
 }
 
 export enum PdfAnnotationSubtype {
@@ -147,7 +155,7 @@ export interface PdfAnnotationObjectBase {
 export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.LINK;
   text: string;
-  target: PdfTarget | undefined;
+  target: PdfLinkTarget | undefined;
 }
 
 export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
@@ -402,6 +410,12 @@ export interface PdfEngine {
     scaleFactor: number,
     rotation: Rotation
   ) => Task<PdfAnnotationObject[], Error>;
+  getPageTextRects: (
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation
+  ) => Task<PdfTextRectObject[], Error>;
   renderThumbnail: (
     doc: PdfDocumentObject,
     page: PdfPageObject,

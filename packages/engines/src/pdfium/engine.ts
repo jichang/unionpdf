@@ -2,14 +2,14 @@ import {
   calculateSize,
   PdfActionObject,
   PdfAnnotationObject,
+  PdfTextRectObject,
   PdfAnnotationSubtype,
   PdfLinkAnnoObject,
-  PdfTarget,
+  PdfLinkTarget,
   PdfZoomMode,
   TaskBase,
   Logger,
   NoopLogger,
-  Task,
 } from '@unionpdf/models';
 import { PdfDestinationObject } from '@unionpdf/models';
 import {
@@ -176,10 +176,33 @@ export const wrappedModuleMethods = {
   FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFLink_GetAction: [['number'] as const, 'number'] as const,
   FPDFText_LoadPage: [['number'] as const, 'number'] as const,
+  FPDFText_CountChars: [['number'] as const, 'number'] as const,
+  FPDFText_CountRects: [
+    ['number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFText_GetRect: [
+    ['number', 'number', 'number', 'number', 'number', 'number'],
+    'boolean',
+  ] as const,
+  FPDFText_GetCharIndexAtPos: [
+    ['number', 'number', 'number', 'number', 'number'],
+    'number',
+  ] as const,
+  FPDFText_GetFontSize: [['number', 'number'], 'number'] as const,
   FPDFText_GetBoundedText: [
     ['number', 'number', 'number', 'number', 'number', 'number', 'number'],
     'number',
   ] as const,
+  FPDFText_FindStart: [
+    ['number', 'string', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FPDFText_FindNext: [['number'] as const, 'boolean'] as const,
+  FPDFText_FindPrev: [['number'] as const, 'boolean'] as const,
+  FPDFText_GetSchResultIndex: [['number'] as const, 'number'] as const,
+  FPDFText_GetSchCount: [['number'] as const, 'number'] as const,
+  FPDFText_FindClose: [['number'] as const, ''] as const,
   FPDFText_ClosePage: [['number'] as const, ''] as const,
   FPDFPage_CloseAnnot: [['number'] as const, ''] as const,
 };
@@ -220,7 +243,7 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', arguments);
     const array = new Uint8Array(arrayBuffer);
     const length = array.length;
-    const filePtr = this.wasmModule._malloc(length);
+    const filePtr = this.malloc(length);
     this.wasmModule.HEAPU8.set(array, filePtr);
 
     const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(
@@ -235,7 +258,7 @@ export class PdfiumEngine implements PdfEngine {
         LOG_CATEGORY,
         `FPDF_LoadMemDocument failed with ${lastError}`
       );
-      this.wasmModule._free(filePtr);
+      this.free(filePtr);
       return TaskBase.reject<PdfDocumentObject>(
         new Error(`FPDF_LoadMemDocument failed with ${lastError}`)
       );
@@ -244,10 +267,7 @@ export class PdfiumEngine implements PdfEngine {
     const pageCount = this.wasmModuleWrapper.FPDF_GetPageCount(docPtr);
 
     const pages: PdfPageObject[] = [];
-    const sizePtr = this.wasmModule._malloc(8);
-    for (let i = 0; i < 8; i++) {
-      this.wasmModule.HEAP8[sizePtr + i] = 0;
-    }
+    const sizePtr = this.malloc(8);
     for (let index = 0; index < pageCount; index++) {
       const result = this.wasmModuleWrapper.FPDF_GetPageSizeByIndexF(
         docPtr,
@@ -260,9 +280,9 @@ export class PdfiumEngine implements PdfEngine {
           LOG_CATEGORY,
           `FPDF_GetPageSizeByIndexF failed with ${lastError}`
         );
-        this.wasmModule._free(sizePtr);
+        this.free(sizePtr);
         this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
-        this.wasmModule._free(filePtr);
+        this.free(filePtr);
         return TaskBase.reject<PdfDocumentObject>(
           new Error(`FPDF_GetPageSizeByIndexF failed with ${lastError}`)
         );
@@ -278,7 +298,7 @@ export class PdfiumEngine implements PdfEngine {
 
       pages.push(page);
     }
-    this.wasmModule._free(sizePtr);
+    this.free(sizePtr);
 
     const pdfDoc = {
       id,
@@ -330,10 +350,7 @@ export class PdfiumEngine implements PdfEngine {
     const bitmapSize = calculateSize(page.size, scaleFactor * DPR, rotation);
     const bitmapHeapLength =
       bitmapSize.width * bitmapSize.height * bytesPerPixel;
-    const bitmapHeapPtr = this.wasmModule._malloc(bitmapHeapLength);
-    for (let i = 0; i < bitmapHeapLength; i++) {
-      this.wasmModule.HEAP8[bitmapHeapPtr + i] = 0;
-    }
+    const bitmapHeapPtr = this.malloc(bitmapHeapLength);
     const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
       bitmapSize.width,
       bitmapSize.height,
@@ -369,7 +386,7 @@ export class PdfiumEngine implements PdfEngine {
     for (let i = 0; i < bitmapHeapLength; i++) {
       dataView.setInt8(i, this.wasmModule.getValue(bitmapHeapPtr + i, 'i8'));
     }
-    this.wasmModule._free(bitmapHeapPtr);
+    this.free(bitmapHeapPtr);
 
     const imageData = new ImageData(array, bitmapSize.width, bitmapSize.height);
 
@@ -406,6 +423,31 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(annotations);
   }
 
+  getPageTextRects(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation,
+    signal?: AbortSignal | undefined
+  ) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getPageTextRects', arguments);
+    const { docPtr } = this.docs[doc.id];
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
+    const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
+
+    const textRects = this.readPageTextRects(
+      page,
+      docPtr,
+      pagePtr,
+      textPagePtr
+    );
+
+    this.wasmModuleWrapper.FPDFText_ClosePage(textPagePtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+
+    return TaskBase.resolve(textRects);
+  }
+
   renderThumbnail(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -423,14 +465,14 @@ export class PdfiumEngine implements PdfEngine {
     const writerPtr = this.wasmModuleWrapper.PDFium_OpenFileWriter();
     this.wasmModuleWrapper.FPDF_SaveAsCopy(docPtr, writerPtr, 0);
     const size = this.wasmModuleWrapper.PDFium_ReadFileWriterSize(writerPtr);
-    const dataPtr = this.wasmModule._malloc(size);
+    const dataPtr = this.malloc(size);
     this.wasmModuleWrapper.PDFium_ReadFileWriter(writerPtr, dataPtr, size);
     const buffer = new ArrayBuffer(size);
     const view = new DataView(buffer);
     for (let i = 0; i < size; i++) {
       view.setInt8(i, this.wasmModule.getValue(dataPtr + i, 'i8'));
     }
-    this.wasmModule._free(dataPtr);
+    this.free(dataPtr);
     this.wasmModuleWrapper.PDFium_CloseFileWriter(writerPtr);
 
     return TaskBase.resolve(buffer);
@@ -452,9 +494,22 @@ export class PdfiumEngine implements PdfEngine {
 
     const { docPtr, filePtr } = this.docs[doc.id];
     this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
-    this.wasmModule._free(filePtr);
+    this.free(filePtr);
     delete this.docs[doc.id];
     return TaskBase.resolve(true);
+  }
+
+  malloc(size: number) {
+    const ptr = this.wasmModule._malloc(size);
+    for (let i = 0; i < size; i++) {
+      this.wasmModule.HEAP8[ptr + i] = 0;
+    }
+
+    return ptr;
+  }
+
+  free(ptr: number) {
+    this.wasmModule._free(ptr);
   }
 
   readMetaText(docPtr: number, key: string) {
@@ -525,6 +580,133 @@ export class PdfiumEngine implements PdfEngine {
       target,
       children: bookmarks,
     };
+  }
+
+  private readPageTextRects(
+    page: PdfPageObject,
+    docPtr: number,
+    pagePtr: number,
+    textPagePtr: number
+  ) {
+    const rectsCount = this.wasmModuleWrapper.FPDFText_CountRects(
+      textPagePtr,
+      0,
+      -1
+    );
+
+    const textRects: PdfTextRectObject[] = [];
+    for (let i = 0; i < rectsCount; i++) {
+      const topPtr = this.malloc(8);
+      const leftPtr = this.malloc(8);
+      const rightPtr = this.malloc(8);
+      const bottomPtr = this.malloc(8);
+      const isSucceed = this.wasmModuleWrapper.FPDFText_GetRect(
+        textPagePtr,
+        i,
+        leftPtr,
+        topPtr,
+        rightPtr,
+        bottomPtr
+      );
+      if (!isSucceed) {
+        this.free(leftPtr);
+        this.free(topPtr);
+        this.free(rightPtr);
+        this.free(bottomPtr);
+        continue;
+      }
+
+      const left = this.wasmModule.getValue(leftPtr, 'double');
+      const top = this.wasmModule.getValue(topPtr, 'double');
+      const right = this.wasmModule.getValue(rightPtr, 'double');
+      const bottom = this.wasmModule.getValue(bottomPtr, 'double');
+
+      this.free(leftPtr);
+      this.free(topPtr);
+      this.free(rightPtr);
+      this.free(bottomPtr);
+
+      const deviceXPtr = this.malloc(4);
+      const deviceYPtr = this.malloc(4);
+      this.wasmModuleWrapper.FPDF_PageToDevice(
+        pagePtr,
+        0,
+        0,
+        page.size.width,
+        page.size.height,
+        0,
+        left,
+        top,
+        deviceXPtr,
+        deviceYPtr
+      );
+      const x = this.wasmModule.getValue(deviceXPtr, 'i32');
+      const y = this.wasmModule.getValue(deviceYPtr, 'i32');
+      this.free(deviceXPtr);
+      this.free(deviceYPtr);
+
+      const rect = {
+        origin: {
+          x,
+          y,
+        },
+        size: {
+          width: Math.abs(right - left),
+          height: Math.abs(top - bottom),
+        },
+      };
+
+      const utf16Length = this.wasmModuleWrapper.FPDFText_GetBoundedText(
+        textPagePtr,
+        left,
+        top,
+        right,
+        bottom,
+        0,
+        0
+      );
+      const bytesCount = (utf16Length + 1) * 2; // include NIL
+      const textBuffer = this.malloc(bytesCount);
+      this.wasmModuleWrapper.FPDFText_GetBoundedText(
+        textPagePtr,
+        left,
+        top,
+        right,
+        bottom,
+        textBuffer,
+        utf16Length
+      );
+      const content = this.wasmModule.UTF16ToString(textBuffer);
+      this.free(textBuffer);
+
+      const charIndex = this.wasmModuleWrapper.FPDFText_GetCharIndexAtPos(
+        textPagePtr,
+        left,
+        top,
+        6,
+        6
+      );
+      if (charIndex < 0) {
+        continue;
+      }
+
+      const fontSize = this.wasmModuleWrapper.FPDFText_GetFontSize(
+        textPagePtr,
+        charIndex
+      );
+
+      const textRect: PdfTextRectObject = {
+        content,
+        rect,
+        font: {
+          size: fontSize,
+        },
+      };
+
+      textRects.push(textRect);
+    }
+
+    return textRects;
   }
 
   private readPageAnnotations(
@@ -603,14 +785,8 @@ export class PdfiumEngine implements PdfEngine {
     const annoRect = this.readAnnoRect(annotationPtr);
     const { left, top, right, bottom } = annoRect;
 
-    const deviceXPtr = this.wasmModule._malloc(4);
-    for (let i = 0; i < 4; i++) {
-      this.wasmModule.HEAP8[deviceXPtr + i] = 0;
-    }
-    const deviceYPtr = this.wasmModule._malloc(4);
-    for (let i = 0; i < 4; i++) {
-      this.wasmModule.HEAP8[deviceYPtr + i] = 0;
-    }
+    const deviceXPtr = this.malloc(4);
+    const deviceYPtr = this.malloc(4);
     this.wasmModuleWrapper.FPDF_PageToDevice(
       pagePtr,
       0,
@@ -625,8 +801,8 @@ export class PdfiumEngine implements PdfEngine {
     );
     const x = this.wasmModule.getValue(deviceXPtr, 'i32');
     const y = this.wasmModule.getValue(deviceYPtr, 'i32');
-    this.wasmModule._free(deviceXPtr);
-    this.wasmModule._free(deviceYPtr);
+    this.free(deviceXPtr);
+    this.free(deviceYPtr);
 
     const rect = {
       origin: {
@@ -649,10 +825,7 @@ export class PdfiumEngine implements PdfEngine {
       0
     );
     const bytesCount = (utf16Length + 1) * 2; // include NIL
-    const textBuffer = this.wasmModule._malloc(bytesCount);
-    for (let i = 0; i < bytesCount; i++) {
-      this.wasmModule.HEAP8[textBuffer + i] = 0;
-    }
+    const textBuffer = this.malloc(bytesCount);
     this.wasmModuleWrapper.FPDFText_GetBoundedText(
       textPagePtr,
       left,
@@ -663,7 +836,7 @@ export class PdfiumEngine implements PdfEngine {
       utf16Length
     );
     const text = this.wasmModule.UTF16ToString(textBuffer);
-    this.wasmModule._free(textBuffer);
+    this.free(textBuffer);
 
     const target = this.readPdfLinkAnnoTarget(
       docPtr,
@@ -688,7 +861,7 @@ export class PdfiumEngine implements PdfEngine {
     docPtr: number,
     getActionPtr: () => number,
     getDestinationPtr: () => number
-  ): PdfTarget | undefined {
+  ): PdfLinkTarget | undefined {
     const actionPtr = getActionPtr();
     if (actionPtr) {
       const action = this.readPdfAction(docPtr, actionPtr);
@@ -714,7 +887,7 @@ export class PdfiumEngine implements PdfEngine {
     docPtr: number,
     getActionPtr: () => number,
     getDestinationPtr: () => number
-  ): PdfTarget | undefined {
+  ): PdfLinkTarget | undefined {
     const destinationPtr = getDestinationPtr();
     if (destinationPtr) {
       const destination = this.readPdfDestination(docPtr, destinationPtr);
@@ -833,11 +1006,8 @@ export class PdfiumEngine implements PdfEngine {
     );
     // Every params is a float value
     const maxParmamsCount = 4;
-    const paramsCountPtr = this.wasmModule._malloc(maxParmamsCount);
-    const paramsPtr = this.wasmModule._malloc(maxParmamsCount * 4);
-    for (let i = 0; i < maxParmamsCount * 4; i++) {
-      this.wasmModule.HEAP8[paramsPtr + i] = 0;
-    }
+    const paramsCountPtr = this.malloc(maxParmamsCount);
+    const paramsPtr = this.malloc(maxParmamsCount * 4);
     const zoomMode = this.wasmModuleWrapper.FPDFDest_GetView(
       destinationPtr,
       paramsCountPtr,
@@ -849,16 +1019,16 @@ export class PdfiumEngine implements PdfEngine {
       const paramPtr = paramsPtr + i * 4;
       view.push(this.wasmModule.getValue(paramPtr, 'float'));
     }
-    this.wasmModule._free(paramsCountPtr);
-    this.wasmModule._free(paramsPtr);
+    this.free(paramsCountPtr);
+    this.free(paramsPtr);
 
     if (zoomMode === PdfZoomMode.XYZ) {
-      const hasXPtr = this.wasmModule._malloc(1);
-      const hasYPtr = this.wasmModule._malloc(1);
-      const hasZPtr = this.wasmModule._malloc(1);
-      const xPtr = this.wasmModule._malloc(4);
-      const yPtr = this.wasmModule._malloc(4);
-      const zPtr = this.wasmModule._malloc(4);
+      const hasXPtr = this.malloc(1);
+      const hasYPtr = this.malloc(1);
+      const hasZPtr = this.malloc(1);
+      const xPtr = this.malloc(4);
+      const yPtr = this.malloc(4);
+      const zPtr = this.malloc(4);
 
       const isSucceed = this.wasmModuleWrapper.FPDFDest_GetLocationInPage(
         destinationPtr,
@@ -878,12 +1048,12 @@ export class PdfiumEngine implements PdfEngine {
         const y = !!hasY ? this.wasmModule.getValue(yPtr, 'float') : 0;
         const zoom = !!hasZ ? this.wasmModule.getValue(zPtr, 'float') : 0;
 
-        this.wasmModule._free(hasXPtr);
-        this.wasmModule._free(hasYPtr);
-        this.wasmModule._free(hasZPtr);
-        this.wasmModule._free(xPtr);
-        this.wasmModule._free(yPtr);
-        this.wasmModule._free(zPtr);
+        this.free(hasXPtr);
+        this.free(hasYPtr);
+        this.free(hasZPtr);
+        this.free(xPtr);
+        this.free(yPtr);
+        this.free(zPtr);
 
         return {
           pageIndex,
@@ -899,12 +1069,12 @@ export class PdfiumEngine implements PdfEngine {
         };
       }
 
-      this.wasmModule._free(hasXPtr);
-      this.wasmModule._free(hasYPtr);
-      this.wasmModule._free(hasZPtr);
-      this.wasmModule._free(xPtr);
-      this.wasmModule._free(yPtr);
-      this.wasmModule._free(zPtr);
+      this.free(hasXPtr);
+      this.free(hasYPtr);
+      this.free(hasZPtr);
+      this.free(xPtr);
+      this.free(yPtr);
+      this.free(zPtr);
 
       return {
         pageIndex,
@@ -930,7 +1100,7 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   private readAnnoRect(annotationPtr: number) {
-    const rectPtr = this.wasmModule._malloc(4 * 4);
+    const rectPtr = this.malloc(4 * 4);
     const rect = {
       left: 0,
       top: 0,
@@ -943,7 +1113,7 @@ export class PdfiumEngine implements PdfEngine {
       rect.right = this.wasmModule.getValue(rectPtr + 8, 'float');
       rect.bottom = this.wasmModule.getValue(rectPtr + 12, 'float');
     }
-    this.wasmModule._free(rectPtr);
+    this.free(rectPtr);
 
     return rect;
   }

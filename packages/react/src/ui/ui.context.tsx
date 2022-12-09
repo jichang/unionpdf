@@ -87,6 +87,9 @@ export interface UIStrings {
   creator: string;
   creationDate: string;
   modificationDate: string;
+  search: string;
+  nextMatch: string;
+  previousMatch: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -108,6 +111,9 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   creator: 'Creator',
   creationDate: 'Creation Date',
   modificationDate: 'Modification Date',
+  search: 'Search',
+  nextMatch: 'Next',
+  previousMatch: 'Next',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

@@ -12,6 +12,7 @@ import {
   TaskBase,
   PdfAnnotationObject,
   PdfBookmarkObject,
+  PdfTextRectObject,
 } from '@unionpdf/models';
 
 export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
@@ -160,6 +161,34 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
         const annotations: PdfAnnotationObject[] = [];
         annotations.push(link);
         return TaskBase.resolve(annotations);
+      }
+    ),
+    getPageTextRects: jest.fn(
+      (
+        doc: PdfDocumentObject,
+        page: PdfPageObject,
+        scaleFactor: number,
+        rotation: Rotation
+      ) => {
+        const textRects: PdfTextRectObject[] = [
+          {
+            content: 'pdf text',
+            font: {
+              size: 12,
+            },
+            rect: {
+              origin: {
+                x: 0,
+                y: 0,
+              },
+              size: {
+                width: 100,
+                height: 100,
+              },
+            },
+          },
+        ];
+        return TaskBase.resolve(textRects);
       }
     ),
     closeDocument: (pdf: PdfDocumentObject) => {

@@ -133,6 +133,9 @@ export class EngineRunner {
       case 'getPageAnnotations':
         task = this.engine[name]!(...args);
         break;
+      case 'getPageTextRects':
+        task = this.engine[name]!(...args);
+        break;
       case 'closeDocument':
         task = this.engine[name]!(...args);
         break;

@@ -30,6 +30,7 @@ import {
   PdfThumbnails,
   PdfPageContentComponentProps,
   PdfPages,
+  PdfPageText,
   PdfPageCanvas,
   PdfPageAnnotationComponentProps,
   PdfPageAnnotations,
@@ -111,6 +112,7 @@ function PdfPageContent(props: PdfPageContentComponentProps) {
   return (
     <>
       <PdfPageCanvas {...props} />
+      <PdfPageText {...props} />
       <PdfPageAnnotations {...props} annotationComponent={PdfPageAnnotation} />
       <PdfPageNumber {...props} />
     </>

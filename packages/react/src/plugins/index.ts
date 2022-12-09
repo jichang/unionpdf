@@ -5,6 +5,7 @@ export * from './bookmarks';
 export * from './pages';
 export * from './pages.toolbar';
 export * from './pageLayers/canvas';
+export * from './pageLayers/text';
 export * from './pageLayers/annotations';
 export * from './annotations/annotation';
 export * from './annotations/link';

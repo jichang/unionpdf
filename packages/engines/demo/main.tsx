@@ -98,6 +98,11 @@ async function run() {
             annotationsTask.wait((annotations) => {
               console.log(page.index, annotations);
             }, logError);
+
+            const textRectsTask = engine.getPageTextRects(doc, page, 1, 0);
+            textRectsTask.wait((textRects) => {
+              console.log(page.index, textRects);
+            }, logError);
           }
         }, logError);
       }

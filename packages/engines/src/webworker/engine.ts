@@ -1,4 +1,4 @@
-import { PdfMetadataObject, Task } from '@unionpdf/models';
+import { PdfMetadataObject, PdfTextRectObject, Task } from '@unionpdf/models';
 import {
   Logger,
   NoopLogger,
@@ -260,6 +260,29 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'getPageAnnotations',
+        args: [doc, page, scaleFactor, rotation],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  getPageTextRects(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation
+  ) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getPageTextRects', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<PdfTextRectObject[]>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'getPageTextRects',
         args: [doc, page, scaleFactor, rotation],
       },
     };
