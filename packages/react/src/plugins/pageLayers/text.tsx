@@ -36,19 +36,21 @@ export function PdfPageText(props: PdfPageTextProps) {
 
   return (
     <div className="pdf__page__layer pdf__page__layer--text">
-      {rects.map((rect, index) => {
-        const style = calculateRectStyle(rect.rect, scaleFactor, rotation);
+      {isVisible
+        ? rects.map((rect, index) => {
+            const style = calculateRectStyle(rect.rect, scaleFactor, rotation);
 
-        return (
-          <span
-            className="pdf__text__span"
-            key={index}
-            style={{ ...style, fontSize: Math.max(rect.font.size, 10) }}
-          >
-            {rect.content}
-          </span>
-        );
-      })}
+            return (
+              <span
+                className="pdf__text__span"
+                key={index}
+                style={{ ...style, fontSize: Math.max(rect.font.size, 10) }}
+              >
+                {rect.content}
+              </span>
+            );
+          })
+        : null}
     </div>
   );
 }

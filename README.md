@@ -19,7 +19,7 @@ git clone https://github.com/jichang/unionpdf.git
 2. bootstrap
 
 ```
-lerna bootstrap --hoist
+lerna bootstrap
 ```
 
 3. build
