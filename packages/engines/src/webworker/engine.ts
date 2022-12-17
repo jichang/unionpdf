@@ -1,4 +1,12 @@
-import { PdfMetadataObject, PdfTextRectObject, Task } from '@unionpdf/models';
+import {
+  PdfEngineFeature,
+  PdfEngineOperation,
+  PdfMetadataObject,
+  PdfTextRectObject,
+  SearchResult,
+  SearchTarget,
+  Task,
+} from '@unionpdf/models';
 import {
   Logger,
   NoopLogger,
@@ -47,6 +55,9 @@ export class WebWorkerEngine implements PdfEngine {
     this.prepareTask = new WorkerTask<boolean, Error>(this.worker, '0');
     this.tasks.set('0', this.prepareTask);
   }
+  isSupport?:
+    | ((feature: PdfEngineFeature) => Task<PdfEngineOperation[], Error>)
+    | undefined;
 
   handle = (evt: MessageEvent<any>) => {
     this.logger.debug(
@@ -307,6 +318,92 @@ export class WebWorkerEngine implements PdfEngine {
       data: {
         name: 'renderThumbnail',
         args: [doc, page, scaleFactor, rotation],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  startSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<boolean>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'startSearch',
+        args: [doc, contextId],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  searchNext(
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ): Task<SearchResult | undefined, Error> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'searchNext', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<SearchResult | undefined>(
+      this.worker,
+      requestId
+    );
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'searchNext',
+        args: [doc, contextId, target],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  searchPrev(
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ): Task<SearchResult | undefined, Error> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'searchPrev', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<SearchResult | undefined>(
+      this.worker,
+      requestId
+    );
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'searchPrev',
+        args: [doc, contextId, target],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  stopSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<boolean>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'stopSearch',
+        args: [doc, contextId],
       },
     };
     this.proxy(task, request);

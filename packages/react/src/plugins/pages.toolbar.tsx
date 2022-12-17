@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useUIComponents, useUIStrings } from '../ui/ui.context';
 import './pages.toolbar.css';
+import { PdfSearchPanel } from './searchpanel';
 import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument } from '../core/document.context';
 import { PdfNavigatorEvent } from '../core/navigator';
@@ -20,6 +21,7 @@ export interface PdfPagesToolbarProps extends ComponentProps<'div'> {
   changeScaleFactor: (evt: ChangeEvent<HTMLInputElement>) => void;
   rotation: Rotation;
   changeRotation: (evt: ChangeEvent<HTMLSelectElement>) => void;
+  toggleIsSearchPanelOpened: () => void;
 }
 
 export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
@@ -28,6 +30,7 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
     changeScaleFactor,
     rotation,
     changeRotation,
+    toggleIsSearchPanelOpened,
     children,
     ...rest
   } = props;
@@ -106,14 +109,6 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
     },
   ];
 
-  const [isSearchPanelOpened, setIsSearchPanelOpened] = useState(false);
-
-  const toggleIsSearchPanelOpened = useCallback(() => {
-    setIsSearchPanelOpened((isSearchPanelOpened) => {
-      return !isSearchPanelOpened;
-    });
-  }, [setIsSearchPanelOpened]);
-
   return (
     <ErrorBoundary>
       <ToolbarItemGroupComponent {...rest}>
@@ -144,7 +139,6 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
           {strings.search}
         </ButtonComponent>
       </ToolbarItemGroupComponent>
-      {isSearchPanelOpened ? <p>Search Panel</p> : null}
     </ErrorBoundary>
   );
 }

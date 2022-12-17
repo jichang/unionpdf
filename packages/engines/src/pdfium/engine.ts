@@ -10,6 +10,11 @@ import {
   TaskBase,
   Logger,
   NoopLogger,
+  SearchResult,
+  SearchTarget,
+  Task,
+  MatchFlag,
+  compareSearchTarge,
 } from '@unionpdf/models';
 import { PdfDestinationObject } from '@unionpdf/models';
 import {
@@ -90,6 +95,7 @@ export const wrappedModuleMethods = {
     ['number', 'number'] as const,
     'number',
   ] as const,
+  FPDFBookmark_Find: [['number', 'string'] as const, 'number'] as const,
   FPDFBookmark_GetTitle: [
     ['number', 'number', 'number'] as const,
     'number',
@@ -195,8 +201,8 @@ export const wrappedModuleMethods = {
     'number',
   ] as const,
   FPDFText_FindStart: [
-    ['number', 'string', 'number', 'number'] as const,
-    'boolean',
+    ['number', 'number', 'number', 'number'] as const,
+    'number',
   ] as const,
   FPDFText_FindNext: [['number'] as const, 'boolean'] as const,
   FPDFText_FindPrev: [['number'] as const, 'boolean'] as const,
@@ -210,6 +216,12 @@ export const wrappedModuleMethods = {
 const LOG_SOURCE = 'PdfiumEngine';
 const LOG_CATEGORY = 'Engine';
 
+export interface SearchContext {
+  target: SearchTarget;
+  currPageIndex: number;
+  startIndex: number; // -1 means reach the end
+}
+
 export class PdfiumEngine implements PdfEngine {
   wasmModuleWrapper: WrappedModule<typeof wrappedModuleMethods>;
   docs: Record<
@@ -217,6 +229,7 @@ export class PdfiumEngine implements PdfEngine {
     {
       filePtr: number;
       docPtr: number;
+      searchContexts: Map<number, SearchContext>;
     }
   > = {};
 
@@ -308,6 +321,7 @@ export class PdfiumEngine implements PdfEngine {
     this.docs[id] = {
       filePtr,
       docPtr,
+      searchContexts: new Map(),
     };
 
     return TaskBase.resolve(pdfDoc);
@@ -478,6 +492,142 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(buffer);
   }
 
+  startSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+    return TaskBase.resolve(true);
+  }
+
+  searchNext(
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ): Task<SearchResult | undefined, Error> {
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject<SearchResult | undefined>(
+        new Error('document is not opened')
+      );
+    }
+
+    const { keyword, flags } = target;
+    const searchContext = this.setupSearchContext(
+      doc,
+      contextId,
+      keyword,
+      flags
+    );
+
+    if (searchContext.currPageIndex === doc.pageCount) {
+      return TaskBase.resolve<SearchResult | undefined>(undefined);
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    let pageIndex = searchContext.currPageIndex;
+    let startIndex = searchContext.startIndex;
+
+    const length = 2 * (keyword.length + 1);
+    const keywordPtr = this.malloc(length);
+    this.wasmModule.stringToUTF16(keyword, keywordPtr, length);
+
+    const flag = flags.reduce((flag: MatchFlag, currFlag: MatchFlag) => {
+      return flag | currFlag;
+    }, MatchFlag.None);
+
+    while (pageIndex < doc.pageCount) {
+      const result = this.searchTextInPage(
+        docPtr,
+        pageIndex,
+        startIndex,
+        keywordPtr,
+        flag
+      );
+      if (result) {
+        searchContext.currPageIndex = result.pageIndex;
+        searchContext.startIndex = result.charIndex + result.charCount;
+        this.free(keywordPtr);
+
+        return TaskBase.resolve<SearchResult | undefined>(result);
+      }
+
+      pageIndex++;
+      startIndex = 0;
+      searchContext.currPageIndex = pageIndex;
+      searchContext.startIndex = startIndex;
+    }
+    this.free(keywordPtr);
+
+    return TaskBase.resolve<SearchResult | undefined>(undefined);
+  }
+
+  searchPrev(
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ): Task<SearchResult | undefined, Error> {
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject<SearchResult | undefined>(
+        new Error('document is not opened')
+      );
+    }
+
+    const { keyword, flags } = target;
+    const searchContext = this.setupSearchContext(
+      doc,
+      contextId,
+      keyword,
+      flags
+    );
+
+    if (searchContext.currPageIndex === -1) {
+      return TaskBase.resolve<SearchResult | undefined>(undefined);
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    let pageIndex = searchContext.currPageIndex;
+    let startIndex = searchContext.startIndex;
+
+    const length = 2 * (keyword.length + 1);
+    const keywordPtr = this.malloc(length);
+    this.wasmModule.stringToUTF16(keyword, keywordPtr, length);
+
+    const flag = target.flags.reduce((flag: MatchFlag, currFlag: MatchFlag) => {
+      return flag | currFlag;
+    }, MatchFlag.None);
+
+    while (pageIndex < doc.pageCount) {
+      const result = this.searchTextInPage(
+        docPtr,
+        pageIndex,
+        startIndex,
+        keywordPtr,
+        flag
+      );
+      if (result) {
+        searchContext.currPageIndex = pageIndex;
+        searchContext.startIndex = result.charIndex + result.charCount;
+        this.free(keywordPtr);
+
+        return TaskBase.resolve<SearchResult | undefined>(result);
+      }
+
+      pageIndex--;
+      startIndex = 0;
+      searchContext.currPageIndex = pageIndex;
+      searchContext.startIndex = startIndex;
+    }
+
+    this.free(keywordPtr);
+
+    return TaskBase.resolve<SearchResult | undefined>(undefined);
+  }
+
+  stopSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+    const { searchContexts } = this.docs[doc.id];
+    if (searchContexts) {
+      searchContexts.delete(contextId);
+    }
+
+    return TaskBase.resolve(true);
+  }
+
   closeDocument(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', arguments);
     const docData = this.docs[doc.id];
@@ -525,6 +675,74 @@ export class PdfiumEngine implements PdfEngine {
       },
       this.wasmModule.UTF16ToString
     );
+  }
+
+  setupSearchContext(
+    doc: PdfDocumentObject,
+    contextId: number,
+    keyword: string,
+    flags: MatchFlag[]
+  ): SearchContext {
+    const { searchContexts } = this.docs[doc.id];
+    let searchContext = searchContexts.get(contextId);
+    if (
+      searchContext &&
+      compareSearchTarge(searchContext.target, { keyword, flags })
+    ) {
+      return searchContext;
+    }
+
+    const currPageIndex = 0;
+    const startIndex = 0;
+    searchContext = {
+      currPageIndex,
+      startIndex,
+      target: {
+        keyword,
+        flags,
+      },
+    };
+    searchContexts.set(contextId, searchContext);
+
+    return searchContext;
+  }
+
+  searchTextInPage(
+    docPtr: number,
+    pageIndex: number,
+    startIndex: number,
+    keywordPtr: number,
+    flag: number
+  ) {
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, pageIndex);
+    const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
+
+    let result: SearchResult | undefined;
+    const searchHandle = this.wasmModuleWrapper.FPDFText_FindStart(
+      textPagePtr,
+      keywordPtr,
+      flag,
+      startIndex
+    );
+    const found = this.wasmModuleWrapper.FPDFText_FindNext(searchHandle);
+    if (found) {
+      const charIndex =
+        this.wasmModuleWrapper.FPDFText_GetSchResultIndex(searchHandle);
+      const charCount =
+        this.wasmModuleWrapper.FPDFText_GetSchCount(searchHandle);
+
+      result = {
+        pageIndex,
+        charIndex,
+        charCount,
+      };
+    }
+
+    this.wasmModuleWrapper.FPDFText_FindClose(searchHandle);
+    this.wasmModuleWrapper.FPDFText_ClosePage(textPagePtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+
+    return result;
   }
 
   readPdfBookmarks(docPtr: number, rootBookmarkPtr = 0) {
@@ -683,8 +901,8 @@ export class PdfiumEngine implements PdfEngine {
         textPagePtr,
         left,
         top,
-        6,
-        6
+        0,
+        0
       );
       if (charIndex < 0) {
         continue;

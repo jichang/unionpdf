@@ -108,3 +108,34 @@ export function Input(props: InputProps) {
     <input className={classNames('pdf__ui__input', className)} {...rest} />
   );
 }
+
+export interface CheckboxProps extends ComponentProps<'input'> {}
+
+export function Checkbox(props: CheckboxProps) {
+  const { className, ...rest } = props;
+  return (
+    <input
+      type="checkbox"
+      className={classNames('pdf__ui__checkbox', className)}
+      {...rest}
+    />
+  );
+}
+
+export interface LabelProps extends ComponentProps<'label'> {}
+
+export function Label(props: LabelProps) {
+  const { className, ...rest } = props;
+
+  return (
+    <label className={classNames('pdf__ui__label', className)} {...rest} />
+  );
+}
+
+export interface FormProps extends ComponentProps<'form'> {}
+
+export function Form(props: FormProps) {
+  const { className, ...rest } = props;
+
+  return <form className={classNames('pdf__ui__form', className)} {...rest} />;
+}

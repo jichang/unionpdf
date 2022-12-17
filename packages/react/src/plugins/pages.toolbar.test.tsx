@@ -11,6 +11,7 @@ describe('PdfPagesToolbar', () => {
         changeRotation={jest.fn()}
         rotation={0}
         changeScaleFactor={jest.fn()}
+        toggleIsSearchPanelOpened={jest.fn()}
       />
     );
 

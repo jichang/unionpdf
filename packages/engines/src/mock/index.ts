@@ -13,10 +13,14 @@ import {
   PdfAnnotationObject,
   PdfBookmarkObject,
   PdfTextRectObject,
+  SearchTarget,
+  SearchResult,
 } from '@unionpdf/models';
 
-export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
-  return {
+export function createMockPdfEngine(
+  partialEngine?: Partial<PdfEngine>
+): PdfEngine {
+  const engine: PdfEngine = {
     openDocument: jest.fn((id: string, url: PdfSource) => {
       return new TaskBase();
     }),
@@ -197,8 +201,38 @@ export function createMockPdfEngine(engine?: Partial<PdfEngine>): PdfEngine {
     saveAsCopy: (pdf: PdfDocumentObject) => {
       return TaskBase.resolve(new ArrayBuffer(0));
     },
-    ...engine,
+    startSearch: (doc: PdfDocumentObject, contextId: number) => {
+      return TaskBase.resolve(true);
+    },
+    searchNext: (
+      doc: PdfDocumentObject,
+      contextId: number,
+      target: SearchTarget
+    ) => {
+      return TaskBase.resolve<SearchResult | undefined>({
+        pageIndex: 0,
+        charIndex: 0,
+        charCount: 1,
+      });
+    },
+    searchPrev: (
+      doc: PdfDocumentObject,
+      contextId: number,
+      target: SearchTarget
+    ) => {
+      return TaskBase.resolve<SearchResult | undefined>({
+        pageIndex: 0,
+        charIndex: 0,
+        charCount: 1,
+      });
+    },
+    stopSearch: (doc: PdfDocumentObject, contextId: number) => {
+      return TaskBase.resolve(true);
+    },
+    ...partialEngine,
   };
+
+  return engine;
 }
 
 export function createMockPdfDocument(

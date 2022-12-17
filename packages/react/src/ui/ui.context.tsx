@@ -1,6 +1,16 @@
 import React from 'react';
 import { createContext, useContext } from 'react';
-import { Button, Icon, Input, Select, Toolbar, ToolbarItemGroup } from './ui';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Icon,
+  Input,
+  Label,
+  Select,
+  Toolbar,
+  ToolbarItemGroup,
+} from './ui';
 
 export interface UIComponents {
   ToolbarComponent: typeof Toolbar;
@@ -9,6 +19,9 @@ export interface UIComponents {
   SelectComponent: typeof Select;
   InputComponent: typeof Input;
   IconComponent: typeof Icon;
+  CheckboxComponent: typeof Checkbox;
+  FormComponent: typeof Form;
+  LabelComponent: typeof Label;
 }
 
 export const DEFAULT_UI_COMPONENTS: UIComponents = {
@@ -18,6 +31,9 @@ export const DEFAULT_UI_COMPONENTS: UIComponents = {
   SelectComponent: Select,
   InputComponent: Input,
   IconComponent: Icon,
+  CheckboxComponent: Checkbox,
+  FormComponent: Form,
+  LabelComponent: Label,
 };
 
 export const UIComponentsContext = createContext<UIComponents>(
@@ -90,6 +106,9 @@ export interface UIStrings {
   search: string;
   nextMatch: string;
   previousMatch: string;
+  matchCase: string;
+  matchWholeWord: string;
+  matchConsecutive: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -114,6 +133,9 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   search: 'Search',
   nextMatch: 'Next',
   previousMatch: 'Next',
+  matchCase: 'Match Case',
+  matchWholeWord: 'Match Whole Word',
+  matchConsecutive: 'Match Consecutive',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

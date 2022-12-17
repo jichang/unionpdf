@@ -44,7 +44,10 @@ export function PdfPageText(props: PdfPageTextProps) {
               <span
                 className="pdf__text__span"
                 key={index}
-                style={{ ...style, fontSize: Math.max(rect.font.size, 10) }}
+                style={{
+                  ...style,
+                  fontSize: Math.max(rect.font.size * scaleFactor, 10),
+                }}
               >
                 {rect.content}
               </span>

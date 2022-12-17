@@ -13,7 +13,7 @@ import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
 import { useUIComponents } from '../ui';
 
-export const PDF_NAVIGATOR_SOURCE_OUTLINES = 'PdfBookmarks';
+export const PDF_NAVIGATOR_SOURCE_BOOKMARKS = 'PdfBookmarks';
 
 export interface PdfBookmarksProps {}
 
@@ -45,16 +45,19 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
         switch (evt.kind) {
           case 'GotoPage':
-            if (source !== PDF_NAVIGATOR_SOURCE_OUTLINES) {
+            if (source !== PDF_NAVIGATOR_SOURCE_BOOKMARKS) {
               setCurrPageIndex(evt.data.destination.pageIndex);
             }
             break;
         }
       };
-      pdfNavigator.addEventListener(PDF_NAVIGATOR_SOURCE_OUTLINES, handle);
+      pdfNavigator.addEventListener(PDF_NAVIGATOR_SOURCE_BOOKMARKS, handle);
 
       return () => {
-        pdfNavigator.removeEventListener(PDF_NAVIGATOR_SOURCE_OUTLINES, handle);
+        pdfNavigator.removeEventListener(
+          PDF_NAVIGATOR_SOURCE_BOOKMARKS,
+          handle
+        );
       };
     }
   }, [pdfNavigator, setCurrPageIndex]);
@@ -64,7 +67,6 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
       if (!bookmark.target) {
         return;
       }
-      console.log(bookmark);
 
       switch (bookmark.target.type) {
         case 'action':
@@ -73,7 +75,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
               case PdfActionType.Goto:
                 pdfNavigator?.gotoPage(
                   { destination: bookmark.target.action.destination },
-                  PDF_NAVIGATOR_SOURCE_OUTLINES
+                  PDF_NAVIGATOR_SOURCE_BOOKMARKS
                 );
 
                 break;
@@ -83,7 +85,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
         case 'destination':
           pdfNavigator?.gotoPage(
             { destination: bookmark.target.destination },
-            PDF_NAVIGATOR_SOURCE_OUTLINES
+            PDF_NAVIGATOR_SOURCE_BOOKMARKS
           );
           break;
       }

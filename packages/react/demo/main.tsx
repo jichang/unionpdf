@@ -39,6 +39,7 @@ import {
   PdfBookmarks,
   LoggerContextProvider,
   PdfToolbarNavigationtemGroup,
+  PdfSearchPanel,
 } from '../src/index';
 import {
   createPdfiumModule,
@@ -188,6 +189,14 @@ function App(props: AppProps) {
     [setScaleFactor]
   );
 
+  const [isSearchPanelOpened, setIsSearchPanelOpened] = useState(false);
+
+  const toggleIsSearchPanelOpened = useCallback(() => {
+    setIsSearchPanelOpened((isSearchPanelOpened) => {
+      return !isSearchPanelOpened;
+    });
+  }, [setIsSearchPanelOpened]);
+
   const [file, setFile] = useState<{
     id: string;
     source: ArrayBuffer;
@@ -253,6 +262,7 @@ function App(props: AppProps) {
                         changeScaleFactor={changeScaleFactor}
                         rotation={rotation}
                         changeRotation={changeRotation}
+                        toggleIsSearchPanelOpened={toggleIsSearchPanelOpened}
                       />
                       <PdfToolbarDocItemGroup />
                     </PdfToolbar>
@@ -272,6 +282,11 @@ function App(props: AppProps) {
                       />
                     ) : null}
                     {bookmarksIsVisible ? <PdfBookmarks /> : null}
+                    {isSearchPanelOpened ? (
+                      <div className="app__dialog">
+                        <PdfSearchPanel />
+                      </div>
+                    ) : null}
                   </PdfDocument>
                 </PdfNavigatorContextProvider>
               </PdfApplication>

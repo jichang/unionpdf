@@ -252,6 +252,40 @@ export enum PdfEngineOperation {
   Delete,
 }
 
+export enum MatchFlag {
+  None = 0,
+  MatchCase = 1,
+  MatchWholeWord = 2,
+  MatchConsecutive = 4,
+}
+
+export function unionFlags(flags: MatchFlag[]) {
+  return flags.reduce((flag, currFlag) => {
+    return flag | currFlag;
+  }, MatchFlag.None);
+}
+
+export interface SearchTarget {
+  keyword: string;
+  flags: MatchFlag[];
+}
+
+export function compareSearchTarge(
+  targetA: SearchTarget,
+  targetB: SearchTarget
+) {
+  const flagA = unionFlags(targetA.flags);
+  const flagB = unionFlags(targetB.flags);
+
+  return flagA === flagB && targetA.keyword === targetB.keyword;
+}
+
+export interface SearchResult {
+  pageIndex: number;
+  charIndex: number;
+  charCount: number;
+}
+
 export enum TaskStage {
   Pending = 0,
   Resolved = 1,
@@ -422,6 +456,24 @@ export interface PdfEngine {
     scaleFactor: number,
     rotation: Rotation
   ) => Task<ImageData, Error>;
-  closeDocument: (pdf: PdfDocumentObject) => Task<boolean, Error>;
+  startSearch: (
+    doc: PdfDocumentObject,
+    contextId: number
+  ) => Task<boolean, Error>;
+  searchNext: (
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ) => Task<SearchResult | undefined, Error>;
+  searchPrev: (
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ) => Task<SearchResult | undefined, Error>;
+  stopSearch: (
+    doc: PdfDocumentObject,
+    contextId: number
+  ) => Task<boolean, Error>;
+  closeDocument: (doc: PdfDocumentObject) => Task<boolean, Error>;
   saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, Error>;
 }
