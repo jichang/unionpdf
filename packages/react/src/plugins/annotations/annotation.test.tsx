@@ -4,12 +4,21 @@ import { render } from '@testing-library/react';
 import {
   PdfAnnotationSubtype,
   PdfLinkAnnoObject,
+  PdfPageObject,
   PdfZoomMode,
 } from '@unionpdf/models';
 import { PdfPageAnnotationBase } from './annotation';
 
 describe('PdfPageLink', () => {
   test('should render pdf link', async () => {
+    const page: PdfPageObject = {
+      index: 0,
+      size: {
+        width: 100,
+        height: 100,
+      },
+    };
+
     const link: PdfLinkAnnoObject = {
       id: 0,
       type: PdfAnnotationSubtype.LINK,
@@ -41,7 +50,12 @@ describe('PdfPageLink', () => {
       },
     };
     const result = render(
-      <PdfPageAnnotationBase annotation={link} scaleFactor={1} rotation={0} />
+      <PdfPageAnnotationBase
+        page={page}
+        annotation={link}
+        scaleFactor={1}
+        rotation={0}
+      />
     );
 
     const linkElem = document.querySelector(

@@ -5,6 +5,7 @@ import {
   PdfTextRectObject,
   PdfAnnotationSubtype,
   PdfLinkAnnoObject,
+  PdfWidgetAnnoObject,
   PdfLinkTarget,
   PdfZoomMode,
   TaskBase,
@@ -15,9 +16,7 @@ import {
   Task,
   MatchFlag,
   compareSearchTarge,
-} from '@unionpdf/models';
-import { PdfDestinationObject } from '@unionpdf/models';
-import {
+  PdfDestinationObject,
   PdfBookmarkObject,
   PdfDocumentObject,
   PdfEngine,
@@ -179,6 +178,10 @@ export const wrappedModuleMethods = {
   FPDFAnnot_GetSubtype: [['number'] as const, 'number'] as const,
   FPDFAnnot_GetRect: [['number', 'number'] as const, 'boolean'] as const,
   FPDFAnnot_GetLink: [['number'], 'number'] as const,
+  FPDFAnnot_GetFormFieldType: [
+    ['number', 'number'] as const,
+    'number',
+  ] as const,
   FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFLink_GetAction: [['number'] as const, 'number'] as const,
   FPDFText_LoadPage: [['number'] as const, 'number'] as const,
@@ -869,8 +872,8 @@ export class PdfiumEngine implements PdfEngine {
           y,
         },
         size: {
-          width: Math.abs(right - left),
-          height: Math.abs(top - bottom),
+          width: Math.ceil(Math.abs(right - left)),
+          height: Math.ceil(Math.abs(top - bottom)),
         },
       };
 
@@ -901,8 +904,8 @@ export class PdfiumEngine implements PdfEngine {
         textPagePtr,
         left,
         top,
-        0,
-        0
+        1,
+        1
       );
       if (charIndex < 0) {
         continue;
@@ -972,6 +975,18 @@ export class PdfiumEngine implements PdfEngine {
       case PdfAnnotationSubtype.LINK:
         {
           annotation = this.readPdfLinkAnno(
+            page,
+            docPtr,
+            pagePtr,
+            textPagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.WIDGET:
+        {
+          annotation = this.readPdfWidgetAnno(
             page,
             docPtr,
             pagePtr,
@@ -1071,6 +1086,54 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.LINK,
       text,
       target,
+      rect,
+    };
+  }
+
+  private readPdfWidgetAnno(
+    page: PdfPageObject,
+    docPtr: number,
+    pagePtr: number,
+    textPagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfWidgetAnnoObject | undefined {
+    const annoRect = this.readAnnoRect(annotationPtr);
+    const { left, top, right, bottom } = annoRect;
+
+    const deviceXPtr = this.malloc(4);
+    const deviceYPtr = this.malloc(4);
+    this.wasmModuleWrapper.FPDF_PageToDevice(
+      pagePtr,
+      0,
+      0,
+      page.size.width,
+      page.size.height,
+      0,
+      left,
+      top,
+      deviceXPtr,
+      deviceYPtr
+    );
+    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
+    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
+    this.free(deviceXPtr);
+    this.free(deviceYPtr);
+
+    const rect = {
+      origin: {
+        x,
+        y,
+      },
+      size: {
+        width: Math.abs(right - left),
+        height: Math.abs(top - bottom),
+      },
+    };
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.WIDGET,
       rect,
     };
   }

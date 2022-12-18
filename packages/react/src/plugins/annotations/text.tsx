@@ -11,10 +11,11 @@ export interface PdfPageTextAnnotationProps {
 }
 
 export function PdfPageTextAnnotation(props: PdfPageTextAnnotationProps) {
-  const { annotation, scaleFactor, rotation } = props;
+  const { page, annotation, scaleFactor, rotation } = props;
 
   return (
     <PdfPageAnnotationBase
+      page={page}
       className="pdf__annotation--text"
       annotation={annotation}
       scaleFactor={scaleFactor}

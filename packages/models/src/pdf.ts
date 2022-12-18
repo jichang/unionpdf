@@ -208,6 +208,29 @@ export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.STAMP;
 }
 
+export enum PDF_FORM_FIELD_TYPE {
+  UNKNOWN = 0, // Unknown.
+  PUSHBUTTON = 1, // push button type.
+  CHECKBOX = 2, // check box type.
+  RADIOBUTTON = 3, // radio button type.
+  COMBOBOX = 4, // combo box type.
+  LISTBOX = 5, // list box type.
+  TEXTFIELD = 6, // text field type.
+  SIGNATURE = 7, // text field type.
+  XFA = 8, // Generic XFA type.
+  XFA_CHECKBOX = 9, // XFA check box type.
+  XFA_COMBOBOX = 10, // XFA combo box type.
+  XFA_IMAGEFIELD = 11, // XFA image field type.
+  XFA_LISTBOX = 12, // XFA list box type.
+  XFA_PUSHBUTTON = 13, // XFA push button type.
+  XFA_SIGNATURE = 14, // XFA signture field type.
+  XFA_TEXTFIELD = 15, // XFA text field type.
+}
+
+export interface PdfWidgetAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.WIDGET;
+}
+
 export type PdfAnnotationObject =
   | PdfTextAnnoObject
   | PdfLinkAnnoObject
@@ -221,7 +244,8 @@ export type PdfAnnotationObject =
   | PdfPolylineAnnoObject
   | PdfPolygonAnnoObject
   | PdfInkAnnoObject
-  | PdfStampAnnoObject;
+  | PdfStampAnnoObject
+  | PdfWidgetAnnoObject;
 
 /*
  * Clockwise direction

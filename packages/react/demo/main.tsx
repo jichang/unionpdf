@@ -70,10 +70,11 @@ function PdfPageNumber(props: { page: PdfPageObject }) {
 function PdfPageTextAnnotationCustomize(
   props: PdfPageAnnotationComponentProps<PdfTextAnnoObject>
 ) {
-  const { annotation, scaleFactor, rotation } = props;
+  const { page, annotation, scaleFactor, rotation } = props;
 
   return (
     <PdfPageAnnotationBase
+      page={page}
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}

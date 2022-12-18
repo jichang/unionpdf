@@ -132,6 +132,23 @@ function PdfPageContent(props: PdfPageContentProps) {
 
 For the full code you can check the [demo app](./packages/app/src/main.tsx)
 
+#### Supported PDF Layers
+
+1. Canvas Layer
+
+   This layer will render PDF content into canvas
+
+2. Text Layer
+
+   This layer will display PDF text in HTML Node
+
+3. Annotation Layer
+
+   This layer will display annotations, supported annotations including
+
+   3.1 Link
+   3.2 Text
+
 ### How to write a pdf plugin
 
 A PDF Plugin is a component that can add specific functionalty to PDF document. In the [plugins folder](./src/plugins), there are several buildin plugins.

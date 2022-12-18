@@ -74,6 +74,7 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
 
   return (
     <PdfPageAnnotationBase
+      page={page}
       className="pdf__annotation--link"
       annotation={annotation}
       scaleFactor={scaleFactor}

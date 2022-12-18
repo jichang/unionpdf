@@ -8,7 +8,6 @@ import React, {
 } from 'react';
 import { useUIComponents, useUIStrings } from '../ui/ui.context';
 import './pages.toolbar.css';
-import { PdfSearchPanel } from './searchpanel';
 import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument } from '../core/document.context';
 import { PdfNavigatorEvent } from '../core/navigator';
