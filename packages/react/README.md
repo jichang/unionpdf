@@ -148,6 +148,7 @@ For the full code you can check the [demo app](./packages/app/src/main.tsx)
 
    3.1 Link
    3.2 Text
+   3.3 Widget (Basci ArcoForm, XFA is not supported yet)
 
 ### How to write a pdf plugin
 
