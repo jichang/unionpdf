@@ -7,6 +7,7 @@ import {
   Icon,
   Input,
   Label,
+  RadioButton,
   Select,
   Toolbar,
   ToolbarItemGroup,
@@ -22,6 +23,7 @@ export interface UIComponents {
   CheckboxComponent: typeof Checkbox;
   FormComponent: typeof Form;
   LabelComponent: typeof Label;
+  RadioButtonComponent: typeof RadioButton;
 }
 
 export const DEFAULT_UI_COMPONENTS: UIComponents = {
@@ -34,6 +36,7 @@ export const DEFAULT_UI_COMPONENTS: UIComponents = {
   CheckboxComponent: Checkbox,
   FormComponent: Form,
   LabelComponent: Label,
+  RadioButtonComponent: RadioButton,
 };
 
 export const UIComponentsContext = createContext<UIComponents>(

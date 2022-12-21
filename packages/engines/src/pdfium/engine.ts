@@ -23,6 +23,9 @@ import {
   PdfPageObject,
   PdfActionType,
   Rotation,
+  PDF_FORM_FIELD_FLAG,
+  PDF_FORM_FIELD_TYPE,
+  PdfWidgetAnnoOption,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readString } from './helper';
@@ -58,9 +61,19 @@ export const wrappedModuleMethods = {
   PDFium_Init: [[] as const, ''] as const,
   PDFium_OpenFileWriter: [[] as const, 'number'] as const,
   PDFium_CloseFileWriter: [['number'] as const, ''] as const,
-  PDFium_ReadFileWriterSize: [['number'] as const, 'number'] as const,
-  PDFium_ReadFileWriter: [['number', 'number', 'number'] as const, ''] as const,
-  FPDF_SaveAsCopy: [['number', 'number', 'number'] as const, ''] as const,
+  PDFium_GetFileWriterSize: [['number'] as const, 'number'] as const,
+  PDFium_GetFileWriterData: [
+    ['number', 'number', 'number'] as const,
+    '',
+  ] as const,
+  PDFium_OpenFormFillInfo: [[] as const, 'number'] as const,
+  PDFium_CloseFormFillInfo: [['number'] as const, ''] as const,
+  PDFium_InitFormFillEnvironment: [
+    ['number', 'number'] as const,
+    'number',
+  ] as const,
+  PDFium_ExitFormFillEnvironment: [['number'] as const, 'number'] as const,
+  PDFium_SaveAsCopy: [['number', 'number'] as const, ''] as const,
   FPDF_LoadMemDocument: [
     ['number', 'number', 'string'] as const,
     'number' as const,
@@ -182,6 +195,32 @@ export const wrappedModuleMethods = {
     ['number', 'number'] as const,
     'number',
   ] as const,
+  FPDFAnnot_GetFormFieldFlags: [
+    ['number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetFormFieldName: [
+    ['number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetFormFieldAlternateName: [
+    ['number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetFormFieldValue: [
+    ['number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetOptionCount: [['number', 'number'] as const, 'number'] as const,
+  FPDFAnnot_GetOptionLabel: [
+    ['number', 'number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_IsOptionSelected: [
+    ['number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FPDFAnnot_IsChecked: [['number', 'number'] as const, 'boolean'] as const,
   FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFLink_GetAction: [['number'] as const, 'number'] as const,
   FPDFText_LoadPage: [['number'] as const, 'number'] as const,
@@ -216,7 +255,7 @@ export const wrappedModuleMethods = {
   FPDFPage_CloseAnnot: [['number'] as const, ''] as const,
 };
 
-const LOG_SOURCE = 'PdfiumEngine';
+const LOG_SOURCE = 'PDFiumEngine';
 const LOG_CATEGORY = 'Engine';
 
 export interface SearchContext {
@@ -480,10 +519,10 @@ export class PdfiumEngine implements PdfEngine {
     const { docPtr } = this.docs[doc.id];
 
     const writerPtr = this.wasmModuleWrapper.PDFium_OpenFileWriter();
-    this.wasmModuleWrapper.FPDF_SaveAsCopy(docPtr, writerPtr, 0);
-    const size = this.wasmModuleWrapper.PDFium_ReadFileWriterSize(writerPtr);
+    this.wasmModuleWrapper.PDFium_SaveAsCopy(docPtr, writerPtr);
+    const size = this.wasmModuleWrapper.PDFium_GetFileWriterSize(writerPtr);
     const dataPtr = this.malloc(size);
-    this.wasmModuleWrapper.PDFium_ReadFileWriter(writerPtr, dataPtr, size);
+    this.wasmModuleWrapper.PDFium_GetFileWriterData(writerPtr, dataPtr, size);
     const buffer = new ArrayBuffer(size);
     const view = new DataView(buffer);
     for (let i = 0; i < size; i++) {
@@ -936,6 +975,12 @@ export class PdfiumEngine implements PdfEngine {
     pagePtr: number,
     textPagePtr: number
   ) {
+    const formFillInfoPtr = this.wasmModuleWrapper.PDFium_OpenFormFillInfo();
+    const formHandle = this.wasmModuleWrapper.PDFium_InitFormFillEnvironment(
+      docPtr,
+      formFillInfoPtr
+    );
+
     const annotationCount =
       this.wasmModuleWrapper.FPDFPage_GetAnnotCount(pagePtr);
 
@@ -946,12 +991,16 @@ export class PdfiumEngine implements PdfEngine {
         docPtr,
         pagePtr,
         textPagePtr,
+        formHandle,
         i
       );
       if (annotation) {
         annotations.push(annotation);
       }
     }
+
+    this.wasmModuleWrapper.PDFium_ExitFormFillEnvironment(formHandle);
+    this.wasmModuleWrapper.PDFium_CloseFormFillInfo(formFillInfoPtr);
 
     return annotations;
   }
@@ -961,6 +1010,7 @@ export class PdfiumEngine implements PdfEngine {
     docPtr: number,
     pagePtr: number,
     textPagePtr: number,
+    formHandle: number,
     index: number
   ) {
     const annotationPtr = this.wasmModuleWrapper.FPDFPage_GetAnnot(
@@ -988,10 +1038,9 @@ export class PdfiumEngine implements PdfEngine {
         {
           annotation = this.readPdfWidgetAnno(
             page,
-            docPtr,
             pagePtr,
-            textPagePtr,
             annotationPtr,
+            formHandle,
             index
           );
         }
@@ -1092,10 +1141,9 @@ export class PdfiumEngine implements PdfEngine {
 
   private readPdfWidgetAnno(
     page: PdfPageObject,
-    docPtr: number,
     pagePtr: number,
-    textPagePtr: number,
     annotationPtr: number,
+    formHandle: number,
     index: number
   ): PdfWidgetAnnoObject | undefined {
     const annoRect = this.readAnnoRect(annotationPtr);
@@ -1131,10 +1179,13 @@ export class PdfiumEngine implements PdfEngine {
       },
     };
 
+    const field = this.readPdfWidgetAnnoField(formHandle, annotationPtr);
+
     return {
       id: index,
       type: PdfAnnotationSubtype.WIDGET,
       rect,
+      field,
     };
   }
 
@@ -1162,6 +1213,113 @@ export class PdfiumEngine implements PdfEngine {
         };
       }
     }
+  }
+
+  private readPdfWidgetAnnoField(
+    formHandle: number,
+    annotationPtr: number
+  ): PdfWidgetAnnoObject['field'] {
+    const flag = this.wasmModuleWrapper.FPDFAnnot_GetFormFieldFlags(
+      formHandle,
+      annotationPtr
+    ) as PDF_FORM_FIELD_FLAG;
+
+    const type = this.wasmModuleWrapper.FPDFAnnot_GetFormFieldType(
+      formHandle,
+      annotationPtr
+    ) as PDF_FORM_FIELD_TYPE;
+
+    const name = readString(
+      this.wasmModule,
+      (buffer: number, bufferLength) => {
+        return this.wasmModuleWrapper.FPDFAnnot_GetFormFieldName(
+          formHandle,
+          annotationPtr,
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
+    );
+
+    const alternateName = readString(
+      this.wasmModule,
+      (buffer: number, bufferLength) => {
+        return this.wasmModuleWrapper.FPDFAnnot_GetFormFieldAlternateName(
+          formHandle,
+          annotationPtr,
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
+    );
+
+    const value = readString(
+      this.wasmModule,
+      (buffer: number, bufferLength) => {
+        return this.wasmModuleWrapper.FPDFAnnot_GetFormFieldValue(
+          formHandle,
+          annotationPtr,
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
+    );
+
+    const options: PdfWidgetAnnoOption[] = [];
+    if (
+      type === PDF_FORM_FIELD_TYPE.COMBOBOX ||
+      type === PDF_FORM_FIELD_TYPE.LISTBOX
+    ) {
+      const count = this.wasmModuleWrapper.FPDFAnnot_GetOptionCount(
+        formHandle,
+        annotationPtr
+      );
+      for (let i = 0; i < count; i++) {
+        const label = readString(
+          this.wasmModule,
+          (buffer: number, bufferLength) => {
+            return this.wasmModuleWrapper.FPDFAnnot_GetOptionLabel(
+              formHandle,
+              annotationPtr,
+              i,
+              buffer,
+              bufferLength
+            );
+          },
+          this.wasmModule.UTF16ToString
+        );
+        const isSelected = this.wasmModuleWrapper.FPDFAnnot_IsOptionSelected(
+          formHandle,
+          annotationPtr,
+          i
+        );
+        options.push({
+          label,
+          isSelected,
+        });
+      }
+    }
+
+    let isChecked = false;
+    if (type === PDF_FORM_FIELD_TYPE.CHECKBOX) {
+      isChecked = this.wasmModuleWrapper.FPDFAnnot_IsChecked(
+        formHandle,
+        annotationPtr
+      );
+    }
+
+    return {
+      flag,
+      type,
+      name,
+      alternateName,
+      value,
+      isChecked,
+      options,
+    };
   }
 
   private readPdfLinkAnnoTarget(

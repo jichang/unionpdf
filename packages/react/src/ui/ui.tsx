@@ -89,10 +89,10 @@ export function Select(props: SelectProps) {
 
   return (
     <select className={classNames('pdf__ui__select', className)} {...rest}>
-      {options.map((option, index) => {
+      {options.map((opt, index) => {
         return (
-          <option value={option.value} key={index}>
-            {option.label}
+          <option value={opt.value} key={index}>
+            {opt.label}
           </option>
         );
       })}
@@ -117,6 +117,19 @@ export function Checkbox(props: CheckboxProps) {
     <input
       type="checkbox"
       className={classNames('pdf__ui__checkbox', className)}
+      {...rest}
+    />
+  );
+}
+
+export interface RadioButtonProps extends ComponentProps<'input'> {}
+
+export function RadioButton(props: RadioButtonProps) {
+  const { className, ...rest } = props;
+  return (
+    <input
+      type="radio"
+      className={classNames('pdf__ui__radiobutton', className)}
       {...rest}
     />
   );

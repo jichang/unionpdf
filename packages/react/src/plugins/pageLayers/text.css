@@ -1,8 +1,12 @@
 .pdf__text__span {
   position: absolute;
-  display: inline-block;
 
   color: transparent;
-  white-space: pre;
   cursor: text;
+}
+
+.pdf__text__span svg {
+  position: absolute;
+  top: 0;
+  left: 0;
 }

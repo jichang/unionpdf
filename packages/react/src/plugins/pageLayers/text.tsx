@@ -41,16 +41,19 @@ export function PdfPageText(props: PdfPageTextProps) {
             const style = calculateRectStyle(rect.rect, scaleFactor, rotation);
 
             return (
-              <span
-                className="pdf__text__span"
-                key={index}
-                style={{
-                  ...style,
-                  fontSize: Math.max(rect.font.size * scaleFactor, 10),
-                }}
-              >
-                {rect.content}
-              </span>
+              <div className="pdf__text__span" key={index} style={style}>
+                <svg viewBox={`0 0 ${style.width} ${style.height}`}>
+                  <text
+                    y="50%"
+                    fontSize={style.height}
+                    textLength={style.width}
+                    lengthAdjust="spacingAndGlyphs"
+                    fill="transparent"
+                  >
+                    {rect.content}
+                  </text>
+                </svg>
+              </div>
             );
           })
         : null}

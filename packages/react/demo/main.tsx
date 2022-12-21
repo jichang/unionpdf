@@ -36,6 +36,7 @@ import {
   PdfPageAnnotations,
   PdfPageAnnotationBase,
   PdfPageLinkAnnotation,
+  PdfPageWidgetAnnotation,
   PdfBookmarks,
   LoggerContextProvider,
   PdfToolbarNavigationtemGroup,
@@ -99,6 +100,15 @@ function PdfPageAnnotation(props: PdfPageAnnotationComponentProps) {
     case PdfAnnotationSubtype.TEXT:
       return (
         <PdfPageTextAnnotationCustomize
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        />
+      );
+    case PdfAnnotationSubtype.WIDGET:
+      return (
+        <PdfPageWidgetAnnotation
           page={page}
           annotation={annotation}
           rotation={rotation}
@@ -235,6 +245,9 @@ function App(props: AppProps) {
     <div className="App">
       <div className="app__toolbar">
         <input type="file" onChange={selectFile} />
+        <button onClick={toggleMode}>
+          {mode === PdfApplicationMode.Edit ? 'View' : 'Edit'}
+        </button>
       </div>
       {file ? (
         <LoggerContextProvider logger={logger}>

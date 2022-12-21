@@ -227,8 +227,34 @@ export enum PDF_FORM_FIELD_TYPE {
   XFA_TEXTFIELD = 15, // XFA text field type.
 }
 
+export enum PDF_FORM_FIELD_FLAG {
+  NONE = 0,
+  READONLY = 1 << 0,
+  REQUIRED = 1 << 1,
+  NOEXPORT = 1 << 2,
+  TEXT_MULTIPLINE = 1 << 12,
+  TEXT_PASSWORD = 1 << 13,
+  CHOICE_COMBO = 1 << 17,
+  CHOICE_EDIT = 1 << 18,
+  CHOICE_MULTL_SELECT = 1 << 21,
+}
+
+export interface PdfWidgetAnnoOption {
+  label: string;
+  isSelected: boolean;
+}
+
 export interface PdfWidgetAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.WIDGET;
+  field: {
+    flag: PDF_FORM_FIELD_FLAG;
+    name: string;
+    alternateName: string;
+    type: PDF_FORM_FIELD_TYPE;
+    value: string;
+    isChecked: boolean;
+    options: PdfWidgetAnnoOption[];
+  };
 }
 
 export type PdfAnnotationObject =
