@@ -109,6 +109,15 @@ export function Input(props: InputProps) {
   );
 }
 
+export interface TextAreaProps extends ComponentProps<'textarea'> {}
+
+export function TextArea(props: TextAreaProps) {
+  const { className, ...rest } = props;
+  return (
+    <textarea className={classNames('pdf__ui__input', className)} {...rest} />
+  );
+}
+
 export interface CheckboxProps extends ComponentProps<'input'> {}
 
 export function Checkbox(props: CheckboxProps) {

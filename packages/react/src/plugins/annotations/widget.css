@@ -1,27 +1,3 @@
 .pdf__annotation--widget {
   position: relative;
 }
-
-.pdf__annotation--widget input,
-.pdf__annotation--widget select {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 0;
-  border: none;
-
-  width: 100%;
-  height: 100%;
-
-  background-color: transparent;
-}
-
-.pdf__annotation--widget button {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 0;
-
-  width: 100%;
-  height: 100%;
-}

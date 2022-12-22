@@ -9,6 +9,7 @@ import {
   Label,
   RadioButton,
   Select,
+  TextArea,
   Toolbar,
   ToolbarItemGroup,
 } from './ui';
@@ -24,6 +25,7 @@ export interface UIComponents {
   FormComponent: typeof Form;
   LabelComponent: typeof Label;
   RadioButtonComponent: typeof RadioButton;
+  TextAreaComponnet: typeof TextArea;
 }
 
 export const DEFAULT_UI_COMPONENTS: UIComponents = {
@@ -37,6 +39,7 @@ export const DEFAULT_UI_COMPONENTS: UIComponents = {
   FormComponent: Form,
   LabelComponent: Label,
   RadioButtonComponent: RadioButton,
+  TextAreaComponnet: TextArea,
 };
 
 export const UIComponentsContext = createContext<UIComponents>(
