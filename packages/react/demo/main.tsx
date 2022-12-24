@@ -13,6 +13,7 @@ import {
   ConsoleLogger,
   Logger,
   PdfZoomMode,
+  PdfEngine,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -41,13 +42,13 @@ import {
   LoggerContextProvider,
   PdfToolbarNavigationtemGroup,
   PdfSearchPanel,
+  PdfAttachments,
 } from '../src/index';
 import {
   createPdfiumModule,
   PdfiumEngine,
   pdfiumWasm,
 } from '@unionpdf/engines';
-import { PdfEngine } from '@unionpdf/models';
 
 function PdfPageNumber(props: { page: PdfPageObject }) {
   const { page } = props;
@@ -208,6 +209,14 @@ function App(props: AppProps) {
     });
   }, [setIsSearchPanelOpened]);
 
+  const [isAttachmentsOpened, setIsAttachmentsOpened] = useState(false);
+
+  const toggleIsAttachmentsVisible = useCallback(() => {
+    setIsAttachmentsOpened((isAttachmentsOpened) => {
+      return !isAttachmentsOpened;
+    });
+  }, [setIsAttachmentsOpened]);
+
   const [file, setFile] = useState<{
     id: string;
     source: ArrayBuffer;
@@ -270,6 +279,7 @@ function App(props: AppProps) {
                         onToggleMetadata={toggleMetadataIsVisible}
                         onToggleOutlines={toggleBookmarksIsVisible}
                         onToggleThumbnails={toggleThumbnailsIsVisible}
+                        onToggleAttachments={toggleIsAttachmentsVisible}
                       />
                       <PdfPagesToolbar
                         scaleFactor={scaleFactor}
@@ -299,6 +309,11 @@ function App(props: AppProps) {
                     {isSearchPanelOpened ? (
                       <div className="app__dialog">
                         <PdfSearchPanel />
+                      </div>
+                    ) : null}
+                    {isAttachmentsOpened ? (
+                      <div className="app__dialog">
+                        <PdfAttachments />
                       </div>
                     ) : null}
                   </PdfDocument>

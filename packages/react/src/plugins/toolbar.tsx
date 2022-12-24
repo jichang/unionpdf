@@ -25,13 +25,19 @@ export interface PdfToolbarNavigationItemGroupProps
   onToggleMetadata: () => void;
   onToggleThumbnails: () => void;
   onToggleOutlines: () => void;
+  onToggleAttachments: () => void;
 }
 
 export function PdfToolbarNavigationtemGroup(
   props: PdfToolbarNavigationItemGroupProps
 ) {
-  const { children, onToggleMetadata, onToggleOutlines, onToggleThumbnails } =
-    props;
+  const {
+    children,
+    onToggleMetadata,
+    onToggleOutlines,
+    onToggleThumbnails,
+    onToggleAttachments,
+  } = props;
   const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
   const strings = useUIStrings();
 
@@ -45,6 +51,9 @@ export function PdfToolbarNavigationtemGroup(
       </ButtonComponent>
       <ButtonComponent onClick={onToggleThumbnails}>
         {strings.thumbnails}
+      </ButtonComponent>
+      <ButtonComponent onClick={onToggleAttachments}>
+        {strings.attchments}
       </ButtonComponent>
       {children}
     </ToolbarItemGroupComponent>

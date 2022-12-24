@@ -115,6 +115,11 @@ export interface UIStrings {
   matchCase: string;
   matchWholeWord: string;
   matchConsecutive: string;
+  attchments: string;
+  fileName: string;
+  fileSize: string;
+  fileCreationDate: string;
+  download: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -142,6 +147,11 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   matchCase: 'Match Case',
   matchWholeWord: 'Match Whole Word',
   matchConsecutive: 'Match Consecutive',
+  attchments: 'Attachments',
+  fileName: 'Name',
+  fileSize: 'Size',
+  fileCreationDate: 'Creation Date',
+  download: 'Download',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

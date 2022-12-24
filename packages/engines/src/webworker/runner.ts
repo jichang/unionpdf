@@ -154,6 +154,12 @@ export class EngineRunner {
       case 'saveAsCopy':
         task = this.engine[name]!(...args);
         break;
+      case 'readAttachments':
+        task = this.engine[name]!(...args);
+        break;
+      case 'readAttachmentContent':
+        task = this.engine[name]!(...args);
+        break;
     }
 
     task.wait(

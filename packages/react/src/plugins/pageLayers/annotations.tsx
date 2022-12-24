@@ -50,6 +50,8 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
     }
   }, [isVisible, engine, doc, page, scaleFactor, rotation]);
 
+  console.log(annotations);
+
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">
       {annotations.map((annotation) => {

@@ -1,4 +1,5 @@
 import {
+  PdfAttachmentObject,
   PdfEngineFeature,
   PdfEngineOperation,
   PdfMetadataObject,
@@ -422,6 +423,50 @@ export class WebWorkerEngine implements PdfEngine {
       data: {
         name: 'saveAsCopy',
         args: [pdf],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  readAttachments(pdf: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'readAttachments', arguments);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<PdfAttachmentObject[]>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'readAttachments',
+        args: [pdf],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  readAttachmentContent(
+    pdf: PdfDocumentObject,
+    attachment: PdfAttachmentObject
+  ) {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'readAttachmentContent',
+      arguments
+    );
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<ArrayBuffer>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'readAttachmentContent',
+        args: [pdf, attachment],
       },
     };
     this.proxy(task, request);

@@ -26,6 +26,10 @@ import {
   PDF_FORM_FIELD_FLAG,
   PDF_FORM_FIELD_TYPE,
   PdfWidgetAnnoOption,
+  PdfFileAttachmentAnnoObject,
+  Rect,
+  PdfAttachmentObject,
+  PdfUnsupportedAnnoObject,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readString } from './helper';
@@ -54,10 +58,6 @@ export enum RenderFlag {
 export const DPR = self.devicePixelRatio || 1;
 
 export const wrappedModuleMethods = {
-  UTF8ToString: [['number'] as const, 'string' as const] as const,
-  UTF16ToString: [['number'] as const, 'string'] as const,
-  UTF32ToString: [['number'] as const, 'string'] as const,
-  AsciiToString: [['number'] as const, 'string'] as const,
   PDFium_Init: [[] as const, ''] as const,
   PDFium_OpenFileWriter: [[] as const, 'number'] as const,
   PDFium_CloseFileWriter: [['number'] as const, ''] as const,
@@ -253,6 +253,20 @@ export const wrappedModuleMethods = {
   FPDFText_FindClose: [['number'] as const, ''] as const,
   FPDFText_ClosePage: [['number'] as const, ''] as const,
   FPDFPage_CloseAnnot: [['number'] as const, ''] as const,
+  FPDFDoc_GetAttachmentCount: [['number'] as const, 'number'] as const,
+  FPDFDoc_GetAttachment: [['number', 'number'] as const, 'number'] as const,
+  FPDFAttachment_GetName: [
+    ['number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAttachment_GetStringValue: [
+    ['number', 'string', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAttachment_GetFile: [
+    ['number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
 };
 
 const LOG_SOURCE = 'PDFiumEngine';
@@ -670,6 +684,69 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(true);
   }
 
+  readAttachments(doc: PdfDocumentObject): Task<PdfAttachmentObject[], Error> {
+    const attachments: PdfAttachmentObject[] = [];
+
+    const { docPtr } = this.docs[doc.id];
+    const count = this.wasmModuleWrapper.FPDFDoc_GetAttachmentCount(docPtr);
+    for (let i = 0; i < count; i++) {
+      const attachment = this.readPdfAttachment(docPtr, i);
+      attachments.push(attachment);
+    }
+
+    return TaskBase.resolve(attachments);
+  }
+
+  readAttachmentContent(
+    doc: PdfDocumentObject,
+    attachment: PdfAttachmentObject
+  ): Task<ArrayBuffer, Error> {
+    const { docPtr } = this.docs[doc.id];
+    const attachmentPtr = this.wasmModuleWrapper.FPDFDoc_GetAttachment(
+      docPtr,
+      attachment.index
+    );
+    const sizePtr = this.malloc(8);
+    if (
+      !this.wasmModuleWrapper.FPDFAttachment_GetFile(
+        attachmentPtr,
+        0,
+        0,
+        sizePtr
+      )
+    ) {
+      this.free(sizePtr);
+      return TaskBase.reject(new Error('can not read attachment size'));
+    }
+    const size = this.wasmModule.getValue(sizePtr, 'i64');
+
+    const contentPtr = this.malloc(size);
+    if (
+      !this.wasmModuleWrapper.FPDFAttachment_GetFile(
+        attachmentPtr,
+        contentPtr,
+        size,
+        sizePtr
+      )
+    ) {
+      this.free(sizePtr);
+      this.free(contentPtr);
+
+      return TaskBase.reject(new Error('can not read attachment content'));
+    }
+
+    const buffer = new ArrayBuffer(size);
+    const view = new DataView(buffer);
+    for (let i = 0; i < size; i++) {
+      view.setInt8(i, this.wasmModule.getValue(contentPtr + i, 'i8'));
+    }
+
+    this.free(sizePtr);
+    this.free(contentPtr);
+
+    return TaskBase.resolve(buffer);
+  }
+
   closeDocument(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', arguments);
     const docData = this.docs[doc.id];
@@ -1045,6 +1122,18 @@ export class PdfiumEngine implements PdfEngine {
           );
         }
         break;
+      case PdfAnnotationSubtype.FILEATTACHMENT:
+        {
+          annotation = this.readPdfFileAttachmentAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      default:
+        break;
     }
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
 
@@ -1064,38 +1153,9 @@ export class PdfiumEngine implements PdfEngine {
       return;
     }
 
-    const annoRect = this.readAnnoRect(annotationPtr);
+    const annoRect = this.readPageAnnoRect(annotationPtr);
     const { left, top, right, bottom } = annoRect;
-
-    const deviceXPtr = this.malloc(4);
-    const deviceYPtr = this.malloc(4);
-    this.wasmModuleWrapper.FPDF_PageToDevice(
-      pagePtr,
-      0,
-      0,
-      page.size.width,
-      page.size.height,
-      0,
-      left,
-      top,
-      deviceXPtr,
-      deviceYPtr
-    );
-    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
-    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
-    this.free(deviceXPtr);
-    this.free(deviceYPtr);
-
-    const rect = {
-      origin: {
-        x,
-        y,
-      },
-      size: {
-        width: Math.abs(right - left),
-        height: Math.abs(top - bottom),
-      },
-    };
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, annoRect);
 
     const utf16Length = this.wasmModuleWrapper.FPDFText_GetBoundedText(
       textPagePtr,
@@ -1146,38 +1206,8 @@ export class PdfiumEngine implements PdfEngine {
     formHandle: number,
     index: number
   ): PdfWidgetAnnoObject | undefined {
-    const annoRect = this.readAnnoRect(annotationPtr);
-    const { left, top, right, bottom } = annoRect;
-
-    const deviceXPtr = this.malloc(4);
-    const deviceYPtr = this.malloc(4);
-    this.wasmModuleWrapper.FPDF_PageToDevice(
-      pagePtr,
-      0,
-      0,
-      page.size.width,
-      page.size.height,
-      0,
-      left,
-      top,
-      deviceXPtr,
-      deviceYPtr
-    );
-    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
-    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
-    this.free(deviceXPtr);
-    this.free(deviceYPtr);
-
-    const rect = {
-      origin: {
-        x,
-        y,
-      },
-      size: {
-        width: Math.abs(right - left),
-        height: Math.abs(top - bottom),
-      },
-    };
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
 
     const field = this.readPdfWidgetAnnoField(formHandle, annotationPtr);
 
@@ -1186,6 +1216,39 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.WIDGET,
       rect,
       field,
+    };
+  }
+
+  private readPdfFileAttachmentAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfFileAttachmentAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.FILEATTACHMENT,
+      rect,
+    };
+  }
+
+  private readPdfAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    type: PdfUnsupportedAnnoObject['type'],
+    annotationPtr: number,
+    index: number
+  ): PdfUnsupportedAnnoObject {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+
+    return {
+      id: index,
+      type,
+      rect,
     };
   }
 
@@ -1538,22 +1601,117 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
-  private readAnnoRect(annotationPtr: number) {
-    const rectPtr = this.malloc(4 * 4);
+  private readPdfAttachment(
+    docPtr: number,
+    index: number
+  ): PdfAttachmentObject {
+    const attachmentPtr = this.wasmModuleWrapper.FPDFDoc_GetAttachment(
+      docPtr,
+      index
+    );
+    const name = readString(
+      this.wasmModule,
+      (buffer, bufferLength) => {
+        return this.wasmModuleWrapper.FPDFAttachment_GetName(
+          attachmentPtr,
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
+    );
+    const creationDate = readString(
+      this.wasmModule,
+      (buffer, bufferLength) => {
+        return this.wasmModuleWrapper.FPDFAttachment_GetStringValue(
+          attachmentPtr,
+          'CreationDate',
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
+    );
+    const checksum = readString(
+      this.wasmModule,
+      (buffer, bufferLength) => {
+        return this.wasmModuleWrapper.FPDFAttachment_GetStringValue(
+          attachmentPtr,
+          'Checksum',
+          buffer,
+          bufferLength
+        );
+      },
+      this.wasmModule.UTF16ToString
+    );
+
+    return {
+      index,
+      name,
+      creationDate,
+      checksum,
+    };
+  }
+
+  private convertPageRectToDeviceRect(
+    page: PdfPageObject,
+    pagePtr: number,
+    pageRect: {
+      left: number;
+      top: number;
+      right: number;
+      bottom: number;
+    }
+  ): Rect {
+    const deviceXPtr = this.malloc(4);
+    const deviceYPtr = this.malloc(4);
+    this.wasmModuleWrapper.FPDF_PageToDevice(
+      pagePtr,
+      0,
+      0,
+      page.size.width,
+      page.size.height,
+      0,
+      pageRect.left,
+      pageRect.top,
+      deviceXPtr,
+      deviceYPtr
+    );
+    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
+    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
+    this.free(deviceXPtr);
+    this.free(deviceYPtr);
+
     const rect = {
+      origin: {
+        x,
+        y,
+      },
+      size: {
+        width: Math.abs(pageRect.right - pageRect.left),
+        height: Math.abs(pageRect.top - pageRect.bottom),
+      },
+    };
+
+    return rect;
+  }
+
+  private readPageAnnoRect(annotationPtr: number) {
+    const pageRectPtr = this.malloc(4 * 4);
+    const pageRect = {
       left: 0,
       top: 0,
       right: 0,
       bottom: 0,
     };
-    if (this.wasmModuleWrapper.FPDFAnnot_GetRect(annotationPtr, rectPtr)) {
-      rect.left = this.wasmModule.getValue(rectPtr, 'float');
-      rect.top = this.wasmModule.getValue(rectPtr + 4, 'float');
-      rect.right = this.wasmModule.getValue(rectPtr + 8, 'float');
-      rect.bottom = this.wasmModule.getValue(rectPtr + 12, 'float');
+    if (this.wasmModuleWrapper.FPDFAnnot_GetRect(annotationPtr, pageRectPtr)) {
+      pageRect.left = this.wasmModule.getValue(pageRectPtr, 'float');
+      pageRect.top = this.wasmModule.getValue(pageRectPtr + 4, 'float');
+      pageRect.right = this.wasmModule.getValue(pageRectPtr + 8, 'float');
+      pageRect.bottom = this.wasmModule.getValue(pageRectPtr + 12, 'float');
     }
-    this.free(rectPtr);
+    this.free(pageRectPtr);
 
-    return rect;
+    return pageRect;
   }
 }

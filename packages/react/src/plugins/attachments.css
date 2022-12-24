@@ -1,0 +1,9 @@
+.pdf__attachments {
+  padding: 1rem;
+
+  background-color: white;
+}
+
+.pdf__attachments td {
+  padding: 0.5rem;
+}

@@ -15,6 +15,7 @@ import {
   PdfTextRectObject,
   SearchTarget,
   SearchResult,
+  PdfAttachmentObject,
 } from '@unionpdf/models';
 
 export function createMockPdfEngine(
@@ -228,6 +229,15 @@ export function createMockPdfEngine(
     },
     stopSearch: (doc: PdfDocumentObject, contextId: number) => {
       return TaskBase.resolve(true);
+    },
+    readAttachments: (doc: PdfDocumentObject) => {
+      return TaskBase.resolve([] as PdfAttachmentObject[]);
+    },
+    readAttachmentContent: (
+      doc: PdfDocumentObject,
+      attachment: PdfAttachmentObject
+    ) => {
+      return TaskBase.resolve(new ArrayBuffer(0));
     },
     ...partialEngine,
   };

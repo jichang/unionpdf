@@ -257,6 +257,31 @@ export interface PdfWidgetAnnoObject extends PdfAnnotationObjectBase {
   };
 }
 
+export interface PdfFileAttachmentAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.FILEATTACHMENT;
+}
+
+export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
+  type: Exclude<
+    PdfAnnotationSubtype,
+    | PdfAnnotationSubtype.TEXT
+    | PdfAnnotationSubtype.LINK
+    | PdfAnnotationSubtype.HIGHLIGHT
+    | PdfAnnotationSubtype.STRIKEOUT
+    | PdfAnnotationSubtype.UNDERLINE
+    | PdfAnnotationSubtype.SQUIGGLY
+    | PdfAnnotationSubtype.SQUARE
+    | PdfAnnotationSubtype.CIRCLE
+    | PdfAnnotationSubtype.LINE
+    | PdfAnnotationSubtype.POLYLINE
+    | PdfAnnotationSubtype.POLYGON
+    | PdfAnnotationSubtype.INK
+    | PdfAnnotationSubtype.STAMP
+    | PdfAnnotationSubtype.WIDGET
+    | PdfAnnotationSubtype.FILEATTACHMENT
+  >;
+}
+
 export type PdfAnnotationObject =
   | PdfTextAnnoObject
   | PdfLinkAnnoObject
@@ -271,7 +296,16 @@ export type PdfAnnotationObject =
   | PdfPolygonAnnoObject
   | PdfInkAnnoObject
   | PdfStampAnnoObject
-  | PdfWidgetAnnoObject;
+  | PdfWidgetAnnoObject
+  | PdfFileAttachmentAnnoObject
+  | PdfUnsupportedAnnoObject;
+
+export interface PdfAttachmentObject {
+  index: number;
+  name: string;
+  creationDate: string;
+  checksum: string;
+}
 
 /*
  * Clockwise direction
@@ -524,6 +558,13 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     contextId: number
   ) => Task<boolean, Error>;
-  closeDocument: (doc: PdfDocumentObject) => Task<boolean, Error>;
+  readAttachments: (
+    doc: PdfDocumentObject
+  ) => Task<PdfAttachmentObject[], Error>;
+  readAttachmentContent: (
+    doc: PdfDocumentObject,
+    attachment: PdfAttachmentObject
+  ) => Task<ArrayBuffer, Error>;
   saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, Error>;
+  closeDocument: (doc: PdfDocumentObject) => Task<boolean, Error>;
 }
