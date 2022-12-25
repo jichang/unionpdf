@@ -4,12 +4,13 @@ import { render } from '@testing-library/react';
 import {
   PdfAnnotationSubtype,
   PdfPageObject,
+  PdfPopupAnnoObject,
   PdfTextAnnoObject,
 } from '@unionpdf/models';
-import { PdfPageTextAnnotation } from './text';
+import { PdfPagePopupAnnotation } from './popup';
 
-describe('PdfPageLink', () => {
-  test('should render pdf text', async () => {
+describe('PdfPagePopup', () => {
+  test('should render pdf popup', async () => {
     const page: PdfPageObject = {
       index: 0,
       size: {
@@ -17,16 +18,10 @@ describe('PdfPageLink', () => {
         height: 100,
       },
     };
-    const text: PdfTextAnnoObject = {
+    const popup: PdfPopupAnnoObject = {
       id: 0,
-      type: PdfAnnotationSubtype.TEXT,
-      contents: 'Link',
-      color: {
-        red: 0,
-        blue: 0,
-        green: 0,
-        alpha: 0,
-      },
+      type: PdfAnnotationSubtype.POPUP,
+      contents: 'Popup',
       rect: {
         origin: {
           x: 0,
@@ -37,20 +32,22 @@ describe('PdfPageLink', () => {
           width: 100,
         },
       },
+      open: false,
     };
     const result = render(
-      <PdfPageTextAnnotation
+      <PdfPagePopupAnnotation
         page={page}
-        annotation={text}
+        parent={popup}
+        annotation={popup}
         scaleFactor={1}
         rotation={0}
       />
     );
 
-    const textElem = document.querySelector('.pdf__annotation--text');
+    const textElem = document.querySelector('.pdf__annotation--popup');
     expect(textElem).toBeDefined();
-    const spanElem = document.querySelector('.pdf__annotation--text span');
-    expect(spanElem?.textContent).toBe(text.contents);
+    const spanElem = document.querySelector('.pdf__annotation--popup span');
+    expect(spanElem?.textContent).toBe(popup.contents);
 
     result.unmount();
   });

@@ -142,14 +142,18 @@ export enum PdfAnnotationSubtype {
   REDACT,
 }
 
+export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.POPUP;
+  rect: Rect;
+  contents: string;
+  open: boolean;
+}
+
 export interface PdfAnnotationObjectBase {
   id: number;
   type: PdfAnnotationSubtype;
   rect: Rect;
-  popup?: {
-    open: boolean;
-    contents: string;
-  };
+  popup?: PdfPopupAnnoObject | undefined;
 }
 
 export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
@@ -160,52 +164,13 @@ export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
 
 export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.TEXT;
-  text: string;
-  color: string;
-}
-
-export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.HIGHLIGHT;
-}
-
-export interface PdfStrikeOutAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.STRIKEOUT;
-}
-
-export interface PdfUnderlineOutAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.UNDERLINE;
-}
-
-export interface PdfSquigglyAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.SQUIGGLY;
-}
-
-export interface PdfSquareAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.SQUARE;
-}
-
-export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.CIRCLE;
-}
-
-export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.LINE;
-}
-
-export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.POLYLINE;
-}
-
-export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.POLYGON;
-}
-
-export interface PdfInkAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.INK;
-}
-
-export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.STAMP;
+  contents: string;
+  color: {
+    red: number;
+    green: number;
+    blue: number;
+    alpha: number;
+  };
 }
 
 export enum PDF_FORM_FIELD_TYPE {
@@ -266,17 +231,6 @@ export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
     PdfAnnotationSubtype,
     | PdfAnnotationSubtype.TEXT
     | PdfAnnotationSubtype.LINK
-    | PdfAnnotationSubtype.HIGHLIGHT
-    | PdfAnnotationSubtype.STRIKEOUT
-    | PdfAnnotationSubtype.UNDERLINE
-    | PdfAnnotationSubtype.SQUIGGLY
-    | PdfAnnotationSubtype.SQUARE
-    | PdfAnnotationSubtype.CIRCLE
-    | PdfAnnotationSubtype.LINE
-    | PdfAnnotationSubtype.POLYLINE
-    | PdfAnnotationSubtype.POLYGON
-    | PdfAnnotationSubtype.INK
-    | PdfAnnotationSubtype.STAMP
     | PdfAnnotationSubtype.WIDGET
     | PdfAnnotationSubtype.FILEATTACHMENT
   >;
@@ -285,17 +239,6 @@ export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
 export type PdfAnnotationObject =
   | PdfTextAnnoObject
   | PdfLinkAnnoObject
-  | PdfHighlightAnnoObject
-  | PdfStrikeOutAnnoObject
-  | PdfUnderlineOutAnnoObject
-  | PdfSquigglyAnnoObject
-  | PdfSquareAnnoObject
-  | PdfCircleAnnoObject
-  | PdfLineAnnoObject
-  | PdfPolylineAnnoObject
-  | PdfPolygonAnnoObject
-  | PdfInkAnnoObject
-  | PdfStampAnnoObject
   | PdfWidgetAnnoObject
   | PdfFileAttachmentAnnoObject
   | PdfUnsupportedAnnoObject;

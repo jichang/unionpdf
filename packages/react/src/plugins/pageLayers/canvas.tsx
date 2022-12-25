@@ -1,7 +1,6 @@
 import { ignore, PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useRef, useEffect, useState } from 'react';
-import { usePdfDocument } from '../../core/document.context';
-import { usePdfEngine } from '../../core/engine.context';
+import { usePdfDocument, usePdfEngine } from '../../core';
 import './canvas.css';
 
 export interface PdfPageCanvasLayerProps {

@@ -5,10 +5,9 @@ import {
   Rotation,
 } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
-import './text.css';
-import { usePdfDocument } from '../../core/document.context';
-import { usePdfEngine } from '../../core/engine.context';
+import { usePdfEngine, usePdfDocument } from '../../core';
 import { calculateRectStyle } from '../helpers/annotation';
+import './text.css';
 
 export interface PdfPageTextProps {
   isVisible: boolean;

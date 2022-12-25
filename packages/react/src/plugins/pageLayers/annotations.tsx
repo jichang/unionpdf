@@ -5,8 +5,7 @@ import {
   Rotation,
 } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
-import { usePdfDocument } from '../../core/document.context';
-import { usePdfEngine } from '../../core/engine.context';
+import { usePdfEngine, usePdfDocument } from '../../core';
 
 export interface PdfPageAnnotationComponentProps<T = PdfAnnotationObject> {
   page: PdfPageObject;
@@ -49,8 +48,6 @@ export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
       };
     }
   }, [isVisible, engine, doc, page, scaleFactor, rotation]);
-
-  console.log(annotations);
 
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">

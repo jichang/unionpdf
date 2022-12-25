@@ -11,34 +11,6 @@ npm install @unionpdf/react
 ### Usage
 
 ```typescript
-function PdfPageNumber(props: { index: number }) {
-  return (
-    <div
-      className="pdf__page__number"
-      style={{
-        color: 'white',
-        position: 'absolute',
-        bottom: 0,
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      {index + 1}
-    </div>
-  );
-}
-
-// This component will be rendered in every pdf page
-function PdfPageContent(props: PdfPageContentProps) {
-  const { page } = props;
-
-  return (
-    <>
-      <PdfPageNumber index={page.index} />
-    </>
-  );
-}
-
 function App() {
   const engine = createMockPdfEngine();
   const pdfAppElemRef = useRef<HTMLDivElement>(null);
@@ -69,7 +41,7 @@ function App() {
               <PdfPages
                 visibleRange={[-1, 1]}
                 viewport={viewport}
-                content={PdfPageContent}
+                content={PdfFullFledgedPageContent}
               />
               <PdfThumbnails
                 layout={{ colsCount: 100, rowsCount: 100 }}
@@ -147,8 +119,11 @@ For the full code you can check the [demo app](./packages/app/src/main.tsx)
    This layer will display annotations, supported annotations including
 
    3.1 Link
+
    3.2 Text
-   3.3 Widget (Basci ArcoForm, XFA is not supported yet)
+
+   3.3 Widget (Basic ArcoForm, XFA is not supported yet)
+
 
 ### How to write a pdf plugin
 
@@ -157,5 +132,8 @@ A PDF Plugin is a component that can add specific functionalty to PDF document. 
 1. PdfPages renders all the pdf pages in the PDF files.
 2. PdfThumbnails renders thumbnails.
 3. PdfOutlines renders outlines.
+4. PdfAttachments for accessing attachments
+5. PdfMetadata for rendering file metadata
+6. PdfSearchPanel for searing text in pdf file
 
 To build a pdf plugin, you just need to use hooks usePdfDocument and usePdfEngine to provide functionalities. Do note that you should avoid coupling between plugins.

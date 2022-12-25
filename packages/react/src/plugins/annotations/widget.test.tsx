@@ -9,8 +9,8 @@ import {
 } from '@unionpdf/models';
 import { PdfPageWidgetAnnotation } from './widget';
 
-describe('PdfPageLink', () => {
-  test('should render pdf link', async () => {
+describe('PdfPageWidget', () => {
+  test('should render pdf widget', async () => {
     const page: PdfPageObject = {
       index: 0,
       size: {
@@ -18,7 +18,7 @@ describe('PdfPageLink', () => {
         height: 100,
       },
     };
-    const text: PdfWidgetAnnoObject = {
+    const widget: PdfWidgetAnnoObject = {
       id: 0,
       type: PdfAnnotationSubtype.WIDGET,
       rect: {
@@ -44,14 +44,14 @@ describe('PdfPageLink', () => {
     const result = render(
       <PdfPageWidgetAnnotation
         page={page}
-        annotation={text}
+        annotation={widget}
         scaleFactor={1}
         rotation={0}
       />
     );
 
-    const textElem = document.querySelector('.pdf__annotation--widget');
-    expect(textElem).toBeDefined();
+    const elem = document.querySelector('.pdf__annotation--widget');
+    expect(elem).toBeDefined();
 
     result.unmount();
   });

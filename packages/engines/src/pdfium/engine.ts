@@ -30,6 +30,8 @@ import {
   Rect,
   PdfAttachmentObject,
   PdfUnsupportedAnnoObject,
+  PdfTextAnnoObject,
+  PdfPopupAnnoObject,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readString } from './helper';
@@ -221,6 +223,15 @@ export const wrappedModuleMethods = {
     'boolean',
   ] as const,
   FPDFAnnot_IsChecked: [['number', 'number'] as const, 'boolean'] as const,
+  FPDFAnnot_GetStringValue: [
+    ['number', 'string', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetColor: [
+    ['number', 'number', 'number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetLinkedAnnot: [['number', 'string'] as const, 'number'] as const,
   FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFLink_GetAction: [['number'] as const, 'number'] as const,
   FPDFText_LoadPage: [['number'] as const, 'number'] as const,
@@ -1063,7 +1074,7 @@ export class PdfiumEngine implements PdfEngine {
 
     const annotations: PdfAnnotationObject[] = [];
     for (let i = 0; i < annotationCount; i++) {
-      const annotation = this.readPageAnnotion(
+      const annotation = this.readPageAnnotation(
         page,
         docPtr,
         pagePtr,
@@ -1082,7 +1093,7 @@ export class PdfiumEngine implements PdfEngine {
     return annotations;
   }
 
-  private readPageAnnotion(
+  private readPageAnnotation(
     page: PdfPageObject,
     docPtr: number,
     pagePtr: number,
@@ -1099,6 +1110,18 @@ export class PdfiumEngine implements PdfEngine {
     ) as PdfAnnotationObject['type'];
     let annotation: PdfAnnotationObject | undefined;
     switch (subType) {
+      case PdfAnnotationSubtype.TEXT:
+        {
+          annotation = this.readPdfTextAnno(
+            page,
+            docPtr,
+            pagePtr,
+            textPagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
       case PdfAnnotationSubtype.LINK:
         {
           annotation = this.readPdfLinkAnno(
@@ -1132,12 +1155,96 @@ export class PdfiumEngine implements PdfEngine {
           );
         }
         break;
+      case PdfAnnotationSubtype.POPUP:
+        break;
       default:
+        {
+          annotation = this.readPdfAnno(
+            page,
+            pagePtr,
+            subType,
+            annotationPtr,
+            index
+          );
+        }
         break;
     }
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
 
     return annotation;
+  }
+
+  private readPdfTextAnno(
+    page: PdfPageObject,
+    docPtr: number,
+    pagePtr: number,
+    textPagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfTextAnnoObject | undefined {
+    const annoRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, annoRect);
+
+    const utf16Length = this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      annotationPtr,
+      'Contents',
+      0,
+      0
+    );
+    const bytesCount = (utf16Length + 1) * 2; // include NIL
+    const contentBuffer = this.malloc(bytesCount);
+    this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      annotationPtr,
+      'Contents',
+      contentBuffer,
+      bytesCount
+    );
+    const contents = this.wasmModule.UTF16ToString(contentBuffer);
+    this.free(contentBuffer);
+
+    const redPtr = this.malloc(4);
+    const greenPtr = this.malloc(4);
+    const bluePtr = this.malloc(4);
+    const alphaPtr = this.malloc(4);
+
+    this.wasmModuleWrapper.FPDFAnnot_GetColor(
+      annotationPtr,
+      0,
+      redPtr,
+      greenPtr,
+      bluePtr,
+      alphaPtr
+    );
+    const red = this.wasmModule.getValue(redPtr, 'i32');
+    const green = this.wasmModule.getValue(redPtr, 'i32');
+    const blue = this.wasmModule.getValue(redPtr, 'i32');
+    const alpha = this.wasmModule.getValue(redPtr, 'i32');
+
+    this.free(redPtr);
+    this.free(greenPtr);
+    this.free(bluePtr);
+    this.free(alphaPtr);
+
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.TEXT,
+      contents,
+      color: {
+        red,
+        green,
+        blue,
+        alpha,
+      },
+      rect,
+      popup,
+    };
   }
 
   private readPdfLinkAnno(
@@ -1189,6 +1296,12 @@ export class PdfiumEngine implements PdfEngine {
         return this.wasmModuleWrapper.FPDFLink_GetDest(docPtr, linkPtr);
       }
     );
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
 
     return {
       id: index,
@@ -1196,6 +1309,7 @@ export class PdfiumEngine implements PdfEngine {
       text,
       target,
       rect,
+      popup,
     };
   }
 
@@ -1208,6 +1322,12 @@ export class PdfiumEngine implements PdfEngine {
   ): PdfWidgetAnnoObject | undefined {
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
 
     const field = this.readPdfWidgetAnnoField(formHandle, annotationPtr);
 
@@ -1216,6 +1336,7 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.WIDGET,
       rect,
       field,
+      popup,
     };
   }
 
@@ -1227,11 +1348,18 @@ export class PdfiumEngine implements PdfEngine {
   ): PdfFileAttachmentAnnoObject | undefined {
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
 
     return {
       id: index,
       type: PdfAnnotationSubtype.FILEATTACHMENT,
       rect,
+      popup,
     };
   }
 
@@ -1244,11 +1372,78 @@ export class PdfiumEngine implements PdfEngine {
   ): PdfUnsupportedAnnoObject {
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
 
     return {
       id: index,
       type,
       rect,
+      popup,
+    };
+  }
+
+  private readPdfAnnoLinkedPopup(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfPopupAnnoObject | undefined {
+    const popupAnnotationPtr = this.wasmModuleWrapper.FPDFAnnot_GetLinkedAnnot(
+      annotationPtr,
+      'Popup'
+    );
+    if (!popupAnnotationPtr) {
+      return;
+    }
+
+    const pageRect = this.readPageAnnoRect(popupAnnotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+
+    const contentsLength = this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      popupAnnotationPtr,
+      'Contents',
+      0,
+      0
+    );
+    const contentsBytesCount = (contentsLength + 1) * 2; // include NIL
+    const contentsPtr = this.malloc(contentsBytesCount);
+    this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      popupAnnotationPtr,
+      'Contents',
+      contentsPtr,
+      contentsBytesCount
+    );
+    const contents = this.wasmModule.UTF16ToString(contentsPtr);
+    this.free(contentsPtr);
+
+    const openLength = this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      popupAnnotationPtr,
+      'Contents',
+      0,
+      0
+    );
+    const openBytesCount = (openLength + 1) * 2; // include NIL
+    const openPtr = this.malloc(contentsBytesCount);
+    this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      popupAnnotationPtr,
+      'Contents',
+      openPtr,
+      openBytesCount
+    );
+    const open = this.wasmModule.UTF16ToString(contentsPtr);
+    this.free(contentsPtr);
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.POPUP,
+      rect,
+      contents,
+      open: open === 'true',
     };
   }
 

@@ -1,4 +1,6 @@
 .pdf__annotation--text {
   user-select: none;
   position: absolute;
+
+  color: transparent;
 }

@@ -21,7 +21,7 @@ export function PdfPageTextAnnotation(props: PdfPageTextAnnotationProps) {
       scaleFactor={scaleFactor}
       rotation={rotation}
     >
-      <span>{annotation.text}</span>
+      <span>{annotation.contents}</span>
     </PdfPageAnnotationBase>
   );
 }

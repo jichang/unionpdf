@@ -6,10 +6,7 @@ import React, {
   useState,
 } from 'react';
 import {
-  PdfPageObject,
   Rotation,
-  PdfTextAnnoObject,
-  PdfAnnotationSubtype,
   ConsoleLogger,
   Logger,
   PdfZoomMode,
@@ -29,108 +26,19 @@ import {
   PdfPagesToolbar,
   PdfToolbarDocItemGroup,
   PdfThumbnails,
-  PdfPageContentComponentProps,
   PdfPages,
-  PdfPageText,
-  PdfPageCanvas,
-  PdfPageAnnotationComponentProps,
-  PdfPageAnnotations,
-  PdfPageAnnotationBase,
-  PdfPageLinkAnnotation,
-  PdfPageWidgetAnnotation,
   PdfBookmarks,
   LoggerContextProvider,
   PdfToolbarNavigationtemGroup,
   PdfSearchPanel,
   PdfAttachments,
+  PdfFullFledgedPageContent,
 } from '../src/index';
 import {
   createPdfiumModule,
   PdfiumEngine,
   pdfiumWasm,
 } from '@unionpdf/engines';
-
-function PdfPageNumber(props: { page: PdfPageObject }) {
-  const { page } = props;
-
-  return (
-    <div
-      className="pdf__page__number"
-      style={{
-        color: 'white',
-        position: 'absolute',
-        bottom: 0,
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      {page.index + 1}
-    </div>
-  );
-}
-
-function PdfPageTextAnnotationCustomize(
-  props: PdfPageAnnotationComponentProps<PdfTextAnnoObject>
-) {
-  const { page, annotation, scaleFactor, rotation } = props;
-
-  return (
-    <PdfPageAnnotationBase
-      page={page}
-      annotation={annotation}
-      scaleFactor={scaleFactor}
-      rotation={rotation}
-    >
-      <p>{annotation.text}</p>
-    </PdfPageAnnotationBase>
-  );
-}
-
-function PdfPageAnnotation(props: PdfPageAnnotationComponentProps) {
-  const { page, annotation, rotation, scaleFactor } = props;
-  switch (annotation.type) {
-    case PdfAnnotationSubtype.LINK:
-      return (
-        <PdfPageLinkAnnotation
-          page={page}
-          annotation={annotation}
-          rotation={rotation}
-          scaleFactor={scaleFactor}
-        />
-      );
-    case PdfAnnotationSubtype.TEXT:
-      return (
-        <PdfPageTextAnnotationCustomize
-          page={page}
-          annotation={annotation}
-          rotation={rotation}
-          scaleFactor={scaleFactor}
-        />
-      );
-    case PdfAnnotationSubtype.WIDGET:
-      return (
-        <PdfPageWidgetAnnotation
-          page={page}
-          annotation={annotation}
-          rotation={rotation}
-          scaleFactor={scaleFactor}
-        />
-      );
-    default:
-      return <PdfPageAnnotationBase {...props} />;
-  }
-}
-
-function PdfPageContent(props: PdfPageContentComponentProps) {
-  return (
-    <>
-      <PdfPageCanvas {...props} />
-      <PdfPageText {...props} />
-      <PdfPageAnnotations {...props} annotationComponent={PdfPageAnnotation} />
-      <PdfPageNumber {...props} />
-    </>
-  );
-}
 
 export interface AppProps {
   logger: Logger;
@@ -296,7 +204,7 @@ function App(props: AppProps) {
                       cacheRange={[-5, 5]}
                       scaleFactor={scaleFactor}
                       rotation={rotation}
-                      pageContentComponent={PdfPageContent}
+                      pageContentComponent={PdfFullFledgedPageContent}
                     />
                     {thumbnailsIsVisible ? (
                       <PdfThumbnails
