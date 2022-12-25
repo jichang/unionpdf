@@ -124,7 +124,6 @@ For the full code you can check the [demo app](./packages/app/src/main.tsx)
 
    3.3 Widget (Basic ArcoForm, XFA is not supported yet)
 
-
 ### How to write a pdf plugin
 
 A PDF Plugin is a component that can add specific functionalty to PDF document. In the [plugins folder](./src/plugins), there are several buildin plugins.
