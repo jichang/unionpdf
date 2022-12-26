@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { usePdfEngine } from './engine.context';
-import { PdfDocumentObject, PdfSource } from '@unionpdf/models';
+import { PdfDocumentObject, PdfEngineError, PdfSource } from '@unionpdf/models';
 import { useTheme } from './theme.context';
 import { PdfDocumentContextProvider } from './document.context';
 import './document.css';
@@ -16,12 +16,21 @@ import './document.css';
 export interface PdfDocumentProps extends ComponentProps<'div'> {
   id: string;
   source: PdfSource;
+  password: string;
   onOpenSuccess?: (pdf: PdfDocumentObject) => void;
-  onOpenFailure?: (error: Error) => void;
+  onOpenFailure?: (error: PdfEngineError) => void;
 }
 
 export function PdfDocument(props: PdfDocumentProps) {
-  const { id, source, onOpenSuccess, onOpenFailure, children, ...rest } = props;
+  const {
+    id,
+    password,
+    source,
+    onOpenSuccess,
+    onOpenFailure,
+    children,
+    ...rest
+  } = props;
   const [doc, setDoc] = useState<PdfDocumentObject | null>(null);
   const engine = usePdfEngine();
   const theme = useTheme();
@@ -38,7 +47,7 @@ export function PdfDocument(props: PdfDocumentProps) {
       setDoc(null);
 
       let doc: PdfDocumentObject | undefined;
-      const task = engine.openDocument(id, source);
+      const task = engine.openDocument(id, source, password);
 
       task.wait(
         (_doc) => {
@@ -58,7 +67,7 @@ export function PdfDocument(props: PdfDocumentProps) {
         }
       };
     }
-  }, [engine, id, source]);
+  }, [engine, id, password, source]);
 
   const themeStyle = useMemo(() => {
     const styles = {} as Record<string, string | number>;

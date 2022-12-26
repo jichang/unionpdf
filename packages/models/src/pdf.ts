@@ -445,69 +445,88 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
   }
 }
 
+export class PdfEngineError extends Error {
+  code?: number;
+
+  constructor(message: string, code?: number) {
+    super(message);
+    this.code = code;
+  }
+}
+
 export interface PdfEngine {
-  isSupport?: (feature: PdfEngineFeature) => Task<PdfEngineOperation[], Error>;
-  initialize?: () => Task<boolean, Error>;
-  destroy?: () => Task<boolean, Error>;
-  openDocument: (id: string, data: PdfSource) => Task<PdfDocumentObject, Error>;
-  getMetadata: (doc: PdfDocumentObject) => Task<PdfMetadataObject, Error>;
-  getBookmarks: (doc: PdfDocumentObject) => Task<PdfBookmarksObject, Error>;
+  isSupport?: (
+    feature: PdfEngineFeature
+  ) => Task<PdfEngineOperation[], PdfEngineError>;
+  initialize?: () => Task<boolean, PdfEngineError>;
+  destroy?: () => Task<boolean, PdfEngineError>;
+  openDocument: (
+    id: string,
+    data: PdfSource,
+    password: string
+  ) => Task<PdfDocumentObject, PdfEngineError>;
+  getMetadata: (
+    doc: PdfDocumentObject
+  ) => Task<PdfMetadataObject, PdfEngineError>;
+  getBookmarks: (
+    doc: PdfDocumentObject
+  ) => Task<PdfBookmarksObject, PdfEngineError>;
   renderPage: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation
-  ) => Task<ImageData, Error>;
+  ) => Task<ImageData, PdfEngineError>;
   renderPageRect?: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
     rect: Rect
-  ) => Task<ImageData, Error>;
+  ) => Task<ImageData, PdfEngineError>;
   getPageAnnotations: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation
-  ) => Task<PdfAnnotationObject[], Error>;
+  ) => Task<PdfAnnotationObject[], PdfEngineError>;
   getPageTextRects: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation
-  ) => Task<PdfTextRectObject[], Error>;
+  ) => Task<PdfTextRectObject[], PdfEngineError>;
   renderThumbnail: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation
-  ) => Task<ImageData, Error>;
+  ) => Task<ImageData, PdfEngineError>;
   startSearch: (
     doc: PdfDocumentObject,
     contextId: number
-  ) => Task<boolean, Error>;
+  ) => Task<boolean, PdfEngineError>;
   searchNext: (
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
-  ) => Task<SearchResult | undefined, Error>;
+  ) => Task<SearchResult | undefined, PdfEngineError>;
   searchPrev: (
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
-  ) => Task<SearchResult | undefined, Error>;
+  ) => Task<SearchResult | undefined, PdfEngineError>;
   stopSearch: (
     doc: PdfDocumentObject,
     contextId: number
-  ) => Task<boolean, Error>;
+  ) => Task<boolean, PdfEngineError>;
   readAttachments: (
     doc: PdfDocumentObject
-  ) => Task<PdfAttachmentObject[], Error>;
+  ) => Task<PdfAttachmentObject[], PdfEngineError>;
   readAttachmentContent: (
     doc: PdfDocumentObject,
     attachment: PdfAttachmentObject
-  ) => Task<ArrayBuffer, Error>;
-  saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, Error>;
-  closeDocument: (doc: PdfDocumentObject) => Task<boolean, Error>;
+  ) => Task<ArrayBuffer, PdfEngineError>;
+  saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, PdfEngineError>;
+  closeDocument: (doc: PdfDocumentObject) => Task<boolean, PdfEngineError>;
 }

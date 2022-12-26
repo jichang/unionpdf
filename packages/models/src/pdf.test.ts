@@ -1,4 +1,4 @@
-import { TaskBase, TaskAbortError, TaskStage } from './pdf';
+import { TaskBase, TaskAbortError, TaskStage, PdfEngineError } from './pdf';
 
 describe('TaskBase', () => {
   test('should has pending state by default', () => {
@@ -25,7 +25,7 @@ describe('TaskBase', () => {
     const resolved = jest.fn();
     const rejected = jest.fn();
     task.wait(resolved, rejected);
-    const error = new Error('hello');
+    const error = new PdfEngineError('hello');
     task.reject(error);
     expect(task.state.stage).toBe(TaskStage.Rejected);
     // @ts-ignore
@@ -55,7 +55,7 @@ describe('TaskBase', () => {
     const resolved = jest.fn();
     const rejected = jest.fn();
     task.wait(resolved, rejected);
-    const error = new Error('hello');
+    const error = new PdfEngineError('hello');
     task.abort(error);
     expect(task.state.stage).toBe(TaskStage.Aborted);
     // @ts-ignore

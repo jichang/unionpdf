@@ -1,5 +1,6 @@
 import {
   PdfAttachmentObject,
+  PdfEngineError,
   PdfEngineFeature,
   PdfEngineOperation,
   PdfMetadataObject,
@@ -46,18 +47,23 @@ export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
 
 export class WebWorkerEngine implements PdfEngine {
   worker: Worker;
-  prepareTask: WorkerTask<boolean, Error>;
-  tasks: Map<string, WorkerTask<any, Error>> = new Map();
+  prepareTask: WorkerTask<boolean, PdfEngineError>;
+  tasks: Map<string, WorkerTask<any, PdfEngineError>> = new Map();
 
   constructor(url: URL, private logger: Logger = new NoopLogger()) {
     this.worker = new Worker(url);
     this.worker.addEventListener('message', this.handle);
 
-    this.prepareTask = new WorkerTask<boolean, Error>(this.worker, '0');
+    this.prepareTask = new WorkerTask<boolean, PdfEngineError>(
+      this.worker,
+      '0'
+    );
     this.tasks.set('0', this.prepareTask);
   }
   isSupport?:
-    | ((feature: PdfEngineFeature) => Task<PdfEngineOperation[], Error>)
+    | ((
+        feature: PdfEngineFeature
+      ) => Task<PdfEngineOperation[], PdfEngineError>)
     | undefined;
 
   handle = (evt: MessageEvent<any>) => {
@@ -151,7 +157,7 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
-  openDocument(id: string, data: PdfSource) {
+  openDocument(id: string, data: PdfSource, password: string) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', arguments);
     const requestId = this.generateRequestId();
     const task = new WorkerTask<PdfDocumentObject>(this.worker, requestId);
@@ -161,7 +167,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'openDocument',
-        args: [id, data],
+        args: [id, data, password],
       },
     };
     this.proxy(task, request);
@@ -326,7 +332,10 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
-  startSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+  startSearch(
+    doc: PdfDocumentObject,
+    contextId: number
+  ): Task<boolean, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', arguments);
     const requestId = this.generateRequestId();
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -348,7 +357,7 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
-  ): Task<SearchResult | undefined, Error> {
+  ): Task<SearchResult | undefined, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'searchNext', arguments);
     const requestId = this.generateRequestId();
     const task = new WorkerTask<SearchResult | undefined>(
@@ -373,7 +382,7 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
-  ): Task<SearchResult | undefined, Error> {
+  ): Task<SearchResult | undefined, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'searchPrev', arguments);
     const requestId = this.generateRequestId();
     const task = new WorkerTask<SearchResult | undefined>(
@@ -394,7 +403,10 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
-  stopSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+  stopSearch(
+    doc: PdfDocumentObject,
+    contextId: number
+  ): Task<boolean, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', arguments);
     const requestId = this.generateRequestId();
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -505,7 +517,7 @@ export class WebWorkerEngine implements PdfEngine {
         this.tasks.set(request.id, task);
       },
       () => {
-        task.reject(new Error('worker initialization failed'));
+        task.reject(new PdfEngineError('worker initialization failed'));
       }
     );
   }

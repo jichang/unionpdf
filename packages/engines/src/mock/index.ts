@@ -22,7 +22,7 @@ export function createMockPdfEngine(
   partialEngine?: Partial<PdfEngine>
 ): PdfEngine {
   const engine: PdfEngine = {
-    openDocument: jest.fn((id: string, url: PdfSource) => {
+    openDocument: jest.fn((id: string, url: PdfSource, password: string) => {
       return new TaskBase();
     }),
     getMetadata: () => {

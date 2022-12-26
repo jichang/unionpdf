@@ -1,4 +1,10 @@
-import { Logger, NoopLogger, PdfEngine, Task } from '@unionpdf/models';
+import {
+  Logger,
+  NoopLogger,
+  PdfEngine,
+  PdfEngineError,
+  Task,
+} from '@unionpdf/models';
 
 export type PdfEngineMethodName = keyof Required<PdfEngine>;
 export type PdfEngineMethodArgs<P extends PdfEngineMethodName> = Readonly<
@@ -79,7 +85,7 @@ export class EngineRunner {
         type: 'ExecuteResponse',
         data: {
           type: 'reject',
-          error: new Error('engine has not started yet'),
+          error: new PdfEngineError('engine has not started yet'),
         },
       };
       this.respond(response);
@@ -94,7 +100,7 @@ export class EngineRunner {
         type: 'ExecuteResponse',
         data: {
           type: 'reject',
-          error: new Error('engine method has not supported yet'),
+          error: new PdfEngineError('engine method has not supported yet'),
         },
       };
       this.respond(response);

@@ -34,11 +34,13 @@ function logError(error: Error) {
 async function run() {
   const wasmBinary = await loadWasmBinary();
   const wasmModule = await createPdfiumModule({ wasmBinary });
-  console.log(wasmModule);
   const engine = new PdfiumEngine(wasmModule, new ConsoleLogger());
 
   engine.initialize();
 
+  const passwordElem = document.getElementById(
+    'pdf-password'
+  ) as HTMLInputElement;
   const inputElem = document.getElementById('pdf-file') as HTMLInputElement;
   const bookmarksElem = document.getElementById(
     'pdf-bookmarks'
@@ -50,61 +52,73 @@ async function run() {
     const closeTask = currDoc
       ? engine.closeDocument(currDoc)
       : TaskBase.resolve(true);
+    currDoc = null;
 
     closeTask.wait(async () => {
       const file = (evt.target as HTMLInputElement).files?.[0];
       if (file) {
         const arrayBuffer = await readFile(file);
-        const task = engine.openDocument(file.name, arrayBuffer);
-        task.wait((doc) => {
-          currDoc = doc;
+        const password = passwordElem.value;
+        const task = engine.openDocument(file.name, arrayBuffer, password);
+        task.wait(
+          (doc) => {
+            currDoc = doc;
 
-          const task = engine.getBookmarks(doc);
-          task.wait((bookmarks) => {
-            console.log(bookmarks);
-          }, logError);
+            const task = engine.getBookmarks(doc);
+            task.wait((bookmarks) => {
+              console.log(bookmarks);
+            }, logError);
 
-          for (let i = 0; i < doc.pageCount; i++) {
-            const page = doc.pages[i];
+            for (let i = 0; i < doc.pageCount; i++) {
+              const page = doc.pages[i];
 
-            const renderTask = engine.renderPage(doc, page, 1, 0);
-            renderTask.wait((imageData) => {
-              const canvasElem = document.createElement(
-                'canvas'
-              ) as HTMLCanvasElement;
-              const rootElem = document.getElementById(
-                'root'
-              ) as HTMLDivElement;
-              rootElem.appendChild(canvasElem);
-              canvasElem.style.width = `${page.size.width}px`;
-              canvasElem.style.height = `${page.size.height}px`;
-              canvasElem.width = imageData.width;
-              canvasElem.height = imageData.height;
+              const renderTask = engine.renderPage(doc, page, 1, 0);
+              renderTask.wait((imageData) => {
+                const canvasElem = document.createElement(
+                  'canvas'
+                ) as HTMLCanvasElement;
+                const rootElem = document.getElementById(
+                  'root'
+                ) as HTMLDivElement;
+                rootElem.appendChild(canvasElem);
+                canvasElem.style.width = `${page.size.width}px`;
+                canvasElem.style.height = `${page.size.height}px`;
+                canvasElem.width = imageData.width;
+                canvasElem.height = imageData.height;
 
-              const ctx = canvasElem.getContext('2d');
-              ctx?.putImageData(
-                imageData,
-                0,
-                0,
-                0,
-                0,
-                imageData.width,
-                imageData.height
+                const ctx = canvasElem.getContext('2d');
+                ctx?.putImageData(
+                  imageData,
+                  0,
+                  0,
+                  0,
+                  0,
+                  imageData.width,
+                  imageData.height
+                );
+                console.log(imageData);
+              }, logError);
+
+              const annotationsTask = engine.getPageAnnotations(
+                doc,
+                page,
+                1,
+                0
               );
-              console.log(imageData);
-            }, logError);
+              annotationsTask.wait((annotations) => {
+                console.log(page.index, annotations);
+              }, logError);
 
-            const annotationsTask = engine.getPageAnnotations(doc, page, 1, 0);
-            annotationsTask.wait((annotations) => {
-              console.log(page.index, annotations);
-            }, logError);
-
-            const textRectsTask = engine.getPageTextRects(doc, page, 1, 0);
-            textRectsTask.wait((textRects) => {
-              console.log(page.index, textRects);
-            }, logError);
+              const textRectsTask = engine.getPageTextRects(doc, page, 1, 0);
+              textRectsTask.wait((textRects) => {
+                console.log(page.index, textRects);
+              }, logError);
+            }
+          },
+          () => {
+            currDoc = null;
           }
-        }, logError);
+        );
       }
     }, logError);
   });

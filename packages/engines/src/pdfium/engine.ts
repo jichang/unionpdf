@@ -32,6 +32,7 @@ import {
   PdfUnsupportedAnnoObject,
   PdfTextAnnoObject,
   PdfPopupAnnoObject,
+  PdfEngineError,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readString } from './helper';
@@ -77,7 +78,7 @@ export const wrappedModuleMethods = {
   PDFium_ExitFormFillEnvironment: [['number'] as const, 'number'] as const,
   PDFium_SaveAsCopy: [['number', 'number'] as const, ''] as const,
   FPDF_LoadMemDocument: [
-    ['number', 'number', 'string'] as const,
+    ['number', 'number', 'number'] as const,
     'number' as const,
   ] as const,
   FPDF_GetPageSizeByIndexF: [
@@ -289,6 +290,18 @@ export interface SearchContext {
   startIndex: number; // -1 means reach the end
 }
 
+export enum PdfiumErrorCode {
+  Success = 0,
+  Unknown = 1,
+  File = 2,
+  Format = 3,
+  Password = 4,
+  Security = 5,
+  Page = 6,
+  XFALoad = 7,
+  XFALayout = 8,
+}
+
 export class PdfiumEngine implements PdfEngine {
   wasmModuleWrapper: WrappedModule<typeof wrappedModuleMethods>;
   docs: Record<
@@ -319,28 +332,39 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(true);
   }
 
-  openDocument(id: string, arrayBuffer: ArrayBuffer) {
+  openDocument(id: string, arrayBuffer: ArrayBuffer, password: string) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', arguments);
     const array = new Uint8Array(arrayBuffer);
     const length = array.length;
     const filePtr = this.malloc(length);
     this.wasmModule.HEAPU8.set(array, filePtr);
 
+    const passwordBytesSize = new TextEncoder().encode(password).length + 1;
+    const passwordPtr = this.malloc(passwordBytesSize);
+    this.wasmModule.stringToUTF8(password, passwordPtr, passwordBytesSize);
+
     const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(
       filePtr,
       length,
-      ''
+      passwordPtr
     );
-    const lastError = this.wasmModuleWrapper.FPDF_GetLastError();
-    if (lastError) {
+
+    this.free(passwordPtr);
+
+    if (!docPtr) {
+      const lastError = this.wasmModuleWrapper.FPDF_GetLastError();
       this.logger.error(
         LOG_SOURCE,
         LOG_CATEGORY,
         `FPDF_LoadMemDocument failed with ${lastError}`
       );
       this.free(filePtr);
+
       return TaskBase.reject<PdfDocumentObject>(
-        new Error(`FPDF_LoadMemDocument failed with ${lastError}`)
+        new PdfEngineError(
+          `FPDF_LoadMemDocument failed with ${lastError}`,
+          lastError
+        )
       );
     }
 
@@ -355,6 +379,7 @@ export class PdfiumEngine implements PdfEngine {
         sizePtr
       );
       if (result === 0) {
+        const lastError = this.wasmModuleWrapper.FPDF_GetLastError();
         this.logger.error(
           LOG_SOURCE,
           LOG_CATEGORY,
@@ -362,9 +387,12 @@ export class PdfiumEngine implements PdfEngine {
         );
         this.free(sizePtr);
         this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
+        this.free(passwordPtr);
         this.free(filePtr);
         return TaskBase.reject<PdfDocumentObject>(
-          new Error(`FPDF_GetPageSizeByIndexF failed with ${lastError}`)
+          new PdfEngineError(
+            `FPDF_GetPageSizeByIndexF failed with ${lastError}`
+          )
         );
       }
 
@@ -559,7 +587,10 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(buffer);
   }
 
-  startSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+  startSearch(
+    doc: PdfDocumentObject,
+    contextId: number
+  ): Task<boolean, PdfEngineError> {
     return TaskBase.resolve(true);
   }
 
@@ -567,10 +598,10 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
-  ): Task<SearchResult | undefined, Error> {
+  ): Task<SearchResult | undefined, PdfEngineError> {
     if (!this.docs[doc.id]) {
       return TaskBase.reject<SearchResult | undefined>(
-        new Error('document is not opened')
+        new PdfEngineError('document is not opened')
       );
     }
 
@@ -628,10 +659,10 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
-  ): Task<SearchResult | undefined, Error> {
+  ): Task<SearchResult | undefined, PdfEngineError> {
     if (!this.docs[doc.id]) {
       return TaskBase.reject<SearchResult | undefined>(
-        new Error('document is not opened')
+        new PdfEngineError('document is not opened')
       );
     }
 
@@ -686,7 +717,10 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve<SearchResult | undefined>(undefined);
   }
 
-  stopSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, Error> {
+  stopSearch(
+    doc: PdfDocumentObject,
+    contextId: number
+  ): Task<boolean, PdfEngineError> {
     const { searchContexts } = this.docs[doc.id];
     if (searchContexts) {
       searchContexts.delete(contextId);
@@ -695,7 +729,9 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(true);
   }
 
-  readAttachments(doc: PdfDocumentObject): Task<PdfAttachmentObject[], Error> {
+  readAttachments(
+    doc: PdfDocumentObject
+  ): Task<PdfAttachmentObject[], PdfEngineError> {
     const attachments: PdfAttachmentObject[] = [];
 
     const { docPtr } = this.docs[doc.id];
@@ -711,7 +747,7 @@ export class PdfiumEngine implements PdfEngine {
   readAttachmentContent(
     doc: PdfDocumentObject,
     attachment: PdfAttachmentObject
-  ): Task<ArrayBuffer, Error> {
+  ): Task<ArrayBuffer, PdfEngineError> {
     const { docPtr } = this.docs[doc.id];
     const attachmentPtr = this.wasmModuleWrapper.FPDFDoc_GetAttachment(
       docPtr,
@@ -727,7 +763,9 @@ export class PdfiumEngine implements PdfEngine {
       )
     ) {
       this.free(sizePtr);
-      return TaskBase.reject(new Error('can not read attachment size'));
+      return TaskBase.reject(
+        new PdfEngineError('can not read attachment size')
+      );
     }
     const size = this.wasmModule.getValue(sizePtr, 'i64');
 
@@ -743,7 +781,9 @@ export class PdfiumEngine implements PdfEngine {
       this.free(sizePtr);
       this.free(contentPtr);
 
-      return TaskBase.reject(new Error('can not read attachment content'));
+      return TaskBase.reject(
+        new PdfEngineError('can not read attachment content')
+      );
     }
 
     const buffer = new ArrayBuffer(size);
@@ -768,7 +808,7 @@ export class PdfiumEngine implements PdfEngine {
         `can not close document ${doc.id}`
       );
       return TaskBase.reject<boolean>(
-        new Error(`can not close document ${doc.id}`)
+        new PdfEngineError(`can not close document ${doc.id}`)
       );
     }
 

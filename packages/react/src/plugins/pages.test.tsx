@@ -3,7 +3,7 @@ import React from 'react';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
 import { PdfPages, PdfPageContentComponentProps } from './pages';
-import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
+import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../core/document';
 import { PdfEngineContextProvider } from '../core/engine.context';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
@@ -37,8 +37,8 @@ describe('PdfPages', () => {
   test('should render pdf pages with layer', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
-    const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
+    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
+    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;
@@ -52,6 +52,7 @@ describe('PdfPages', () => {
         <PdfDocument
           id="test"
           source={new Uint8Array()}
+          password=""
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >

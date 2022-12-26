@@ -11,6 +11,7 @@ import {
   Logger,
   PdfZoomMode,
   PdfEngine,
+  PdfEngineError,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -38,6 +39,7 @@ import {
   createPdfiumModule,
   PdfiumEngine,
   pdfiumWasm,
+  PdfiumErrorCode,
 } from '@unionpdf/engines';
 
 export interface AppProps {
@@ -158,6 +160,9 @@ function App(props: AppProps) {
     [setFile, pdfNavigator]
   );
 
+  const [password, setPassword] = useState('');
+  const [isPasswordOpened, setIsPasswordOpened] = useState(false);
+
   return (
     <div className="App">
       <div className="app__toolbar">
@@ -179,8 +184,15 @@ function App(props: AppProps) {
                   <PdfDocument
                     id={file.id}
                     source={file.source}
-                    onOpenSuccess={() => {}}
-                    onOpenFailure={() => {}}
+                    password={password}
+                    onOpenSuccess={() => {
+                      setIsPasswordOpened(false);
+                    }}
+                    onOpenFailure={(error: PdfEngineError) => {
+                      if (error.code === PdfiumErrorCode.Password) {
+                        setIsPasswordOpened(true);
+                      }
+                    }}
                   >
                     <PdfToolbar>
                       <PdfToolbarNavigationtemGroup
@@ -230,6 +242,19 @@ function App(props: AppProps) {
             </PdfEngineContextProvider>
           </ThemeContextProvider>
         </LoggerContextProvider>
+      ) : null}
+      {isPasswordOpened ? (
+        <div className="app__dialog">
+          <div>
+            <input
+              type="text"
+              value={password}
+              onChange={(evt) => {
+                setPassword(evt.target.value);
+              }}
+            />
+          </div>
+        </div>
       ) : null}
     </div>
   );

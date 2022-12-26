@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
-import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
+import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../core/document';
 import { PdfEngineContextProvider } from '../core/engine.context';
 import { PdfMetadata } from './metadata';
@@ -10,8 +10,8 @@ import { PdfMetadata } from './metadata';
 describe('PdfMetadata', () => {
   test('should render pdf metadata', async () => {
     const pdf = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
-    const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
+    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
+    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;
@@ -25,6 +25,7 @@ describe('PdfMetadata', () => {
         <PdfDocument
           id="test"
           source={new Uint8Array()}
+          password=""
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >

@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { PdfDocument } from './document';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
-import { PdfDocumentObject, TaskBase } from '@unionpdf/models';
+import { PdfDocumentObject, PdfEngineError, TaskBase } from '@unionpdf/models';
 import { usePdfDocument } from './document.context';
 import { PdfEngineContextProvider } from './engine.context';
 
@@ -17,8 +17,8 @@ describe('PdfDocument', () => {
 
   test('should render pdf document element', () => {
     const doc = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
-    const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
+    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
+    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;
@@ -33,10 +33,12 @@ describe('PdfDocument', () => {
 
     const id = 'test';
     const source = new Uint8Array();
+    const password = '';
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
           id="test"
+          password={password}
           source={source}
           onOpenSuccess={onOpenSuccess}
           onOpenFailure={onOpenFailure}
@@ -48,7 +50,7 @@ describe('PdfDocument', () => {
 
     expect(document.querySelector('.pdf__document')).toBeDefined();
     expect(engine.openDocument).toBeCalledTimes(1);
-    expect(engine.openDocument).toBeCalledWith(id, source);
+    expect(engine.openDocument).toBeCalledWith(id, source, password);
     expect(pdfDocInContext).toBe(null);
 
     act(() => {

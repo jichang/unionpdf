@@ -3,14 +3,14 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { PdfAttachments } from './attachments';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
-import { TaskBase, PdfDocumentObject } from '@unionpdf/models';
+import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider, PdfDocument } from '../core';
 
 describe('PdfAttachments', () => {
   it('Toolbar should render div with children', () => {
     const pdf = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, Error>();
-    const closeDocumentTask = TaskBase.resolve<boolean, Error>(true);
+    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
+    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;
@@ -24,6 +24,7 @@ describe('PdfAttachments', () => {
         <PdfDocument
           id="test"
           source={new Uint8Array()}
+          password=""
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
