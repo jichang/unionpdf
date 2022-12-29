@@ -1,0 +1,9 @@
+.pdf__signatures {
+  padding: 1rem;
+
+  background-color: white;
+}
+
+.pdf__signatures td {
+  padding: 0.5rem;
+}

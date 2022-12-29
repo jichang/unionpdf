@@ -20,7 +20,7 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
 
   useEffect(() => {
     if (engine && doc) {
-      const task = engine.readAttachments(doc);
+      const task = engine.getAttachments(doc);
       task.wait(setAttachments, ignore);
 
       return () => {

@@ -4,7 +4,8 @@
 }
 
 .pdf__form__field input,
-.pdf__form__field select {
+.pdf__form__field select,
+.pdf__form__field textarea {
   position: absolute;
   top: 0;
   left: 0;
@@ -15,6 +16,10 @@
   height: 100%;
 
   background-color: transparent;
+}
+
+.pdf__form__field textarea {
+  resize: none;
 }
 
 .pdf__form__field button {

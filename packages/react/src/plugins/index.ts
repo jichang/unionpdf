@@ -7,5 +7,6 @@ export * from './attachments';
 export * from './pages';
 export * from './pages.toolbar';
 export * from './annotations';
+export * from './signatures';
 export * from './form';
 export * from './builtin';

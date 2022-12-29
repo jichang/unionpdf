@@ -16,6 +16,7 @@ import {
   SearchTarget,
   SearchResult,
   PdfAttachmentObject,
+  PdfSignatureObject,
 } from '@unionpdf/models';
 
 export function createMockPdfEngine(
@@ -36,6 +37,10 @@ export function createMockPdfEngine(
         creationDate: 'creationDate',
         modificationDate: 'modificationDate',
       });
+    },
+    getSignatures: (doc: PdfDocumentObject) => {
+      const signatures: PdfSignatureObject[] = [];
+      return TaskBase.resolve(signatures);
     },
     getBookmarks: (doc: PdfDocumentObject) => {
       const bookmarks: PdfBookmarkObject[] = [];
@@ -230,7 +235,7 @@ export function createMockPdfEngine(
     stopSearch: (doc: PdfDocumentObject, contextId: number) => {
       return TaskBase.resolve(true);
     },
-    readAttachments: (doc: PdfDocumentObject) => {
+    getAttachments: (doc: PdfDocumentObject) => {
       return TaskBase.resolve([] as PdfAttachmentObject[]);
     },
     readAttachmentContent: (

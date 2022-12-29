@@ -27,3 +27,25 @@ export function readString(
 
   return str;
 }
+
+export function readArrayBuffer(
+  wasmModule: PdfiumModule,
+  readChars: (buffer: number, bufferLength: number) => number
+): ArrayBuffer {
+  const bufferSize = readChars(0, 0);
+
+  const bufferPtr = wasmModule._malloc(bufferSize);
+
+  readChars(bufferPtr, bufferSize);
+
+  const arrayBuffer = new ArrayBuffer(bufferSize);
+  const view = new DataView(arrayBuffer);
+
+  for (let i = 0; i < bufferSize; i++) {
+    view.setInt8(i, wasmModule.getValue(bufferPtr + i, 'i8'));
+  }
+
+  wasmModule._free(bufferPtr);
+
+  return arrayBuffer;
+}

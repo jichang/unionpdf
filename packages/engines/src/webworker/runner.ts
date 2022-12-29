@@ -127,6 +127,9 @@ export class EngineRunner {
       case 'getBookmarks':
         task = this.engine[name]!(...args);
         break;
+      case 'getSignatures':
+        task = this.engine[name]!(...args);
+        break;
       case 'renderPage':
         task = this.engine[name]!(...args);
         break;
@@ -160,7 +163,7 @@ export class EngineRunner {
       case 'saveAsCopy':
         task = this.engine[name]!(...args);
         break;
-      case 'readAttachments':
+      case 'getAttachments':
         task = this.engine[name]!(...args);
         break;
       case 'readAttachmentContent':

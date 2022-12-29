@@ -29,6 +29,7 @@ import {
   PdfThumbnails,
   PdfPages,
   PdfBookmarks,
+  PdfSignatures,
   LoggerContextProvider,
   PdfToolbarNavigationtemGroup,
   PdfSearchPanel,
@@ -78,6 +79,13 @@ function App(props: AppProps) {
       return !isVisible;
     });
   }, [setMetadataIsVisible]);
+
+  const [signaturesIsVisible, setSignaturesIsVisible] = useState(false);
+  const toggleSignaturesIsVisible = useCallback(() => {
+    setSignaturesIsVisible((isVisible) => {
+      return !isVisible;
+    });
+  }, [setSignaturesIsVisible]);
 
   const [bookmarksIsVisible, setBookmarksIsVisible] = useState(false);
   const toggleBookmarksIsVisible = useCallback(() => {
@@ -200,6 +208,7 @@ function App(props: AppProps) {
                         onToggleOutlines={toggleBookmarksIsVisible}
                         onToggleThumbnails={toggleThumbnailsIsVisible}
                         onToggleAttachments={toggleIsAttachmentsVisible}
+                        onToggleSignatures={toggleSignaturesIsVisible}
                       />
                       <PdfPagesToolbar
                         scaleFactor={scaleFactor}
@@ -234,6 +243,18 @@ function App(props: AppProps) {
                     {isAttachmentsOpened ? (
                       <div className="app__dialog">
                         <PdfAttachments />
+                      </div>
+                    ) : null}
+                    {signaturesIsVisible ? (
+                      <div className="app__dialog">
+                        <PdfSignatures
+                          onSignaturesLoaded={(signatures) => {
+                            console.log(
+                              'You can verify the signature here: ',
+                              signatures
+                            );
+                          }}
+                        />
                       </div>
                     ) : null}
                   </PdfDocument>

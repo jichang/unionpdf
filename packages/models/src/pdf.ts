@@ -98,6 +98,15 @@ export interface PdfBookmarkObject {
   children?: PdfBookmarkObject[];
 }
 
+export interface PdfSignatureObject {
+  contents: ArrayBuffer;
+  byteRange: ArrayBuffer;
+  subFilter: ArrayBuffer;
+  reason: string;
+  time: string;
+  docMDP: number;
+}
+
 export interface PdfBookmarksObject {
   bookmarks: PdfBookmarkObject[];
 }
@@ -468,6 +477,9 @@ export interface PdfEngine {
   getMetadata: (
     doc: PdfDocumentObject
   ) => Task<PdfMetadataObject, PdfEngineError>;
+  getSignatures: (
+    doc: PdfDocumentObject
+  ) => Task<PdfSignatureObject[], PdfEngineError>;
   getBookmarks: (
     doc: PdfDocumentObject
   ) => Task<PdfBookmarksObject, PdfEngineError>;
@@ -520,7 +532,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     contextId: number
   ) => Task<boolean, PdfEngineError>;
-  readAttachments: (
+  getAttachments: (
     doc: PdfDocumentObject
   ) => Task<PdfAttachmentObject[], PdfEngineError>;
   readAttachmentContent: (

@@ -120,6 +120,7 @@ export interface UIStrings {
   fileSize: string;
   fileCreationDate: string;
   download: string;
+  signatures: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -152,6 +153,7 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   fileSize: 'Size',
   fileCreationDate: 'Creation Date',
   download: 'Download',
+  signatures: 'Signatures',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

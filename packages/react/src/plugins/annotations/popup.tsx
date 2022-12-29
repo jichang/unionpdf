@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   PdfAnnotationObject,
   PdfPageObject,
   PdfPopupAnnoObject,
   Rotation,
 } from '@unionpdf/models';
-import './text.css';
+import './popup.css';
+import { calculateRectStyle } from '../helpers/annotation';
 
 export interface PdfPagePopupAnnotationProps {
   page: PdfPageObject;
@@ -16,10 +17,14 @@ export interface PdfPagePopupAnnotationProps {
 }
 
 export function PdfPagePopupAnnotation(props: PdfPagePopupAnnotationProps) {
-  const { annotation } = props;
+  const { annotation, scaleFactor, rotation } = props;
+
+  const style = useMemo(() => {
+    return calculateRectStyle(annotation.rect, scaleFactor, rotation);
+  }, [annotation, rotation, scaleFactor]);
 
   return (
-    <div className="pdf__annotation--popup">
+    <div className="pdf__annotation--popup" style={style}>
       <span>{annotation.contents}</span>
     </div>
   );

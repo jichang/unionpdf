@@ -1,4 +1,5 @@
 .pdf__annotation--popup {
   user-select: none;
   position: absolute;
+  display: none;
 }
