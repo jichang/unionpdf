@@ -35,6 +35,7 @@ import {
   PdfSearchPanel,
   PdfAttachments,
   PdfFullFledgedPageContent,
+  PdfLinkAnnoContextProvider,
 } from '../src/index';
 import {
   createPdfiumModule,
@@ -220,13 +221,19 @@ function App(props: AppProps) {
                       <PdfToolbarDocItemGroup />
                     </PdfToolbar>
                     {metadataIsVisible ? <PdfMetadata /> : null}
-                    <PdfPages
-                      prerenderRange={[-1, 1]}
-                      cacheRange={[-5, 5]}
-                      scaleFactor={scaleFactor}
-                      rotation={rotation}
-                      pageContentComponent={PdfFullFledgedPageContent}
-                    />
+                    <PdfLinkAnnoContextProvider
+                      onClick={(evt, annotation) => {
+                        console.log(evt, annotation);
+                      }}
+                    >
+                      <PdfPages
+                        prerenderRange={[-1, 1]}
+                        cacheRange={[-5, 5]}
+                        scaleFactor={scaleFactor}
+                        rotation={rotation}
+                        pageContentComponent={PdfFullFledgedPageContent}
+                      />
+                    </PdfLinkAnnoContextProvider>
                     {thumbnailsIsVisible ? (
                       <PdfThumbnails
                         layout={{ direction: 'vertical', itemsCount: 2 }}

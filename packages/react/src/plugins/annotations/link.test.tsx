@@ -8,6 +8,7 @@ import {
   PdfLinkAnnoObject,
   PdfPageObject,
 } from '@unionpdf/models';
+import { PdfLinkAnnoContextProvider } from './link.context';
 
 describe('PdfPageLink', () => {
   test('should render pdf link', async () => {
@@ -42,13 +43,14 @@ describe('PdfPageLink', () => {
     };
     const onClick = jest.fn();
     const result = render(
-      <PdfPageLinkAnnotation
-        page={page}
-        annotation={link}
-        scaleFactor={1}
-        rotation={0}
-        onClick={onClick}
-      />
+      <PdfLinkAnnoContextProvider onClick={onClick}>
+        <PdfPageLinkAnnotation
+          page={page}
+          annotation={link}
+          scaleFactor={1}
+          rotation={0}
+        />
+      </PdfLinkAnnoContextProvider>
     );
 
     const linkElem = document.querySelector(
@@ -65,7 +67,7 @@ describe('PdfPageLink', () => {
       fireEvent.click(aElem);
     });
 
-    expect(onClick).toBeCalledWith(link);
+    expect(onClick).toBeCalledTimes(1);
 
     result.unmount();
   });

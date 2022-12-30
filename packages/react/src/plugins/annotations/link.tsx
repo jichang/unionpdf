@@ -8,13 +8,13 @@ import {
 import './link.css';
 import { PdfPageAnnotationBase } from './annotation';
 import { usePdfNavigator } from '../../core/navigator.context';
+import { usePdfLinkAnnoContext } from './link.context';
 
 export interface PdfPageLinkAnnotationProps {
   page: PdfPageObject;
   annotation: PdfLinkAnnoObject;
   scaleFactor: number;
   rotation: Rotation;
-  onClick?: (linkAnnoObject: PdfLinkAnnoObject) => void;
 }
 
 export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
@@ -38,38 +38,44 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
     }
   }, [annotation]);
 
+  const context = usePdfLinkAnnoContext();
+
   const onClick = useCallback(
-    (evt: React.MouseEvent) => {
-      if (props.onClick) {
-        props.onClick(annotation);
+    (evt: React.MouseEvent<HTMLAnchorElement>) => {
+      if (context.onClick) {
+        context.onClick(evt, annotation);
+      }
+
+      if (evt.isDefaultPrevented()) {
+        return;
+      }
+
+      evt.preventDefault();
+
+      if (!annotation.target) {
+        return;
+      }
+
+      if (annotation.target.type === 'action') {
+        switch (annotation.target.action.type) {
+          case PdfActionType.Goto:
+            pdfNavigator?.gotoPage(
+              { destination: annotation.target.action.destination },
+              'annotation'
+            );
+            break;
+          case PdfActionType.URI:
+            window.open(annotation.target.action.uri, '_blank');
+            break;
+        }
       } else {
-        evt.preventDefault();
-
-        if (!annotation.target) {
-          return;
-        }
-
-        if (annotation.target.type === 'action') {
-          switch (annotation.target.action.type) {
-            case PdfActionType.Goto:
-              pdfNavigator?.gotoPage(
-                { destination: annotation.target.action.destination },
-                'annotation'
-              );
-              break;
-            case PdfActionType.URI:
-              window.open(annotation.target.action.uri, '_blank');
-              break;
-          }
-        } else {
-          pdfNavigator?.gotoPage(
-            { destination: annotation.target.destination },
-            'annotation'
-          );
-        }
+        pdfNavigator?.gotoPage(
+          { destination: annotation.target.destination },
+          'annotation'
+        );
       }
     },
-    [pdfNavigator, page, annotation, props.onClick]
+    [pdfNavigator, page, annotation, context.onClick]
   );
 
   return (

@@ -39,12 +39,13 @@ export function PdfToolbarNavigationtemGroup(
     onToggleThumbnails,
     onToggleAttachments,
     onToggleSignatures,
+    ...rest
   } = props;
   const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
   const strings = useUIStrings();
 
   return (
-    <ToolbarItemGroupComponent>
+    <ToolbarItemGroupComponent {...rest}>
       <ButtonComponent onClick={onToggleMetadata}>
         {strings.metadata}
       </ButtonComponent>
@@ -68,7 +69,7 @@ export function PdfToolbarNavigationtemGroup(
 export interface PdfToolbarDocItemGroupProps extends ComponentProps<'div'> {}
 
 export function PdfToolbarDocItemGroup(props: PdfToolbarDocItemGroupProps) {
-  const { children } = props;
+  const { children, ...rest } = props;
   const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
   const strings = useUIStrings();
   const doc = usePdfDocument();
@@ -89,7 +90,7 @@ export function PdfToolbarDocItemGroup(props: PdfToolbarDocItemGroupProps) {
   const print = useCallback(() => {}, [engine, doc]);
 
   return (
-    <ToolbarItemGroupComponent>
+    <ToolbarItemGroupComponent {...rest}>
       <ButtonComponent onClick={saveAs}>{strings.saveAs}</ButtonComponent>
       <ButtonComponent onClick={print}>{strings.print}</ButtonComponent>
       {children}
