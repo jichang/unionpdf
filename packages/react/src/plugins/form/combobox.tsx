@@ -28,7 +28,7 @@ export function ComboboxField(props: ComboboxFieldProps) {
   });
 
   const isDisabled =
-    mode === PdfApplicationMode.Read || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
+    mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isMultipleChoice = !!(flag & PDF_FORM_FIELD_FLAG.CHOICE_MULTL_SELECT);
 

@@ -3,22 +3,23 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
 import { PdfPageContentComponentProps, PdfPages } from '../pages';
-import { PdfPageTextLayer } from './text';
+import { PdfPageEditorLayer } from './editor';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
-import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
+import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 
-describe('PdfPageTextLayer', () => {
-  function PdfPageContent(props: PdfPageContentComponentProps) {
-    return (
-      <>
-        <PdfPageTextLayer {...props} />
-      </>
-    );
-  }
+function PdfPageContent(props: PdfPageContentComponentProps) {
+  return (
+    <>
+      <PdfPageEditorLayer {...props} />
+    </>
+  );
+}
 
-  test('should render pdf text', async () => {
+describe('PdfPageEditorLayer', () => {
+  test('should render pdf editor', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
@@ -31,19 +32,20 @@ describe('PdfPageTextLayer', () => {
         return closeDocumentTask;
       }),
     });
-
     const result = render(
-      <PdfEngineContextProvider engine={engine}>
-        <PdfDocument
-          id="test"
-          source={new Uint8Array()}
-          password=""
-          onOpenSuccess={jest.fn()}
-          onOpenFailure={jest.fn()}
-        >
-          <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
-        </PdfDocument>
-      </PdfEngineContextProvider>
+      <PdfApplicationContextProvider mode={PdfApplicationMode.Edit}>
+        <PdfEngineContextProvider engine={engine}>
+          <PdfDocument
+            id="test"
+            source={new Uint8Array()}
+            password=""
+            onOpenSuccess={jest.fn()}
+            onOpenFailure={jest.fn()}
+          >
+            <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
+          </PdfDocument>
+        </PdfEngineContextProvider>
+      </PdfApplicationContextProvider>
     );
 
     act(() => {
@@ -54,9 +56,9 @@ describe('PdfPageTextLayer', () => {
       intersectionObserver.simulate([{ isIntersecting: true }]);
     });
 
-    expect(document.querySelectorAll('.pdf__text__span').length).toEqual(
-      pdf.pageCount
-    );
+    expect(
+      document.querySelectorAll('.pdf__page__layer--editor').length
+    ).toEqual(10);
 
     result.unmount();
     intersectionObserver.restore();

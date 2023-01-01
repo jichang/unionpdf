@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
 import { PdfPageContentComponentProps, PdfPages } from '../pages';
-import { PdfPageCanvas } from './canvas';
+import { PdfPageCanvasLayer } from './canvas';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
@@ -12,12 +12,12 @@ import { intersectionObserver } from '@shopify/jest-dom-mocks';
 function PdfPageContent(props: PdfPageContentComponentProps) {
   return (
     <>
-      <PdfPageCanvas {...props} />
+      <PdfPageCanvasLayer {...props} />
     </>
   );
 }
 
-describe('PdfPageCanvas', () => {
+describe('PdfPageCanvasLayer', () => {
   test('should render pdf canvas', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();

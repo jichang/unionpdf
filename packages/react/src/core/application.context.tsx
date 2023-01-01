@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext } from 'react';
 
 export enum PdfApplicationMode {
-  Read,
+  View,
   Edit,
 }
 
@@ -11,7 +11,7 @@ export interface PdfApplicationContextValue {
 
 export const PdfApplicationContext =
   React.createContext<PdfApplicationContextValue>({
-    mode: PdfApplicationMode.Read,
+    mode: PdfApplicationMode.View,
   });
 
 export interface PdfApplicationContextProviderProps

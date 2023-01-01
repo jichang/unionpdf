@@ -2,9 +2,10 @@ import React, { ReactNode } from 'react';
 import { PdfPageContentComponentProps } from './pages';
 import {
   PdfPageAnnotationComponentProps,
-  PdfPageAnnotations,
-  PdfPageCanvas,
-  PdfPageText,
+  PdfPageAnnotationsLayer,
+  PdfPageCanvasLayer,
+  PdfPageTextLayer,
+  PdfPageEditorLayer,
 } from './pageLayers';
 import {
   PdfPageAnnotationBase,
@@ -57,12 +58,13 @@ export function PdfFullFledgedPageContent(
 ) {
   return (
     <>
-      <PdfPageCanvas {...props} />
-      <PdfPageText {...props} />
-      <PdfPageAnnotations
+      <PdfPageCanvasLayer {...props} />
+      <PdfPageTextLayer {...props} />
+      <PdfPageAnnotationsLayer
         {...props}
         annotationComponent={PdfFullFledgedPageAnnotation}
       />
+      <PdfPageEditorLayer {...props} />
     </>
   );
 }

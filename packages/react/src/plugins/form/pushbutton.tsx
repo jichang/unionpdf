@@ -15,7 +15,7 @@ export function PushButtonField(props: PushButtonFieldProps) {
   const name = field.alternateName || field.name;
 
   const isDisabled =
-    mode === PdfApplicationMode.Read || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
+    mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
 
   const { ButtonComponent } = useUIComponents();
 

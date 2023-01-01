@@ -3,13 +3,13 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
 import { PdfPageContentComponentProps, PdfPages } from '../pages';
-import { PdfPageAnnotations } from './annotations';
+import { PdfPageAnnotationsLayer } from './annotations';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
 
-describe('PdfPageAnnotations', () => {
+describe('PdfPageAnnotationsLayer', () => {
   function PdfPageAnnotation() {
     return <div className="pdf__annotation"></div>;
   }
@@ -17,7 +17,7 @@ describe('PdfPageAnnotations', () => {
   function PdfPageContent(props: PdfPageContentComponentProps) {
     return (
       <>
-        <PdfPageAnnotations
+        <PdfPageAnnotationsLayer
           {...props}
           annotationComponent={PdfPageAnnotation}
         />

@@ -23,7 +23,7 @@ export function CheckboxField(props: CheckboxFieldProps) {
   );
 
   const isDisabled =
-    mode === PdfApplicationMode.Read || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
+    mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
 
   const { CheckboxComponent } = useUIComponents();

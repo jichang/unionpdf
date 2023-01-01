@@ -18,7 +18,7 @@ export type PdfPageAnnotationComponent = (
   props: PdfPageAnnotationComponentProps
 ) => JSX.Element;
 
-export interface PdfPageAnnotationsProps {
+export interface PdfPageAnnotationsLayerProps {
   isVisible: boolean;
   page: PdfPageObject;
   scaleFactor: number;
@@ -26,7 +26,7 @@ export interface PdfPageAnnotationsProps {
   annotationComponent: PdfPageAnnotationComponent;
 }
 
-export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
+export function PdfPageAnnotationsLayer(props: PdfPageAnnotationsLayerProps) {
   const {
     isVisible,
     page,

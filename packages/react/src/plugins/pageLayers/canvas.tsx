@@ -11,7 +11,7 @@ export interface PdfPageCanvasLayerProps {
   inCacheRange: boolean;
 }
 
-export function PdfPageCanvas(props: PdfPageCanvasLayerProps) {
+export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
   const doc = usePdfDocument();
   const engine = usePdfEngine();
   const { page, scaleFactor, rotation, inVisibleRange, inCacheRange } = props;

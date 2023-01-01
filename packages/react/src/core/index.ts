@@ -6,4 +6,5 @@ export * from './document';
 export * from './document.context';
 export * from './logger.context';
 export * from './engine.context';
+export * from './editor.context';
 export * from './theme.context';

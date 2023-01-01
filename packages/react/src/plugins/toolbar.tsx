@@ -4,6 +4,7 @@ import './toolbar.css';
 import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument, usePdfEngine } from '../core';
 import { ignore } from '@unionpdf/models';
+import classNames from 'classnames';
 
 export interface PdfToolbarProps extends ComponentProps<'div'> {}
 
@@ -20,8 +21,7 @@ export function PdfToolbar(props: PdfToolbarProps) {
   );
 }
 
-export interface PdfToolbarNavigationItemGroupProps
-  extends ComponentProps<'div'> {
+export interface PdfToolbarBrowseItemGroupProps extends ComponentProps<'div'> {
   onToggleMetadata: () => void;
   onToggleThumbnails: () => void;
   onToggleOutlines: () => void;
@@ -29,10 +29,11 @@ export interface PdfToolbarNavigationItemGroupProps
   onToggleSignatures: () => void;
 }
 
-export function PdfToolbarNavigationtemGroup(
-  props: PdfToolbarNavigationItemGroupProps
+export function PdfToolbarBrowseItemGroup(
+  props: PdfToolbarBrowseItemGroupProps
 ) {
   const {
+    className,
     children,
     onToggleMetadata,
     onToggleOutlines,
@@ -45,7 +46,10 @@ export function PdfToolbarNavigationtemGroup(
   const strings = useUIStrings();
 
   return (
-    <ToolbarItemGroupComponent {...rest}>
+    <ToolbarItemGroupComponent
+      className={classNames('pdf__toolbar__item__group', className)}
+      {...rest}
+    >
       <ButtonComponent onClick={onToggleMetadata}>
         {strings.metadata}
       </ButtonComponent>
@@ -66,10 +70,12 @@ export function PdfToolbarNavigationtemGroup(
   );
 }
 
-export interface PdfToolbarDocItemGroupProps extends ComponentProps<'div'> {}
+export interface PdfToolbarManageItemGroupProps extends ComponentProps<'div'> {}
 
-export function PdfToolbarDocItemGroup(props: PdfToolbarDocItemGroupProps) {
-  const { children, ...rest } = props;
+export function PdfToolbarManageItemGroup(
+  props: PdfToolbarManageItemGroupProps
+) {
+  const { className, children, ...rest } = props;
   const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
   const strings = useUIStrings();
   const doc = usePdfDocument();
@@ -90,7 +96,10 @@ export function PdfToolbarDocItemGroup(props: PdfToolbarDocItemGroupProps) {
   const print = useCallback(() => {}, [engine, doc]);
 
   return (
-    <ToolbarItemGroupComponent {...rest}>
+    <ToolbarItemGroupComponent
+      className={classNames('pdf__toolbar__item__group', className)}
+      {...rest}
+    >
       <ButtonComponent onClick={saveAs}>{strings.saveAs}</ButtonComponent>
       <ButtonComponent onClick={print}>{strings.print}</ButtonComponent>
       {children}

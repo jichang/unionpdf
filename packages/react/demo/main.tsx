@@ -24,14 +24,15 @@ import {
   PdfApplication,
   PdfMetadata,
   PdfToolbar,
-  PdfPagesToolbar,
-  PdfToolbarDocItemGroup,
+  PdfToolbarBrowseItemGroup,
+  PdfToolbarViewPagesItemGroup,
+  PdfToolbarEditPagesItemGroup,
+  PdfToolbarManageItemGroup,
   PdfThumbnails,
   PdfPages,
   PdfBookmarks,
   PdfSignatures,
   LoggerContextProvider,
-  PdfToolbarNavigationtemGroup,
   PdfSearchPanel,
   PdfAttachments,
   PdfFullFledgedPageContent,
@@ -51,13 +52,13 @@ export interface AppProps {
 
 function App(props: AppProps) {
   const { logger, engine } = props;
-  const [mode, setMode] = useState(PdfApplicationMode.Read);
+  const [mode, setMode] = useState(PdfApplicationMode.View);
 
   const toggleMode = useCallback(() => {
     setMode((mode: PdfApplicationMode) => {
-      return mode === PdfApplicationMode.Read
+      return mode === PdfApplicationMode.View
         ? PdfApplicationMode.Edit
-        : PdfApplicationMode.Read;
+        : PdfApplicationMode.View;
     });
   }, [setMode]);
 
@@ -136,6 +137,9 @@ function App(props: AppProps) {
     });
   }, [setIsAttachmentsOpened]);
 
+  const [password, setPassword] = useState('');
+  const [isPasswordOpened, setIsPasswordOpened] = useState(false);
+
   const [file, setFile] = useState<{
     id: string;
     source: ArrayBuffer;
@@ -150,6 +154,7 @@ function App(props: AppProps) {
           id: file.name,
           source: arrayBuffer,
         });
+        setPassword('');
         setRotation(0);
         setScaleFactor(1);
         pdfNavigator.gotoPage(
@@ -169,16 +174,10 @@ function App(props: AppProps) {
     [setFile, pdfNavigator]
   );
 
-  const [password, setPassword] = useState('');
-  const [isPasswordOpened, setIsPasswordOpened] = useState(false);
-
   return (
     <div className="App">
       <div className="app__toolbar">
         <input type="file" onChange={selectFile} />
-        <button onClick={toggleMode}>
-          {mode === PdfApplicationMode.Edit ? 'View' : 'Edit'}
-        </button>
       </div>
       {file ? (
         <LoggerContextProvider logger={logger}>
@@ -204,21 +203,36 @@ function App(props: AppProps) {
                     }}
                   >
                     <PdfToolbar>
-                      <PdfToolbarNavigationtemGroup
-                        onToggleMetadata={toggleMetadataIsVisible}
-                        onToggleOutlines={toggleBookmarksIsVisible}
-                        onToggleThumbnails={toggleThumbnailsIsVisible}
-                        onToggleAttachments={toggleIsAttachmentsVisible}
-                        onToggleSignatures={toggleSignaturesIsVisible}
-                      />
-                      <PdfPagesToolbar
-                        scaleFactor={scaleFactor}
-                        changeScaleFactor={changeScaleFactor}
-                        rotation={rotation}
-                        changeRotation={changeRotation}
-                        toggleIsSearchPanelOpened={toggleIsSearchPanelOpened}
-                      />
-                      <PdfToolbarDocItemGroup />
+                      {mode === PdfApplicationMode.View ? (
+                        <PdfToolbarBrowseItemGroup
+                          className="pdf__toolbar__item__group--left"
+                          onToggleMetadata={toggleMetadataIsVisible}
+                          onToggleOutlines={toggleBookmarksIsVisible}
+                          onToggleThumbnails={toggleThumbnailsIsVisible}
+                          onToggleAttachments={toggleIsAttachmentsVisible}
+                          onToggleSignatures={toggleSignaturesIsVisible}
+                        />
+                      ) : null}
+                      {mode === PdfApplicationMode.View ? (
+                        <PdfToolbarViewPagesItemGroup
+                          className="pdf__toolbar__item__group--center"
+                          scaleFactor={scaleFactor}
+                          changeScaleFactor={changeScaleFactor}
+                          rotation={rotation}
+                          changeRotation={changeRotation}
+                          toggleIsSearchPanelOpened={toggleIsSearchPanelOpened}
+                        />
+                      ) : (
+                        <PdfToolbarEditPagesItemGroup></PdfToolbarEditPagesItemGroup>
+                      )}
+                      <PdfToolbarManageItemGroup className="pdf__toolbar__item__group--right">
+                        <button
+                          onClick={toggleMode}
+                          className="pdf__ui__button"
+                        >
+                          {mode === PdfApplicationMode.Edit ? 'View' : 'Edit'}
+                        </button>
+                      </PdfToolbarManageItemGroup>
                     </PdfToolbar>
                     {metadataIsVisible ? <PdfMetadata /> : null}
                     <PdfLinkAnnoContextProvider
@@ -274,6 +288,7 @@ function App(props: AppProps) {
       {isPasswordOpened ? (
         <div className="app__dialog">
           <div>
+            <label>Input the password</label>
             <input
               type="text"
               value={password}

@@ -12,10 +12,13 @@ import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument } from '../core/document.context';
 import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
+import classNames from 'classnames';
 
-export const PDF_NAVIGATOR_SOURCE_TOOLBAR = 'PdfPagesToolbar';
+export const PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR =
+  'PdfToolbarViewPagesItemGroup';
 
-export interface PdfPagesToolbarProps extends ComponentProps<'div'> {
+export interface PdfToolbarViewPagesItemGroupProps
+  extends ComponentProps<'div'> {
   scaleFactor: number;
   changeScaleFactor: (evt: ChangeEvent<HTMLInputElement>) => void;
   rotation: Rotation;
@@ -23,8 +26,11 @@ export interface PdfPagesToolbarProps extends ComponentProps<'div'> {
   toggleIsSearchPanelOpened: () => void;
 }
 
-export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
+export function PdfToolbarViewPagesItemGroup(
+  props: PdfToolbarViewPagesItemGroupProps
+) {
   const {
+    className,
     scaleFactor,
     changeScaleFactor,
     rotation,
@@ -58,7 +64,7 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
               view: [],
             },
           },
-          PDF_NAVIGATOR_SOURCE_TOOLBAR
+          PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR
         );
         setCurrPageIndex(pageIndex - 1);
       }
@@ -75,16 +81,22 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
       const handle = (evt: PdfNavigatorEvent, source: string) => {
         switch (evt.kind) {
           case 'GotoPage':
-            if (source !== PDF_NAVIGATOR_SOURCE_TOOLBAR) {
+            if (source !== PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR) {
               setCurrPageIndex(evt.data.destination.pageIndex);
             }
             break;
         }
       };
-      pdfNavigator.addEventListener(PDF_NAVIGATOR_SOURCE_TOOLBAR, handle);
+      pdfNavigator.addEventListener(
+        PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR,
+        handle
+      );
 
       return () => {
-        pdfNavigator.removeEventListener(PDF_NAVIGATOR_SOURCE_TOOLBAR, handle);
+        pdfNavigator.removeEventListener(
+          PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR,
+          handle
+        );
       };
     }
   }, [pdfNavigator, setCurrPageIndex]);
@@ -110,7 +122,10 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
 
   return (
     <ErrorBoundary>
-      <ToolbarItemGroupComponent {...rest}>
+      <ToolbarItemGroupComponent
+        className={classNames('pdf__toolbar__item__group', className)}
+        {...rest}
+      >
         <SelectComponent
           className="pdf__toolbar__select pdf__toolbar__select--rotation"
           value={rotation}
@@ -137,6 +152,32 @@ export function PdfPagesToolbar(props: PdfPagesToolbarProps) {
         <ButtonComponent onClick={toggleIsSearchPanelOpened}>
           {strings.search}
         </ButtonComponent>
+      </ToolbarItemGroupComponent>
+    </ErrorBoundary>
+  );
+}
+
+export interface PdfToolbarEditPagesItemGroupProps
+  extends ComponentProps<'div'> {}
+
+export function PdfToolbarEditPagesItemGroup(
+  props: PdfToolbarEditPagesItemGroupProps
+) {
+  const { className, children, ...rest } = props;
+  const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
+
+  const strings = useUIStrings();
+
+  return (
+    <ErrorBoundary>
+      <ToolbarItemGroupComponent
+        className={classNames('pdf__toolbar__item__group', className)}
+        {...rest}
+      >
+        <ButtonComponent>{strings.pencil}</ButtonComponent>
+        <ButtonComponent>{strings.addTextBox}</ButtonComponent>
+        <ButtonComponent>{strings.addSignature}</ButtonComponent>
+        <ButtonComponent>{strings.addImage}</ButtonComponent>
       </ToolbarItemGroupComponent>
     </ErrorBoundary>
   );

@@ -121,6 +121,10 @@ export interface UIStrings {
   fileCreationDate: string;
   download: string;
   signatures: string;
+  pencil: string;
+  addTextBox: string;
+  addSignature: string;
+  addImage: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -154,6 +158,10 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   fileCreationDate: 'Creation Date',
   download: 'Download',
   signatures: 'Signatures',
+  pencil: 'Pencil',
+  addTextBox: 'Add Text Box',
+  addSignature: 'Add Signature',
+  addImage: 'Add Image',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

@@ -9,14 +9,14 @@ import { usePdfEngine, usePdfDocument } from '../../core';
 import { calculateRectStyle } from '../helpers/annotation';
 import './text.css';
 
-export interface PdfPageTextProps {
+export interface PdfPageTextLayerProps {
   isVisible: boolean;
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
 }
 
-export function PdfPageText(props: PdfPageTextProps) {
+export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();
   const doc = usePdfDocument();

@@ -1,12 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { PdfPagesToolbar } from './pages.toolbar';
+import { PdfToolbarViewPagesItemGroup } from './pages.toolbar';
 
-describe('PdfPagesToolbar', () => {
+describe('PdfToolbarViewPagesItemGroup', () => {
   it('Toolbar should render div with children', () => {
     const result = render(
-      <PdfPagesToolbar
+      <PdfToolbarViewPagesItemGroup
         scaleFactor={1}
         changeRotation={jest.fn()}
         rotation={0}
