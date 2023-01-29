@@ -125,6 +125,7 @@ export interface UIStrings {
   addTextBox: string;
   addSignature: string;
   addImage: string;
+  selection: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -162,6 +163,7 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   addTextBox: 'Add Text Box',
   addSignature: 'Add Signature',
   addImage: 'Add Image',
+  selection: 'Selection',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

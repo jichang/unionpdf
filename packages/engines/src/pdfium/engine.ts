@@ -36,6 +36,7 @@ import {
   PdfSignatureObject,
   PdfMetadataObject,
   PdfBookmarksObject,
+  PdfRenderOptions,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -595,7 +596,8 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
+    options: PdfRenderOptions
   ): Task<ImageData, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
@@ -604,7 +606,8 @@ export class PdfiumEngine implements PdfEngine {
       doc,
       page,
       scaleFactor,
-      rotation
+      rotation,
+      options
     );
 
     if (!this.docs[doc.id]) {
@@ -633,7 +636,10 @@ export class PdfiumEngine implements PdfEngine {
       bitmapSize.height,
       0xffffffff
     );
-    const flags = RenderFlag.REVERSE_BYTE_ORDER | RenderFlag.ANNOT;
+    let flags = RenderFlag.REVERSE_BYTE_ORDER;
+    if (options?.withAnnotations) {
+      flags = flags | RenderFlag.ANNOT;
+    }
     const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
     this.wasmModuleWrapper.FPDF_RenderPageBitmap(
       bitmapPtr,
@@ -755,7 +761,9 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     scaleFactor = Math.max(scaleFactor, 0.5);
-    return this.renderPage(doc, page, scaleFactor, rotation);
+    return this.renderPage(doc, page, scaleFactor, rotation, {
+      withAnnotations: true,
+    });
   }
 
   saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {

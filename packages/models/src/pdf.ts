@@ -454,6 +454,10 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
   }
 }
 
+export interface PdfRenderOptions {
+  withAnnotations: boolean;
+}
+
 export class PdfEngineError extends Error {
   code?: number;
 
@@ -487,14 +491,16 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
+    options: PdfRenderOptions
   ) => Task<ImageData, PdfEngineError>;
   renderPageRect?: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-    rect: Rect
+    rect: Rect,
+    options: PdfRenderOptions
   ) => Task<ImageData, PdfEngineError>;
   getPageAnnotations: (
     doc: PdfDocumentObject,

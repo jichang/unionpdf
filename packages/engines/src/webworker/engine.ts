@@ -10,6 +10,7 @@ import {
   SearchTarget,
   Task,
 } from '@unionpdf/models';
+import { PdfRenderOptions } from '@unionpdf/models';
 import {
   Logger,
   NoopLogger,
@@ -241,7 +242,8 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
+    options: PdfRenderOptions
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -250,7 +252,8 @@ export class WebWorkerEngine implements PdfEngine {
       doc,
       page,
       scaleFactor,
-      rotation
+      rotation,
+      options
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<ImageData>(this.worker, requestId);
@@ -260,7 +263,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'renderPage',
-        args: [doc, page, scaleFactor, rotation],
+        args: [doc, page, scaleFactor, rotation, options],
       },
     };
     this.proxy(task, request);
@@ -273,7 +276,8 @@ export class WebWorkerEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-    rect: Rect
+    rect: Rect,
+    options: PdfRenderOptions
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -283,7 +287,8 @@ export class WebWorkerEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
-      rect
+      rect,
+      options
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<ImageData>(this.worker, requestId);
@@ -293,7 +298,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'renderPageRect',
-        args: [doc, page, scaleFactor, rotation, rect],
+        args: [doc, page, scaleFactor, rotation, rect, options],
       },
     };
     this.proxy(task, request);

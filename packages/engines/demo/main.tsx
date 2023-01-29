@@ -72,7 +72,9 @@ async function run() {
             for (let i = 0; i < doc.pageCount; i++) {
               const page = doc.pages[i];
 
-              const renderTask = engine.renderPage(doc, page, 1, 0);
+              const renderTask = engine.renderPage(doc, page, 1, 0, {
+                withAnnotations: true,
+              });
               renderTask.wait((imageData) => {
                 const canvasElem = document.createElement(
                   'canvas'

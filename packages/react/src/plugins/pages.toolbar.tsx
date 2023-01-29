@@ -13,6 +13,7 @@ import { usePdfDocument } from '../core/document.context';
 import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
 import classNames from 'classnames';
+import { EditorTool, usePdfEditor } from '../core';
 
 export const PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR =
   'PdfToolbarViewPagesItemGroup';
@@ -164,9 +165,12 @@ export function PdfToolbarEditPagesItemGroup(
   props: PdfToolbarEditPagesItemGroupProps
 ) {
   const { className, children, ...rest } = props;
-  const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
+  const { ToolbarItemGroupComponent, InputComponent, ButtonComponent } =
+    useUIComponents();
 
   const strings = useUIStrings();
+
+  const { setTool } = usePdfEditor();
 
   return (
     <ErrorBoundary>
@@ -174,10 +178,43 @@ export function PdfToolbarEditPagesItemGroup(
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <ButtonComponent>{strings.pencil}</ButtonComponent>
-        <ButtonComponent>{strings.addTextBox}</ButtonComponent>
-        <ButtonComponent>{strings.addSignature}</ButtonComponent>
-        <ButtonComponent>{strings.addImage}</ButtonComponent>
+        <ButtonComponent
+          onClick={(evt) => {
+            setTool(EditorTool.Selection);
+          }}
+        >
+          {strings.selection}
+        </ButtonComponent>
+        <ButtonComponent
+          onClick={(evt) => {
+            setTool(EditorTool.Pencil);
+          }}
+        >
+          {strings.pencil}
+        </ButtonComponent>
+        <ButtonComponent
+          onClick={(evt) => {
+            setTool(EditorTool.AddTextBox);
+          }}
+        >
+          {strings.addTextBox}
+        </ButtonComponent>
+        <div>
+          {strings.addImage}
+          <InputComponent
+            type="file"
+            onClick={(evt) => {
+              setTool(EditorTool.AddImage);
+            }}
+          ></InputComponent>
+        </div>
+        <ButtonComponent
+          onClick={(evt) => {
+            setTool(EditorTool.AddSignature);
+          }}
+        >
+          {strings.addSignature}
+        </ButtonComponent>
       </ToolbarItemGroupComponent>
     </ErrorBoundary>
   );

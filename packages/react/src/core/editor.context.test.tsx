@@ -3,6 +3,7 @@ import {
   PdfEditorContextVale,
   PdfEditorContextProvider,
   usePdfEditor,
+  EditorTool,
 } from './editor.context';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
@@ -16,21 +17,18 @@ describe('PdfEditorContextProvider ', () => {
   }
 
   test('should assign context value', () => {
-    const editor = {
-      decorations: {},
-    };
-
     const result = render(
-      <PdfEditorContextProvider
-        decorations={editor.decorations}
-        addDecoration={jest.fn()}
-        removeDecoration={jest.fn()}
-      >
+      <PdfEditorContextProvider>
         <Consumer />
       </PdfEditorContextProvider>
     );
 
-    expect(editorInContext?.decorations).toBe(editor.decorations);
+    expect(editorInContext?.tool).toBe(EditorTool.Selection);
+    expect(editorInContext?.stacks).toStrictEqual({
+      undo: [],
+      redo: [],
+      committed: [],
+    });
 
     result?.unmount();
   });

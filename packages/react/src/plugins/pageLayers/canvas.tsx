@@ -1,6 +1,11 @@
 import { ignore, PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useRef, useEffect, useState } from 'react';
-import { usePdfDocument, usePdfEngine } from '../../core';
+import {
+  PdfApplicationMode,
+  usePdfApplication,
+  usePdfDocument,
+  usePdfEngine,
+} from '../../core';
 import './canvas.css';
 
 export interface PdfPageCanvasLayerProps {
@@ -12,6 +17,7 @@ export interface PdfPageCanvasLayerProps {
 }
 
 export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
+  const { mode } = usePdfApplication();
   const doc = usePdfDocument();
   const engine = usePdfEngine();
   const { page, scaleFactor, rotation, inVisibleRange, inCacheRange } = props;
@@ -21,14 +27,16 @@ export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
     if (canvasElem && engine && doc && inVisibleRange) {
-      const task = engine.renderPage(doc, page, scaleFactor, rotation);
+      const task = engine.renderPage(doc, page, scaleFactor, rotation, {
+        withAnnotations: mode === PdfApplicationMode.View,
+      });
       task.wait(setImageData, ignore);
 
       return () => {
         task.abort();
       };
     }
-  }, [page, engine, doc, inVisibleRange, scaleFactor, rotation]);
+  }, [mode, page, engine, doc, inVisibleRange, scaleFactor, rotation]);
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
