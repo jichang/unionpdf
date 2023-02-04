@@ -46,27 +46,18 @@ export function IntersectionObserverContextProvider(
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        const visiblities: Record<string, boolean> = {};
-        entries.forEach((entry, index) => {
-          const target = entry.target as HTMLElement;
-          const entryId = target.dataset.entryId || index;
-          visiblities[entryId] = entry.isIntersecting;
-        });
-
         setVisibleEntryIds((visibleEntryIds) => {
-          const updatedVisibleEntryIds: Set<number> = new Set();
+          const updatedVisibleEntryIds: Set<number> = new Set(visibleEntryIds);
 
-          for (const entryId of visibleEntryIds) {
-            if (visiblities[entryId] !== false) {
+          entries.forEach((entry, index) => {
+            const target = entry.target as HTMLDivElement;
+            const entryId = Number(target.dataset.entryId) || index;
+            if (entry.isIntersecting === false) {
+              updatedVisibleEntryIds.delete(entryId);
+            } else {
               updatedVisibleEntryIds.add(entryId);
             }
-          }
-
-          for (const entryId in visiblities) {
-            if (visiblities[entryId] === true) {
-              updatedVisibleEntryIds.add(Number(entryId));
-            }
-          }
+          });
 
           return updatedVisibleEntryIds;
         });

@@ -9,8 +9,8 @@ import {
 } from '@unionpdf/models';
 import { PdfPageAnnotationBase } from './annotation';
 
-describe('PdfPageLink', () => {
-  test('should render pdf link', async () => {
+describe('PdfPageAnnotationBase', () => {
+  test('should render pdf annotation', async () => {
     const page: PdfPageObject = {
       index: 0,
       size: {

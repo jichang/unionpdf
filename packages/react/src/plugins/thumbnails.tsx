@@ -9,7 +9,6 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePdfDocument } from '../core/document.context';
 import { usePdfEngine } from '../core/engine.context';
-import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
 import { ErrorBoundary } from '../ui/errorboundary';
 import {
@@ -42,36 +41,11 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
     rotation = 0,
   } = props;
   const doc = usePdfDocument();
-  const pdfNavigator = usePdfNavigator();
-  const [currPageIndex, setCurrPageIndex] = useState(
-    pdfNavigator?.currPageIndex || 0
-  );
+  const { currPageIndex, gotoPage } = usePdfNavigator();
 
-  useEffect(() => {
-    if (pdfNavigator) {
-      const handle = (evt: PdfNavigatorEvent, source: string) => {
-        switch (evt.kind) {
-          case 'GotoPage':
-            if (source !== PDF_NAVIGATOR_SOURCE_THUMBNAILS) {
-              setCurrPageIndex(evt.data.destination.pageIndex);
-            }
-            break;
-        }
-      };
-      pdfNavigator.addEventListener(PDF_NAVIGATOR_SOURCE_THUMBNAILS, handle);
-
-      return () => {
-        pdfNavigator.removeEventListener(
-          PDF_NAVIGATOR_SOURCE_THUMBNAILS,
-          handle
-        );
-      };
-    }
-  }, [pdfNavigator, setCurrPageIndex]);
-
-  const gotoPage = useCallback(
+  const jumpToPage = useCallback(
     (page: PdfPageObject) => {
-      pdfNavigator?.gotoPage(
+      gotoPage(
         {
           destination: {
             pageIndex: page.index,
@@ -83,9 +57,8 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
         },
         PDF_NAVIGATOR_SOURCE_THUMBNAILS
       );
-      setCurrPageIndex(page.index);
     },
-    [pdfNavigator, setCurrPageIndex]
+    [gotoPage]
   );
 
   const styleTemplate: string[] = [];
@@ -108,7 +81,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
           currPageIndex={currPageIndex}
           scaleFactor={scaleFactor}
           rotation={rotation}
-          gotoPage={gotoPage}
+          gotoPage={jumpToPage}
         />
       </IntersectionObserverContextProvider>
     </ErrorBoundary>

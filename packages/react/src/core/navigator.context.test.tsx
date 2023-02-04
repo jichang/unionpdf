@@ -2,13 +2,13 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import {
+  PdfNavigator,
   PdfNavigatorContextProvider,
   usePdfNavigator,
 } from './navigator.context';
-import { PdfNavigator } from './navigator';
 
 describe('PdfNavigatorContextProvider ', () => {
-  let pdfNavigatorInContext: PdfNavigator | null;
+  let pdfNavigatorInContext: PdfNavigator;
   function Consumer() {
     pdfNavigatorInContext = usePdfNavigator();
 
@@ -16,14 +16,13 @@ describe('PdfNavigatorContextProvider ', () => {
   }
 
   test('should assign context value', () => {
-    const pdfNavigator = new PdfNavigator();
     const result = render(
-      <PdfNavigatorContextProvider navigator={pdfNavigator}>
+      <PdfNavigatorContextProvider>
         <Consumer />
       </PdfNavigatorContextProvider>
     );
 
-    expect(pdfNavigatorInContext).toBe(pdfNavigator);
+    expect(pdfNavigatorInContext?.currPageIndex).toBe(0);
 
     result?.unmount();
   });

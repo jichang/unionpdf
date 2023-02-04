@@ -7,6 +7,7 @@ import {
   PdfAnnotationSubtype,
   PdfLinkAnnoObject,
   PdfPageObject,
+  PdfZoomMode,
 } from '@unionpdf/models';
 import { PdfLinkAnnoContextProvider } from './link.context';
 
@@ -25,8 +26,19 @@ describe('PdfPageLink', () => {
       target: {
         type: 'action',
         action: {
-          type: PdfActionType.URI,
-          uri: 'https://localhost',
+          type: PdfActionType.Goto,
+          destination: {
+            pageIndex: 0,
+            zoom: {
+              mode: PdfZoomMode.XYZ,
+              params: {
+                x: 0,
+                y: 0,
+                zoom: 0,
+              },
+            },
+            view: [],
+          },
         },
       },
       text: 'Link',

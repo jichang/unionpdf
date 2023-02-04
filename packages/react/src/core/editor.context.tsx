@@ -1,4 +1,4 @@
-import { PdfPageObject } from '@unionpdf/models';
+import { PdfAnnotationObject } from '@unionpdf/models';
 import React, { ReactNode, useCallback, useContext, useState } from 'react';
 
 export enum EditorTool {
@@ -10,21 +10,28 @@ export enum EditorTool {
 }
 
 export interface Operation {
+  id: string;
+  pageIndex: number;
   action: 'create' | 'update' | 'remove';
-  id: number;
+  annotation: PdfAnnotationObject;
+}
+
+export interface PdfEditorStackEntry {
+  id: string;
   pageIndex: number;
 }
 
 export interface PdfEditorStacks {
-  undo: Operation[];
-  redo: Operation[];
-  committed: Operation[];
+  undo: PdfEditorStackEntry[];
+  redo: PdfEditorStackEntry[];
+  committed: PdfEditorStackEntry[];
+  operations: Record<string, Operation[]>;
 }
 
 export interface PdfEditorContextVale {
   tool: EditorTool;
   setTool: (tool: EditorTool) => void;
-  stacks: PdfEditorStacks;
+  query: (pageIndex: number) => Operation[];
   exec: (operation: Operation) => void;
   undo: () => void;
   redo: () => void;
@@ -34,10 +41,8 @@ export interface PdfEditorContextVale {
 export const PdfEditorContext = React.createContext<PdfEditorContextVale>({
   tool: EditorTool.Selection,
   setTool: (tool: EditorTool) => {},
-  stacks: {
-    undo: [],
-    redo: [],
-    committed: [],
+  query: (pageIndex: number) => {
+    return [];
   },
   exec: (operation: Operation) => {},
   undo: () => {},
@@ -58,17 +63,30 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     undo: [],
     redo: [],
     committed: [],
+    operations: {},
   });
+
+  const query = useCallback(
+    (pageIndex: number) => {
+      return stacks.operations[pageIndex];
+    },
+    [stacks]
+  );
 
   const exec = useCallback(
     (operation: Operation) => {
       setStacks((stacks) => {
-        const { undo, redo, committed } = stacks;
+        const { undo, redo, committed, operations } = stacks;
+        const pageOperations = operations[operation.pageIndex] || [];
 
         return {
-          undo: [...undo, operation],
+          undo: [...undo, { id: operation.id, pageIndex: operation.pageIndex }],
           redo,
           committed,
+          operations: {
+            ...operations,
+            [operation.pageIndex]: [...pageOperations, operation],
+          },
         };
       });
     },
@@ -77,26 +95,38 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const undo = useCallback(() => {
     setStacks((stacks) => {
-      const { undo, redo, committed } = stacks;
+      const { undo, redo, committed, operations } = stacks;
       const operation = undo[undo.length - 1];
+      const pageOperations = operations[operation.pageIndex] || [];
 
       return {
         undo: undo.slice(0, undo.length - 1),
         redo: [...redo, operation],
         committed,
+        operations: {
+          ...operations,
+          [operation.pageIndex]: pageOperations.filter((_operation) => {
+            return _operation.id !== operation.id;
+          }),
+        },
       };
     });
   }, [setStacks]);
 
   const redo = useCallback(() => {
     setStacks((stacks) => {
-      const { undo, redo, committed } = stacks;
-      const operation = redo[redo.length - 1];
+      const { undo, redo, committed, operations } = stacks;
+      const operation = redo[undo.length - 1];
+      const pageOperations = operations[operation.pageIndex] || [];
 
       return {
         undo: [...undo, operation],
         redo: redo.slice(0, redo.length - 1),
         committed,
+        operations: {
+          ...operations,
+          [operation.pageIndex]: [...pageOperations, operation],
+        },
       };
     });
   }, [setStacks]);
@@ -109,6 +139,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         undo: [],
         redo: [],
         committed: [...committed, ...undo],
+        operations: {},
       };
     });
   }, [setStacks]);
@@ -118,7 +149,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       value={{
         tool,
         setTool,
-        stacks,
+        query,
         exec,
         undo,
         redo,

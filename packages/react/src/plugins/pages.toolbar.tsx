@@ -1,16 +1,9 @@
-import { PdfZoomMode, Rotation } from '@unionpdf/models';
-import React, {
-  ChangeEvent,
-  ComponentProps,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { PdfAnnotationSubtype, PdfZoomMode, Rotation } from '@unionpdf/models';
+import React, { ChangeEvent, ComponentProps, useCallback } from 'react';
 import { useUIComponents, useUIStrings } from '../ui/ui.context';
 import './pages.toolbar.css';
 import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument } from '../core/document.context';
-import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
 import classNames from 'classnames';
 import { EditorTool, usePdfEditor } from '../core';
@@ -67,40 +60,12 @@ export function PdfToolbarViewPagesItemGroup(
           },
           PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR
         );
-        setCurrPageIndex(pageIndex - 1);
       }
     },
     [pdfNavigator]
   );
 
-  const [currPageIndex, setCurrPageIndex] = useState(
-    pdfNavigator?.currPageIndex || 0
-  );
-
-  useEffect(() => {
-    if (pdfNavigator) {
-      const handle = (evt: PdfNavigatorEvent, source: string) => {
-        switch (evt.kind) {
-          case 'GotoPage':
-            if (source !== PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR) {
-              setCurrPageIndex(evt.data.destination.pageIndex);
-            }
-            break;
-        }
-      };
-      pdfNavigator.addEventListener(
-        PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR,
-        handle
-      );
-
-      return () => {
-        pdfNavigator.removeEventListener(
-          PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR,
-          handle
-        );
-      };
-    }
-  }, [pdfNavigator, setCurrPageIndex]);
+  const { currPageIndex } = usePdfNavigator();
 
   const rotationOptions = [
     {
@@ -159,18 +124,17 @@ export function PdfToolbarViewPagesItemGroup(
 }
 
 export interface PdfToolbarEditPagesItemGroupProps
-  extends ComponentProps<'div'> {}
+  extends ComponentProps<'div'> {
+  onAddSignature: () => void;
+}
 
 export function PdfToolbarEditPagesItemGroup(
   props: PdfToolbarEditPagesItemGroupProps
 ) {
-  const { className, children, ...rest } = props;
-  const { ToolbarItemGroupComponent, InputComponent, ButtonComponent } =
-    useUIComponents();
+  const { onAddSignature, className, children, ...rest } = props;
+  const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
 
   const strings = useUIStrings();
-
-  const { setTool } = usePdfEditor();
 
   return (
     <ErrorBoundary>
@@ -178,41 +142,7 @@ export function PdfToolbarEditPagesItemGroup(
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <ButtonComponent
-          onClick={(evt) => {
-            setTool(EditorTool.Selection);
-          }}
-        >
-          {strings.selection}
-        </ButtonComponent>
-        <ButtonComponent
-          onClick={(evt) => {
-            setTool(EditorTool.Pencil);
-          }}
-        >
-          {strings.pencil}
-        </ButtonComponent>
-        <ButtonComponent
-          onClick={(evt) => {
-            setTool(EditorTool.AddTextBox);
-          }}
-        >
-          {strings.addTextBox}
-        </ButtonComponent>
-        <div>
-          {strings.addImage}
-          <InputComponent
-            type="file"
-            onClick={(evt) => {
-              setTool(EditorTool.AddImage);
-            }}
-          ></InputComponent>
-        </div>
-        <ButtonComponent
-          onClick={(evt) => {
-            setTool(EditorTool.AddSignature);
-          }}
-        >
+        <ButtonComponent onClick={onAddSignature}>
           {strings.addSignature}
         </ButtonComponent>
       </ToolbarItemGroupComponent>

@@ -1,4 +1,3 @@
-export * from './navigator';
 export * from './navigator.context';
 export * from './application';
 export * from './application.context';

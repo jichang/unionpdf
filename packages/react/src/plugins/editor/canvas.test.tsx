@@ -3,22 +3,27 @@ import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
 import { PdfPageContentComponentProps, PdfPages } from '../pages';
-import { PdfPageCanvasLayer } from './canvas';
+import { PdfEditorCanvas } from './canvas';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import {
+  PdfApplicationContextProvider,
+  PdfApplicationMode,
+  PdfEditorContextProvider,
+} from '../../core';
 
 function PdfPageContent(props: PdfPageContentComponentProps) {
   return (
     <>
-      <PdfPageCanvasLayer {...props} />
+      <PdfEditorCanvas {...props} />
     </>
   );
 }
 
-describe('PdfPageCanvasLayer', () => {
-  test('should render pdf canvas', async () => {
+describe('PdfEditorAnnotations', () => {
+  test('should render pdf editor annotations', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
@@ -32,17 +37,21 @@ describe('PdfPageCanvasLayer', () => {
       }),
     });
     const result = render(
-      <PdfEngineContextProvider engine={engine}>
-        <PdfDocument
-          id="test"
-          source={new Uint8Array()}
-          password=""
-          onOpenSuccess={jest.fn()}
-          onOpenFailure={jest.fn()}
-        >
-          <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
-        </PdfDocument>
-      </PdfEngineContextProvider>
+      <PdfApplicationContextProvider mode={PdfApplicationMode.Edit}>
+        <PdfEngineContextProvider engine={engine}>
+          <PdfDocument
+            id="test"
+            source={new Uint8Array()}
+            password=""
+            onOpenSuccess={jest.fn()}
+            onOpenFailure={jest.fn()}
+          >
+            <PdfEditorContextProvider>
+              <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
+            </PdfEditorContextProvider>
+          </PdfDocument>
+        </PdfEngineContextProvider>
+      </PdfApplicationContextProvider>
     );
 
     act(() => {
@@ -53,9 +62,9 @@ describe('PdfPageCanvasLayer', () => {
       intersectionObserver.simulate([{ isIntersecting: true }]);
     });
 
-    expect(
-      document.querySelectorAll('.pdf__page__layer--canvas').length
-    ).toEqual(10);
+    expect(document.querySelectorAll('.pdf__editor__canvas').length).toEqual(
+      10
+    );
 
     result.unmount();
     intersectionObserver.restore();

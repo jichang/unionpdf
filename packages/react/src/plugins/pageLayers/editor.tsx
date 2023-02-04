@@ -6,36 +6,44 @@ import {
   usePdfApplication,
   usePdfEditor,
 } from '../../core';
+import { PdfEditorAnnotations, PdfEditorCanvas } from '../editor';
 import './editor.css';
 
 export interface PdfPageEditorLayerProps {
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
+  isVisible: boolean;
   inVisibleRange: boolean;
   inCacheRange: boolean;
 }
 
 export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
-  const { page } = props;
+  const { isVisible, inVisibleRange, page, scaleFactor, rotation } = props;
   const { mode } = usePdfApplication();
 
-  const { tool, stacks } = usePdfEditor();
+  const { tool } = usePdfEditor();
 
   if (mode === PdfApplicationMode.View) {
     return null;
   }
 
-  const operations = stacks.undo.filter((operation) => {
-    return operation.pageIndex === page.index;
-  });
+  if (!isVisible && !inVisibleRange) {
+    return null;
+  }
 
   return (
     <div className="pdf__page__layer pdf__page__layer--editor">
-      {operations.map((operation, index) => {
-        return <div key={operation.id}></div>;
-      })}
-      {tool === EditorTool.Pencil ? <canvas /> : null}
+      <PdfEditorAnnotations
+        page={page}
+        scaleFactor={scaleFactor}
+        rotation={rotation}
+      />
+      <PdfEditorCanvas
+        page={page}
+        scaleFactor={scaleFactor}
+        rotation={rotation}
+      />
     </div>
   );
 }

@@ -23,7 +23,7 @@ import { usePdfDocument } from '../core/document.context';
 import {
   PdfNavigatorGotoPageEvent,
   PdfNavigatorEvent,
-} from '../core/navigator';
+} from '../core/navigator.context';
 import { usePdfNavigator } from '../core/navigator.context';
 import {
   IntersectionObserverContextProvider,
@@ -31,6 +31,7 @@ import {
 } from '../ui/intersectionobserver.context';
 import { IntersectionObserverEntry } from '../ui/intersectionobserver.entry';
 import { useLogger } from '../core';
+import classNames from 'classnames';
 
 export type PdfPageContentComponentProps = Omit<PdfPageProps, 'children'>;
 
@@ -161,25 +162,23 @@ export function PdfPages(props: PdfPagesProps) {
     [logger, pageGap, pdfPages, scaleFactor, rotation]
   );
 
-  const pdfNavigator = usePdfNavigator();
+  const { addEventListener, removeEventListener } = usePdfNavigator();
   useEffect(() => {
-    if (pdfNavigator) {
-      const handle = (evt: PdfNavigatorEvent, source: string) => {
-        switch (evt.kind) {
-          case 'GotoPage':
-            if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
-              gotoPage(evt.data);
-            }
-            break;
-        }
-      };
-      pdfNavigator.addEventListener(PDF_NAVIGATOR_SOURCE_PAGES, handle);
+    const handle = (evt: PdfNavigatorEvent, source: string) => {
+      switch (evt.kind) {
+        case 'GotoPage':
+          if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
+            gotoPage(evt.data);
+          }
+          break;
+      }
+    };
+    addEventListener(PDF_NAVIGATOR_SOURCE_PAGES, handle);
 
-      return () => {
-        pdfNavigator.removeEventListener(PDF_NAVIGATOR_SOURCE_PAGES, handle);
-      };
-    }
-  }, [pdfNavigator, gotoPage]);
+    return () => {
+      removeEventListener(PDF_NAVIGATOR_SOURCE_PAGES, handle);
+    };
+  }, [addEventListener, removeEventListener, gotoPage]);
 
   return (
     <ErrorBoundary>
@@ -228,54 +227,59 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
     cacheRange,
     pageContentComponent: ContentComponent,
   } = props;
-  const pdfNavigator = usePdfNavigator();
 
   const { visibleEntryIds } = useIntersectionObserver();
 
-  const [currPageIndex, setCurrPageIndex] = useState(
-    pdfNavigator?.currPageIndex || 0
-  );
+  const { gotoPage } = usePdfNavigator();
+
+  const [minVisiblePageIndex, maxVisiblePageIndex] = useMemo((): [
+    number,
+    number
+  ] => {
+    if (visibleEntryIds.size === 0) {
+      return [0, 0];
+    }
+
+    const pageIndexes = [...visibleEntryIds].sort((indexA, indexB) => {
+      return indexA - indexB;
+    });
+
+    let minPageIndex: number = pageIndexes[0];
+    let maxPageIndex: number = pageIndexes[pageIndexes.length - 1];
+
+    return [minPageIndex, maxPageIndex];
+  }, [visibleEntryIds]);
 
   useEffect(() => {
-    let currPageIndex = Number.MAX_SAFE_INTEGER;
-    for (const entryId of visibleEntryIds) {
-      if (currPageIndex > entryId) {
-        currPageIndex = entryId;
-      }
-    }
-
-    if (pdfNavigator?.currPageIndex !== currPageIndex) {
-      pdfNavigator?.gotoPage(
-        {
-          destination: {
-            pageIndex: currPageIndex,
-            zoom: {
-              mode: PdfZoomMode.Unknown,
-            },
-            view: [],
+    gotoPage(
+      {
+        destination: {
+          pageIndex: minVisiblePageIndex,
+          zoom: {
+            mode: PdfZoomMode.Unknown,
           },
+          view: [],
         },
-        PDF_NAVIGATOR_SOURCE_PAGES
-      );
-    }
-    setCurrPageIndex(currPageIndex);
-  }, [visibleEntryIds, pdfNavigator, setCurrPageIndex]);
+      },
+      PDF_NAVIGATOR_SOURCE_PAGES
+    );
+  }, [minVisiblePageIndex, gotoPage]);
 
   return (
     <>
       {pdfPages.map((page) => {
         const isVisible = visibleEntryIds.has(page.index);
         const inVisibleRange =
-          page.index >= currPageIndex + prerenderRange[0] &&
-          page.index <= currPageIndex + prerenderRange[1];
+          page.index >= minVisiblePageIndex + prerenderRange[0] &&
+          page.index <= maxVisiblePageIndex + prerenderRange[1];
         const inCacheRange =
-          page.index >= currPageIndex + cacheRange[0] &&
-          page.index <= currPageIndex + cacheRange[1];
+          page.index >= minVisiblePageIndex + cacheRange[0] &&
+          page.index <= maxVisiblePageIndex + cacheRange[1];
 
         return (
           <PdfPage
             key={page.index}
-            isCurrent={page.index === currPageIndex}
+            isCurrent={page.index === minVisiblePageIndex}
             page={page}
             isVisible={isVisible}
             inVisibleRange={inVisibleRange}
@@ -286,7 +290,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
             visualSize={page.visualSize}
           >
             <ContentComponent
-              isCurrent={page.index === currPageIndex}
+              isCurrent={page.index === minVisiblePageIndex}
               page={page}
               isVisible={isVisible}
               inVisibleRange={inVisibleRange}
@@ -323,7 +327,7 @@ export function PdfPage(props: PdfPageProps) {
   return (
     <IntersectionObserverEntry
       entryId={`${page.index}`}
-      className={`pdf__page ${isCurrent ? 'pdf__page--current' : ''}`}
+      className={classNames('pdf__page', isCurrent ? 'pdf__page--current' : '')}
       style={{ paddingTop: pageGap / 2, paddingBottom: pageGap / 2 }}
       data-page-index={page.index}
     >

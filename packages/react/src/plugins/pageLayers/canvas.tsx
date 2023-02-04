@@ -12,6 +12,7 @@ export interface PdfPageCanvasLayerProps {
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
+  isVisible: boolean;
   inVisibleRange: boolean;
   inCacheRange: boolean;
 }
@@ -20,13 +21,20 @@ export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
   const { mode } = usePdfApplication();
   const doc = usePdfDocument();
   const engine = usePdfEngine();
-  const { page, scaleFactor, rotation, inVisibleRange, inCacheRange } = props;
+  const {
+    page,
+    scaleFactor,
+    rotation,
+    isVisible,
+    inVisibleRange,
+    inCacheRange,
+  } = props;
   const [imageData, setImageData] = useState<ImageData | null>(null);
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
-    if (canvasElem && engine && doc && inVisibleRange) {
+    if (canvasElem && engine && doc && (isVisible || inVisibleRange)) {
       const task = engine.renderPage(doc, page, scaleFactor, rotation, {
         withAnnotations: mode === PdfApplicationMode.View,
       });

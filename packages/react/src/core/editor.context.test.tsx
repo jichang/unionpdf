@@ -24,11 +24,6 @@ describe('PdfEditorContextProvider ', () => {
     );
 
     expect(editorInContext?.tool).toBe(EditorTool.Selection);
-    expect(editorInContext?.stacks).toStrictEqual({
-      undo: [],
-      redo: [],
-      committed: [],
-    });
 
     result?.unmount();
   });

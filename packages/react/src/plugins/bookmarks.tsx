@@ -9,7 +9,6 @@ import { ErrorBoundary } from '../ui/errorboundary';
 import './bookmarks.css';
 import { usePdfDocument } from '../core/document.context';
 import { usePdfEngine } from '../core/engine.context';
-import { PdfNavigatorEvent } from '../core/navigator';
 import { usePdfNavigator } from '../core/navigator.context';
 import { useUIComponents } from '../ui';
 
@@ -36,31 +35,6 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
   }, [engine, doc]);
 
   const pdfNavigator = usePdfNavigator();
-  const [currPageIndex, setCurrPageIndex] = useState(
-    pdfNavigator?.currPageIndex || 0
-  );
-
-  useEffect(() => {
-    if (pdfNavigator) {
-      const handle = (evt: PdfNavigatorEvent, source: string) => {
-        switch (evt.kind) {
-          case 'GotoPage':
-            if (source !== PDF_NAVIGATOR_SOURCE_BOOKMARKS) {
-              setCurrPageIndex(evt.data.destination.pageIndex);
-            }
-            break;
-        }
-      };
-      pdfNavigator.addEventListener(PDF_NAVIGATOR_SOURCE_BOOKMARKS, handle);
-
-      return () => {
-        pdfNavigator.removeEventListener(
-          PDF_NAVIGATOR_SOURCE_BOOKMARKS,
-          handle
-        );
-      };
-    }
-  }, [pdfNavigator, setCurrPageIndex]);
 
   const handleEntryClicked = useCallback(
     (bookmark: PdfBookmarkObject) => {
@@ -101,7 +75,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
             return (
               <PdfBookmarkEntry
                 key={index}
-                currPageIndex={currPageIndex}
+                currPageIndex={pdfNavigator.currPageIndex}
                 bookmark={bookmark}
                 onClick={handleEntryClicked}
               />

@@ -1,0 +1,12 @@
+.pdf__editor__panel {
+  position: fixed;
+  left: 0;
+  top: 10%;
+
+  height: 80%;
+}
+
+.pdf__editor__panel__tools {
+  display: flex;
+  flex-direction: column;
+}

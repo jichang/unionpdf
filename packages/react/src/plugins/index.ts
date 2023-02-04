@@ -10,3 +10,4 @@ export * from './annotations';
 export * from './signatures';
 export * from './form';
 export * from './builtin';
+export * from './editor';

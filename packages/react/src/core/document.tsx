@@ -44,8 +44,6 @@ export function PdfDocument(props: PdfDocumentProps) {
 
   useEffect(() => {
     if (engine && id && source) {
-      console.log('PdfDocument: ', engine, id, password, source);
-
       let doc: PdfDocumentObject | undefined;
       const task = engine.openDocument(id, source, password);
 
