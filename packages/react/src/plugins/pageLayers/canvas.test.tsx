@@ -9,14 +9,6 @@ import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
 
-function PdfPageContent(props: PdfPageContentComponentProps) {
-  return (
-    <>
-      <PdfPageCanvasLayer {...props} />
-    </>
-  );
-}
-
 describe('PdfPageCanvasLayer', () => {
   test('should render pdf canvas', async () => {
     intersectionObserver.mock();
@@ -40,7 +32,7 @@ describe('PdfPageCanvasLayer', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
+          <PdfPages pageGap={8} pageLayers={[PdfPageCanvasLayer]} />
         </PdfDocument>
       </PdfEngineContextProvider>
     );

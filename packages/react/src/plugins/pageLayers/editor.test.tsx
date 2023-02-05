@@ -10,14 +10,6 @@ import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 
-function PdfPageContent(props: PdfPageContentComponentProps) {
-  return (
-    <>
-      <PdfPageEditorLayer {...props} />
-    </>
-  );
-}
-
 describe('PdfPageEditorLayer', () => {
   test('should render pdf editor', async () => {
     intersectionObserver.mock();
@@ -42,7 +34,7 @@ describe('PdfPageEditorLayer', () => {
             onOpenSuccess={jest.fn()}
             onOpenFailure={jest.fn()}
           >
-            <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
+            <PdfPages pageGap={8} pageLayers={[PdfPageEditorLayer]} />
           </PdfDocument>
         </PdfEngineContextProvider>
       </PdfApplicationContextProvider>

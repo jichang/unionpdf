@@ -42,13 +42,13 @@ export function PdfToolbarViewPagesItemGroup(
   } = useUIComponents();
 
   const pdfDoc = usePdfDocument();
+  const { currPageIndex, gotoPage } = usePdfNavigator();
 
-  const pdfNavigator = usePdfNavigator();
   const navigate = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       const pageIndex = parseInt(evt.target.value, 10);
       if (!isNaN(pageIndex)) {
-        pdfNavigator?.gotoPage(
+        gotoPage(
           {
             destination: {
               pageIndex: pageIndex - 1,
@@ -62,10 +62,8 @@ export function PdfToolbarViewPagesItemGroup(
         );
       }
     },
-    [pdfNavigator]
+    [gotoPage]
   );
-
-  const { currPageIndex } = usePdfNavigator();
 
   const rotationOptions = [
     {

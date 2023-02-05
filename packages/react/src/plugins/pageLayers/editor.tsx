@@ -1,28 +1,56 @@
-import { PdfPageObject, Rotation } from '@unionpdf/models';
-import React from 'react';
 import {
-  EditorTool,
+  PdfAnnotationObject,
+  ignore,
+  PdfAnnotationSubtype,
+} from '@unionpdf/models';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
   PdfApplicationMode,
   usePdfApplication,
+  usePdfDocument,
   usePdfEditor,
+  usePdfEngine,
 } from '../../core';
-import { PdfEditorAnnotations, PdfEditorCanvas } from '../editor';
+import {
+  PdfPageAnnotationComponentContextProvider,
+  PdfPageAnnotations,
+} from '../annotations';
+import { PdfEditorAnnotation, PdfEditorCanvas } from '../editor';
+import { apply } from '../helpers/editor';
 import './editor.css';
+import { PdfPageLayerComponentProps } from './layer';
 
-export interface PdfPageEditorLayerProps {
-  page: PdfPageObject;
-  scaleFactor: number;
-  rotation: Rotation;
-  isVisible: boolean;
-  inVisibleRange: boolean;
-  inCacheRange: boolean;
-}
+export interface PdfPageEditorLayerProps extends PdfPageLayerComponentProps {}
 
 export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
   const { isVisible, inVisibleRange, page, scaleFactor, rotation } = props;
   const { mode } = usePdfApplication();
 
-  const { tool } = usePdfEditor();
+  const engine = usePdfEngine();
+  const doc = usePdfDocument();
+  const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
+
+  useEffect(() => {
+    if (mode === PdfApplicationMode.Edit && engine && doc && page) {
+      const task = engine.getPageAnnotations(doc, page, scaleFactor, rotation);
+      task.wait(setAnnotations, ignore);
+
+      return () => {
+        task.abort();
+      };
+    }
+  }, [mode, engine, doc, page, scaleFactor, rotation]);
+
+  const { query } = usePdfEditor();
+  const operations = query(page.index) || [];
+
+  const editableAnnotations = useMemo(() => {
+    return apply(annotations, operations).filter(
+      (annotation: PdfAnnotationObject) => {
+        return annotation.type !== PdfAnnotationSubtype.WIDGET;
+      }
+    );
+  }, [operations, annotations]);
 
   if (mode === PdfApplicationMode.View) {
     return null;
@@ -34,11 +62,16 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
 
   return (
     <div className="pdf__page__layer pdf__page__layer--editor">
-      <PdfEditorAnnotations
-        page={page}
-        scaleFactor={scaleFactor}
-        rotation={rotation}
-      />
+      <PdfPageAnnotationComponentContextProvider
+        component={PdfEditorAnnotation}
+      >
+        <PdfPageAnnotations
+          annotations={editableAnnotations}
+          page={page}
+          scaleFactor={scaleFactor}
+          rotation={rotation}
+        />
+      </PdfPageAnnotationComponentContextProvider>
       <PdfEditorCanvas
         page={page}
         scaleFactor={scaleFactor}

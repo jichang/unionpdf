@@ -41,7 +41,12 @@ function App() {
               <PdfPages
                 visibleRange={[-1, 1]}
                 viewport={viewport}
-                content={PdfFullFledgedPageContent}
+                pageLayers={[
+                  PdfPageCanvasLayer,
+                  PdfPageTextLayer,
+                  PdfPageAnnotationsLayer,
+                  PdfPageEditorLayer,
+                ]}
               />
               <PdfThumbnails
                 layout={{ colsCount: 100, rowsCount: 100 }}
@@ -83,28 +88,16 @@ function PdfPageNumber(props: { index: number }) {
   );
 }
 
-// This component will be rendered in every pdf page
-function PdfPageContent(props: PdfPageContentProps) {
-  const { page } = props;
-
-  return (
-    <>
-      <PdfPageCanvas />
-      <PdfPageNumber index={page.index} />
-    </>
-  );
-}
-
 <PdfPages
   visibleRange={[-1, 1]}
   viewport={viewport}
-  content={PdfPageContent}
+  pageLayers={[PdfPageCanvasLayer, PdfPageNumber]}
 />;
 ```
 
 For the full code you can check the [demo app](./packages/app/src/main.tsx)
 
-#### Supported PDF Layers
+#### Supported PDF Page Layers
 
 1. Canvas Layer
 
@@ -123,6 +116,10 @@ For the full code you can check the [demo app](./packages/app/src/main.tsx)
    3.2 Text
 
    3.3 Widget (Basic ArcoForm, XFA is not supported yet)
+
+4. Editor Layer
+
+   This layer supports editing pdf files
 
 ### How to write a pdf plugin
 

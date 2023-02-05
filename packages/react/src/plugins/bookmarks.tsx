@@ -34,7 +34,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
     }
   }, [engine, doc]);
 
-  const pdfNavigator = usePdfNavigator();
+  const { currPageIndex, gotoPage } = usePdfNavigator();
 
   const handleEntryClicked = useCallback(
     (bookmark: PdfBookmarkObject) => {
@@ -47,7 +47,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
           {
             switch (bookmark.target.action.type) {
               case PdfActionType.Goto:
-                pdfNavigator?.gotoPage(
+                gotoPage(
                   { destination: bookmark.target.action.destination },
                   PDF_NAVIGATOR_SOURCE_BOOKMARKS
                 );
@@ -57,14 +57,14 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
           }
           break;
         case 'destination':
-          pdfNavigator?.gotoPage(
+          gotoPage(
             { destination: bookmark.target.destination },
             PDF_NAVIGATOR_SOURCE_BOOKMARKS
           );
           break;
       }
     },
-    [pdfNavigator]
+    [gotoPage]
   );
 
   return (
@@ -75,7 +75,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
             return (
               <PdfBookmarkEntry
                 key={index}
-                currPageIndex={pdfNavigator.currPageIndex}
+                currPageIndex={currPageIndex}
                 bookmark={bookmark}
                 onClick={handleEntryClicked}
               />

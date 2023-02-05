@@ -19,7 +19,7 @@ export interface PdfPageLinkAnnotationProps {
 
 export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
-  const pdfNavigator = usePdfNavigator();
+  const { gotoPage } = usePdfNavigator();
 
   const href = useMemo(() => {
     if (!annotation.target) {
@@ -59,7 +59,7 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
       if (annotation.target.type === 'action') {
         switch (annotation.target.action.type) {
           case PdfActionType.Goto:
-            pdfNavigator?.gotoPage(
+            gotoPage(
               { destination: annotation.target.action.destination },
               'annotation'
             );
@@ -69,13 +69,10 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
             break;
         }
       } else {
-        pdfNavigator?.gotoPage(
-          { destination: annotation.target.destination },
-          'annotation'
-        );
+        gotoPage({ destination: annotation.target.destination }, 'annotation');
       }
     },
-    [pdfNavigator, page, annotation, context.onClick]
+    [gotoPage, page, annotation, context.onClick]
   );
 
   return (

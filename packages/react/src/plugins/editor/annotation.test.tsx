@@ -2,24 +2,18 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
-import { PdfPageContentComponentProps, PdfPages } from '../pages';
-import { PdfEditorAnnotations } from './annotations';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
+import { PdfPages } from '../pages';
+import { PdfPageEditorLayer } from '../pageLayers';
+import { PdfEditorAnnotation } from './annotation';
+import { PdfPageAnnotationComponentContextProvider } from '../annotations';
 
-function PdfPageContent(props: PdfPageContentComponentProps) {
-  return (
-    <>
-      <PdfEditorAnnotations {...props} />
-    </>
-  );
-}
-
-describe('PdfEditorAnnotations', () => {
-  test('should render pdf editor annotations', async () => {
+describe('PdfEditorAnnotation', () => {
+  test('should render pdf editor annotation', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
@@ -42,7 +36,11 @@ describe('PdfEditorAnnotations', () => {
             onOpenSuccess={jest.fn()}
             onOpenFailure={jest.fn()}
           >
-            <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
+            <PdfPageAnnotationComponentContextProvider
+              component={PdfEditorAnnotation}
+            >
+              <PdfPages pageGap={8} pageLayers={[PdfPageEditorLayer]} />
+            </PdfPageAnnotationComponentContextProvider>
           </PdfDocument>
         </PdfEngineContextProvider>
       </PdfApplicationContextProvider>

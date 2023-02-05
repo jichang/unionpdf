@@ -1,3 +1,3 @@
-export * from './annotations';
+export * from './annotation';
 export * from './canvas';
 export * from './panel';

@@ -33,10 +33,15 @@ import {
   LoggerContextProvider,
   PdfSearchPanel,
   PdfAttachments,
-  PdfFullFledgedPageContent,
+  PdfPageAnnotationComponentContextProvider,
   PdfLinkAnnoContextProvider,
   PdfEditorContextProvider,
   PdfEditorPanel,
+  PdfPageAnnotationsLayer,
+  PdfPageCanvasLayer,
+  PdfPageTextLayer,
+  PdfPageDefaultAnnotation,
+  PdfPageEditorLayer,
 } from '../src/index';
 import {
   createPdfiumModule,
@@ -227,19 +232,28 @@ function App(props: AppProps) {
                         </PdfToolbarManageItemGroup>
                       </PdfToolbar>
                       {metadataIsVisible ? <PdfMetadata /> : null}
-                      <PdfLinkAnnoContextProvider
-                        onClick={(evt, annotation) => {
-                          console.log(evt, annotation);
-                        }}
+                      <PdfPageAnnotationComponentContextProvider
+                        component={PdfPageDefaultAnnotation}
                       >
-                        <PdfPages
-                          prerenderRange={[-1, 1]}
-                          cacheRange={[-5, 5]}
-                          scaleFactor={scaleFactor}
-                          rotation={rotation}
-                          pageContentComponent={PdfFullFledgedPageContent}
-                        />
-                      </PdfLinkAnnoContextProvider>
+                        <PdfLinkAnnoContextProvider
+                          onClick={(evt, annotation) => {
+                            console.log(evt, annotation);
+                          }}
+                        >
+                          <PdfPages
+                            prerenderRange={[-1, 1]}
+                            cacheRange={[-5, 5]}
+                            scaleFactor={scaleFactor}
+                            rotation={rotation}
+                            pageLayers={[
+                              PdfPageCanvasLayer,
+                              PdfPageTextLayer,
+                              PdfPageAnnotationsLayer,
+                              PdfPageEditorLayer,
+                            ]}
+                          />
+                        </PdfLinkAnnoContextProvider>
+                      </PdfPageAnnotationComponentContextProvider>
                       {thumbnailsIsVisible ? (
                         <PdfThumbnails
                           layout={{ direction: 'vertical', itemsCount: 2 }}

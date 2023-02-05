@@ -1,3 +1,5 @@
 .pdf__annotation {
   position: absolute;
+
+  pointer-events: all;
 }

@@ -1,39 +1,12 @@
-import {
-  ignore,
-  PdfAnnotationObject,
-  PdfPageObject,
-  Rotation,
-} from '@unionpdf/models';
+import { ignore, PdfAnnotationObject } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 import { usePdfEngine, usePdfDocument } from '../../core';
+import { PdfPageLayerComponentProps } from './layer';
+import { PdfPageAnnotations } from '../annotations';
+import './annotations.css';
 
-export interface PdfPageAnnotationComponentProps<T = PdfAnnotationObject> {
-  page: PdfPageObject;
-  annotation: T;
-  scaleFactor: number;
-  rotation: Rotation;
-}
-
-export type PdfPageAnnotationComponent = (
-  props: PdfPageAnnotationComponentProps
-) => JSX.Element;
-
-export interface PdfPageAnnotationsLayerProps {
-  isVisible: boolean;
-  page: PdfPageObject;
-  scaleFactor: number;
-  rotation: Rotation;
-  annotationComponent: PdfPageAnnotationComponent;
-}
-
-export function PdfPageAnnotationsLayer(props: PdfPageAnnotationsLayerProps) {
-  const {
-    isVisible,
-    page,
-    scaleFactor,
-    rotation,
-    annotationComponent: AnnotationComponent,
-  } = props;
+export function PdfPageAnnotationsLayer(props: PdfPageLayerComponentProps) {
+  const { isVisible, page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();
   const doc = usePdfDocument();
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
@@ -51,17 +24,12 @@ export function PdfPageAnnotationsLayer(props: PdfPageAnnotationsLayerProps) {
 
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">
-      {annotations.map((annotation) => {
-        return (
-          <AnnotationComponent
-            key={annotation.id}
-            page={page}
-            annotation={annotation}
-            scaleFactor={scaleFactor}
-            rotation={rotation}
-          />
-        );
-      })}
+      <PdfPageAnnotations
+        page={page}
+        scaleFactor={scaleFactor}
+        rotation={rotation}
+        annotations={annotations}
+      />
     </div>
   );
 }

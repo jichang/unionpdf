@@ -2,35 +2,17 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import { act, render } from '@testing-library/react';
 import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
-import { PdfPages, PdfPageContentComponentProps } from './pages';
+import { PdfPages } from './pages';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../core/document';
 import { PdfEngineContextProvider } from '../core/engine.context';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { PdfPageLayerComponentProps } from './pageLayers';
 
-export interface PdfPageNumberProps {
-  index: number;
-  color: string;
-}
-
-function PdfPageNumber(props: PdfPageNumberProps) {
-  const { index, color } = props;
-
-  return (
-    <div className="pdf__page__layer--number" style={{ color }}>
-      {index + 1}
-    </div>
-  );
-}
-
-function PdfPageContent(props: PdfPageContentComponentProps) {
+function PdfPageNumber(props: PdfPageLayerComponentProps) {
   const { page } = props;
 
-  return (
-    <>
-      <PdfPageNumber index={page.index} color="blue" />
-    </>
-  );
+  return <div className="pdf__page__layer--number">{page.index + 1}</div>;
 }
 
 describe('PdfPages', () => {
@@ -60,7 +42,7 @@ describe('PdfPages', () => {
             pageGap={8}
             scaleFactor={1}
             rotation={0}
-            pageContentComponent={PdfPageContent}
+            pageLayers={[PdfPageNumber]}
           />
         </PdfDocument>
       </PdfEngineContextProvider>

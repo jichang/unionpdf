@@ -1,3 +1,4 @@
+export * from './layer';
 export * from './canvas';
 export * from './text';
 export * from './annotations';

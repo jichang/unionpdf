@@ -8,21 +8,11 @@ import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { PdfPageAnnotationComponentContextProvider } from '../annotations';
 
 describe('PdfPageAnnotationsLayer', () => {
   function PdfPageAnnotation() {
     return <div className="pdf__annotation"></div>;
-  }
-
-  function PdfPageContent(props: PdfPageContentComponentProps) {
-    return (
-      <>
-        <PdfPageAnnotationsLayer
-          {...props}
-          annotationComponent={PdfPageAnnotation}
-        />
-      </>
-    );
   }
 
   test('should render pdf annotations', async () => {
@@ -48,7 +38,11 @@ describe('PdfPageAnnotationsLayer', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
+          <PdfPageAnnotationComponentContextProvider
+            component={PdfPageAnnotation}
+          >
+            <PdfPages pageGap={8} pageLayers={[PdfPageAnnotationsLayer]} />
+          </PdfPageAnnotationComponentContextProvider>
         </PdfDocument>
       </PdfEngineContextProvider>
     );

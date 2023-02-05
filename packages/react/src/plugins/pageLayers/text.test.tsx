@@ -10,14 +10,6 @@ import { PdfEngineContextProvider } from '../../core/engine.context';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
 
 describe('PdfPageTextLayer', () => {
-  function PdfPageContent(props: PdfPageContentComponentProps) {
-    return (
-      <>
-        <PdfPageTextLayer {...props} />
-      </>
-    );
-  }
-
   test('should render pdf text', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();
@@ -41,7 +33,7 @@ describe('PdfPageTextLayer', () => {
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}
         >
-          <PdfPages pageGap={8} pageContentComponent={PdfPageContent} />
+          <PdfPages pageGap={8} pageLayers={[PdfPageTextLayer]} />
         </PdfDocument>
       </PdfEngineContextProvider>
     );

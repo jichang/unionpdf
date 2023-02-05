@@ -23,7 +23,7 @@ export function PdfSearchPanel(props: PdfSearchPanelProps) {
 
   const engine = usePdfEngine();
   const doc = usePdfDocument();
-  const pdfNavigator = usePdfNavigator();
+  const { gotoPage } = usePdfNavigator();
   const [contextId] = useState(() => {
     return Date.now();
   });
@@ -68,8 +68,8 @@ export function PdfSearchPanel(props: PdfSearchPanelProps) {
     (keyword: string, flags: MatchFlag[]) => {
       if (engine && doc) {
         engine.searchNext(doc, contextId, { keyword, flags }).wait((result) => {
-          if (pdfNavigator && result) {
-            pdfNavigator.gotoPage(
+          if (result) {
+            gotoPage(
               {
                 destination: {
                   pageIndex: result?.pageIndex,
@@ -85,18 +85,18 @@ export function PdfSearchPanel(props: PdfSearchPanelProps) {
         }, ignore);
       }
     },
-    [engine, doc, contextId, pdfNavigator]
+    [engine, doc, contextId, gotoPage]
   );
 
   const searchPrev = useCallback(
     (keyword: string, flags: MatchFlag[]) => {
       if (engine && doc) {
-        engine.searchPrev(doc, contextId, { keyword, flags }).wait((result) => {
-          console.log(result);
-        }, ignore);
+        engine
+          .searchPrev(doc, contextId, { keyword, flags })
+          .wait(ignore, ignore);
       }
     },
-    [engine, doc, contextId, pdfNavigator]
+    [engine, doc, contextId]
   );
 
   const search = useCallback(

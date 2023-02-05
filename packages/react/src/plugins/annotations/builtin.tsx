@@ -1,21 +1,22 @@
-import React, { ReactNode } from 'react';
-import { PdfPageContentComponentProps } from './pages';
-import {
-  PdfPageAnnotationComponentProps,
-  PdfPageAnnotationsLayer,
-  PdfPageCanvasLayer,
-  PdfPageTextLayer,
-  PdfPageEditorLayer,
-} from './pageLayers';
+import React from 'react';
 import {
   PdfPageAnnotationBase,
+  PdfPageAnnotationComponentProps,
   PdfPageLinkAnnotation,
   PdfPageTextAnnotation,
   PdfPageWidgetAnnotation,
-} from './annotations';
-import { PdfAnnotationSubtype } from '@unionpdf/models';
+  usePdfPageAnnotationComponent,
+} from '.';
+import {
+  PdfAnnotationObject,
+  PdfAnnotationSubtype,
+  PdfPageObject,
+  Rotation,
+} from '@unionpdf/models';
 
-function PdfFullFledgedPageAnnotation(props: PdfPageAnnotationComponentProps) {
+export function PdfPageDefaultAnnotation(
+  props: PdfPageAnnotationComponentProps
+) {
   const { page, annotation, rotation, scaleFactor } = props;
   switch (annotation.type) {
     case PdfAnnotationSubtype.LINK:
@@ -50,21 +51,31 @@ function PdfFullFledgedPageAnnotation(props: PdfPageAnnotationComponentProps) {
   }
 }
 
-export interface PdfFullFledgedPageContentProps
-  extends PdfPageContentComponentProps {}
+export interface PdfPageAnnotationsProps {
+  annotations: PdfAnnotationObject[];
+  page: PdfPageObject;
+  scaleFactor: number;
+  rotation: Rotation;
+}
 
-export function PdfFullFledgedPageContent(
-  props: PdfFullFledgedPageContentProps
-) {
+export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
+  const { annotations, page, scaleFactor, rotation } = props;
+
+  const AnnotationComponent = usePdfPageAnnotationComponent();
+
   return (
     <>
-      <PdfPageCanvasLayer {...props} />
-      <PdfPageTextLayer {...props} />
-      <PdfPageAnnotationsLayer
-        {...props}
-        annotationComponent={PdfFullFledgedPageAnnotation}
-      />
-      <PdfPageEditorLayer {...props} />
+      {annotations.map((annotation) => {
+        return (
+          <AnnotationComponent
+            key={annotation.id}
+            page={page}
+            annotation={annotation}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+          />
+        );
+      })}
     </>
   );
 }

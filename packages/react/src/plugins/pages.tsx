@@ -1,9 +1,9 @@
 import React, {
   useRef,
-  useState,
   useCallback,
   useEffect,
   useMemo,
+  ComponentProps,
 } from 'react';
 import {
   PdfPageObject,
@@ -32,6 +32,7 @@ import {
 import { IntersectionObserverEntry } from '../ui/intersectionobserver.entry';
 import { useLogger } from '../core';
 import classNames from 'classnames';
+import { PdfPageLayerComponent } from '../plugins/pageLayers';
 
 export type PdfPageContentComponentProps = Omit<PdfPageProps, 'children'>;
 
@@ -45,7 +46,7 @@ export interface PdfPagesProps {
   cacheRange?: [number, number];
   scaleFactor?: number;
   rotation?: Rotation;
-  pageContentComponent: PdfPageContentComponent;
+  pageLayers: PdfPageLayerComponent[];
   children?: any;
 }
 
@@ -61,7 +62,7 @@ export function PdfPages(props: PdfPagesProps) {
     cacheRange = [0, 0],
     scaleFactor = 1,
     rotation = 0,
-    pageContentComponent,
+    pageLayers,
   } = props;
   const pdfDoc = usePdfDocument();
   const logger = useLogger();
@@ -194,7 +195,7 @@ export function PdfPages(props: PdfPagesProps) {
             rotation={rotation}
             prerenderRange={prerenderRange}
             cacheRange={cacheRange}
-            pageContentComponent={pageContentComponent}
+            layers={pageLayers}
           />
         </IntersectionObserverContextProvider>
       </div>
@@ -214,7 +215,7 @@ export interface PdfPagesContentProps {
   cacheRange: [number, number];
   scaleFactor: number;
   rotation: Rotation;
-  pageContentComponent: PdfPageContentComponent;
+  layers: PdfPageLayerComponent[];
 }
 
 export function PdfPagesContent(props: PdfPagesContentProps) {
@@ -225,7 +226,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
     scaleFactor,
     prerenderRange,
     cacheRange,
-    pageContentComponent: ContentComponent,
+    layers,
   } = props;
 
   const { visibleEntryIds } = useIntersectionObserver();
@@ -289,17 +290,22 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
             rotation={rotation}
             visualSize={page.visualSize}
           >
-            <ContentComponent
-              isCurrent={page.index === minVisiblePageIndex}
-              page={page}
-              isVisible={isVisible}
-              inVisibleRange={inVisibleRange}
-              inCacheRange={inCacheRange}
-              pageGap={pageGap}
-              scaleFactor={scaleFactor}
-              rotation={rotation}
-              visualSize={page.visualSize}
-            />
+            {layers.map((Layer, index) => {
+              return (
+                <Layer
+                  key={index}
+                  isCurrent={page.index === minVisiblePageIndex}
+                  isVisible={isVisible}
+                  inVisibleRange={inVisibleRange}
+                  inCacheRange={inCacheRange}
+                  page={page}
+                  pageGap={pageGap}
+                  scaleFactor={scaleFactor}
+                  rotation={rotation}
+                  visualSize={page.visualSize}
+                />
+              );
+            })}
           </PdfPage>
         );
       })}
@@ -307,7 +313,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
   );
 }
 
-export interface PdfPageProps {
+export interface PdfPageProps extends ComponentProps<'div'> {
   page: PdfPageObject;
   isCurrent: boolean;
   isVisible: boolean;
@@ -317,7 +323,6 @@ export interface PdfPageProps {
   scaleFactor: number;
   rotation: Rotation;
   visualSize: Size;
-  children: JSX.Element;
 }
 
 export function PdfPage(props: PdfPageProps) {

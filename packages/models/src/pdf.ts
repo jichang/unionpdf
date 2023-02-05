@@ -1,4 +1,4 @@
-import { Size, Rect } from './geometry';
+import { Size, Rect, Position } from './geometry';
 
 export interface PdfPageObject {
   index: number;
@@ -235,17 +235,28 @@ export interface PdfFileAttachmentAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.FILEATTACHMENT;
 }
 
+export interface PdfInkListObject {
+  points: Position[];
+}
+
+export interface PdfInkAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.INK;
+  inkList: PdfInkListObject[];
+}
+
 export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
   type: Exclude<
     PdfAnnotationSubtype,
     | PdfAnnotationSubtype.TEXT
     | PdfAnnotationSubtype.LINK
+    | PdfAnnotationSubtype.INK
     | PdfAnnotationSubtype.WIDGET
     | PdfAnnotationSubtype.FILEATTACHMENT
   >;
 }
 
 export type PdfAnnotationObject =
+  | PdfInkAnnoObject
   | PdfTextAnnoObject
   | PdfLinkAnnoObject
   | PdfWidgetAnnoObject

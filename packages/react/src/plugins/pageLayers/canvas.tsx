@@ -1,4 +1,4 @@
-import { ignore, PdfPageObject, Rotation } from '@unionpdf/models';
+import { ignore } from '@unionpdf/models';
 import React, { useRef, useEffect, useState } from 'react';
 import {
   PdfApplicationMode,
@@ -7,15 +7,9 @@ import {
   usePdfEngine,
 } from '../../core';
 import './canvas.css';
+import { PdfPageLayerComponentProps } from './layer';
 
-export interface PdfPageCanvasLayerProps {
-  page: PdfPageObject;
-  scaleFactor: number;
-  rotation: Rotation;
-  isVisible: boolean;
-  inVisibleRange: boolean;
-  inCacheRange: boolean;
-}
+export interface PdfPageCanvasLayerProps extends PdfPageLayerComponentProps {}
 
 export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
   const { mode } = usePdfApplication();

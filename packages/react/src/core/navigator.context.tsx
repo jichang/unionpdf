@@ -100,8 +100,6 @@ export function PdfNavigatorContextProvider(
         return;
       }
 
-      setCurrPageIndex(data.destination.pageIndex);
-
       emit(
         {
           kind: 'GotoPage',
@@ -109,6 +107,8 @@ export function PdfNavigatorContextProvider(
         },
         source
       );
+
+      setCurrPageIndex(data.destination.pageIndex);
     },
     [currPageIndex, listeners, setCurrPageIndex, emit]
   );

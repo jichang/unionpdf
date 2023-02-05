@@ -37,6 +37,9 @@ import {
   PdfMetadataObject,
   PdfBookmarksObject,
   PdfRenderOptions,
+  PdfInkAnnoObject,
+  PdfInkListObject,
+  Position,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -237,6 +240,11 @@ export const wrappedModuleMethods = {
     'number',
   ] as const,
   FPDFAnnot_GetLinkedAnnot: [['number', 'string'] as const, 'number'] as const,
+  FPDFAnnot_GetInkListCount: [['number'] as const, 'number'] as const,
+  FPDFAnnot_GetInkListPath: [
+    ['number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
   FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFLink_GetAction: [['number'] as const, 'number'] as const,
   FPDFText_LoadPage: [['number'] as const, 'number'] as const,
@@ -1448,6 +1456,11 @@ export class PdfiumEngine implements PdfEngine {
           );
         }
         break;
+      case PdfAnnotationSubtype.INK:
+        {
+          annotation = this.readPdfInkAnno(page, pagePtr, annotationPtr, index);
+        }
+        break;
       case PdfAnnotationSubtype.POPUP:
         break;
       default:
@@ -1653,6 +1666,70 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.FILEATTACHMENT,
       rect,
       popup,
+    };
+  }
+
+  private readPdfInkAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfInkAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    const inkList: PdfInkListObject[] = [];
+
+    const count =
+      this.wasmModuleWrapper.FPDFAnnot_GetInkListCount(annotationPtr);
+    for (let i = 0; i < count - 1; i++) {
+      const points: Position[] = [];
+      const pointsCount = this.wasmModuleWrapper.FPDFAnnot_GetInkListPath(
+        annotationPtr,
+        i,
+        0,
+        0
+      );
+      if (pointsCount > 0) {
+        const pointMemorySize = 8;
+        const pointsPtr = this.malloc(pointsCount * pointMemorySize);
+        this.wasmModuleWrapper.FPDFAnnot_GetInkListPath(
+          annotationPtr,
+          i,
+          pointsPtr,
+          pointsCount
+        );
+
+        for (let j = 0; j < pointsCount; j++) {
+          const x = this.wasmModule.getValue(
+            pointsPtr + j * pointMemorySize,
+            'float'
+          );
+          const y = this.wasmModule.getValue(
+            pointsPtr + j * pointMemorySize + 4,
+            'float'
+          );
+          points.push({ x, y });
+        }
+
+        this.free(pointsPtr);
+      }
+
+      inkList.push({ points });
+    }
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.INK,
+      rect,
+      popup,
+      inkList,
     };
   }
 

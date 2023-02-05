@@ -1,20 +1,11 @@
-import {
-  ignore,
-  PdfPageObject,
-  PdfTextRectObject,
-  Rotation,
-} from '@unionpdf/models';
+import { ignore, PdfTextRectObject } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 import { usePdfEngine, usePdfDocument } from '../../core';
 import { calculateRectStyle } from '../helpers/annotation';
+import { PdfPageLayerComponentProps } from './layer';
 import './text.css';
 
-export interface PdfPageTextLayerProps {
-  isVisible: boolean;
-  page: PdfPageObject;
-  scaleFactor: number;
-  rotation: Rotation;
-}
+export interface PdfPageTextLayerProps extends PdfPageLayerComponentProps {}
 
 export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
