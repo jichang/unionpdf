@@ -7,7 +7,7 @@ import {
   PdfPageObject,
   PdfZoomMode,
 } from '@unionpdf/models';
-import { PdfPageAnnotationBase } from './annotation';
+import { PdfPageAnnotation } from './annotation';
 
 describe('PdfPageAnnotationBase', () => {
   test('should render pdf annotation', async () => {
@@ -50,7 +50,7 @@ describe('PdfPageAnnotationBase', () => {
       },
     };
     const result = render(
-      <PdfPageAnnotationBase
+      <PdfPageAnnotation
         page={page}
         annotation={link}
         scaleFactor={1}

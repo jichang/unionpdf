@@ -56,23 +56,11 @@ describe('PdfPageLink', () => {
     const onClick = jest.fn();
     const result = render(
       <PdfLinkAnnoContextProvider onClick={onClick}>
-        <PdfPageLinkAnnotation
-          page={page}
-          annotation={link}
-          scaleFactor={1}
-          rotation={0}
-        />
+        <PdfPageLinkAnnotation page={page} annotation={link} />
       </PdfLinkAnnoContextProvider>
     );
 
-    const linkElem = document.querySelector(
-      '.pdf__annotation--link'
-    ) as HTMLDivElement;
-    expect(linkElem).toBeDefined();
-
-    const aElem = document.querySelector(
-      '.pdf__annotation--link a'
-    ) as HTMLAnchorElement;
+    const aElem = document.querySelector('a') as HTMLAnchorElement;
     expect(aElem?.getAttribute('title')).toEqual(link.text);
 
     await act(async () => {

@@ -5,7 +5,6 @@ import {
   PdfAnnotationSubtype,
   PdfPageObject,
   PdfPopupAnnoObject,
-  PdfTextAnnoObject,
 } from '@unionpdf/models';
 import { PdfPagePopupAnnotation } from './popup';
 

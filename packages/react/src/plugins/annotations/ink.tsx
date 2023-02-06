@@ -1,18 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { PdfInkAnnoObject, PdfPageObject, Rotation } from '@unionpdf/models';
+import React, { useEffect, useRef } from 'react';
+import { PdfInkAnnoObject } from '@unionpdf/models';
 import './ink.css';
-import { PdfPageAnnotationBase } from './annotation';
-import { calculateRectStyle } from '../helpers/annotation';
 
 export interface PdfPageInkAnnotationProps {
-  page: PdfPageObject;
   annotation: PdfInkAnnoObject;
-  scaleFactor: number;
-  rotation: Rotation;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
 }
 
 export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
-  const { page, annotation, scaleFactor, rotation } = props;
+  const { annotation, top, left, width, height } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -20,35 +19,22 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
     if (canvasElem) {
       const ctx = canvasElem.getContext('2d');
       if (ctx) {
+        ctx.lineJoin = 'round';
         annotation.inkList.forEach((inkList) => {
           if (inkList.points.length >= 2) {
             const startPoint = inkList.points[0];
             ctx.beginPath();
-            ctx.moveTo(startPoint.x, startPoint.y);
+            ctx.moveTo(startPoint.x - left, startPoint.y - top);
 
             inkList.points.slice(1).forEach((point) => {
-              ctx.lineTo(point.x, point.y);
+              ctx.lineTo(point.x - left, point.y - top);
               ctx.stroke();
             });
           }
         });
       }
     }
-  }, [annotation]);
+  }, [annotation, top, left]);
 
-  const style = useMemo(() => {
-    return calculateRectStyle(annotation.rect, scaleFactor, rotation);
-  }, [annotation, rotation, scaleFactor]);
-
-  return (
-    <PdfPageAnnotationBase
-      page={page}
-      className="pdf__annotation--ink"
-      annotation={annotation}
-      scaleFactor={scaleFactor}
-      rotation={rotation}
-    >
-      <canvas width={style.width} height={style.height} ref={canvasRef} />
-    </PdfPageAnnotationBase>
-  );
+  return <canvas width={width} height={height} ref={canvasRef} />;
 }

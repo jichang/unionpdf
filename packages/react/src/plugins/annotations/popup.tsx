@@ -24,7 +24,11 @@ export function PdfPagePopupAnnotation(props: PdfPagePopupAnnotationProps) {
   }, [annotation, rotation, scaleFactor]);
 
   return (
-    <div className="pdf__annotation--popup" style={style}>
+    <div
+      data-subtype={annotation.type}
+      className="pdf__annotation pdf__annotation--popup"
+      style={style}
+    >
       <span>{annotation.contents}</span>
     </div>
   );

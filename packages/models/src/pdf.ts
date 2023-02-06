@@ -151,6 +151,38 @@ export enum PdfAnnotationSubtype {
   REDACT,
 }
 
+export const PdfAnnotationSubtypeName: Record<PdfAnnotationSubtype, string> = {
+  [PdfAnnotationSubtype.UNKNOWN]: 'unknow',
+  [PdfAnnotationSubtype.TEXT]: 'text',
+  [PdfAnnotationSubtype.LINK]: 'link',
+  [PdfAnnotationSubtype.FREETEXT]: 'freetext',
+  [PdfAnnotationSubtype.LINE]: 'line',
+  [PdfAnnotationSubtype.SQUARE]: 'square',
+  [PdfAnnotationSubtype.CIRCLE]: 'circle',
+  [PdfAnnotationSubtype.POLYGON]: 'polygon',
+  [PdfAnnotationSubtype.POLYLINE]: 'polyline',
+  [PdfAnnotationSubtype.HIGHLIGHT]: 'highlight',
+  [PdfAnnotationSubtype.UNDERLINE]: 'underline',
+  [PdfAnnotationSubtype.SQUIGGLY]: 'squiggly',
+  [PdfAnnotationSubtype.STRIKEOUT]: 'strikeout',
+  [PdfAnnotationSubtype.STAMP]: 'stamp',
+  [PdfAnnotationSubtype.CARET]: 'caret',
+  [PdfAnnotationSubtype.INK]: 'ink',
+  [PdfAnnotationSubtype.POPUP]: 'popup',
+  [PdfAnnotationSubtype.FILEATTACHMENT]: 'fileattachment',
+  [PdfAnnotationSubtype.SOUND]: 'sound',
+  [PdfAnnotationSubtype.MOVIE]: 'movie',
+  [PdfAnnotationSubtype.WIDGET]: 'widget',
+  [PdfAnnotationSubtype.SCREEN]: 'screen',
+  [PdfAnnotationSubtype.PRINTERMARK]: 'printermark',
+  [PdfAnnotationSubtype.TRAPNET]: 'trapnet',
+  [PdfAnnotationSubtype.WATERMARK]: 'watermark',
+  [PdfAnnotationSubtype.THREED]: 'threed',
+  [PdfAnnotationSubtype.RICHMEDIA]: 'richmedia',
+  [PdfAnnotationSubtype.XFAWIDGET]: 'xfawidget',
+  [PdfAnnotationSubtype.REDACT]: 'redact',
+};
+
 export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.POPUP;
   rect: Rect;

@@ -23,7 +23,7 @@ import { PdfPageLayerComponentProps } from './layer';
 export interface PdfPageEditorLayerProps extends PdfPageLayerComponentProps {}
 
 export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
-  const { isVisible, inVisibleRange, page, scaleFactor, rotation } = props;
+  const { isVisible, page, scaleFactor, rotation } = props;
   const { mode } = usePdfApplication();
 
   const engine = usePdfEngine();
@@ -31,7 +31,13 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
 
   useEffect(() => {
-    if (mode === PdfApplicationMode.Edit && engine && doc && page) {
+    if (
+      mode === PdfApplicationMode.Edit &&
+      isVisible &&
+      engine &&
+      doc &&
+      page
+    ) {
       const task = engine.getPageAnnotations(doc, page, scaleFactor, rotation);
       task.wait(setAnnotations, ignore);
 
@@ -39,7 +45,7 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
         task.abort();
       };
     }
-  }, [mode, engine, doc, page, scaleFactor, rotation]);
+  }, [isVisible, mode, engine, doc, page, scaleFactor, rotation]);
 
   const { query } = usePdfEditor();
   const operations = query(page.index) || [];
@@ -53,10 +59,6 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
   }, [operations, annotations]);
 
   if (mode === PdfApplicationMode.View) {
-    return null;
-  }
-
-  if (!isVisible && !inVisibleRange) {
     return null;
   }
 

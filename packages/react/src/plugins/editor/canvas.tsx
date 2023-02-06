@@ -1,8 +1,14 @@
-import { PdfPageObject, Rotation } from '@unionpdf/models';
+import {
+  PdfAnnotationSubtype,
+  PdfPageObject,
+  Position,
+  Rotation,
+} from '@unionpdf/models';
 import classNames from 'classnames';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { EditorTool, usePdfEditor } from '../../core';
 import { calculateRectStyle } from '../helpers/annotation';
+import { calculateBoundingRect } from '../helpers/editor';
 import './canvas.css';
 
 export interface PdfEditorCanvasProps {
@@ -14,7 +20,16 @@ export interface PdfEditorCanvasProps {
 export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
   const { page, scaleFactor, rotation } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [points, setPoints] = useState<{ x: number; y: number }[]>([]);
+
+  const style = useMemo(() => {
+    return calculateRectStyle(
+      { origin: { x: 0, y: 0 }, size: page.size },
+      scaleFactor,
+      rotation
+    );
+  }, [page, scaleFactor, rotation]);
+
+  const { exec, tool } = usePdfEditor();
 
   useEffect(() => {
     const canvasElem = canvasRef.current;
@@ -25,85 +40,87 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
       }
 
       let isDrawing = false;
-      const handlePointerDown = (evt: PointerEvent) => {
+      let points: Position[] = [];
+      const startDrawing = (evt: PointerEvent) => {
         if (isDrawing) {
           return;
         }
 
         isDrawing = true;
-
-        setPoints((points) => {
-          return [
-            {
-              x: evt.offsetX,
-              y: evt.offsetY,
-            },
-          ];
+        points.push({
+          x: evt.offsetX,
+          y: evt.offsetY,
         });
         ctx.beginPath();
         ctx.moveTo(evt.offsetX, evt.offsetY);
       };
-      const handlePointerMove = (evt: PointerEvent) => {
+
+      const draw = (evt: PointerEvent) => {
         if (!isDrawing) {
           return;
         }
 
-        setPoints((points) => {
-          return [
-            ...points,
-            {
-              x: evt.offsetX,
-              y: evt.offsetY,
-            },
-          ];
+        points.push({
+          x: evt.offsetX,
+          y: evt.offsetY,
         });
         ctx.lineTo(evt.offsetX, evt.offsetY);
         ctx.stroke();
       };
-      const handlePointerUp = (evt: PointerEvent) => {
+
+      const stopDrawing = (evt: PointerEvent) => {
         if (!isDrawing) {
           return;
         }
+
+        points.push({
+          x: evt.offsetX,
+          y: evt.offsetY,
+        });
+
+        ctx.save();
+
+        ctx.clearRect(0, 0, style.width, style.height);
+
+        ctx.restore();
+
+        const inkList = [{ points: [...points] }];
+
+        exec({
+          id: `${Date.now()}.${Math.random()}`,
+          pageIndex: page.index,
+          action: 'create',
+          annotation: {
+            id: Date.now(),
+            type: PdfAnnotationSubtype.INK,
+            rect: calculateBoundingRect(inkList),
+            inkList,
+          },
+        });
+
+        points = [];
 
         isDrawing = false;
-
-        setPoints((points) => {
-          return [
-            ...points,
-            {
-              x: evt.offsetX,
-              y: evt.offsetY,
-            },
-          ];
-        });
-        ctx.lineTo(evt.offsetX, evt.offsetY);
-        ctx.stroke();
       };
-      canvasElem.addEventListener('pointerdown', handlePointerDown);
+      canvasElem.addEventListener('pointerdown', startDrawing);
 
-      canvasElem.addEventListener('pointerup', handlePointerUp);
+      canvasElem.addEventListener('pointerup', stopDrawing);
+      canvasElem.addEventListener('pointerleave', stopDrawing);
+      canvasElem.addEventListener('pointerout', stopDrawing);
 
-      canvasElem.addEventListener('pointermove', handlePointerMove);
+      canvasElem.addEventListener('pointermove', draw);
 
       return () => {
-        canvasElem.removeEventListener('pointerdown', handlePointerDown);
+        canvasElem.removeEventListener('pointerdown', startDrawing);
 
-        canvasElem.removeEventListener('pointerup', handlePointerUp);
+        canvasElem.removeEventListener('pointerup', stopDrawing);
+        canvasElem.removeEventListener('pointerleave', stopDrawing);
+        canvasElem.removeEventListener('pointerout', stopDrawing);
 
-        canvasElem.removeEventListener('pointermove', handlePointerMove);
+        canvasElem.removeEventListener('pointermove', draw);
       };
     }
-  }, [setPoints]);
-
-  const style = useMemo(() => {
-    return calculateRectStyle(
-      { origin: { x: 0, y: 0 }, size: page.size },
-      scaleFactor,
-      rotation
-    );
-  }, [page, scaleFactor, rotation]);
-
-  const { tool } = usePdfEditor();
+  }, [page, exec]);
 
   return (
     <canvas

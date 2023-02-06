@@ -28,16 +28,6 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
       <div className="pdf__editor__panel__tools">
         <ButtonComponent
           onClick={(evt) => {
-            setTool(EditorTool.Pencil);
-          }}
-          className={classNames(
-            tool === EditorTool.Pencil ? 'pdf__ui__button--active' : ''
-          )}
-        >
-          {strings.pencil}
-        </ButtonComponent>
-        <ButtonComponent
-          onClick={(evt) => {
             setTool(EditorTool.Selection);
           }}
           className={classNames(
@@ -45,6 +35,16 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
           )}
         >
           {strings.selection}
+        </ButtonComponent>
+        <ButtonComponent
+          onClick={(evt) => {
+            setTool(EditorTool.Pencil);
+          }}
+          className={classNames(
+            tool === EditorTool.Pencil ? 'pdf__ui__button--active' : ''
+          )}
+        >
+          {strings.pencil}
         </ButtonComponent>
       </div>
     </div>

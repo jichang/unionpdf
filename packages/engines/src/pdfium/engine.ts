@@ -1707,14 +1707,18 @@ export class PdfiumEngine implements PdfEngine {
         );
 
         for (let j = 0; j < pointsCount; j++) {
-          const x = this.wasmModule.getValue(
+          const pointX = this.wasmModule.getValue(
             pointsPtr + j * pointMemorySize,
             'float'
           );
-          const y = this.wasmModule.getValue(
+          const pointY = this.wasmModule.getValue(
             pointsPtr + j * pointMemorySize + 4,
             'float'
           );
+          const { x, y } = this.convertPagePointToDevicePoint(pagePtr, page, {
+            x: pointX,
+            y: pointY,
+          });
           points.push({ x, y });
         }
 
@@ -2220,6 +2224,33 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  private convertPagePointToDevicePoint(
+    pagePtr: number,
+    page: PdfPageObject,
+    position: Position
+  ) {
+    const deviceXPtr = this.malloc(4);
+    const deviceYPtr = this.malloc(4);
+    this.wasmModuleWrapper.FPDF_PageToDevice(
+      pagePtr,
+      0,
+      0,
+      page.size.width,
+      page.size.height,
+      0,
+      position.x,
+      position.y,
+      deviceXPtr,
+      deviceYPtr
+    );
+    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
+    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
+    this.free(deviceXPtr);
+    this.free(deviceYPtr);
+
+    return { x, y };
+  }
+
   private convertPageRectToDeviceRect(
     page: PdfPageObject,
     pagePtr: number,
@@ -2230,25 +2261,10 @@ export class PdfiumEngine implements PdfEngine {
       bottom: number;
     }
   ): Rect {
-    const deviceXPtr = this.malloc(4);
-    const deviceYPtr = this.malloc(4);
-    this.wasmModuleWrapper.FPDF_PageToDevice(
-      pagePtr,
-      0,
-      0,
-      page.size.width,
-      page.size.height,
-      0,
-      pageRect.left,
-      pageRect.top,
-      deviceXPtr,
-      deviceYPtr
-    );
-    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
-    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
-    this.free(deviceXPtr);
-    this.free(deviceYPtr);
-
+    const { x, y } = this.convertPagePointToDevicePoint(pagePtr, page, {
+      x: pageRect.left,
+      y: pageRect.top,
+    });
     const rect = {
       origin: {
         x,

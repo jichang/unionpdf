@@ -4,7 +4,8 @@ import React, { useEffect, useRef } from 'react';
 import { usePdfEditor } from '../../core';
 import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
-import { PdfPageInkAnnotation } from '../annotations';
+import { PdfPageAnnotation, PdfPageInkAnnotation } from '../annotations';
+import classNames from 'classnames';
 
 export interface PdfEditorAnnotationProps {
   page: PdfPageObject;
@@ -42,10 +43,13 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
       content = (
         <PdfPageInkAnnotation
           key={annotation.id}
-          page={page}
+          // @ts-ignore
+          top={style.top}
+          // @ts-ignore
+          left={style.left}
+          width={style.width}
+          height={style.height}
           annotation={annotation}
-          scaleFactor={scaleFactor}
-          rotation={rotation}
         />
       );
       break;
@@ -54,15 +58,14 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
   }
 
   return (
-    <div
-      ref={containerRef}
-      tabIndex={0}
-      style={style}
-      className="pdf__editor__annotation"
-      data-subtype={annotation.type}
-      key={annotation.id}
+    <PdfPageAnnotation
+      page={page}
+      className={classNames('pdf__annotation--editor')}
+      annotation={annotation}
+      scaleFactor={scaleFactor}
+      rotation={rotation}
     >
       {content}
-    </div>
+    </PdfPageAnnotation>
   );
 }

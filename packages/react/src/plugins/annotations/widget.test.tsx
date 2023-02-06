@@ -41,16 +41,9 @@ describe('PdfPageWidget', () => {
         options: [],
       },
     };
-    const result = render(
-      <PdfPageWidgetAnnotation
-        page={page}
-        annotation={widget}
-        scaleFactor={1}
-        rotation={0}
-      />
-    );
+    const result = render(<PdfPageWidgetAnnotation annotation={widget} />);
 
-    const elem = document.querySelector('.pdf__annotation--widget');
+    const elem = document.querySelector('.pdf__form__field');
     expect(elem).toBeDefined();
 
     result.unmount();

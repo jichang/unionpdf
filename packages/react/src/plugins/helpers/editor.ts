@@ -28,17 +28,17 @@ export function apply(
 }
 
 export function calculateBoundingRect(inkLists: PdfInkListObject[]): Rect {
-  let minX = 0;
-  let minY = 0;
+  let minX = Number.MAX_VALUE;
+  let minY = Number.MAX_VALUE;
   let maxX = 0;
   let maxY = 0;
 
-  for (let i = 0; i < inkLists.length - 1; i++) {
+  for (let i = 0; i < inkLists.length; i++) {
     const points = inkLists[i].points;
     for (let j = 0; j < points.length; j++) {
       const point = points[j];
       minX = Math.min(point.x, minX);
-      maxY = Math.max(point.x, maxX);
+      maxX = Math.max(point.x, maxX);
       minY = Math.min(point.y, minY);
       maxY = Math.max(point.y, maxY);
     }

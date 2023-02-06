@@ -179,20 +179,20 @@ function App(props: AppProps) {
             <PdfEngineContextProvider engine={engine}>
               <PdfApplication mode={mode}>
                 <PdfNavigatorContextProvider>
-                  <PdfEditorContextProvider>
-                    <PdfDocument
-                      id={file.id}
-                      source={file.source}
-                      password={password}
-                      onOpenSuccess={() => {
-                        setIsPasswordOpened(false);
-                      }}
-                      onOpenFailure={(error: PdfEngineError) => {
-                        if (error.code === PdfiumErrorCode.Password) {
-                          setIsPasswordOpened(true);
-                        }
-                      }}
-                    >
+                  <PdfDocument
+                    id={file.id}
+                    source={file.source}
+                    password={password}
+                    onOpenSuccess={() => {
+                      setIsPasswordOpened(false);
+                    }}
+                    onOpenFailure={(error: PdfEngineError) => {
+                      if (error.code === PdfiumErrorCode.Password) {
+                        setIsPasswordOpened(true);
+                      }
+                    }}
+                  >
+                    <PdfEditorContextProvider>
                       <PdfToolbar>
                         {mode === PdfApplicationMode.View ? (
                           <PdfToolbarBrowseItemGroup
@@ -284,9 +284,9 @@ function App(props: AppProps) {
                           />
                         </div>
                       ) : null}
-                    </PdfDocument>
-                    <PdfEditorPanel />
-                  </PdfEditorContextProvider>
+                      <PdfEditorPanel />
+                    </PdfEditorContextProvider>
+                  </PdfDocument>
                 </PdfNavigatorContextProvider>
               </PdfApplication>
             </PdfEngineContextProvider>

@@ -1,5 +1,12 @@
 import { PdfAnnotationObject } from '@unionpdf/models';
-import React, { ReactNode, useCallback, useContext, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { usePdfDocument } from './document.context';
 
 export enum EditorTool {
   Selection,
@@ -55,7 +62,7 @@ export interface PdfEditorContextProviderProps {
 }
 
 export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
-  const { children, ...rest } = props;
+  const { children } = props;
 
   const [tool, setTool] = useState(EditorTool.Selection);
 
@@ -143,6 +150,19 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       };
     });
   }, [setStacks]);
+
+  const doc = usePdfDocument();
+
+  useEffect(() => {
+    return () => {
+      setStacks({
+        undo: [],
+        redo: [],
+        committed: [],
+        operations: {},
+      });
+    };
+  }, [doc]);
 
   return (
     <PdfEditorContext.Provider

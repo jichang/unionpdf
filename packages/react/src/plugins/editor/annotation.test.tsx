@@ -55,7 +55,7 @@ describe('PdfEditorAnnotation', () => {
     });
 
     expect(
-      document.querySelectorAll('.pdf__editor__annotation').length
+      document.querySelectorAll('.pdf__annotation--editor').length
     ).toEqual(10);
 
     result.unmount();

@@ -7,7 +7,7 @@
   height: 100%;
 }
 
-.pdf__page__layer--editor canvas {
+.pdf__page__layer--editor .pdf__editor__canvas {
   position: absolute;
   top: 0;
   left: 0;

@@ -2,17 +2,17 @@ import React, { ComponentProps, useMemo } from 'react';
 import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
-import classNames from 'classnames';
 import { PdfPagePopupAnnotation } from './popup';
+import classNames from 'classnames';
 
-export interface PdfPageAnnotationBaseProps extends ComponentProps<'div'> {
+export interface PdfPageAnnotationProps extends ComponentProps<'div'> {
   page: PdfPageObject;
   annotation: PdfAnnotationObject;
   scaleFactor: number;
   rotation: Rotation;
 }
 
-export function PdfPageAnnotationBase(props: PdfPageAnnotationBaseProps) {
+export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
   const {
     page,
     annotation,

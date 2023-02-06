@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  PdfPageAnnotationBase,
+  PdfPageAnnotation,
   PdfPageAnnotationComponentProps,
   PdfPageLinkAnnotation,
   PdfPageTextAnnotation,
@@ -10,45 +10,45 @@ import {
 import {
   PdfAnnotationObject,
   PdfAnnotationSubtype,
+  PdfAnnotationSubtypeName,
   PdfPageObject,
   Rotation,
 } from '@unionpdf/models';
+import classNames from 'classnames';
 
 export function PdfPageDefaultAnnotation(
   props: PdfPageAnnotationComponentProps
 ) {
   const { page, annotation, rotation, scaleFactor } = props;
+  let content = null;
   switch (annotation.type) {
     case PdfAnnotationSubtype.LINK:
-      return (
-        <PdfPageLinkAnnotation
-          page={page}
-          annotation={annotation}
-          rotation={rotation}
-          scaleFactor={scaleFactor}
-        />
-      );
+      content = <PdfPageLinkAnnotation page={page} annotation={annotation} />;
+      break;
     case PdfAnnotationSubtype.TEXT:
-      return (
-        <PdfPageTextAnnotation
-          page={page}
-          annotation={annotation}
-          rotation={rotation}
-          scaleFactor={scaleFactor}
-        />
-      );
+      content = <PdfPageTextAnnotation annotation={annotation} />;
+      break;
     case PdfAnnotationSubtype.WIDGET:
-      return (
-        <PdfPageWidgetAnnotation
-          page={page}
-          annotation={annotation}
-          rotation={rotation}
-          scaleFactor={scaleFactor}
-        />
-      );
+      content = <PdfPageWidgetAnnotation annotation={annotation} />;
+      break;
     default:
-      return <PdfPageAnnotationBase {...props} />;
+      content = <PdfPageAnnotation {...props} />;
   }
+
+  return (
+    <PdfPageAnnotation
+      page={page}
+      className={classNames(
+        'pdf__annotation',
+        `pdf__annotation--${PdfAnnotationSubtypeName[annotation.type]}`
+      )}
+      annotation={annotation}
+      scaleFactor={scaleFactor}
+      rotation={rotation}
+    >
+      {content}
+    </PdfPageAnnotation>
+  );
 }
 
 export interface PdfPageAnnotationsProps {

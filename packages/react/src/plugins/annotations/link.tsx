@@ -3,22 +3,18 @@ import {
   PdfActionType,
   PdfLinkAnnoObject,
   PdfPageObject,
-  Rotation,
 } from '@unionpdf/models';
 import './link.css';
-import { PdfPageAnnotationBase } from './annotation';
 import { usePdfNavigator } from '../../core/navigator.context';
 import { usePdfLinkAnnoContext } from './link.context';
 
 export interface PdfPageLinkAnnotationProps {
   page: PdfPageObject;
   annotation: PdfLinkAnnoObject;
-  scaleFactor: number;
-  rotation: Rotation;
 }
 
 export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
-  const { page, annotation, scaleFactor, rotation } = props;
+  const { page, annotation } = props;
   const { gotoPage } = usePdfNavigator();
 
   const href = useMemo(() => {
@@ -76,19 +72,6 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
   );
 
   return (
-    <PdfPageAnnotationBase
-      page={page}
-      className="pdf__annotation--link"
-      annotation={annotation}
-      scaleFactor={scaleFactor}
-      rotation={rotation}
-    >
-      <a
-        target="_blank"
-        title={annotation.text}
-        href={href}
-        onClick={onClick}
-      />
-    </PdfPageAnnotationBase>
+    <a target="_blank" title={annotation.text} href={href} onClick={onClick} />
   );
 }

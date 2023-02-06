@@ -1,6 +1,6 @@
 import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { ComponentProps, ComponentType, useContext } from 'react';
-import { PdfPageAnnotationBase } from '../annotations/annotation';
+import { PdfPageAnnotation } from '../annotations/annotation';
 
 export interface PdfPageAnnotationComponentProps extends ComponentProps<'div'> {
   page: PdfPageObject;
@@ -13,7 +13,7 @@ export type PdfPageAnnotationComponent =
   ComponentType<PdfPageAnnotationComponentProps>;
 
 export const PdfPageAnnotationComponentContext =
-  React.createContext<PdfPageAnnotationComponent>(PdfPageAnnotationBase);
+  React.createContext<PdfPageAnnotationComponent>(PdfPageAnnotation);
 
 export interface PdfPageAnnotationComponentContexProviderProps
   extends ComponentProps<'div'> {
