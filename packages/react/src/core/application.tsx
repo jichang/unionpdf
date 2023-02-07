@@ -4,7 +4,6 @@ import {
   PdfApplicationContextProvider,
   PdfApplicationMode,
 } from './application.context';
-import { PdfEditorContextProvider } from './editor.context';
 
 export interface PdfApplicationProps extends ComponentProps<'div'> {
   mode: PdfApplicationMode;
@@ -23,7 +22,7 @@ export function PdfApplication(props: PdfApplicationProps) {
       {...rest}
     >
       <PdfApplicationContextProvider mode={mode}>
-        <PdfEditorContextProvider>{children}</PdfEditorContextProvider>
+        {children}
       </PdfApplicationContextProvider>
     </div>
   );

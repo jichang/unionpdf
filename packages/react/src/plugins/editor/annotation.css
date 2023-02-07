@@ -1,2 +1,3 @@
-.pdf__editor__annotation {
+.pdf__annotation--editor {
+  transition: opacity 0s ease-in;
 }

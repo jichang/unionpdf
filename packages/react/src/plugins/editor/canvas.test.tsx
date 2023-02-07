@@ -7,12 +7,9 @@ import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
-import {
-  PdfApplicationContextProvider,
-  PdfApplicationMode,
-  PdfEditorContextProvider,
-} from '../../core';
+import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 import { PdfEditorCanvas } from './canvas';
+import { PdfEditorContextProvider } from './editor.context';
 
 describe('PdfEditorAnnotations', () => {
   test('should render pdf editor annotations', async () => {

@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { usePdfDocument } from './document.context';
+import { usePdfDocument } from '../../core';
 
 export enum EditorTool {
   Selection,
@@ -23,16 +23,11 @@ export interface Operation {
   annotation: PdfAnnotationObject;
 }
 
-export interface PdfEditorStackEntry {
-  id: string;
-  pageIndex: number;
-}
-
 export interface PdfEditorStacks {
-  undo: PdfEditorStackEntry[];
-  redo: PdfEditorStackEntry[];
-  committed: PdfEditorStackEntry[];
-  operations: Record<string, Operation[]>;
+  undo: Operation[];
+  redo: Operation[];
+  committed: Operation[];
+  pages: Record<string, Operation[]>;
 }
 
 export interface PdfEditorContextVale {
@@ -70,12 +65,17 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     undo: [],
     redo: [],
     committed: [],
-    operations: {},
+    pages: {},
   });
 
   const query = useCallback(
     (pageIndex: number) => {
-      return stacks.operations[pageIndex];
+      const pageStack = stacks.pages[pageIndex];
+      if (!pageStack || pageStack.length === 0) {
+        return [];
+      }
+
+      return pageStack;
     },
     [stacks]
   );
@@ -83,16 +83,16 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   const exec = useCallback(
     (operation: Operation) => {
       setStacks((stacks) => {
-        const { undo, redo, committed, operations } = stacks;
-        const pageOperations = operations[operation.pageIndex] || [];
+        const { undo, redo, committed, pages } = stacks;
+        const pageStack = pages[operation.pageIndex] || [];
 
         return {
-          undo: [...undo, { id: operation.id, pageIndex: operation.pageIndex }],
+          undo: [...undo, operation],
           redo,
           committed,
-          operations: {
-            ...operations,
-            [operation.pageIndex]: [...pageOperations, operation],
+          pages: {
+            ...pages,
+            [operation.pageIndex]: [...pageStack, operation],
           },
         };
       });
@@ -102,17 +102,22 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const undo = useCallback(() => {
     setStacks((stacks) => {
-      const { undo, redo, committed, operations } = stacks;
+      const { undo, redo, committed, pages } = stacks;
+
+      if (undo.length === 0) {
+        return stacks;
+      }
+
       const operation = undo[undo.length - 1];
-      const pageOperations = operations[operation.pageIndex] || [];
+      const pageStack = pages[operation.pageIndex] || [];
 
       return {
         undo: undo.slice(0, undo.length - 1),
         redo: [...redo, operation],
         committed,
-        operations: {
-          ...operations,
-          [operation.pageIndex]: pageOperations.filter((_operation) => {
+        pages: {
+          ...pages,
+          [operation.pageIndex]: pageStack.filter((_operation) => {
             return _operation.id !== operation.id;
           }),
         },
@@ -122,17 +127,22 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const redo = useCallback(() => {
     setStacks((stacks) => {
-      const { undo, redo, committed, operations } = stacks;
-      const operation = redo[undo.length - 1];
-      const pageOperations = operations[operation.pageIndex] || [];
+      const { undo, redo, committed, pages } = stacks;
+
+      if (redo.length === 0) {
+        return stacks;
+      }
+
+      const operation = redo[redo.length - 1];
+      const pageStack = pages[operation.pageIndex] || [];
 
       return {
         undo: [...undo, operation],
         redo: redo.slice(0, redo.length - 1),
         committed,
-        operations: {
-          ...operations,
-          [operation.pageIndex]: [...pageOperations, operation],
+        pages: {
+          ...pages,
+          [operation.pageIndex]: [...pageStack, operation],
         },
       };
     });
@@ -142,11 +152,15 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     setStacks((stacks) => {
       const { undo, committed } = stacks;
 
+      if (undo.length === 0) {
+        return stacks;
+      }
+
       return {
         undo: [],
         redo: [],
         committed: [...committed, ...undo],
-        operations: {},
+        pages: {},
       };
     });
   }, [setStacks]);
@@ -159,7 +173,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         undo: [],
         redo: [],
         committed: [],
-        operations: {},
+        pages: {},
       });
     };
   }, [doc]);

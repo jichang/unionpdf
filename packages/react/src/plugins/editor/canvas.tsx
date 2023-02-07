@@ -5,10 +5,10 @@ import {
   Rotation,
 } from '@unionpdf/models';
 import classNames from 'classnames';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { EditorTool, usePdfEditor } from '../../core';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { calculateRectStyle } from '../helpers/annotation';
 import { calculateBoundingRect } from '../helpers/editor';
+import { EditorTool, usePdfEditor } from './editor.context';
 import './canvas.css';
 
 export interface PdfEditorCanvasProps {

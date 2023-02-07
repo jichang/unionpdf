@@ -8,17 +8,15 @@ import {
   PdfApplicationMode,
   usePdfApplication,
   usePdfDocument,
-  usePdfEditor,
   usePdfEngine,
 } from '../../core';
-import {
-  PdfPageAnnotationComponentContextProvider,
-  PdfPageAnnotations,
-} from '../annotations';
-import { PdfEditorAnnotation, PdfEditorCanvas } from '../editor';
+import { PdfEditorAnnotations, PdfEditorCanvas } from '../editor';
 import { apply } from '../helpers/editor';
 import './editor.css';
 import { PdfPageLayerComponentProps } from './layer';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { EditorTool, usePdfEditor } from '../editor/editor.context';
 
 export interface PdfPageEditorLayerProps extends PdfPageLayerComponentProps {}
 
@@ -47,7 +45,7 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
     }
   }, [isVisible, mode, engine, doc, page, scaleFactor, rotation]);
 
-  const { query } = usePdfEditor();
+  const { tool, query, undo, redo } = usePdfEditor();
   const operations = query(page.index) || [];
 
   const editableAnnotations = useMemo(() => {
@@ -58,27 +56,49 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
     );
   }, [operations, annotations]);
 
+  useEffect(() => {
+    if (mode === PdfApplicationMode.Edit) {
+      const handleKey = (evt: KeyboardEvent) => {
+        if (evt.metaKey) {
+          if (evt.key === 'z') {
+            evt.preventDefault();
+            undo();
+          } else if (evt.key === 'y') {
+            evt.preventDefault();
+            redo();
+          }
+        }
+      };
+
+      window.addEventListener('keydown', handleKey);
+
+      return () => {
+        window.removeEventListener('keydown', handleKey);
+      };
+    }
+  }, [mode, undo, redo]);
+
   if (mode === PdfApplicationMode.View) {
     return null;
   }
 
   return (
-    <div className="pdf__page__layer pdf__page__layer--editor">
-      <PdfPageAnnotationComponentContextProvider
-        component={PdfEditorAnnotation}
-      >
-        <PdfPageAnnotations
-          annotations={editableAnnotations}
+    <DndProvider backend={HTML5Backend}>
+      <div className="pdf__page__layer pdf__page__layer--editor">
+        <PdfEditorAnnotations
           page={page}
+          annotations={editableAnnotations}
           scaleFactor={scaleFactor}
           rotation={rotation}
         />
-      </PdfPageAnnotationComponentContextProvider>
-      <PdfEditorCanvas
-        page={page}
-        scaleFactor={scaleFactor}
-        rotation={rotation}
-      />
-    </div>
+        {tool === EditorTool.Pencil ? (
+          <PdfEditorCanvas
+            page={page}
+            scaleFactor={scaleFactor}
+            rotation={rotation}
+          />
+        ) : null}
+      </div>
+    </DndProvider>
   );
 }

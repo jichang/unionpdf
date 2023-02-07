@@ -1,5 +1,5 @@
 import { PdfAnnotationObject, PdfInkListObject, Rect } from '@unionpdf/models';
-import { Operation } from '../../core/editor.context';
+import { Operation } from '../editor/editor.context';
 
 export function apply(
   annotations: PdfAnnotationObject[],
@@ -46,12 +46,12 @@ export function calculateBoundingRect(inkLists: PdfInkListObject[]): Rect {
 
   return {
     origin: {
-      x: minX,
-      y: minY,
+      x: minX - 1,
+      y: minY - 1,
     },
     size: {
-      width: maxX - minX,
-      height: maxY - minY,
+      width: maxX - minX + 2,
+      height: maxY - minY + 2,
     },
   };
 }

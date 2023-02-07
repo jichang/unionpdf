@@ -1,5 +1,5 @@
 import { PdfAnnotationObject } from '@unionpdf/models';
-import { Operation } from '../../core';
+import { Operation } from '../editor/editor.context';
 import { apply } from './editor';
 
 describe('apply', () => {

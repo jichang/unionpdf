@@ -4,15 +4,14 @@ import './ink.css';
 
 export interface PdfPageInkAnnotationProps {
   annotation: PdfInkAnnoObject;
-  top: number;
-  left: number;
   width: number;
   height: number;
 }
 
 export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
-  const { annotation, top, left, width, height } = props;
+  const { annotation, width, height } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { x, y } = annotation.rect.origin;
 
   useEffect(() => {
     const canvasElem = canvasRef.current;
@@ -24,17 +23,17 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
           if (inkList.points.length >= 2) {
             const startPoint = inkList.points[0];
             ctx.beginPath();
-            ctx.moveTo(startPoint.x - left, startPoint.y - top);
+            ctx.moveTo(startPoint.x - x, startPoint.y - y);
 
             inkList.points.slice(1).forEach((point) => {
-              ctx.lineTo(point.x - left, point.y - top);
+              ctx.lineTo(point.x - x, point.y - y);
               ctx.stroke();
             });
           }
         });
       }
     }
-  }, [annotation, top, left]);
+  }, [annotation, x, y]);
 
   return <canvas width={width} height={height} ref={canvasRef} />;
 }

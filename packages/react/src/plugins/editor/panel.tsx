@@ -1,12 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
-import {
-  usePdfEditor,
-  EditorTool,
-  usePdfApplication,
-  PdfApplicationMode,
-} from '../../core';
+import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents, useUIStrings } from '../../ui/ui.context';
+import { EditorTool, usePdfEditor } from './editor.context';
 import './panel.css';
 
 export interface PdfEditorPanelProps {}

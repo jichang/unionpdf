@@ -1,4 +1,4 @@
-import { PdfAnnotationSubtype, PdfZoomMode, Rotation } from '@unionpdf/models';
+import { PdfZoomMode, Rotation } from '@unionpdf/models';
 import React, { ChangeEvent, ComponentProps, useCallback } from 'react';
 import { useUIComponents, useUIStrings } from '../ui/ui.context';
 import './pages.toolbar.css';
@@ -6,7 +6,6 @@ import { ErrorBoundary } from '../ui/errorboundary';
 import { usePdfDocument } from '../core/document.context';
 import { usePdfNavigator } from '../core/navigator.context';
 import classNames from 'classnames';
-import { EditorTool, usePdfEditor } from '../core';
 
 export const PDF_NAVIGATOR_SOURCE_VIEW_PAGES_TOOLBAR =
   'PdfToolbarViewPagesItemGroup';

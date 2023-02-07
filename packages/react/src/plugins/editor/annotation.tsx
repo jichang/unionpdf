@@ -1,11 +1,16 @@
 import { PdfAnnotationObject, PdfAnnotationSubtype } from '@unionpdf/models';
 import { PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useEffect, useRef } from 'react';
-import { usePdfEditor } from '../../core';
 import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
 import { PdfPageAnnotation, PdfPageInkAnnotation } from '../annotations';
 import classNames from 'classnames';
+import { useDrag } from 'react-dnd';
+import { usePdfEditor } from './editor.context';
+
+export const ItemTypes = {
+  Annotation: 'annotation',
+};
 
 export interface PdfEditorAnnotationProps {
   page: PdfPageObject;
@@ -37,16 +42,23 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
     }
   }, [page, annotation, tool, exec]);
 
+  const [{ isDragging }, drag] = useDrag(() => {
+    return {
+      type: ItemTypes.Annotation,
+      collect: (monitor) => {
+        return {
+          isDragging: !!monitor.isDragging(),
+        };
+      },
+    };
+  });
+
   let content = null;
   switch (annotation.type) {
     case PdfAnnotationSubtype.INK:
       content = (
         <PdfPageInkAnnotation
           key={annotation.id}
-          // @ts-ignore
-          top={style.top}
-          // @ts-ignore
-          left={style.left}
           width={style.width}
           height={style.height}
           annotation={annotation}
@@ -64,6 +76,13 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}
+      drag={drag}
+      style={{
+        opacity: isDragging ? 0 : 1,
+        fontSize: 25,
+        fontWeight: 'bold',
+        cursor: 'move',
+      }}
     >
       {content}
     </PdfPageAnnotation>
