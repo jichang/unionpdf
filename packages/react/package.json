@@ -19,7 +19,7 @@
     "start": "parcel --no-cache ./demo/index.html",
     "build": "parcel build",
     "clean": "del-cli --force dist .parcel-cache",
-    "ignore:test": "jest --version"
+    "test": "jest"
   },
   "files": [
     "dist/cjs",
@@ -65,9 +65,7 @@
   "dependencies": {
     "@types/classnames": "^2.3.1",
     "@unionpdf/models": "^0.12.1",
-    "classnames": "^2.3.2",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1"
+    "classnames": "^2.3.2"
   },
   "peerDependencies": {
     "react": "^18.2.0",

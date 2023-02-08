@@ -1,12 +1,11 @@
 import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import classNames from 'classnames';
-import React from 'react';
-import { useDrop } from 'react-dnd';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   PdfPageAnnotationComponentContextProvider,
   PdfPageAnnotations,
 } from '../annotations';
-import { ItemTypes, PdfEditorAnnotation } from './annotation';
+import { PdfEditorAnnotation } from './annotation';
 import './annotations.css';
 
 export interface PdfEditorAnnotationsProps {
@@ -19,17 +18,32 @@ export interface PdfEditorAnnotationsProps {
 export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
   const { page, annotations, scaleFactor, rotation } = props;
 
-  const [{ isOver }, drop] = useDrop(
-    () => ({
-      accept: ItemTypes.Annotation,
-      drop: () => {},
-      collect: (monitor) => {
-        return {
-          isOver: !!monitor.isOver(),
-        };
-      },
-    }),
-    []
+  const [isOver, setIsOver] = useState(false);
+
+  const handleDragEnter = useCallback(
+    (evt: React.DragEvent<HTMLDivElement>) => {
+      const target = evt.target as HTMLElement;
+      if (target.classList.contains('pdf__annotations--editor')) {
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'move';
+        setIsOver(true);
+      }
+    },
+    [setIsOver]
+  );
+
+  const handleDrop = useCallback((evt: React.DragEvent<HTMLDivElement>) => {
+    evt.preventDefault();
+  }, []);
+
+  const handleDragLeave = useCallback(
+    (evt: React.DragEvent<HTMLDivElement>) => {
+      const target = evt.target as HTMLElement;
+      if (target.classList.contains('pdf__annotations--editor')) {
+        setIsOver(false);
+      }
+    },
+    [setIsOver]
   );
 
   return (
@@ -38,7 +52,9 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
         className={classNames('pdf__annotations--editor', {
           'pdf__annotations--droptarget': isOver,
         })}
-        ref={drop}
+        onDragEnter={handleDragEnter}
+        onDrop={handleDrop}
+        onDragLeave={handleDragLeave}
       >
         <PdfPageAnnotations
           annotations={annotations}

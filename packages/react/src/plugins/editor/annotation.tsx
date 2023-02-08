@@ -1,11 +1,14 @@
-import { PdfAnnotationObject, PdfAnnotationSubtype } from '@unionpdf/models';
+import {
+  PdfAnnotationObject,
+  PdfAnnotationSubtype,
+  Position,
+} from '@unionpdf/models';
 import { PdfPageObject, Rotation } from '@unionpdf/models';
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
 import { PdfPageAnnotation, PdfPageInkAnnotation } from '../annotations';
 import classNames from 'classnames';
-import { useDrag } from 'react-dnd';
 import { usePdfEditor } from './editor.context';
 
 export const ItemTypes = {
@@ -26,32 +29,62 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { tool, exec } = usePdfEditor();
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener('keyup', (evt) => {
-        if (evt.key === 'Delete') {
-          exec({
-            id: `${Date.now()}.${Math.random}`,
-            pageIndex: page.index,
-            action: 'remove',
-            annotation,
-          });
-        }
-      });
-    }
-  }, [page, annotation, tool, exec]);
+  const handleKeyUp = useCallback(
+    (evt: React.KeyboardEvent) => {
+      if (evt.key === 'Delete') {
+        exec({
+          id: `${Date.now()}.${Math.random}`,
+          pageIndex: page.index,
+          action: 'remove',
+          annotation,
+        });
+      }
+    },
+    [annotation, page, exec]
+  );
 
-  const [{ isDragging }, drag] = useDrag(() => {
-    return {
-      type: ItemTypes.Annotation,
-      collect: (monitor) => {
-        return {
-          isDragging: !!monitor.isDragging(),
+  const [isDragging, setIsDragging] = useState(false);
+  const startPointRef = useRef<Position | null>();
+
+  const handleDragStart = useCallback(
+    (evt: React.DragEvent<HTMLDivElement>) => {
+      startPointRef.current = {
+        x: evt.screenX,
+        y: evt.screenY,
+      };
+      evt.dataTransfer.dropEffect = 'move';
+      setIsDragging(true);
+    },
+    [setIsDragging]
+  );
+
+  const handleDrag = useCallback(
+    (evt: React.DragEvent<HTMLDivElement>) => {
+      evt.dataTransfer.dropEffect = 'move';
+    },
+    [setIsDragging]
+  );
+
+  const handleDragEnd = useCallback(
+    (evt: React.DragEvent<HTMLDivElement>) => {
+      if (startPointRef.current) {
+        const offset = {
+          x: evt.screenX - startPointRef.current.x,
+          y: evt.screenY - startPointRef.current.y,
         };
-      },
-    };
-  });
+
+        exec({
+          id: `${Date.now()}.${Math.random}`,
+          pageIndex: page.index,
+          action: 'transition',
+          annotation,
+          offset,
+        });
+      }
+      setIsDragging(false);
+    },
+    [setIsDragging, annotation, page, exec]
+  );
 
   let content = null;
   switch (annotation.type) {
@@ -72,17 +105,17 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
   return (
     <PdfPageAnnotation
       page={page}
-      className={classNames('pdf__annotation--editor')}
+      className={classNames('pdf__annotation--editor', {
+        'pdf__annotation--dragging': isDragging,
+      })}
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}
-      drag={drag}
-      style={{
-        opacity: isDragging ? 0 : 1,
-        fontSize: 25,
-        fontWeight: 'bold',
-        cursor: 'move',
-      }}
+      onKeyUp={handleKeyUp}
+      draggable={true}
+      onDragStart={handleDragStart}
+      onDrag={handleDrag}
+      onDragEnd={handleDragEnd}
     >
       {content}
     </PdfPageAnnotation>

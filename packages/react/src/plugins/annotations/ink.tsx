@@ -35,5 +35,12 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
     }
   }, [annotation, x, y]);
 
-  return <canvas width={width} height={height} ref={canvasRef} />;
+  return (
+    <canvas
+      className="pdf__annotation__canvas"
+      width={width}
+      height={height}
+      ref={canvasRef}
+    />
+  );
 }

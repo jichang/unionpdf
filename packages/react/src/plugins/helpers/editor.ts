@@ -9,12 +9,24 @@ export function apply(
     switch (operation.action) {
       case 'create':
         return [...annotations, operation.annotation];
-      case 'update':
+      case 'transition':
         return annotations.map((annotation) => {
           if (annotation.id !== operation.annotation.id) {
             return annotation;
           } else {
-            return annotation;
+            const {
+              rect: { origin, size },
+            } = annotation;
+            return {
+              ...annotation,
+              rect: {
+                origin: {
+                  x: origin.x + operation.offset.x,
+                  y: origin.y + operation.offset.y,
+                },
+                size,
+              },
+            };
           }
         });
       case 'remove':

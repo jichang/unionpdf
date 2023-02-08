@@ -14,8 +14,6 @@ import { PdfEditorAnnotations, PdfEditorCanvas } from '../editor';
 import { apply } from '../helpers/editor';
 import './editor.css';
 import { PdfPageLayerComponentProps } from './layer';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { EditorTool, usePdfEditor } from '../editor/editor.context';
 
 export interface PdfPageEditorLayerProps extends PdfPageLayerComponentProps {}
@@ -83,22 +81,20 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="pdf__page__layer pdf__page__layer--editor">
-        <PdfEditorAnnotations
+    <div className="pdf__page__layer pdf__page__layer--editor">
+      <PdfEditorAnnotations
+        page={page}
+        annotations={editableAnnotations}
+        scaleFactor={scaleFactor}
+        rotation={rotation}
+      />
+      {tool === EditorTool.Pencil ? (
+        <PdfEditorCanvas
           page={page}
-          annotations={editableAnnotations}
           scaleFactor={scaleFactor}
           rotation={rotation}
         />
-        {tool === EditorTool.Pencil ? (
-          <PdfEditorCanvas
-            page={page}
-            scaleFactor={scaleFactor}
-            rotation={rotation}
-          />
-        ) : null}
-      </div>
-    </DndProvider>
+      ) : null}
+    </div>
   );
 }

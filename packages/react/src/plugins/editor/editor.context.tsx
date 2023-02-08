@@ -1,4 +1,4 @@
-import { PdfAnnotationObject } from '@unionpdf/models';
+import { PdfAnnotationObject, Position } from '@unionpdf/models';
 import React, {
   ReactNode,
   useCallback,
@@ -16,12 +16,20 @@ export enum EditorTool {
   AddSignature,
 }
 
-export interface Operation {
-  id: string;
-  pageIndex: number;
-  action: 'create' | 'update' | 'remove';
-  annotation: PdfAnnotationObject;
-}
+export type Operation =
+  | {
+      id: string;
+      pageIndex: number;
+      action: 'create' | 'remove';
+      annotation: PdfAnnotationObject;
+    }
+  | {
+      id: string;
+      pageIndex: number;
+      action: 'transition';
+      annotation: PdfAnnotationObject;
+      offset: Position;
+    };
 
 export interface PdfEditorStacks {
   undo: Operation[];

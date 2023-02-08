@@ -1,3 +1,7 @@
 .pdf__annotation--editor {
   transition: opacity 0s ease-in;
 }
+
+.pdf__annotation--editor.pdf__annotation--dragging {
+  opacity: 0.01;
+}
