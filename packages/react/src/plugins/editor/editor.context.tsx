@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { usePdfDocument } from '../../core';
+import { usePdfDocument, usePdfEngine } from '../../core';
 
 export enum EditorTool {
   Selection,
@@ -26,9 +26,12 @@ export type Operation =
   | {
       id: string;
       pageIndex: number;
-      action: 'transition';
+      action: 'transform';
       annotation: PdfAnnotationObject;
-      offset: Position;
+      tranformation: {
+        type: 'translate';
+        offset: Position;
+      };
     };
 
 export interface PdfEditorStacks {
@@ -41,7 +44,7 @@ export interface PdfEditorStacks {
 export interface PdfEditorContextVale {
   tool: EditorTool;
   setTool: (tool: EditorTool) => void;
-  query: (pageIndex: number) => Operation[];
+  queryByPageIndex: (pageIndex: number) => Operation[];
   exec: (operation: Operation) => void;
   undo: () => void;
   redo: () => void;
@@ -51,7 +54,7 @@ export interface PdfEditorContextVale {
 export const PdfEditorContext = React.createContext<PdfEditorContextVale>({
   tool: EditorTool.Selection,
   setTool: (tool: EditorTool) => {},
-  query: (pageIndex: number) => {
+  queryByPageIndex: (pageIndex: number) => {
     return [];
   },
   exec: (operation: Operation) => {},
@@ -76,7 +79,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     pages: {},
   });
 
-  const query = useCallback(
+  const queryByPageIndex = useCallback(
     (pageIndex: number) => {
       const pageStack = stacks.pages[pageIndex];
       if (!pageStack || pageStack.length === 0) {
@@ -156,6 +159,9 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     });
   }, [setStacks]);
 
+  const engine = usePdfEngine();
+  const doc = usePdfDocument();
+
   const commit = useCallback(() => {
     setStacks((stacks) => {
       const { undo, committed } = stacks;
@@ -173,8 +179,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     });
   }, [setStacks]);
 
-  const doc = usePdfDocument();
-
   useEffect(() => {
     return () => {
       setStacks({
@@ -191,7 +195,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       value={{
         tool,
         setTool,
-        query,
+        queryByPageIndex,
         exec,
         undo,
         redo,

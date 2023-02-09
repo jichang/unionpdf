@@ -1,12 +1,18 @@
-import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
+import {
+  PdfAnnotationObject,
+  PdfPageObject,
+  Position,
+  Rotation,
+} from '@unionpdf/models';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   PdfPageAnnotationComponentContextProvider,
   PdfPageAnnotations,
 } from '../annotations';
 import { PdfEditorAnnotation } from './annotation';
 import './annotations.css';
+import { usePdfEditor } from './editor.context';
 
 export interface PdfEditorAnnotationsProps {
   page: PdfPageObject;
@@ -32,18 +38,59 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
     [setIsOver]
   );
 
-  const handleDrop = useCallback((evt: React.DragEvent<HTMLDivElement>) => {
-    evt.preventDefault();
+  const handleDragOver = useCallback((evt: React.DragEvent<HTMLDivElement>) => {
+    const target = evt.target as HTMLElement;
+    if (target.classList.contains('pdf__annotations--editor')) {
+      evt.preventDefault();
+    }
   }, []);
 
   const handleDragLeave = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
       const target = evt.target as HTMLElement;
       if (target.classList.contains('pdf__annotations--editor')) {
+        evt.preventDefault();
         setIsOver(false);
       }
     },
     [setIsOver]
+  );
+
+  const { exec } = usePdfEditor();
+  const handleDrop = useCallback(
+    (evt: React.DragEvent<HTMLDivElement>) => {
+      evt.preventDefault();
+
+      const data = evt.dataTransfer.getData('application/json');
+      if (data) {
+        const stopPosition = {
+          x: evt.nativeEvent.pageX,
+          y: evt.nativeEvent.pageY,
+        };
+        const { annotation, pageIndex, startPosition } = JSON.parse(data) as {
+          annotation: PdfAnnotationObject;
+          pageIndex: number;
+          startPosition: Position;
+        };
+
+        if (page.index === pageIndex) {
+          exec({
+            id: `${Date.now()}.${Math.random}`,
+            pageIndex: page.index,
+            action: 'transform',
+            annotation,
+            tranformation: {
+              type: 'translate',
+              offset: {
+                x: stopPosition.x - startPosition.x,
+                y: stopPosition.y - startPosition.y,
+              },
+            },
+          });
+        }
+      }
+    },
+    [exec, page, annotations]
   );
 
   return (
@@ -53,8 +100,9 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
           'pdf__annotations--droptarget': isOver,
         })}
         onDragEnter={handleDragEnter}
-        onDrop={handleDrop}
+        onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
         <PdfPageAnnotations
           annotations={annotations}

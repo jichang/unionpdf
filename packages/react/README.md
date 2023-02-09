@@ -119,7 +119,12 @@ For the full code you can check the [demo app](./packages/app/src/main.tsx)
 
 4. Editor Layer
 
-   This layer supports editing pdf files
+   This layer is for editing pdf files, supports features
+
+   4.1 drawing new ink annotations
+   4.2 move annotations through drag and drop
+
+   Also, it has build in support for undo/redo.
 
 ### How to write a pdf plugin
 

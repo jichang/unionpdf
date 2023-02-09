@@ -1,4 +1,9 @@
-import { PdfAnnotationObject, PdfInkListObject, Rect } from '@unionpdf/models';
+import {
+  PdfAnnotationObject,
+  PdfAnnotationSubtype,
+  PdfInkListObject,
+  Rect,
+} from '@unionpdf/models';
 import { Operation } from '../editor/editor.context';
 
 export function apply(
@@ -9,7 +14,7 @@ export function apply(
     switch (operation.action) {
       case 'create':
         return [...annotations, operation.annotation];
-      case 'transition':
+      case 'transform':
         return annotations.map((annotation) => {
           if (annotation.id !== operation.annotation.id) {
             return annotation;
@@ -17,16 +22,37 @@ export function apply(
             const {
               rect: { origin, size },
             } = annotation;
-            return {
+            const {
+              tranformation: { offset },
+            } = operation;
+
+            let updated = {
               ...annotation,
               rect: {
                 origin: {
-                  x: origin.x + operation.offset.x,
-                  y: origin.y + operation.offset.y,
+                  x: origin.x + offset.x,
+                  y: origin.y + offset.y,
                 },
                 size,
               },
             };
+
+            switch (updated.type) {
+              case PdfAnnotationSubtype.INK:
+                updated.inkList = updated.inkList.map((inkList) => {
+                  return {
+                    points: inkList.points.map((point) => {
+                      return {
+                        x: point.x + offset.x,
+                        y: point.y + offset.y,
+                      };
+                    }),
+                  };
+                });
+                break;
+            }
+
+            return updated;
           }
         });
       case 'remove':

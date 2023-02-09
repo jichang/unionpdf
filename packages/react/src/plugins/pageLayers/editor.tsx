@@ -43,8 +43,8 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
     }
   }, [isVisible, mode, engine, doc, page, scaleFactor, rotation]);
 
-  const { tool, query, undo, redo } = usePdfEditor();
-  const operations = query(page.index) || [];
+  const { tool, queryByPageIndex, undo, redo } = usePdfEditor();
+  const operations = queryByPageIndex(page.index) || [];
 
   const editableAnnotations = useMemo(() => {
     return apply(annotations, operations).filter(

@@ -33,7 +33,7 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
         });
       }
     }
-  }, [annotation, x, y]);
+  }, [annotation, x, y, width, height]);
 
   return (
     <canvas
