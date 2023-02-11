@@ -45,3 +45,14 @@ body {
 .pdf__toolbar__item__group--right {
   justify-content: right;
 }
+
+.app__pdf__thumbnails {
+  position: fixed;
+  top: 10%;
+  left: 0;
+  box-shadow: 0 0 1px black;
+
+  height: 80%;
+
+  overflow: scroll;
+}

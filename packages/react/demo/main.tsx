@@ -36,7 +36,7 @@ import {
   PdfPageAnnotationComponentContextProvider,
   PdfLinkAnnoContextProvider,
   PdfEditorContextProvider,
-  PdfEditorPanel,
+  PdfEditor,
   PdfPageAnnotationsLayer,
   PdfPageCanvasLayer,
   PdfPageTextLayer,
@@ -216,11 +216,7 @@ function App(props: AppProps) {
                             }
                           />
                         ) : (
-                          <PdfToolbarEditPagesItemGroup
-                            onAddSignature={() => {
-                              console.log('add signature here');
-                            }}
-                          />
+                          <PdfToolbarEditPagesItemGroup />
                         )}
                         <PdfToolbarManageItemGroup className="pdf__toolbar__item__group--right">
                           <button
@@ -284,7 +280,7 @@ function App(props: AppProps) {
                           />
                         </div>
                       ) : null}
-                      <PdfEditorPanel />
+                      <PdfEditor />
                     </PdfEditorContextProvider>
                   </PdfDocument>
                 </PdfNavigatorContextProvider>

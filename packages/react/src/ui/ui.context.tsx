@@ -3,6 +3,7 @@ import { createContext, useContext } from 'react';
 import {
   Button,
   Checkbox,
+  Dialog,
   Form,
   Icon,
   Input,
@@ -26,6 +27,7 @@ export interface UIComponents {
   LabelComponent: typeof Label;
   RadioButtonComponent: typeof RadioButton;
   TextAreaComponnet: typeof TextArea;
+  DialogComponent: typeof Dialog;
 }
 
 export const DEFAULT_UI_COMPONENTS: UIComponents = {
@@ -40,6 +42,7 @@ export const DEFAULT_UI_COMPONENTS: UIComponents = {
   LabelComponent: Label,
   RadioButtonComponent: RadioButton,
   TextAreaComponnet: TextArea,
+  DialogComponent: Dialog,
 };
 
 export const UIComponentsContext = createContext<UIComponents>(
@@ -124,8 +127,10 @@ export interface UIStrings {
   pencil: string;
   addTextBox: string;
   addSignature: string;
+  extract: string;
   addImage: string;
   selection: string;
+  annotation: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -159,11 +164,13 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   fileCreationDate: 'Creation Date',
   download: 'Download',
   signatures: 'Signatures',
+  extract: 'Extract',
   pencil: 'Pencil',
   addTextBox: 'Add Text Box',
   addSignature: 'Add Signature',
   addImage: 'Add Image',
   selection: 'Selection',
+  annotation: 'Annotation',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

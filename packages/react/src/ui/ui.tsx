@@ -161,3 +161,13 @@ export function Form(props: FormProps) {
 
   return <form className={classNames('pdf__ui__form', className)} {...rest} />;
 }
+
+export interface DialogProps extends ComponentProps<'dialog'> {}
+
+export function Dialog(props: DialogProps) {
+  const { className, ...rest } = props;
+
+  return (
+    <dialog className={classNames('pdf__ui__dialog', className)} {...rest} />
+  );
+}

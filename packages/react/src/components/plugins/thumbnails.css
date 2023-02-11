@@ -1,0 +1,54 @@
+.pdf__thumbnails {
+  position: relative;
+}
+
+.pdf__thumbnails__grid {
+  position: relative;
+  display: grid;
+  border: 1px solid gray;
+
+  height: 100%;
+
+  background-color: white;
+}
+
+.pdf__thumbnail {
+  position: relative;
+  padding: 0.5rem;
+
+  text-align: center;
+
+  cursor: pointer;
+}
+
+.pdf__thumbnail img {
+  display: inline-block;
+  border: 1px solid black;
+}
+
+.pdf__thumbnail:hover img,
+.pdf__thumbnail.pdf__thumbnail--current img {
+  box-shadow: 0 0 1px black;
+}
+
+.pdf__thumbnail__checkbox {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+
+.pdf__thumbnail span {
+  display: block;
+
+  width: 100%;
+}
+
+.pdf__thumbnails__footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+}
