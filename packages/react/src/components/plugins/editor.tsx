@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ErrorBoundary } from '../../ui';
 import './editor.css';
 import { PdfEditorTool, usePdfEditor } from '../editor/editor.context';
@@ -8,7 +8,29 @@ import { PdfEditorExtractor } from '../editor';
 
 export function PdfEditor() {
   const { mode } = usePdfApplication();
-  const { tool } = usePdfEditor();
+  const { tool, redo, undo } = usePdfEditor();
+
+  useEffect(() => {
+    if (mode === PdfApplicationMode.Edit) {
+      const handleKey = (evt: KeyboardEvent) => {
+        if (evt.metaKey) {
+          if (evt.key === 'z') {
+            evt.preventDefault();
+            undo();
+          } else if (evt.key === 'y') {
+            evt.preventDefault();
+            redo();
+          }
+        }
+      };
+
+      window.addEventListener('keydown', handleKey);
+
+      return () => {
+        window.removeEventListener('keydown', handleKey);
+      };
+    }
+  }, [mode, undo, redo]);
 
   if (mode === PdfApplicationMode.View) {
     return null;

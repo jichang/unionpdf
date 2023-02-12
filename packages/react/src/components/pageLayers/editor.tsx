@@ -43,7 +43,7 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
     }
   }, [isVisible, mode, engine, doc, page, scaleFactor, rotation]);
 
-  const { annotationTool, queryByPageIndex, undo, redo } = usePdfEditor();
+  const { annotationTool, queryByPageIndex } = usePdfEditor();
   const operations = queryByPageIndex(page.index) || [];
 
   const editableAnnotations = useMemo(() => {
@@ -53,28 +53,6 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
       }
     );
   }, [operations, annotations]);
-
-  useEffect(() => {
-    if (mode === PdfApplicationMode.Edit) {
-      const handleKey = (evt: KeyboardEvent) => {
-        if (evt.metaKey) {
-          if (evt.key === 'z') {
-            evt.preventDefault();
-            undo();
-          } else if (evt.key === 'y') {
-            evt.preventDefault();
-            redo();
-          }
-        }
-      };
-
-      window.addEventListener('keydown', handleKey);
-
-      return () => {
-        window.removeEventListener('keydown', handleKey);
-      };
-    }
-  }, [mode, undo, redo]);
 
   if (mode === PdfApplicationMode.View) {
     return null;
