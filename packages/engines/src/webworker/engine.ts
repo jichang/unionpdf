@@ -568,6 +568,24 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  extract(pdf: PdfDocumentObject, pageIndexes: number[]) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extract', pdf);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<ArrayBuffer>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'extract',
+        args: [pdf, pageIndexes],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
   closeDocument(pdf: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', pdf);
     const requestId = this.generateRequestId();

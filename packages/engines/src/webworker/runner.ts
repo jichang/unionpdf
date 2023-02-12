@@ -169,6 +169,9 @@ export class EngineRunner {
       case 'readAttachmentContent':
         task = this.engine[name]!(...args);
         break;
+      case 'extract':
+        task = this.engine[name]!(...args);
+        break;
     }
 
     task.wait(

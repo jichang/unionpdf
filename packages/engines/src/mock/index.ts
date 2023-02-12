@@ -207,6 +207,9 @@ export function createMockPdfEngine(
     saveAsCopy: (pdf: PdfDocumentObject) => {
       return TaskBase.resolve(new ArrayBuffer(0));
     },
+    extract: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
+      return TaskBase.resolve(new ArrayBuffer(0));
+    },
     startSearch: (doc: PdfDocumentObject, contextId: number) => {
       return TaskBase.resolve(true);
     },

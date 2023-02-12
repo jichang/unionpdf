@@ -1,13 +1,13 @@
 .pdf__thumbnails {
   position: relative;
+
+  overflow: scroll;
 }
 
 .pdf__thumbnails__grid {
   position: relative;
   display: grid;
   border: 1px solid gray;
-
-  height: 100%;
 
   background-color: white;
 }

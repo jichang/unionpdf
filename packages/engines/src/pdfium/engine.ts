@@ -317,6 +317,11 @@ export const wrappedModuleMethods = {
     ['number'] as const,
     'number',
   ] as const,
+  FPDF_CreateNewDocument: [[] as const, 'number'] as const,
+  FPDF_ImportPagesByIndex: [
+    ['number', 'number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
 };
 
 const LOG_SOURCE = 'PDFiumEngine';
@@ -774,31 +779,6 @@ export class PdfiumEngine implements PdfEngine {
     });
   }
 
-  saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', doc);
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { docPtr } = this.docs[doc.id];
-
-    const writerPtr = this.wasmModuleWrapper.PDFium_OpenFileWriter();
-    this.wasmModuleWrapper.PDFium_SaveAsCopy(docPtr, writerPtr);
-    const size = this.wasmModuleWrapper.PDFium_GetFileWriterSize(writerPtr);
-    const dataPtr = this.malloc(size);
-    this.wasmModuleWrapper.PDFium_GetFileWriterData(writerPtr, dataPtr, size);
-    const buffer = new ArrayBuffer(size);
-    const view = new DataView(buffer);
-    for (let i = 0; i < size; i++) {
-      view.setInt8(i, this.wasmModule.getValue(dataPtr + i, 'i8'));
-    }
-    this.free(dataPtr);
-    this.wasmModuleWrapper.PDFium_CloseFileWriter(writerPtr);
-
-    return TaskBase.resolve(buffer);
-  }
-
   startSearch(
     doc: PdfDocumentObject,
     contextId: number
@@ -1054,6 +1034,63 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(buffer);
   }
 
+  extract(
+    doc: PdfDocumentObject,
+    pageIndexes: number[]
+  ): Task<ArrayBuffer, Error> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extract', doc, pageIndexes);
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+
+    const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
+    if (!newDocPtr) {
+      return TaskBase.reject(new PdfEngineError('can not create new document'));
+    }
+
+    const pageIndexesPtr = this.malloc(pageIndexes.length * 4);
+    for (let i = 0; i < pageIndexes.length; i++) {
+      this.wasmModule.setValue(pageIndexesPtr + i * 4, pageIndexes[i], 'i32');
+    }
+
+    if (
+      !this.wasmModuleWrapper.FPDF_ImportPagesByIndex(
+        newDocPtr,
+        docPtr,
+        pageIndexesPtr,
+        pageIndexes.length,
+        0
+      )
+    ) {
+      this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+      return TaskBase.reject(
+        new PdfEngineError('can not import pages to new document')
+      );
+    }
+
+    const buffer = this.saveDocument(newDocPtr);
+
+    this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+
+    return TaskBase.resolve(buffer);
+  }
+
+  saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', doc);
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const buffer = this.saveDocument(docPtr);
+
+    return TaskBase.resolve(buffer);
+  }
+
   closeDocument(doc: PdfDocumentObject): Task<boolean, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', doc);
 
@@ -1091,6 +1128,23 @@ export class PdfiumEngine implements PdfEngine {
 
   free(ptr: number) {
     this.wasmModule._free(ptr);
+  }
+
+  saveDocument(docPtr: number) {
+    const writerPtr = this.wasmModuleWrapper.PDFium_OpenFileWriter();
+    this.wasmModuleWrapper.PDFium_SaveAsCopy(docPtr, writerPtr);
+    const size = this.wasmModuleWrapper.PDFium_GetFileWriterSize(writerPtr);
+    const dataPtr = this.malloc(size);
+    this.wasmModuleWrapper.PDFium_GetFileWriterData(writerPtr, dataPtr, size);
+    const buffer = new ArrayBuffer(size);
+    const view = new DataView(buffer);
+    for (let i = 0; i < size; i++) {
+      view.setInt8(i, this.wasmModule.getValue(dataPtr + i, 'i8'));
+    }
+    this.free(dataPtr);
+    this.wasmModuleWrapper.PDFium_CloseFileWriter(writerPtr);
+
+    return buffer;
   }
 
   readMetaText(docPtr: number, key: string) {

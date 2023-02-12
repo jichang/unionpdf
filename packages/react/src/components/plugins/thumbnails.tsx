@@ -7,11 +7,10 @@ import {
   Size,
 } from '@unionpdf/models';
 import React, { ComponentProps, useCallback, useEffect, useState } from 'react';
-import { PdfApplicationMode, usePdfApplication } from '../../core';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
-import { useUIComponents, useUIStrings } from '../../ui';
+import { useUIComponents } from '../../ui';
 import { ErrorBoundary } from '../../ui/errorboundary';
 import {
   IntersectionObserverContextProvider,
@@ -32,6 +31,9 @@ export interface PdfThumbnailsProps {
   size: Size;
   scaleFactor?: number;
   rotation?: Rotation;
+  enableCheckbox?: boolean;
+  selectedIndexes?: number[];
+  onClickCheckbox?: (page: PdfPageObject) => void;
 }
 
 export const PDF_NAVIGATOR_SOURCE_THUMBNAILS = 'PdfThumbnails';
@@ -41,10 +43,10 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
     layout = { direction: 'vertical', itemsCount: 1 },
     scaleFactor = 1,
     rotation = 0,
+    enableCheckbox = false,
+    selectedIndexes = [],
+    onClickCheckbox: onClickThumbnail,
   } = props;
-  const { ButtonComponent } = useUIComponents();
-  const strings = useUIStrings();
-  const { mode } = usePdfApplication();
   const doc = usePdfDocument();
   const { currPageIndex, gotoPage } = usePdfNavigator();
 
@@ -71,24 +73,6 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
     styleTemplate.push('1fr');
   }
 
-  const [selectedPageIndexes, setSelectedIndexes] = useState<number[]>([]);
-
-  const toggleThumbnailSelected = useCallback(
-    (page: PdfPageObject) => {
-      setSelectedIndexes((pageIndexes) => {
-        const index = pageIndexes.indexOf(page.index);
-        if (index === -1) {
-          return [...pageIndexes, page.index];
-        } else {
-          return pageIndexes.filter((index) => {
-            return index !== page.index;
-          });
-        }
-      });
-    },
-    [setSelectedIndexes]
-  );
-
   return (
     <ErrorBoundary>
       <div className="pdf__thumbnails">
@@ -106,14 +90,10 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
             scaleFactor={scaleFactor}
             rotation={rotation}
             gotoPage={jumpToPage}
-            selectedPageIndexes={selectedPageIndexes}
-            onSelectedChange={toggleThumbnailSelected}
-          ></PdfThumbnailsContent>
-          {mode === PdfApplicationMode.Edit ? (
-            <div className="pdf__thumbnails__footer">
-              <ButtonComponent>{strings.extract}</ButtonComponent>
-            </div>
-          ) : null}
+            enableCheckbox={enableCheckbox}
+            selectedIndexes={selectedIndexes}
+            onClickThumbnail={onClickThumbnail}
+          />
         </IntersectionObserverContextProvider>
       </div>
     </ErrorBoundary>
@@ -126,8 +106,9 @@ export interface PdfThumbnailsContentProps extends ComponentProps<'div'> {
   scaleFactor: number;
   rotation: Rotation;
   gotoPage: (page: PdfPageObject) => void;
-  selectedPageIndexes: number[];
-  onSelectedChange: (page: PdfPageObject) => void;
+  enableCheckbox: boolean;
+  selectedIndexes: number[];
+  onClickThumbnail?: (page: PdfPageObject) => void;
 }
 
 export function PdfThumbnailsContent(props: PdfThumbnailsContentProps) {
@@ -137,8 +118,9 @@ export function PdfThumbnailsContent(props: PdfThumbnailsContentProps) {
     scaleFactor,
     rotation,
     gotoPage,
-    selectedPageIndexes,
-    onSelectedChange,
+    enableCheckbox,
+    selectedIndexes,
+    onClickThumbnail,
     children,
   } = props;
   const { visibleEntryIds } = useIntersectionObserver();
@@ -148,7 +130,7 @@ export function PdfThumbnailsContent(props: PdfThumbnailsContentProps) {
       {doc?.pages.map((page, index) => {
         const isCurrent = page.index === currPageIndex;
         const isVisible = visibleEntryIds.has(page.index);
-        const isSelected = selectedPageIndexes.indexOf(page.index) !== -1;
+        const isSelected = selectedIndexes.indexOf(page.index) !== -1;
 
         return (
           <PdfThumbnail
@@ -160,7 +142,8 @@ export function PdfThumbnailsContent(props: PdfThumbnailsContentProps) {
             isCurrent={isCurrent}
             isSelected={isSelected}
             onClick={gotoPage}
-            onSelectedChange={onSelectedChange}
+            enableCheckbox={enableCheckbox}
+            onClickCheckbox={onClickThumbnail}
           />
         );
       })}
@@ -177,7 +160,8 @@ export interface PdfThumbnailProps {
   isCurrent: boolean;
   isSelected: boolean;
   onClick: (page: PdfPageObject) => void;
-  onSelectedChange: (page: PdfPageObject) => void;
+  enableCheckbox: boolean;
+  onClickCheckbox?: (page: PdfPageObject) => void;
 }
 
 export function PdfThumbnail(props: PdfThumbnailProps) {
@@ -191,7 +175,7 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
     isVisible,
     isCurrent,
     onClick,
-    onSelectedChange,
+    enableCheckbox,
   } = props;
   const [src, setSrc] = useState('');
 
@@ -208,12 +192,11 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
     }
   }, [src, engine, doc, page, scaleFactor, rotation, isVisible]);
 
-  const { mode } = usePdfApplication();
   const { InputComponent } = useUIComponents();
 
-  const toggleThumbnailSelected = useCallback(() => {
-    onSelectedChange(page);
-  }, [page, onSelectedChange]);
+  const onClickCheckbox = useCallback(() => {
+    props.onClickCheckbox?.(page);
+  }, [page, props.onClickCheckbox]);
 
   return (
     <IntersectionObserverEntry
@@ -230,12 +213,12 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
         width={page.size.width * scaleFactor}
         height={page.size.height * scaleFactor}
       />
-      {mode === PdfApplicationMode.Edit ? (
+      {enableCheckbox ? (
         <InputComponent
           checked={isSelected}
           className="pdf__thumbnail__checkbox"
           type="checkbox"
-          onChange={toggleThumbnailSelected}
+          onChange={onClickCheckbox}
         />
       ) : null}
       <span>{page.index + 1}</span>

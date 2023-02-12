@@ -251,11 +251,13 @@ function App(props: AppProps) {
                         </PdfLinkAnnoContextProvider>
                       </PdfPageAnnotationComponentContextProvider>
                       {thumbnailsIsVisible ? (
-                        <PdfThumbnails
-                          layout={{ direction: 'vertical', itemsCount: 2 }}
-                          size={{ width: 100, height: 100 }}
-                          scaleFactor={0.25}
-                        />
+                        <div className="app__pdf__thumbnails">
+                          <PdfThumbnails
+                            layout={{ direction: 'vertical', itemsCount: 2 }}
+                            size={{ width: 100, height: 100 }}
+                            scaleFactor={0.25}
+                          />
+                        </div>
                       ) : null}
                       {bookmarksIsVisible ? <PdfBookmarks /> : null}
                       {isSearchPanelOpened ? (
