@@ -44,6 +44,9 @@ import {
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
 import { PdfiumModule } from './pdfium';
+import { PdfPolygonAnnoObject } from '@unionpdf/models';
+import { PdfPolylineAnnoObject } from '@unionpdf/models';
+import { PdfLineAnnoObject } from '@unionpdf/models';
 
 export enum BitmapFormat {
   Bitmap_Gray = 1,
@@ -243,6 +246,14 @@ export const wrappedModuleMethods = {
   FPDFAnnot_GetInkListCount: [['number'] as const, 'number'] as const,
   FPDFAnnot_GetInkListPath: [
     ['number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetVertices: [
+    ['number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetLine: [
+    ['number', 'number', 'number'] as const,
     'number',
   ] as const,
   FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
@@ -1515,6 +1526,36 @@ export class PdfiumEngine implements PdfEngine {
           annotation = this.readPdfInkAnno(page, pagePtr, annotationPtr, index);
         }
         break;
+      case PdfAnnotationSubtype.POLYGON:
+        {
+          annotation = this.readPdfPolygonAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.POLYLINE:
+        {
+          annotation = this.readPdfPolylineAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.LINE:
+        {
+          annotation = this.readPdfLineAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
       case PdfAnnotationSubtype.POPUP:
         break;
       default:
@@ -1791,6 +1832,106 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  private readPdfPolygonAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfPolygonAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+    const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.POLYGON,
+      rect,
+      popup,
+      vertices,
+    };
+  }
+
+  private readPdfPolylineAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfPolylineAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+    const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.POLYLINE,
+      rect,
+      popup,
+      vertices,
+    };
+  }
+
+  private readPdfLineAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfLineAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+    const startPointPtr = this.malloc(8);
+    const endPointPtr = this.malloc(8);
+
+    this.wasmModuleWrapper.FPDFAnnot_GetLine(
+      annotationPtr,
+      startPointPtr,
+      endPointPtr
+    );
+
+    const startPointX = this.wasmModule.getValue(startPointPtr, 'float');
+    const startPointY = this.wasmModule.getValue(startPointPtr + 4, 'float');
+    const startPoint = this.convertPagePointToDevicePoint(pagePtr, page, {
+      x: startPointX,
+      y: startPointY,
+    });
+
+    const endPointX = this.wasmModule.getValue(endPointPtr, 'float');
+    const endPointY = this.wasmModule.getValue(endPointPtr + 4, 'float');
+    const endPoint = this.convertPagePointToDevicePoint(pagePtr, page, {
+      x: endPointX,
+      y: endPointY,
+    });
+
+    this.free(startPointPtr);
+    this.free(endPointPtr);
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.LINE,
+      rect,
+      popup,
+      startPoint,
+      endPoint,
+    };
+  }
+
   private readPdfAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -1875,6 +2016,48 @@ export class PdfiumEngine implements PdfEngine {
       contents,
       open: open === 'true',
     };
+  }
+
+  private readPdfAnnoVertices(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number
+  ) {
+    const vertices: Position[] = [];
+    const count = this.wasmModuleWrapper.FPDFAnnot_GetVertices(
+      annotationPtr,
+      0,
+      0
+    );
+    const pointMemorySize = 8;
+    const pointsPtr = this.malloc(count * pointMemorySize);
+    this.wasmModuleWrapper.FPDFAnnot_GetVertices(
+      annotationPtr,
+      pointsPtr,
+      count
+    );
+    for (let i = 0; i < count; i++) {
+      const pointX = this.wasmModule.getValue(
+        pointsPtr + i * pointMemorySize,
+        'float'
+      );
+      const pointY = this.wasmModule.getValue(
+        pointsPtr + i * pointMemorySize + 4,
+        'float'
+      );
+
+      const { x, y } = this.convertPagePointToDevicePoint(pagePtr, page, {
+        x: pointX,
+        y: pointY,
+      });
+      vertices.push({
+        x,
+        y,
+      });
+    }
+    this.free(pointsPtr);
+
+    return vertices;
   }
 
   private readPdfBookmarkTarget(

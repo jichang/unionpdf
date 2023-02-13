@@ -95,6 +95,25 @@ export function translate(offset: Position, annotation: PdfAnnotationObject) {
         };
       });
       break;
+    case PdfAnnotationSubtype.POLYGON:
+    case PdfAnnotationSubtype.POLYLINE:
+      updated.vertices = updated.vertices.map((point) => {
+        return {
+          x: point.x + offset.x,
+          y: point.y + offset.y,
+        };
+      });
+      break;
+    case PdfAnnotationSubtype.LINE:
+      updated.startPoint = {
+        x: updated.startPoint.x + offset.x,
+        y: updated.startPoint.y + offset.y,
+      };
+      updated.endPoint = {
+        x: updated.endPoint.x + offset.x,
+        y: updated.endPoint.y + offset.y,
+      };
+      break;
   }
 
   return updated;

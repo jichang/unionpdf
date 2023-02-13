@@ -276,12 +276,31 @@ export interface PdfInkAnnoObject extends PdfAnnotationObjectBase {
   inkList: PdfInkListObject[];
 }
 
+export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.POLYGON;
+  vertices: Position[];
+}
+
+export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.POLYLINE;
+  vertices: Position[];
+}
+
+export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.LINE;
+  startPoint: Position;
+  endPoint: Position;
+}
+
 export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
   type: Exclude<
     PdfAnnotationSubtype,
     | PdfAnnotationSubtype.TEXT
     | PdfAnnotationSubtype.LINK
     | PdfAnnotationSubtype.INK
+    | PdfAnnotationSubtype.POLYGON
+    | PdfAnnotationSubtype.POLYLINE
+    | PdfAnnotationSubtype.LINE
     | PdfAnnotationSubtype.WIDGET
     | PdfAnnotationSubtype.FILEATTACHMENT
   >;
@@ -291,6 +310,9 @@ export type PdfAnnotationObject =
   | PdfInkAnnoObject
   | PdfTextAnnoObject
   | PdfLinkAnnoObject
+  | PdfPolygonAnnoObject
+  | PdfPolylineAnnoObject
+  | PdfLineAnnoObject
   | PdfWidgetAnnoObject
   | PdfFileAttachmentAnnoObject
   | PdfUnsupportedAnnoObject;

@@ -3,7 +3,13 @@ import { PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useCallback, useState } from 'react';
 import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
-import { PdfPageAnnotation, PdfPageInkAnnotation } from '../annotations';
+import {
+  PdfPageAnnotation,
+  PdfPageInkAnnotation,
+  PdfPageLineAnnotation,
+  PdfPagePolygonAnnotation,
+  PdfPagePolylineAnnotation,
+} from '../annotations';
 import classNames from 'classnames';
 import { usePdfEditor } from './editor.context';
 
@@ -38,7 +44,6 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
 
   const handleDragStart = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
-      const target = evt.nativeEvent.target as HTMLDivElement;
       evt.dataTransfer.dropEffect = 'move';
       evt.dataTransfer.setData(
         'application/json',
@@ -79,6 +84,46 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
     case PdfAnnotationSubtype.INK:
       content = (
         <PdfPageInkAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.INK:
+      content = (
+        <PdfPageInkAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.POLYGON:
+      content = (
+        <PdfPagePolygonAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.POLYLINE:
+      content = (
+        <PdfPagePolylineAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.LINE:
+      content = (
+        <PdfPageLineAnnotation
           key={annotation.id}
           width={style.width}
           height={style.height}
