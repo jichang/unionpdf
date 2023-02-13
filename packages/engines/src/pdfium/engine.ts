@@ -1742,7 +1742,7 @@ export class PdfiumEngine implements PdfEngine {
 
     const count =
       this.wasmModuleWrapper.FPDFAnnot_GetInkListCount(annotationPtr);
-    for (let i = 0; i < count - 1; i++) {
+    for (let i = 0; i < count; i++) {
       const points: Position[] = [];
       const pointsCount = this.wasmModuleWrapper.FPDFAnnot_GetInkListPath(
         annotationPtr,
