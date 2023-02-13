@@ -4,10 +4,8 @@ import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
 import { PdfPagePopupAnnotation } from './popup';
 import classNames from 'classnames';
-import { ConnectDragSource } from 'react-dnd';
 
 export interface PdfPageAnnotationProps extends ComponentProps<'div'> {
-  drag?: ConnectDragSource;
   page: PdfPageObject;
   annotation: PdfAnnotationObject;
   scaleFactor: number;
@@ -16,7 +14,6 @@ export interface PdfPageAnnotationProps extends ComponentProps<'div'> {
 
 export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
   const {
-    drag,
     page,
     annotation,
     scaleFactor,
@@ -36,7 +33,6 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
 
   return (
     <div
-      ref={drag}
       style={style}
       data-subtype={annotation.type}
       className={classNames('pdf__annotation', className)}
