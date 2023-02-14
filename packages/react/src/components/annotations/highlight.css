@@ -1,0 +1,8 @@
+.pdf__annotation__highlight {
+  opacity: 0.5;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: yellow;
+}

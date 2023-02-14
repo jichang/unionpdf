@@ -47,6 +47,7 @@ import { PdfiumModule } from './pdfium';
 import { PdfPolygonAnnoObject } from '@unionpdf/models';
 import { PdfPolylineAnnoObject } from '@unionpdf/models';
 import { PdfLineAnnoObject } from '@unionpdf/models';
+import { PdfHighlightAnnoObject } from '@unionpdf/models';
 
 export enum BitmapFormat {
   Bitmap_Gray = 1,
@@ -1556,6 +1557,14 @@ export class PdfiumEngine implements PdfEngine {
           );
         }
         break;
+      case PdfAnnotationSubtype.HIGHLIGHT:
+        annotation = this.readPdfHighlightAnno(
+          page,
+          pagePtr,
+          annotationPtr,
+          index
+        );
+        break;
       case PdfAnnotationSubtype.POPUP:
         break;
       default:
@@ -1929,6 +1938,29 @@ export class PdfiumEngine implements PdfEngine {
       popup,
       startPoint,
       endPoint,
+    };
+  }
+
+  private readPdfHighlightAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfHighlightAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.HIGHLIGHT,
+      rect,
+      popup,
     };
   }
 

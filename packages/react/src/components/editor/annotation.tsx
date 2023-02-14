@@ -9,6 +9,7 @@ import {
   PdfPageLineAnnotation,
   PdfPagePolygonAnnotation,
   PdfPagePolylineAnnotation,
+  PdfPageHighlightAnnotation,
 } from '../annotations';
 import classNames from 'classnames';
 import { usePdfEditor } from './editor.context';
@@ -124,6 +125,16 @@ export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
     case PdfAnnotationSubtype.LINE:
       content = (
         <PdfPageLineAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.HIGHLIGHT:
+      content = (
+        <PdfPageHighlightAnnotation
           key={annotation.id}
           width={style.width}
           height={style.height}

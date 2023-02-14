@@ -6,6 +6,7 @@ export * from './polyline';
 export * from './line';
 export * from './link';
 export * from './link.context';
+export * from './highlight';
 export * from './text';
 export * from './widget';
 export * from './builtin';

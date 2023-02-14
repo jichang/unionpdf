@@ -292,6 +292,15 @@ export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
   endPoint: Position;
 }
 
+export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.HIGHLIGHT;
+  color?: {
+    red: number;
+    gree: number;
+    blue: number;
+  };
+}
+
 export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
   type: Exclude<
     PdfAnnotationSubtype,
@@ -301,6 +310,7 @@ export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
     | PdfAnnotationSubtype.POLYGON
     | PdfAnnotationSubtype.POLYLINE
     | PdfAnnotationSubtype.LINE
+    | PdfAnnotationSubtype.HIGHLIGHT
     | PdfAnnotationSubtype.WIDGET
     | PdfAnnotationSubtype.FILEATTACHMENT
   >;
@@ -312,6 +322,7 @@ export type PdfAnnotationObject =
   | PdfLinkAnnoObject
   | PdfPolygonAnnoObject
   | PdfPolylineAnnoObject
+  | PdfHighlightAnnoObject
   | PdfLineAnnoObject
   | PdfWidgetAnnoObject
   | PdfFileAttachmentAnnoObject
