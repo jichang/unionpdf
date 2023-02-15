@@ -126,7 +126,7 @@ export interface UIStrings {
   signatures: string;
   pencil: string;
   addTextBox: string;
-  addSignature: string;
+  addStamp: string;
   extract: string;
   addImage: string;
   selection: string;
@@ -167,7 +167,7 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   extract: 'Extract',
   pencil: 'Pencil',
   addTextBox: 'Add Text Box',
-  addSignature: 'Add Signature',
+  addStamp: 'Add Stamp',
   addImage: 'Add Image',
   selection: 'Selection',
   annotation: 'Annotation',

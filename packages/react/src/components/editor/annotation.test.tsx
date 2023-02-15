@@ -9,8 +9,8 @@ import { intersectionObserver } from '@shopify/jest-dom-mocks';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 import { PdfPages } from '../plugins/pages';
 import { PdfPageEditorLayer } from '../pageLayers';
-import { PdfEditorAnnotation } from './annotation';
-import { PdfPageAnnotationComponentContextProvider } from '../annotations';
+import { PdfPageEditorAnnotation } from './annotation';
+import { PdfPageAnnotationComponentContextProvider } from '../common';
 
 describe('PdfEditorAnnotation', () => {
   test('should render pdf editor annotation', async () => {
@@ -37,7 +37,7 @@ describe('PdfEditorAnnotation', () => {
             onOpenFailure={jest.fn()}
           >
             <PdfPageAnnotationComponentContextProvider
-              component={PdfEditorAnnotation}
+              component={PdfPageEditorAnnotation}
             >
               <PdfPages pageGap={8} pageLayers={[PdfPageEditorLayer]} />
             </PdfPageAnnotationComponentContextProvider>

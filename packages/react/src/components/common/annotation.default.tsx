@@ -1,20 +1,17 @@
 import React from 'react';
 import {
-  PdfPageAnnotation,
-  PdfPageAnnotationComponentProps,
   PdfPageLinkAnnotation,
   PdfPageTextAnnotation,
   PdfPageWidgetAnnotation,
-  usePdfPageAnnotationComponent,
-} from '.';
+  PdfPagePopupAnnotation,
+} from '../annotations';
 import {
-  PdfAnnotationObject,
   PdfAnnotationSubtype,
   PdfAnnotationSubtypeName,
-  PdfPageObject,
-  Rotation,
 } from '@unionpdf/models';
 import classNames from 'classnames';
+import { PdfPageAnnotationComponentProps } from './annotations.context';
+import { PdfPageAnnotation } from './annotation';
 
 export function PdfPageDefaultAnnotation(
   props: PdfPageAnnotationComponentProps
@@ -47,35 +44,15 @@ export function PdfPageDefaultAnnotation(
       rotation={rotation}
     >
       {content}
+      {annotation.popup ? (
+        <PdfPagePopupAnnotation
+          page={page}
+          parent={annotation}
+          annotation={annotation.popup}
+          scaleFactor={scaleFactor}
+          rotation={rotation}
+        />
+      ) : null}
     </PdfPageAnnotation>
-  );
-}
-
-export interface PdfPageAnnotationsProps {
-  annotations: PdfAnnotationObject[];
-  page: PdfPageObject;
-  scaleFactor: number;
-  rotation: Rotation;
-}
-
-export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
-  const { annotations, page, scaleFactor, rotation } = props;
-
-  const AnnotationComponent = usePdfPageAnnotationComponent();
-
-  return (
-    <>
-      {annotations.map((annotation) => {
-        return (
-          <AnnotationComponent
-            key={annotation.id}
-            page={page}
-            annotation={annotation}
-            scaleFactor={scaleFactor}
-            rotation={rotation}
-          />
-        );
-      })}
-    </>
   );
 }

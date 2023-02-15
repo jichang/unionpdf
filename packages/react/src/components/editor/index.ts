@@ -4,4 +4,6 @@ export * from './annotations';
 export * from './canvas';
 export * from './panel';
 export * from './extractor';
+export * from './stamps.context';
+export * from './stamps';
 export * from './editor.context';

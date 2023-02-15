@@ -4,7 +4,7 @@ import './editor.css';
 import { PdfEditorTool, usePdfEditor } from '../editor/editor.context';
 import { PdfEditorPanel } from '../editor/panel';
 import { PdfApplicationMode, usePdfApplication } from '../../core';
-import { PdfEditorExtractor } from '../editor';
+import { PdfEditorExtractor, PdfEditorStamps } from '../editor';
 
 export function PdfEditor() {
   const { mode } = usePdfApplication();
@@ -13,7 +13,7 @@ export function PdfEditor() {
   useEffect(() => {
     if (mode === PdfApplicationMode.Edit) {
       const handleKey = (evt: KeyboardEvent) => {
-        if (evt.metaKey) {
+        if (evt.metaKey || evt.ctrlKey) {
           if (evt.key === 'z') {
             evt.preventDefault();
             undo();
@@ -43,6 +43,9 @@ export function PdfEditor() {
       break;
     case PdfEditorTool.Extract:
       content = <PdfEditorExtractor />;
+      break;
+    case PdfEditorTool.Stamp:
+      content = <PdfEditorStamps />;
       break;
   }
 

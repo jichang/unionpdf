@@ -5,11 +5,12 @@ import {
   Rotation,
 } from '@unionpdf/models';
 import classNames from 'classnames';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { calculateRectStyle } from '../helpers/annotation';
 import { calculateBoundingRect } from '../helpers/editor';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import './canvas.css';
+import { Drawable, DrawablePath } from '../common';
 
 export interface PdfEditorCanvasProps {
   page: PdfPageObject;
@@ -19,7 +20,6 @@ export interface PdfEditorCanvasProps {
 
 export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
   const { page, scaleFactor, rotation } = props;
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const style = useMemo(() => {
     return calculateRectStyle(
@@ -31,99 +31,25 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
 
   const { exec, annotationTool } = usePdfEditor();
 
-  useEffect(() => {
-    const canvasElem = canvasRef.current;
-    if (canvasElem) {
-      const ctx = canvasElem.getContext('2d');
-      if (!ctx) {
-        return;
-      }
-
-      let isDrawing = false;
-      let points: Position[] = [];
-      const startDrawing = (evt: PointerEvent) => {
-        if (isDrawing) {
-          return;
-        }
-
-        isDrawing = true;
-        points.push({
-          x: evt.offsetX,
-          y: evt.offsetY,
-        });
-        ctx.beginPath();
-        ctx.moveTo(evt.offsetX, evt.offsetY);
-      };
-
-      const draw = (evt: PointerEvent) => {
-        if (!isDrawing) {
-          return;
-        }
-
-        points.push({
-          x: evt.offsetX,
-          y: evt.offsetY,
-        });
-        ctx.lineTo(evt.offsetX, evt.offsetY);
-        ctx.stroke();
-      };
-
-      const stopDrawing = (evt: PointerEvent) => {
-        if (!isDrawing) {
-          return;
-        }
-
-        points.push({
-          x: evt.offsetX,
-          y: evt.offsetY,
-        });
-
-        ctx.save();
-
-        ctx.clearRect(0, 0, style.width, style.height);
-
-        ctx.restore();
-
-        const inkList = [{ points: [...points] }];
-
-        exec({
-          id: `${Date.now()}.${Math.random()}`,
-          pageIndex: page.index,
-          action: 'create',
-          annotation: {
-            id: Date.now(),
-            type: PdfAnnotationSubtype.INK,
-            rect: calculateBoundingRect(inkList),
-            inkList,
-          },
-        });
-
-        points = [];
-
-        isDrawing = false;
-      };
-      canvasElem.addEventListener('pointerdown', startDrawing);
-
-      canvasElem.addEventListener('pointerup', stopDrawing);
-      canvasElem.addEventListener('pointerleave', stopDrawing);
-      canvasElem.addEventListener('pointerout', stopDrawing);
-
-      canvasElem.addEventListener('pointermove', draw);
-
-      return () => {
-        canvasElem.removeEventListener('pointerdown', startDrawing);
-
-        canvasElem.removeEventListener('pointerup', stopDrawing);
-        canvasElem.removeEventListener('pointerleave', stopDrawing);
-        canvasElem.removeEventListener('pointerout', stopDrawing);
-
-        canvasElem.removeEventListener('pointermove', draw);
-      };
-    }
-  }, [page, exec]);
+  const addPath = useCallback(
+    (path: DrawablePath) => {
+      exec({
+        id: `${Date.now()}.${Math.random()}`,
+        pageIndex: page.index,
+        action: 'create',
+        annotation: {
+          id: Date.now(),
+          type: PdfAnnotationSubtype.INK,
+          rect: calculateBoundingRect([path]),
+          inkList: [path],
+        },
+      });
+    },
+    [page, exec]
+  );
 
   return (
-    <canvas
+    <Drawable
       className={classNames(
         'pdf__editor__canvas',
         annotationTool === PdfAnnotationTool.Pencil
@@ -132,7 +58,7 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
       )}
       width={style.width}
       height={style.height}
-      ref={canvasRef}
+      onAddPath={addPath}
     />
   );
 }

@@ -9,7 +9,7 @@ import {
 } from '@unionpdf/models';
 import { PdfPageAnnotation } from './annotation';
 
-describe('PdfPageAnnotationBase', () => {
+describe('PdfPageAnnotation', () => {
   test('should render pdf annotation', async () => {
     const page: PdfPageObject = {
       index: 0,

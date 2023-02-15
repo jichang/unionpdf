@@ -2,4 +2,6 @@
   position: absolute;
 
   pointer-events: all;
+
+  box-sizing: border-box;
 }

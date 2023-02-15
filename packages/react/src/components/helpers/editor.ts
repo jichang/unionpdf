@@ -56,12 +56,12 @@ export function calculateBoundingRect(inkLists: PdfInkListObject[]): Rect {
 
   return {
     origin: {
-      x: minX - 1,
-      y: minY - 1,
+      x: minX,
+      y: minY,
     },
     size: {
-      width: maxX - minX + 2,
-      height: maxY - minY + 2,
+      width: maxX - minX,
+      height: maxY - minY,
     },
   };
 }

@@ -42,6 +42,7 @@ import {
   PdfPageTextLayer,
   PdfPageDefaultAnnotation,
   PdfPageEditorLayer,
+  PdfEditorStampsContextProvider,
 } from '../src/index';
 import {
   createPdfiumModule,
@@ -164,6 +165,10 @@ function App(props: AppProps) {
     [setFile]
   );
 
+  const stamps = [
+    { source: document.getElementById('stamp') as HTMLImageElement },
+  ];
+
   return (
     <div className="App">
       <div className="app__toolbar">
@@ -282,7 +287,13 @@ function App(props: AppProps) {
                           />
                         </div>
                       ) : null}
-                      <PdfEditor />
+                      <PdfEditorStampsContextProvider
+                        stamps={stamps}
+                        onAddStamp={() => {}}
+                        onRemoveStamp={() => {}}
+                      >
+                        <PdfEditor />
+                      </PdfEditorStampsContextProvider>
                     </PdfEditorContextProvider>
                   </PdfDocument>
                 </PdfNavigatorContextProvider>

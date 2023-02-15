@@ -6,11 +6,9 @@ import {
 } from '@unionpdf/models';
 import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
-import {
-  PdfPageAnnotationComponentContextProvider,
-  PdfPageAnnotations,
-} from '../annotations';
-import { PdfEditorAnnotation } from './annotation';
+import { PdfPageAnnotations } from '../annotations';
+import { PdfPageAnnotationComponentContextProvider } from '../common';
+import { PdfPageEditorAnnotation } from './annotation';
 import './annotations.css';
 import { usePdfEditor } from './editor.context';
 
@@ -128,7 +126,9 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
   );
 
   return (
-    <PdfPageAnnotationComponentContextProvider component={PdfEditorAnnotation}>
+    <PdfPageAnnotationComponentContextProvider
+      component={PdfPageEditorAnnotation}
+    >
       <div
         className={classNames('pdf__annotations--editor', {
           'pdf__annotations--droptarget': isOver,

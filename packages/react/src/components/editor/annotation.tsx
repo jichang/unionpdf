@@ -4,7 +4,6 @@ import React, { useCallback, useState } from 'react';
 import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
 import {
-  PdfPageAnnotation,
   PdfPageInkAnnotation,
   PdfPageLineAnnotation,
   PdfPagePolygonAnnotation,
@@ -13,15 +12,16 @@ import {
 } from '../annotations';
 import classNames from 'classnames';
 import { usePdfEditor } from './editor.context';
+import { PdfPageAnnotation } from '../common';
 
-export interface PdfEditorAnnotationProps {
+export interface PdfPageEditorAnnotationProps {
   page: PdfPageObject;
   annotation: PdfAnnotationObject;
   scaleFactor: number;
   rotation: Rotation;
 }
 
-export function PdfEditorAnnotation(props: PdfEditorAnnotationProps) {
+export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
   const style = calculateRectStyle(annotation.rect, scaleFactor, rotation);
 

@@ -2,7 +2,6 @@ import React, { ComponentProps, useMemo } from 'react';
 import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import './annotation.css';
 import { calculateRectStyle } from '../helpers/annotation';
-import { PdfPagePopupAnnotation } from './popup';
 import classNames from 'classnames';
 
 export interface PdfPageAnnotationProps extends ComponentProps<'div'> {
@@ -40,15 +39,6 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
       {...rest}
     >
       {children}
-      {annotation.popup ? (
-        <PdfPagePopupAnnotation
-          page={page}
-          parent={annotation}
-          annotation={annotation.popup}
-          scaleFactor={scaleFactor}
-          rotation={rotation}
-        />
-      ) : null}
     </div>
   );
 }

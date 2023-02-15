@@ -1,0 +1,15 @@
+.pdf__editor__stamps {
+  position: fixed;
+  left: 0;
+  top: 10%;
+
+  width: 10rem;
+  height: 80%;
+
+  box-shadow: 0 0 1px black;
+  background-color: white;
+}
+
+.pdf__editor__stamp {
+  width: 100%;
+}

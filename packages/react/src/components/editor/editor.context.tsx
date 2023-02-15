@@ -11,7 +11,7 @@ import { usePdfDocument, usePdfEngine } from '../../core';
 export enum PdfEditorTool {
   Annotation,
   Extract,
-  Signature,
+  Stamp,
 }
 
 export enum PdfAnnotationTool {

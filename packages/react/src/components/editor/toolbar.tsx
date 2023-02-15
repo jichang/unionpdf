@@ -25,7 +25,7 @@ export function PdfToolbarEditPagesItemGroup(
   }, [setTool]);
 
   const handleSignature = useCallback(() => {
-    setTool(PdfEditorTool.Signature);
+    setTool(PdfEditorTool.Stamp);
   }, [setTool]);
 
   return (
@@ -41,7 +41,7 @@ export function PdfToolbarEditPagesItemGroup(
           {strings.extract}
         </ButtonComponent>
         <ButtonComponent onClick={handleSignature}>
-          {strings.addSignature}
+          {strings.addStamp}
         </ButtonComponent>
       </ToolbarItemGroupComponent>
     </ErrorBoundary>
