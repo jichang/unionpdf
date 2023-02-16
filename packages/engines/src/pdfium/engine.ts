@@ -40,6 +40,7 @@ import {
   PdfInkAnnoObject,
   PdfInkListObject,
   Position,
+  PdfStampAnnoObject,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -635,58 +636,54 @@ export class PdfiumEngine implements PdfEngine {
       options
     );
 
+    const { docPtr } = this.docs[doc.id];
+    const imageData = this.renderPageRectToImageData(
+      docPtr,
+      page,
+      {
+        origin: { x: 0, y: 0 },
+        size: page.size,
+      },
+      scaleFactor,
+      rotation,
+      options
+    );
+    return TaskBase.resolve(imageData);
+  }
+
+  renderPageRect(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation,
+    rect: Rect,
+    options: PdfRenderOptions
+  ): Task<ImageData, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'renderPageRect',
+      doc,
+      page,
+      scaleFactor,
+      rotation,
+      rect,
+      options
+    );
+
     if (!this.docs[doc.id]) {
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
     const { docPtr } = this.docs[doc.id];
-    const format = BitmapFormat.Bitmap_BGRA;
-    const bytesPerPixel = 4;
-    const bitmapSize = calculateSize(page.size, scaleFactor * DPR, rotation);
-    const bitmapHeapLength =
-      bitmapSize.width * bitmapSize.height * bytesPerPixel;
-    const bitmapHeapPtr = this.malloc(bitmapHeapLength);
-    const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
-      bitmapSize.width,
-      bitmapSize.height,
-      format,
-      bitmapHeapPtr,
-      bitmapSize.width * bytesPerPixel
-    );
-    this.wasmModuleWrapper.FPDFBitmap_FillRect(
-      bitmapPtr,
-      0,
-      0,
-      bitmapSize.width,
-      bitmapSize.height,
-      0xffffffff
-    );
-    let flags = RenderFlag.REVERSE_BYTE_ORDER;
-    if (options?.withAnnotations) {
-      flags = flags | RenderFlag.ANNOT;
-    }
-    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
-    this.wasmModuleWrapper.FPDF_RenderPageBitmap(
-      bitmapPtr,
-      pagePtr,
-      0,
-      0,
-      bitmapSize.width,
-      bitmapSize.height,
+    const imageData = this.renderPageRectToImageData(
+      docPtr,
+      page,
+      rect,
+      scaleFactor,
       rotation,
-      flags
+      options
     );
-    this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
-    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
-
-    const array = new Uint8ClampedArray(bitmapHeapLength);
-    const dataView = new DataView(array.buffer);
-    for (let i = 0; i < bitmapHeapLength; i++) {
-      dataView.setInt8(i, this.wasmModule.getValue(bitmapHeapPtr + i, 'i8'));
-    }
-    this.free(bitmapHeapPtr);
-
-    const imageData = new ImageData(array, bitmapSize.width, bitmapSize.height);
 
     return TaskBase.resolve(imageData);
   }
@@ -719,7 +716,9 @@ export class PdfiumEngine implements PdfEngine {
       page,
       docPtr,
       pagePtr,
-      textPagePtr
+      textPagePtr,
+      scaleFactor,
+      rotation
     );
 
     this.wasmModuleWrapper.FPDFText_ClosePage(textPagePtr);
@@ -1428,7 +1427,9 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     docPtr: number,
     pagePtr: number,
-    textPagePtr: number
+    textPagePtr: number,
+    scaleFactor: number,
+    rotation: Rotation
   ) {
     const formFillInfoPtr = this.wasmModuleWrapper.PDFium_OpenFormFillInfo();
     const formHandle = this.wasmModuleWrapper.PDFium_InitFormFillEnvironment(
@@ -1447,7 +1448,9 @@ export class PdfiumEngine implements PdfEngine {
         pagePtr,
         textPagePtr,
         formHandle,
-        i
+        i,
+        scaleFactor,
+        rotation
       );
       if (annotation) {
         annotations.push(annotation);
@@ -1466,7 +1469,9 @@ export class PdfiumEngine implements PdfEngine {
     pagePtr: number,
     textPagePtr: number,
     formHandle: number,
-    index: number
+    index: number,
+    scaleFactor: number,
+    rotation: Rotation
   ) {
     const annotationPtr = this.wasmModuleWrapper.FPDFPage_GetAnnot(
       pagePtr,
@@ -1564,6 +1569,19 @@ export class PdfiumEngine implements PdfEngine {
           annotationPtr,
           index
         );
+        break;
+      case PdfAnnotationSubtype.STAMP:
+        {
+          annotation = this.readPdfStampAnno(
+            docPtr,
+            page,
+            pagePtr,
+            annotationPtr,
+            index,
+            scaleFactor,
+            rotation
+          );
+        }
         break;
       case PdfAnnotationSubtype.POPUP:
         break;
@@ -1964,6 +1982,42 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  private readPdfStampAnno(
+    docPtr: number,
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number,
+    scaleFactor: number,
+    rotation: Rotation
+  ): PdfStampAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    const content = this.renderPageRectToImageData(
+      docPtr,
+      page,
+      rect,
+      scaleFactor,
+      rotation,
+      { withAnnotations: true }
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.STAMP,
+      rect,
+      popup,
+      content,
+    };
+  }
+
   private readPdfAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2223,6 +2277,65 @@ export class PdfiumEngine implements PdfEngine {
       isChecked,
       options,
     };
+  }
+
+  private renderPageRectToImageData(
+    docPtr: number,
+    page: PdfPageObject,
+    rect: Rect,
+    scaleFactor: number,
+    rotation: Rotation,
+    options: PdfRenderOptions
+  ) {
+    const format = BitmapFormat.Bitmap_BGRA;
+    const bytesPerPixel = 4;
+    const bitmapSize = calculateSize(rect.size, scaleFactor * DPR, rotation);
+    const bitmapHeapLength =
+      bitmapSize.width * bitmapSize.height * bytesPerPixel;
+    const bitmapHeapPtr = this.malloc(bitmapHeapLength);
+    const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
+      bitmapSize.width,
+      bitmapSize.height,
+      format,
+      bitmapHeapPtr,
+      bitmapSize.width * bytesPerPixel
+    );
+    this.wasmModuleWrapper.FPDFBitmap_FillRect(
+      bitmapPtr,
+      0,
+      0,
+      bitmapSize.width,
+      bitmapSize.height,
+      0xffffffff
+    );
+    let flags = RenderFlag.REVERSE_BYTE_ORDER;
+    if (options?.withAnnotations) {
+      flags = flags | RenderFlag.ANNOT;
+    }
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
+    this.wasmModuleWrapper.FPDF_RenderPageBitmap(
+      bitmapPtr,
+      pagePtr,
+      rect.origin.x,
+      rect.origin.y,
+      bitmapSize.width,
+      bitmapSize.height,
+      rotation,
+      flags
+    );
+    this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+
+    const array = new Uint8ClampedArray(bitmapHeapLength);
+    const dataView = new DataView(array.buffer);
+    for (let i = 0; i < bitmapHeapLength; i++) {
+      dataView.setInt8(i, this.wasmModule.getValue(bitmapHeapPtr + i, 'i8'));
+    }
+    this.free(bitmapHeapPtr);
+
+    const imageData = new ImageData(array, bitmapSize.width, bitmapSize.height);
+
+    return imageData;
   }
 
   private readPdfLinkAnnoTarget(

@@ -1,8 +1,5 @@
-import React, { Children, ComponentProps, useContext } from 'react';
-
-export interface Stamp {
-  source: ImageData | ImageBitmap | HTMLImageElement;
-}
+import React, { useContext } from 'react';
+import { Stamp } from '../common';
 
 export interface PdfEditorStampsContextValue {
   stamps: Stamp[];

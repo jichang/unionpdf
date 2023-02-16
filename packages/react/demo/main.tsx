@@ -181,124 +181,126 @@ function App(props: AppProps) {
               background: 'blue',
             }}
           >
-            <PdfEngineContextProvider engine={engine}>
-              <PdfApplication mode={mode}>
-                <PdfNavigatorContextProvider>
-                  <PdfDocument
-                    id={file.id}
-                    source={file.source}
-                    password={password}
-                    onOpenSuccess={() => {
-                      setIsPasswordOpened(false);
-                    }}
-                    onOpenFailure={(error: PdfEngineError) => {
-                      if (error.code === PdfiumErrorCode.Password) {
-                        setIsPasswordOpened(true);
-                      }
-                    }}
-                  >
-                    <PdfEditorContextProvider>
-                      <PdfToolbar>
-                        {mode === PdfApplicationMode.View ? (
-                          <PdfToolbarBrowseItemGroup
-                            className="pdf__toolbar__item__group--left"
-                            onToggleMetadata={toggleMetadataIsVisible}
-                            onToggleOutlines={toggleBookmarksIsVisible}
-                            onToggleThumbnails={toggleThumbnailsIsVisible}
-                            onToggleAttachments={toggleIsAttachmentsVisible}
-                            onToggleSignatures={toggleSignaturesIsVisible}
-                          />
-                        ) : null}
-                        {mode === PdfApplicationMode.View ? (
-                          <PdfToolbarViewPagesItemGroup
-                            className="pdf__toolbar__item__group--center"
-                            scaleFactor={scaleFactor}
-                            changeScaleFactor={changeScaleFactor}
-                            rotation={rotation}
-                            changeRotation={changeRotation}
-                            toggleIsSearchPanelOpened={
-                              toggleIsSearchPanelOpened
-                            }
-                          />
-                        ) : (
-                          <PdfToolbarEditPagesItemGroup />
-                        )}
-                        <PdfToolbarManageItemGroup className="pdf__toolbar__item__group--right">
-                          <button
-                            onClick={toggleMode}
-                            className="pdf__ui__button"
-                          >
-                            {mode === PdfApplicationMode.Edit ? 'View' : 'Edit'}
-                          </button>
-                        </PdfToolbarManageItemGroup>
-                      </PdfToolbar>
-                      {metadataIsVisible ? <PdfMetadata /> : null}
-                      <PdfPageAnnotationComponentContextProvider
-                        component={PdfPageDefaultAnnotation}
-                      >
-                        <PdfLinkAnnoContextProvider
-                          onClick={(evt, annotation) => {
-                            console.log(evt, annotation);
-                          }}
+            <PdfEditorStampsContextProvider
+              stamps={stamps}
+              onAddStamp={() => {}}
+              onRemoveStamp={() => {}}
+            >
+              <PdfEngineContextProvider engine={engine}>
+                <PdfApplication mode={mode}>
+                  <PdfNavigatorContextProvider>
+                    <PdfDocument
+                      id={file.id}
+                      source={file.source}
+                      password={password}
+                      onOpenSuccess={() => {
+                        setIsPasswordOpened(false);
+                      }}
+                      onOpenFailure={(error: PdfEngineError) => {
+                        if (error.code === PdfiumErrorCode.Password) {
+                          setIsPasswordOpened(true);
+                        }
+                      }}
+                    >
+                      <PdfEditorContextProvider>
+                        <PdfToolbar>
+                          {mode === PdfApplicationMode.View ? (
+                            <PdfToolbarBrowseItemGroup
+                              className="pdf__toolbar__item__group--left"
+                              onToggleMetadata={toggleMetadataIsVisible}
+                              onToggleOutlines={toggleBookmarksIsVisible}
+                              onToggleThumbnails={toggleThumbnailsIsVisible}
+                              onToggleAttachments={toggleIsAttachmentsVisible}
+                              onToggleSignatures={toggleSignaturesIsVisible}
+                            />
+                          ) : null}
+                          {mode === PdfApplicationMode.View ? (
+                            <PdfToolbarViewPagesItemGroup
+                              className="pdf__toolbar__item__group--center"
+                              scaleFactor={scaleFactor}
+                              changeScaleFactor={changeScaleFactor}
+                              rotation={rotation}
+                              changeRotation={changeRotation}
+                              toggleIsSearchPanelOpened={
+                                toggleIsSearchPanelOpened
+                              }
+                            />
+                          ) : (
+                            <PdfToolbarEditPagesItemGroup />
+                          )}
+                          <PdfToolbarManageItemGroup className="pdf__toolbar__item__group--right">
+                            <button
+                              onClick={toggleMode}
+                              className="pdf__ui__button"
+                            >
+                              {mode === PdfApplicationMode.Edit
+                                ? 'View'
+                                : 'Edit'}
+                            </button>
+                          </PdfToolbarManageItemGroup>
+                        </PdfToolbar>
+                        {metadataIsVisible ? <PdfMetadata /> : null}
+                        <PdfPageAnnotationComponentContextProvider
+                          component={PdfPageDefaultAnnotation}
                         >
-                          <PdfPages
-                            prerenderRange={[-1, 1]}
-                            cacheRange={[-5, 5]}
-                            scaleFactor={scaleFactor}
-                            rotation={rotation}
-                            pageLayers={[
-                              PdfPageCanvasLayer,
-                              PdfPageTextLayer,
-                              PdfPageAnnotationsLayer,
-                              PdfPageEditorLayer,
-                            ]}
-                          />
-                        </PdfLinkAnnoContextProvider>
-                      </PdfPageAnnotationComponentContextProvider>
-                      {thumbnailsIsVisible ? (
-                        <div className="app__pdf__thumbnails">
-                          <PdfThumbnails
-                            layout={{ direction: 'vertical', itemsCount: 2 }}
-                            size={{ width: 100, height: 100 }}
-                            scaleFactor={0.25}
-                          />
-                        </div>
-                      ) : null}
-                      {bookmarksIsVisible ? <PdfBookmarks /> : null}
-                      {isSearchPanelOpened ? (
-                        <div className="app__dialog">
-                          <PdfSearchPanel />
-                        </div>
-                      ) : null}
-                      {isAttachmentsOpened ? (
-                        <div className="app__dialog">
-                          <PdfAttachments />
-                        </div>
-                      ) : null}
-                      {signaturesIsVisible ? (
-                        <div className="app__dialog">
-                          <PdfSignatures
-                            onSignaturesLoaded={(signatures) => {
-                              console.log(
-                                'You can verify the signature here: ',
-                                signatures
-                              );
+                          <PdfLinkAnnoContextProvider
+                            onClick={(evt, annotation) => {
+                              console.log(evt, annotation);
                             }}
-                          />
-                        </div>
-                      ) : null}
-                      <PdfEditorStampsContextProvider
-                        stamps={stamps}
-                        onAddStamp={() => {}}
-                        onRemoveStamp={() => {}}
-                      >
+                          >
+                            <PdfPages
+                              prerenderRange={[-1, 1]}
+                              cacheRange={[-5, 5]}
+                              scaleFactor={scaleFactor}
+                              rotation={rotation}
+                              pageLayers={[
+                                PdfPageCanvasLayer,
+                                PdfPageTextLayer,
+                                PdfPageAnnotationsLayer,
+                                PdfPageEditorLayer,
+                              ]}
+                            />
+                          </PdfLinkAnnoContextProvider>
+                        </PdfPageAnnotationComponentContextProvider>
+                        {thumbnailsIsVisible ? (
+                          <div className="app__pdf__thumbnails">
+                            <PdfThumbnails
+                              layout={{ direction: 'vertical', itemsCount: 2 }}
+                              size={{ width: 100, height: 100 }}
+                              scaleFactor={0.25}
+                            />
+                          </div>
+                        ) : null}
+                        {bookmarksIsVisible ? <PdfBookmarks /> : null}
+                        {isSearchPanelOpened ? (
+                          <div className="app__dialog">
+                            <PdfSearchPanel />
+                          </div>
+                        ) : null}
+                        {isAttachmentsOpened ? (
+                          <div className="app__dialog">
+                            <PdfAttachments />
+                          </div>
+                        ) : null}
+                        {signaturesIsVisible ? (
+                          <div className="app__dialog">
+                            <PdfSignatures
+                              onSignaturesLoaded={(signatures) => {
+                                console.log(
+                                  'You can verify the signature here: ',
+                                  signatures
+                                );
+                              }}
+                            />
+                          </div>
+                        ) : null}
                         <PdfEditor />
-                      </PdfEditorStampsContextProvider>
-                    </PdfEditorContextProvider>
-                  </PdfDocument>
-                </PdfNavigatorContextProvider>
-              </PdfApplication>
-            </PdfEngineContextProvider>
+                      </PdfEditorContextProvider>
+                    </PdfDocument>
+                  </PdfNavigatorContextProvider>
+                </PdfApplication>
+              </PdfEngineContextProvider>
+            </PdfEditorStampsContextProvider>
           </ThemeContextProvider>
         </LoggerContextProvider>
       ) : null}

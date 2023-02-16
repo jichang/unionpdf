@@ -3,10 +3,10 @@ import {
   PdfEditorStampsContextValue,
   PdfEditorStampsContextProvider,
   usePdfEditorStamps,
-  Stamp,
 } from './stamps.context';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
+import { Stamp } from '../common';
 
 describe('PdfEditorStampsContextProvider ', () => {
   let stampsInContext: PdfEditorStampsContextValue | null;

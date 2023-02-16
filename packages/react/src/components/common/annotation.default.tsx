@@ -29,7 +29,7 @@ export function PdfPageDefaultAnnotation(
       content = <PdfPageWidgetAnnotation annotation={annotation} />;
       break;
     default:
-      content = <PdfPageAnnotation {...props} />;
+      content = null;
   }
 
   return (

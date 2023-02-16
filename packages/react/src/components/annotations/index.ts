@@ -7,5 +7,5 @@ export * from './link.context';
 export * from './highlight';
 export * from './text';
 export * from './widget';
+export * from './stamp';
 export * from './popup';
-export * from '../common/annotations';

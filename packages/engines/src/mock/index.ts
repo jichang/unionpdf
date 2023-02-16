@@ -17,6 +17,8 @@ import {
   SearchResult,
   PdfAttachmentObject,
   PdfSignatureObject,
+  Rect,
+  PdfRenderOptions,
 } from '@unionpdf/models';
 
 export function createMockPdfEngine(
@@ -96,7 +98,39 @@ export function createMockPdfEngine(
         doc: PdfDocumentObject,
         page: PdfPageObject,
         scaleFactor: number,
-        rotation: Rotation
+        rotation: Rotation,
+        options: PdfRenderOptions
+      ) => {
+        const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
+        const imageSize = {
+          width: Math.ceil(pageSize.width * scaleFactor),
+          height: Math.ceil(pageSize.height * scaleFactor),
+        };
+        const pixelCount = imageSize.width * imageSize.height;
+        const array = new Uint8ClampedArray(pixelCount * 4);
+        const rgbValue = page.index % 255;
+        const alphaValue = 255;
+        for (let i = 0; i < pixelCount; i++) {
+          for (let j = 0; j < 3; j++) {
+            const index = i * 4 + j;
+            array[index] = rgbValue;
+          }
+          array[i * 4 + 3] = alphaValue;
+        }
+
+        return TaskBase.resolve(
+          new ImageData(array, imageSize.width, imageSize.height)
+        );
+      }
+    ),
+    renderPageRect: jest.fn(
+      (
+        doc: PdfDocumentObject,
+        page: PdfPageObject,
+        scaleFactor: number,
+        rotation: Rotation,
+        rect: Rect,
+        options: PdfRenderOptions
       ) => {
         const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
         const imageSize = {

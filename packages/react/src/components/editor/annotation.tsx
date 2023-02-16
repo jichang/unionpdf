@@ -9,10 +9,20 @@ import {
   PdfPagePolygonAnnotation,
   PdfPagePolylineAnnotation,
   PdfPageHighlightAnnotation,
+  PdfPageStampAnnotation,
 } from '../annotations';
 import classNames from 'classnames';
 import { usePdfEditor } from './editor.context';
 import { PdfPageAnnotation } from '../common';
+import { Position } from '@unionpdf/models';
+
+export interface DraggableAnnotationData {
+  type: 'annotation';
+  annotation: PdfAnnotationObject;
+  pageIndex: number;
+  startPosition: Position;
+  cursorPosition: Position;
+}
 
 export interface PdfPageEditorAnnotationProps {
   page: PdfPageObject;
@@ -29,7 +39,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
 
   const handleKeyUp = useCallback(
     (evt: React.KeyboardEvent) => {
-      if (evt.key === 'Delete') {
+      if (evt.key === 'Delete' || evt.key === 'Backspace') {
         exec({
           id: `${Date.now()}.${Math.random()}`,
           pageIndex: page.index,
@@ -45,21 +55,23 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
 
   const handleDragStart = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
+      const draggableData = {
+        type: 'annotation',
+        pageIndex: page.index,
+        annotation,
+        startPosition: {
+          x: evt.nativeEvent.pageX,
+          y: evt.nativeEvent.pageY,
+        },
+        cursorPosition: {
+          x: evt.nativeEvent.offsetX,
+          y: evt.nativeEvent.offsetY,
+        },
+      };
       evt.dataTransfer.dropEffect = 'move';
       evt.dataTransfer.setData(
         'application/json',
-        JSON.stringify({
-          pageIndex: page.index,
-          annotation,
-          startPosition: {
-            x: evt.nativeEvent.pageX,
-            y: evt.nativeEvent.pageY,
-          },
-          cursorPosition: {
-            x: evt.nativeEvent.offsetX,
-            y: evt.nativeEvent.offsetY,
-          },
-        })
+        JSON.stringify(draggableData)
       );
     },
     [page, annotation]
@@ -135,6 +147,16 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
     case PdfAnnotationSubtype.HIGHLIGHT:
       content = (
         <PdfPageHighlightAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.STAMP:
+      content = (
+        <PdfPageStampAnnotation
           key={annotation.id}
           width={style.width}
           height={style.height}

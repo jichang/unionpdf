@@ -11,5 +11,15 @@
 }
 
 .pdf__editor__stamp {
+  border: 1px solid gray;
+
+  cursor: move;
+}
+
+.pdf__editor__stamp canvas {
   width: 100%;
+}
+
+.pdf__editor__stamp.pdf__editro__stamp--dragging {
+  opacity: 0;
 }

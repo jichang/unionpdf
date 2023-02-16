@@ -1,5 +1,7 @@
 .pdf__annotation--editor {
   border: 1px solid gray;
+
+  cursor: move;
 }
 
 .pdf__annotation--editor.pdf__annotation--dragging {

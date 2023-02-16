@@ -2,7 +2,7 @@ import { ignore, PdfAnnotationObject } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 import { usePdfEngine, usePdfDocument } from '../../core';
 import { PdfPageLayerComponentProps } from './layer';
-import { PdfPageAnnotations } from '../annotations';
+import { PdfPageAnnotations } from '../common';
 import './annotations.css';
 
 export function PdfPageAnnotationsLayer(props: PdfPageLayerComponentProps) {

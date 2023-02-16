@@ -301,6 +301,11 @@ export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
   };
 }
 
+export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.STAMP;
+  content: ImageBitmap | ImageData | HTMLImageElement;
+}
+
 export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
   type: Exclude<
     PdfAnnotationSubtype,
@@ -313,6 +318,7 @@ export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
     | PdfAnnotationSubtype.HIGHLIGHT
     | PdfAnnotationSubtype.WIDGET
     | PdfAnnotationSubtype.FILEATTACHMENT
+    | PdfAnnotationSubtype.STAMP
   >;
 }
 
@@ -326,6 +332,7 @@ export type PdfAnnotationObject =
   | PdfLineAnnoObject
   | PdfWidgetAnnoObject
   | PdfFileAttachmentAnnoObject
+  | PdfStampAnnoObject
   | PdfUnsupportedAnnoObject;
 
 export interface PdfAttachmentObject {
@@ -570,7 +577,7 @@ export interface PdfEngine {
     rotation: Rotation,
     options: PdfRenderOptions
   ) => Task<ImageData, PdfEngineError>;
-  renderPageRect?: (
+  renderPageRect: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,

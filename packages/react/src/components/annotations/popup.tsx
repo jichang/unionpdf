@@ -17,11 +17,19 @@ export interface PdfPagePopupAnnotationProps {
 }
 
 export function PdfPagePopupAnnotation(props: PdfPagePopupAnnotationProps) {
-  const { annotation, scaleFactor, rotation } = props;
+  const { parent, annotation, scaleFactor, rotation } = props;
 
   const style = useMemo(() => {
-    return calculateRectStyle(annotation.rect, scaleFactor, rotation);
-  }, [annotation, rotation, scaleFactor]);
+    const { origin, size } = annotation.rect;
+    const rect = {
+      origin: {
+        x: origin.x - parent.rect.origin.x,
+        y: origin.y - parent.rect.origin.y,
+      },
+      size,
+    };
+    return calculateRectStyle(rect, scaleFactor, rotation);
+  }, [parent, annotation, rotation, scaleFactor]);
 
   return (
     <div

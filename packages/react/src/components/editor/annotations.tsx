@@ -1,16 +1,18 @@
-import {
-  PdfAnnotationObject,
-  PdfPageObject,
-  Position,
-  Rotation,
-} from '@unionpdf/models';
+import { PdfAnnotationSubtype } from '@unionpdf/models';
+import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
-import { PdfPageAnnotations } from '../annotations';
-import { PdfPageAnnotationComponentContextProvider } from '../common';
-import { PdfPageEditorAnnotation } from './annotation';
+import {
+  PdfPageAnnotations,
+  PdfPageAnnotationComponentContextProvider,
+} from '../common';
+import { DraggableAnnotationData, PdfPageEditorAnnotation } from './annotation';
 import './annotations.css';
 import { usePdfEditor } from './editor.context';
+import { DraggableStampData } from './stamps';
+import { usePdfEditorStamps } from './stamps.context';
+
+export type DraggableData = DraggableAnnotationData | DraggableStampData;
 
 export interface PdfEditorAnnotationsProps {
   page: PdfPageObject;
@@ -55,6 +57,7 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
   );
 
   const { exec } = usePdfEditor();
+  const { stamps } = usePdfEditorStamps();
   const handleDrop = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
       evt.preventDefault();
@@ -65,64 +68,86 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
           x: evt.nativeEvent.pageX,
           y: evt.nativeEvent.pageY,
         };
-        const { annotation, pageIndex, startPosition, cursorPosition } =
-          JSON.parse(data) as {
-            annotation: PdfAnnotationObject;
-            pageIndex: number;
-            startPosition: Position;
-            cursorPosition: Position;
-          };
+        const draggableData = JSON.parse(data) as DraggableData;
 
-        if (page.index === pageIndex) {
-          exec({
-            id: `${Date.now()}.${Math.random()}`,
-            pageIndex: page.index,
-            action: 'transform',
-            annotation,
-            tranformation: {
-              type: 'translate',
-              offset: {
-                x: stopPosition.x - startPosition.x,
-                y: stopPosition.y - startPosition.y,
+        if (draggableData.type === 'annotation') {
+          const { pageIndex, annotation, startPosition, cursorPosition } =
+            draggableData;
+          if (page.index === pageIndex) {
+            exec({
+              id: `${Date.now()}.${Math.random()}`,
+              pageIndex: page.index,
+              action: 'transform',
+              annotation,
+              tranformation: {
+                type: 'translate',
+                offset: {
+                  x: stopPosition.x - startPosition.x,
+                  y: stopPosition.y - startPosition.y,
+                },
               },
-            },
-          });
-        } else {
-          exec({
-            id: `${Date.now()}.${Math.random()}`,
-            pageIndex: pageIndex,
-            action: 'remove',
-            annotation,
-          });
+            });
+          } else {
+            exec({
+              id: `${Date.now()}.${Math.random()}`,
+              pageIndex: pageIndex,
+              action: 'remove',
+              annotation,
+            });
+            exec({
+              id: `${Date.now()}.${Math.random()}`,
+              pageIndex: page.index,
+              action: 'create',
+              annotation,
+            });
+            exec({
+              id: `${Date.now()}.${Math.random()}`,
+              pageIndex: page.index,
+              action: 'transform',
+              annotation,
+              tranformation: {
+                type: 'translate',
+                offset: {
+                  x:
+                    evt.nativeEvent.offsetX -
+                    annotation.rect.origin.x -
+                    cursorPosition.x,
+                  y:
+                    evt.nativeEvent.offsetY -
+                    annotation.rect.origin.y -
+                    cursorPosition.y,
+                },
+              },
+            });
+          }
+        } else if (draggableData.type === 'stamp') {
+          const { index, cursorPosition } = draggableData;
+          const stamp = stamps[index];
+
           exec({
             id: `${Date.now()}.${Math.random()}`,
             pageIndex: page.index,
             action: 'create',
-            annotation,
-          });
-          exec({
-            id: `${Date.now()}.${Math.random()}`,
-            pageIndex: page.index,
-            action: 'transform',
-            annotation,
-            tranformation: {
-              type: 'translate',
-              offset: {
-                x:
-                  evt.nativeEvent.offsetX -
-                  annotation.rect.origin.x -
-                  cursorPosition.x,
-                y:
-                  evt.nativeEvent.offsetY -
-                  annotation.rect.origin.y -
-                  cursorPosition.y,
+            annotation: {
+              id: Date.now(),
+              type: PdfAnnotationSubtype.STAMP,
+              content: stamp.source,
+              rect: {
+                origin: {
+                  x: evt.nativeEvent.offsetX - cursorPosition.x,
+                  y: evt.nativeEvent.offsetY - cursorPosition.y,
+                },
+                size: {
+                  width: stamp.source.width,
+                  height: stamp.source.height,
+                },
               },
             },
           });
         }
       }
     },
-    [exec, page, annotations]
+    [exec, page, annotations, stamps]
   );
 
   return (
