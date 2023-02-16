@@ -1,7 +1,14 @@
 import { Position } from '@unionpdf/models';
 import classNames from 'classnames';
-import React, { useCallback, useState } from 'react';
-import { PdfStamp, Stamp } from '../common';
+import React, { useCallback, useRef, useState } from 'react';
+import { useUIComponents, useUIStrings } from '../../ui';
+import {
+  Drawable,
+  DrawableHandle,
+  DrawablePath,
+  PdfStamp,
+  Stamp,
+} from '../common';
 import { usePdfEditorStamps } from './stamps.context';
 import './stamps.css';
 
@@ -10,11 +17,73 @@ export interface PdfEidtorStampsProps {}
 export function PdfEditorStamps() {
   const { stamps } = usePdfEditorStamps();
 
+  const strings = useUIStrings();
+  const { DialogComponent, ButtonComponent } = useUIComponents();
+
+  const [drawableDialogIsShown, setDrawableDialogIsShown] = useState(false);
+  const [paths, setPaths] = useState<DrawablePath[]>([]);
+
+  const onAddPath = useCallback(
+    (path: DrawablePath) => {
+      setPaths((paths) => {
+        return [...paths, path];
+      });
+    },
+    [setPaths]
+  );
+
+  const cancel = useCallback(() => {
+    setDrawableDialogIsShown(false);
+  }, [setDrawableDialogIsShown]);
+
+  const { onAddStamp } = usePdfEditorStamps();
+
+  const drawableHandleRef = useRef<DrawableHandle>();
+  const submit = useCallback(() => {
+    if (drawableHandleRef.current) {
+      const imageData = drawableHandleRef.current.queryImage();
+      if (imageData) {
+        onAddStamp({ source: imageData });
+      }
+    }
+    setDrawableDialogIsShown(false);
+  }, [onAddStamp, setDrawableDialogIsShown]);
+
   return (
     <div className="pdf__editor__stamps">
-      {stamps.map((stamp, index) => {
-        return <PdfEditorStamp index={index} stamp={stamp} key={index} />;
-      })}
+      <header className="pdf__editor__stamps__header">
+        <ButtonComponent
+          onClick={() => {
+            setDrawableDialogIsShown(true);
+          }}
+        >
+          {strings.createStamp}
+        </ButtonComponent>
+      </header>
+      <div className="pdf__editor__stamps__list">
+        {stamps.map((stamp, index) => {
+          return <PdfEditorStamp key={index} index={index} stamp={stamp} />;
+        })}
+      </div>
+      <DialogComponent
+        open={drawableDialogIsShown}
+        onClose={() => {
+          setDrawableDialogIsShown(false);
+        }}
+      >
+        <Drawable
+          componentRef={drawableHandleRef}
+          width={320}
+          height={480}
+          onAddPath={onAddPath}
+        />
+        <div>
+          <ButtonComponent onClick={cancel}>{strings.cancel}</ButtonComponent>
+          <ButtonComponent onClick={submit}>
+            {strings.createStamp}
+          </ButtonComponent>
+        </div>
+      </DialogComponent>
     </div>
   );
 }

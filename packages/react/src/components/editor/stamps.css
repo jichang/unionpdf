@@ -2,12 +2,26 @@
   position: fixed;
   left: 0;
   top: 10%;
+  display: flex;
+  flex-direction: column;
 
   width: 10rem;
   height: 80%;
 
   box-shadow: 0 0 1px black;
   background-color: white;
+}
+
+.pdf__editor__stamps__header {
+  padding: 0.5rem;
+  border-bottom: 1px solid gray;
+}
+
+.pdf__editor__stamps__list {
+  flex: 1;
+  padding: 0.5rem;
+
+  overflow-y: scroll;
 }
 
 .pdf__editor__stamp {

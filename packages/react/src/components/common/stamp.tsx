@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import './stamp.css';
 
 export interface Stamp {
-  source: ImageData | ImageBitmap | HTMLImageElement;
+  source: ImageData;
 }
 
 export interface PdfStampProps {
@@ -11,7 +11,7 @@ export interface PdfStampProps {
 }
 
 export function PdfStamp(props: PdfStampProps) {
-  const { index, stamp } = props;
+  const { stamp } = props;
 
   const canvasElemRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -23,14 +23,7 @@ export function PdfStamp(props: PdfStampProps) {
 
       if (ctx) {
         ctx?.clearRect(0, 0, stamp.source.width, stamp.source.height);
-
-        if (stamp.source instanceof ImageData) {
-          ctx.putImageData(stamp.source, 0, 0);
-        } else if (stamp.source instanceof ImageBitmap) {
-          ctx.drawImage(stamp.source, 0, 0);
-        } else if (stamp.source instanceof HTMLImageElement) {
-          ctx.drawImage(stamp.source, 0, 0);
-        }
+        ctx.putImageData(stamp.source, 0, 0);
       }
     }
   }, [stamp]);

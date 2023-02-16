@@ -15,10 +15,11 @@ import classNames from 'classnames';
 import { usePdfEditor } from './editor.context';
 import { PdfPageAnnotation } from '../common';
 import { Position } from '@unionpdf/models';
+import { serialze } from '../helpers/editor';
 
 export interface DraggableAnnotationData {
   type: 'annotation';
-  annotation: PdfAnnotationObject;
+  annotation: string;
   pageIndex: number;
   startPosition: Position;
   cursorPosition: Position;
@@ -58,7 +59,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       const draggableData = {
         type: 'annotation',
         pageIndex: page.index,
-        annotation,
+        annotation: serialze(annotation),
         startPosition: {
           x: evt.nativeEvent.pageX,
           y: evt.nativeEvent.pageY,

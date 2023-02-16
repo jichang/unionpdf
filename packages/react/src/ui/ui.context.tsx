@@ -131,6 +131,8 @@ export interface UIStrings {
   addImage: string;
   selection: string;
   annotation: string;
+  createStamp: string;
+  cancel: string;
 }
 
 export const DEFAULT_UI_STRINGS: UIStrings = {
@@ -171,6 +173,8 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   addImage: 'Add Image',
   selection: 'Selection',
   annotation: 'Annotation',
+  createStamp: 'Create Stamp',
+  cancel: 'Cancel',
 };
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);

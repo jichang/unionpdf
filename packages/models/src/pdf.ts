@@ -303,7 +303,7 @@ export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
 
 export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.STAMP;
-  content: ImageBitmap | ImageData | HTMLImageElement;
+  content: ImageData;
 }
 
 export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {

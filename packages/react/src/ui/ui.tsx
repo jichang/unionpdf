@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React, { ComponentProps, useEffect, useRef } from 'react';
 import './ui.css';
 import classNames from 'classnames';
 
@@ -165,9 +165,23 @@ export function Form(props: FormProps) {
 export interface DialogProps extends ComponentProps<'dialog'> {}
 
 export function Dialog(props: DialogProps) {
-  const { className, ...rest } = props;
+  const { open, className, ...rest } = props;
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    if (open) {
+      dialogRef.current?.showModal?.();
+    } else {
+      dialogRef.current?.close?.();
+    }
+  }, [open]);
 
   return (
-    <dialog className={classNames('pdf__ui__dialog', className)} {...rest} />
+    <dialog
+      ref={dialogRef}
+      className={classNames('pdf__ui__dialog', className)}
+      {...rest}
+    />
   );
 }

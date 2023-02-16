@@ -8,6 +8,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { calculateBoundingRect } from '../helpers/editor';
 import './drawable.css';
 
 export interface DrawablePath {
@@ -15,16 +16,18 @@ export interface DrawablePath {
 }
 
 export interface DrawableHandle {
-  query: () => DrawablePath[];
+  queryPaths: () => DrawablePath[];
+  queryImage: () => ImageData | undefined;
 }
 
 export interface DrawableProps extends ComponentProps<'canvas'> {
-  componentRef?: RefObject<DrawableHandle>;
+  componentRef?: React.MutableRefObject<DrawableHandle | undefined>;
   onAddPath: (path: DrawablePath) => void;
 }
 
 export function Drawable(props: DrawableProps) {
   const { componentRef, className, onAddPath, ...rest } = props;
+  const { width = 320, height = 480 } = rest;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [paths, setPaths] = useState<DrawablePath[]>([]);
@@ -33,12 +36,24 @@ export function Drawable(props: DrawableProps) {
     componentRef,
     () => {
       return {
-        query: () => {
+        queryPaths: () => {
           return paths;
+        },
+        queryImage: () => {
+          const ctx = canvasRef.current?.getContext('2d');
+          if (ctx) {
+            const { origin, size } = calculateBoundingRect(paths);
+            return ctx.getImageData(
+              origin.x,
+              origin.y,
+              Number(size.width),
+              Number(size.height)
+            );
+          }
         },
       };
     },
-    [paths]
+    [width, height, paths]
   );
 
   useEffect(() => {

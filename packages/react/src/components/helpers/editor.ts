@@ -118,3 +118,36 @@ export function translate(offset: Position, annotation: PdfAnnotationObject) {
 
   return updated;
 }
+
+export function serialze(annotation: PdfAnnotationObject) {
+  if (annotation.type === PdfAnnotationSubtype.STAMP) {
+    return JSON.stringify({
+      ...annotation,
+      content: {
+        width: annotation.content.width,
+        height: annotation.content.height,
+        data: [...annotation.content.data],
+        colorSpace: annotation.content.colorSpace,
+      },
+    });
+  } else {
+    return JSON.stringify(annotation);
+  }
+}
+
+export function deserialze(data: string): PdfAnnotationObject {
+  const annotation = JSON.parse(data) as PdfAnnotationObject;
+  if (annotation.type === PdfAnnotationSubtype.STAMP) {
+    const { content } = annotation;
+    const data = new Uint8ClampedArray(content.data);
+
+    return {
+      ...annotation,
+      content: new ImageData(data, content.width, content.height, {
+        colorSpace: annotation.content.colorSpace,
+      }),
+    };
+  } else {
+    return annotation;
+  }
+}

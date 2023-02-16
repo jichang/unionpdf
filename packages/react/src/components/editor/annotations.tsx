@@ -6,6 +6,7 @@ import {
   PdfPageAnnotations,
   PdfPageAnnotationComponentContextProvider,
 } from '../common';
+import { deserialze } from '../helpers/editor';
 import { DraggableAnnotationData, PdfPageEditorAnnotation } from './annotation';
 import './annotations.css';
 import { usePdfEditor } from './editor.context';
@@ -71,8 +72,9 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
         const draggableData = JSON.parse(data) as DraggableData;
 
         if (draggableData.type === 'annotation') {
-          const { pageIndex, annotation, startPosition, cursorPosition } =
-            draggableData;
+          const { pageIndex, startPosition, cursorPosition } = draggableData;
+          const annotation = deserialze(draggableData.annotation);
+
           if (page.index === pageIndex) {
             exec({
               id: `${Date.now()}.${Math.random()}`,

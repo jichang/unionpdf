@@ -43,6 +43,7 @@ import {
   PdfPageDefaultAnnotation,
   PdfPageEditorLayer,
   PdfEditorStampsContextProvider,
+  Stamp,
 } from '../src/index';
 import {
   createPdfiumModule,
@@ -165,9 +166,16 @@ function App(props: AppProps) {
     [setFile]
   );
 
-  const stamps = [
-    { source: document.getElementById('stamp') as HTMLImageElement },
-  ];
+  const [stamps, setStamps] = useState<Stamp[]>([]);
+
+  const addStamp = useCallback(
+    (stamp: Stamp) => {
+      setStamps((stamps) => {
+        return [...stamps, stamp];
+      });
+    },
+    [setStamps]
+  );
 
   return (
     <div className="App">
@@ -183,7 +191,7 @@ function App(props: AppProps) {
           >
             <PdfEditorStampsContextProvider
               stamps={stamps}
-              onAddStamp={() => {}}
+              onAddStamp={addStamp}
               onRemoveStamp={() => {}}
             >
               <PdfEngineContextProvider engine={engine}>
@@ -265,7 +273,10 @@ function App(props: AppProps) {
                         {thumbnailsIsVisible ? (
                           <div className="app__pdf__thumbnails">
                             <PdfThumbnails
-                              layout={{ direction: 'vertical', itemsCount: 2 }}
+                              layout={{
+                                direction: 'vertical',
+                                itemsCount: 2,
+                              }}
                               size={{ width: 100, height: 100 }}
                               scaleFactor={0.25}
                             />
@@ -343,7 +354,11 @@ async function run() {
 
   const appElem = document.querySelector('#root') as HTMLElement;
   const root = ReactDOM.createRoot(appElem);
-  root.render(<App engine={engine} logger={logger} />);
+  root.render(
+    <React.StrictMode>
+      <App engine={engine} logger={logger} />
+    </React.StrictMode>
+  );
 }
 
 run();
