@@ -4,12 +4,12 @@ import { render } from '@testing-library/react';
 import {
   PdfAnnotationSubtype,
   PdfPageObject,
-  PdfTextAnnoObject,
+  PdfFreeTextAnnoObject,
 } from '@unionpdf/models';
-import { PdfPageTextAnnotation } from './text';
+import { PdfPageFreeTextAnnotation } from './freetext';
 
-describe('PdfPageTextAnnotation', () => {
-  test('should render pdf text', async () => {
+describe('PdfPageFreeText', () => {
+  test('should render pdf free text', async () => {
     const page: PdfPageObject = {
       index: 0,
       size: {
@@ -17,16 +17,10 @@ describe('PdfPageTextAnnotation', () => {
         height: 100,
       },
     };
-    const text: PdfTextAnnoObject = {
+    const text: PdfFreeTextAnnoObject = {
       id: 0,
-      type: PdfAnnotationSubtype.TEXT,
+      type: PdfAnnotationSubtype.FREETEXT,
       contents: 'Link',
-      color: {
-        red: 0,
-        blue: 0,
-        green: 0,
-        alpha: 0,
-      },
       rect: {
         origin: {
           x: 0,
@@ -38,7 +32,7 @@ describe('PdfPageTextAnnotation', () => {
         },
       },
     };
-    const result = render(<PdfPageTextAnnotation annotation={text} />);
+    const result = render(<PdfPageFreeTextAnnotation annotation={text} />);
 
     const spanElem = document.querySelector('span');
     expect(spanElem?.textContent).toBe(text.contents);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { PdfLineAnnoObject } from '@unionpdf/models';
-import './polyline.css';
+import './line.css';
 
 export interface PdfPageLineAnnotationProps {
   annotation: PdfLineAnnoObject;

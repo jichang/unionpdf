@@ -135,7 +135,7 @@ export function serialze(annotation: PdfAnnotationObject) {
   }
 }
 
-export function deserialze(data: string): PdfAnnotationObject {
+export function deserialize(data: string): PdfAnnotationObject {
   const annotation = JSON.parse(data) as PdfAnnotationObject;
   if (annotation.type === PdfAnnotationSubtype.STAMP) {
     const { content } = annotation;

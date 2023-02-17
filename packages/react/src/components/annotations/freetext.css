@@ -1,0 +1,6 @@
+.pdf__annotation--freetext span {
+  display: block;
+
+  line-height: 1;
+  height: 100%;
+}

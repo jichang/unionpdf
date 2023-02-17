@@ -41,6 +41,13 @@ import {
   PdfInkListObject,
   Position,
   PdfStampAnnoObject,
+  PdfCircleAnnoObject,
+  PdfSquareAnnoObject,
+  PdfFreeTextAnnoObject,
+  PdfCaretAnnoObject,
+  PdfSquigglyAnnoObject,
+  PdfStrikeOutAnnoObject,
+  PdfUnderlineAnnoObject,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -1486,9 +1493,17 @@ export class PdfiumEngine implements PdfEngine {
         {
           annotation = this.readPdfTextAnno(
             page,
-            docPtr,
             pagePtr,
-            textPagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.FREETEXT:
+        {
+          annotation = this.readPdfFreeTextAnno(
+            page,
+            pagePtr,
             annotationPtr,
             index
           );
@@ -1583,6 +1598,66 @@ export class PdfiumEngine implements PdfEngine {
           );
         }
         break;
+      case PdfAnnotationSubtype.SQUARE:
+        {
+          annotation = this.readPdfSquareAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.CIRCLE:
+        {
+          annotation = this.readPdfCircleAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.UNDERLINE:
+        {
+          annotation = this.readPdfUnderlineAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.SQUIGGLY:
+        {
+          annotation = this.readPdfSquigglyAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.STRIKEOUT:
+        {
+          annotation = this.readPdfStrikeOutAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
+      case PdfAnnotationSubtype.CARET:
+        {
+          annotation = this.readPdfCaretAnno(
+            page,
+            pagePtr,
+            annotationPtr,
+            index
+          );
+        }
+        break;
       case PdfAnnotationSubtype.POPUP:
         break;
       default:
@@ -1604,9 +1679,7 @@ export class PdfiumEngine implements PdfEngine {
 
   private readPdfTextAnno(
     page: PdfPageObject,
-    docPtr: number,
     pagePtr: number,
-    textPagePtr: number,
     annotationPtr: number,
     index: number
   ): PdfTextAnnoObject | undefined {
@@ -1670,6 +1743,48 @@ export class PdfiumEngine implements PdfEngine {
         blue,
         alpha,
       },
+      rect,
+      popup,
+    };
+  }
+
+  private readPdfFreeTextAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfFreeTextAnnoObject | undefined {
+    const annoRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, annoRect);
+
+    const utf16Length = this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      annotationPtr,
+      'Contents',
+      0,
+      0
+    );
+    const bytesCount = (utf16Length + 1) * 2; // include NIL
+    const contentBuffer = this.malloc(bytesCount);
+    this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
+      annotationPtr,
+      'Contents',
+      contentBuffer,
+      bytesCount
+    );
+    const contents = this.wasmModule.UTF16ToString(contentBuffer);
+    this.free(contentBuffer);
+
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.FREETEXT,
+      contents,
       rect,
       popup,
     };
@@ -1982,6 +2097,98 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  private readPdfUnderlineAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfUnderlineAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.UNDERLINE,
+      rect,
+      popup,
+    };
+  }
+
+  private readPdfStrikeOutAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfStrikeOutAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.STRIKEOUT,
+      rect,
+      popup,
+    };
+  }
+
+  private readPdfSquigglyAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfSquigglyAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.SQUIGGLY,
+      rect,
+      popup,
+    };
+  }
+
+  private readPdfCaretAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfCaretAnnoObject | undefined {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.CARET,
+      rect,
+      popup,
+    };
+  }
+
   private readPdfStampAnno(
     docPtr: number,
     page: PdfPageObject,
@@ -2015,6 +2222,52 @@ export class PdfiumEngine implements PdfEngine {
       rect,
       popup,
       content,
+    };
+  }
+
+  private readPdfCircleAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfCircleAnnoObject {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.CIRCLE,
+      rect,
+      popup,
+    };
+  }
+
+  private readPdfSquareAnno(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    index: number
+  ): PdfSquareAnnoObject {
+    const pageRect = this.readPageAnnoRect(annotationPtr);
+    const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
+    const popup = this.readPdfAnnoLinkedPopup(
+      page,
+      pagePtr,
+      annotationPtr,
+      index
+    );
+
+    return {
+      id: index,
+      type: PdfAnnotationSubtype.SQUARE,
+      rect,
+      popup,
     };
   }
 

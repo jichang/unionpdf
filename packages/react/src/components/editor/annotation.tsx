@@ -1,4 +1,8 @@
-import { PdfAnnotationObject, PdfAnnotationSubtype } from '@unionpdf/models';
+import {
+  PdfAnnotationObject,
+  PdfAnnotationSubtype,
+  PdfAnnotationSubtypeName,
+} from '@unionpdf/models';
 import { PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useCallback, useState } from 'react';
 import './annotation.css';
@@ -10,6 +14,13 @@ import {
   PdfPagePolylineAnnotation,
   PdfPageHighlightAnnotation,
   PdfPageStampAnnotation,
+  PdfPageCircleAnnotation,
+  PdfPageSquareAnnotation,
+  PdfPageFreeTextAnnotation,
+  PdfPageSquigglyAnnotation,
+  PdfPageUnderlineAnnotation,
+  PdfPageCaretAnnotation,
+  PdfPageStrikeOutAnnotation,
 } from '../annotations';
 import classNames from 'classnames';
 import { usePdfEditor } from './editor.context';
@@ -165,6 +176,74 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
         />
       );
       break;
+    case PdfAnnotationSubtype.CIRCLE:
+      content = (
+        <PdfPageCircleAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.SQUARE:
+      content = (
+        <PdfPageSquareAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.SQUIGGLY:
+      content = (
+        <PdfPageSquigglyAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.UNDERLINE:
+      content = (
+        <PdfPageUnderlineAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.CARET:
+      content = (
+        <PdfPageCaretAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.STRIKEOUT:
+      content = (
+        <PdfPageStrikeOutAnnotation
+          key={annotation.id}
+          width={style.width}
+          height={style.height}
+          annotation={annotation}
+        />
+      );
+      break;
+    case PdfAnnotationSubtype.FREETEXT:
+      content = (
+        <PdfPageFreeTextAnnotation
+          key={annotation.id}
+          annotation={annotation}
+        />
+      );
+      break;
     default:
       content = null;
   }
@@ -172,9 +251,13 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   return (
     <PdfPageAnnotation
       page={page}
-      className={classNames('pdf__annotation--editor', {
-        'pdf__annotation--dragging': isDragging,
-      })}
+      className={classNames(
+        'pdf__annotation--editor',
+        `pdf__annotation--${PdfAnnotationSubtypeName[annotation.type]}`,
+        {
+          'pdf__annotation--dragging': isDragging,
+        }
+      )}
       annotation={annotation}
       scaleFactor={scaleFactor}
       tabIndex={0}

@@ -306,23 +306,36 @@ export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   content: ImageData;
 }
 
-export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
-  type: Exclude<
-    PdfAnnotationSubtype,
-    | PdfAnnotationSubtype.TEXT
-    | PdfAnnotationSubtype.LINK
-    | PdfAnnotationSubtype.INK
-    | PdfAnnotationSubtype.POLYGON
-    | PdfAnnotationSubtype.POLYLINE
-    | PdfAnnotationSubtype.LINE
-    | PdfAnnotationSubtype.HIGHLIGHT
-    | PdfAnnotationSubtype.WIDGET
-    | PdfAnnotationSubtype.FILEATTACHMENT
-    | PdfAnnotationSubtype.STAMP
-  >;
+export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.CIRCLE;
 }
 
-export type PdfAnnotationObject =
+export interface PdfSquareAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.SQUARE;
+}
+
+export interface PdfSquigglyAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.SQUIGGLY;
+}
+
+export interface PdfUnderlineAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.UNDERLINE;
+}
+
+export interface PdfStrikeOutAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.STRIKEOUT;
+}
+
+export interface PdfCaretAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.CARET;
+}
+
+export interface PdfFreeTextAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.FREETEXT;
+  contents: string;
+}
+
+export type PdfSupportedAnnoObject =
   | PdfInkAnnoObject
   | PdfTextAnnoObject
   | PdfLinkAnnoObject
@@ -333,6 +346,20 @@ export type PdfAnnotationObject =
   | PdfWidgetAnnoObject
   | PdfFileAttachmentAnnoObject
   | PdfStampAnnoObject
+  | PdfSquareAnnoObject
+  | PdfCircleAnnoObject
+  | PdfSquigglyAnnoObject
+  | PdfUnderlineAnnoObject
+  | PdfStrikeOutAnnoObject
+  | PdfCaretAnnoObject
+  | PdfFreeTextAnnoObject;
+
+export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
+  type: Exclude<PdfAnnotationSubtype, PdfSupportedAnnoObject['type']>;
+}
+
+export type PdfAnnotationObject =
+  | PdfSupportedAnnoObject
   | PdfUnsupportedAnnoObject;
 
 export interface PdfAttachmentObject {
