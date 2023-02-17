@@ -643,6 +643,10 @@ export class PdfiumEngine implements PdfEngine {
       options
     );
 
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
     const { docPtr } = this.docs[doc.id];
     const imageData = this.renderPageRectToImageData(
       docPtr,
