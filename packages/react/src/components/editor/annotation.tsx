@@ -6,7 +6,6 @@ import {
 import { PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { useCallback, useState } from 'react';
 import './annotation.css';
-import { calculateRectStyle } from '../helpers/annotation';
 import {
   PdfPageInkAnnotation,
   PdfPageLineAnnotation,
@@ -33,7 +32,6 @@ export interface DraggableAnnotationData {
   annotation: string;
   pageIndex: number;
   startPosition: Position;
-  cursorPosition: Position;
 }
 
 export interface PdfPageEditorAnnotationProps {
@@ -45,7 +43,6 @@ export interface PdfPageEditorAnnotationProps {
 
 export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
-  const style = calculateRectStyle(annotation.rect, scaleFactor, rotation);
 
   const { exec } = usePdfEditor();
 
@@ -67,17 +64,14 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
 
   const handleDragStart = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
-      const draggableData = {
+      const target = evt.nativeEvent.target as HTMLDivElement;
+      const draggableData: DraggableAnnotationData = {
         type: 'annotation',
         pageIndex: page.index,
         annotation: serialze(annotation),
         startPosition: {
-          x: evt.nativeEvent.pageX,
-          y: evt.nativeEvent.pageY,
-        },
-        cursorPosition: {
-          x: evt.nativeEvent.offsetX,
-          y: evt.nativeEvent.offsetY,
+          x: target.offsetLeft + evt.nativeEvent.offsetX,
+          y: target.offsetTop + evt.nativeEvent.offsetY,
         },
       };
       evt.dataTransfer.dropEffect = 'move';
@@ -110,19 +104,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageInkAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
-        />
-      );
-      break;
-    case PdfAnnotationSubtype.INK:
-      content = (
-        <PdfPageInkAnnotation
-          key={annotation.id}
-          width={style.width}
-          height={style.height}
-          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -130,9 +115,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPagePolygonAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -140,9 +126,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPagePolylineAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -150,9 +137,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageLineAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -160,9 +148,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageHighlightAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -170,9 +159,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageStampAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -180,9 +170,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageCircleAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -190,9 +181,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageSquareAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -200,9 +192,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageSquigglyAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -210,9 +203,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageUnderlineAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -220,9 +214,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageCaretAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -230,9 +225,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageStrikeOutAnnotation
           key={annotation.id}
-          width={style.width}
-          height={style.height}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;
@@ -240,7 +236,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       content = (
         <PdfPageFreeTextAnnotation
           key={annotation.id}
+          page={page}
           annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
         />
       );
       break;

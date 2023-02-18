@@ -1,11 +1,10 @@
 import React from 'react';
 import { PdfSquigglyAnnoObject } from '@unionpdf/models';
 import './squiggly.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageSquigglyAnnotationProps {
+export interface PdfPageSquigglyAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfSquigglyAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageSquigglyAnnotation(

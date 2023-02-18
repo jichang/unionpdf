@@ -20,13 +20,34 @@ export function PdfPageDefaultAnnotation(
   let content = null;
   switch (annotation.type) {
     case PdfAnnotationSubtype.LINK:
-      content = <PdfPageLinkAnnotation page={page} annotation={annotation} />;
+      content = (
+        <PdfPageLinkAnnotation
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        />
+      );
       break;
     case PdfAnnotationSubtype.TEXT:
-      content = <PdfPageTextAnnotation annotation={annotation} />;
+      content = (
+        <PdfPageTextAnnotation
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        />
+      );
       break;
     case PdfAnnotationSubtype.WIDGET:
-      content = <PdfPageWidgetAnnotation annotation={annotation} />;
+      content = (
+        <PdfPageWidgetAnnotation
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        />
+      );
       break;
     default:
       content = null;

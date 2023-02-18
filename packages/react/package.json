@@ -32,7 +32,10 @@
   },
   "keywords": [
     "PDF",
-    "viewer"
+    "Viewer",
+    "React",
+    "Editor",
+    "Pdfium"
   ],
   "author": "Ji Chang",
   "license": "MIT",

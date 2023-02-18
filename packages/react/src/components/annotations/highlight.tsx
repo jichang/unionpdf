@@ -1,11 +1,11 @@
 import React from 'react';
 import { PdfHighlightAnnoObject } from '@unionpdf/models';
 import './highlight.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageHighlightAnnotationProps {
+export interface PdfPageHighlightAnnotationProps
+  extends PdfPageAnnotationProps {
   annotation: PdfHighlightAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageHighlightAnnotation(

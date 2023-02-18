@@ -1,34 +1,34 @@
 import React, { useMemo } from 'react';
 import {
   PdfAnnotationObject,
-  PdfPageObject,
   PdfPopupAnnoObject,
-  Rotation,
+  transformRect,
 } from '@unionpdf/models';
 import './popup.css';
-import { calculateRectStyle } from '../helpers/annotation';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPagePopupAnnotationProps {
-  page: PdfPageObject;
+export interface PdfPagePopupAnnotationProps extends PdfPageAnnotationProps {
   parent: PdfAnnotationObject;
   annotation: PdfPopupAnnoObject;
-  scaleFactor: number;
-  rotation: Rotation;
 }
 
 export function PdfPagePopupAnnotation(props: PdfPagePopupAnnotationProps) {
-  const { parent, annotation, scaleFactor, rotation } = props;
+  const { page, parent, annotation, scaleFactor, rotation } = props;
 
   const style = useMemo(() => {
-    const { origin, size } = annotation.rect;
-    const rect = {
-      origin: {
-        x: origin.x - parent.rect.origin.x,
-        y: origin.y - parent.rect.origin.y,
-      },
-      size,
+    const rect = transformRect(
+      page.size,
+      annotation.rect,
+      rotation,
+      scaleFactor
+    );
+
+    return {
+      top: rect.origin.y,
+      left: rect.origin.x,
+      width: rect.size.width,
+      height: rect.size.height,
     };
-    return calculateRectStyle(rect, scaleFactor, rotation);
   }, [parent, annotation, rotation, scaleFactor]);
 
   return (

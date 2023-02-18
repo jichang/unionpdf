@@ -1,3 +1,4 @@
+import { calculateDegree, Rotation } from '@unionpdf/models';
 import React, { useRef, useEffect } from 'react';
 import './stamp.css';
 
@@ -22,11 +23,12 @@ export function PdfStamp(props: PdfStampProps) {
       const ctx = canvasElem.getContext('2d');
 
       if (ctx) {
+        ctx.resetTransform();
         ctx?.clearRect(0, 0, stamp.source.width, stamp.source.height);
         ctx.putImageData(stamp.source, 0, 0);
       }
     }
   }, [stamp]);
 
-  return <canvas ref={canvasElemRef} />;
+  return <canvas className="pdf__stamp" ref={canvasElemRef} />;
 }

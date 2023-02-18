@@ -1,11 +1,11 @@
 import React from 'react';
 import { PdfUnderlineAnnoObject } from '@unionpdf/models';
 import './underline.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageUnderlineAnnotationProps {
+export interface PdfPageUnderlineAnnotationProps
+  extends PdfPageAnnotationProps {
   annotation: PdfUnderlineAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageUnderlineAnnotation(

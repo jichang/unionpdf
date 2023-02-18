@@ -1,11 +1,10 @@
 import React from 'react';
-import { PdfCaretAnnoObject } from '@unionpdf/models';
 import './square.css';
+import { PdfPageAnnotationProps } from '../common';
+import { PdfCaretAnnoObject } from '@unionpdf/models';
 
-export interface PdfPageCaretAnnotationProps {
+export interface PdfPageCaretAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfCaretAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageCaretAnnotation(props: PdfPageCaretAnnotationProps) {

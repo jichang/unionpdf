@@ -8,6 +8,7 @@ import {
   PdfLinkAnnoObject,
   PdfPageObject,
   PdfZoomMode,
+  Rotation,
 } from '@unionpdf/models';
 import { PdfLinkAnnoContextProvider } from './link.context';
 
@@ -56,7 +57,12 @@ describe('PdfPageLink', () => {
     const onClick = jest.fn();
     const result = render(
       <PdfLinkAnnoContextProvider onClick={onClick}>
-        <PdfPageLinkAnnotation page={page} annotation={link} />
+        <PdfPageLinkAnnotation
+          page={page}
+          annotation={link}
+          scaleFactor={0}
+          rotation={Rotation.Degree0}
+        />
       </PdfLinkAnnoContextProvider>
     );
 

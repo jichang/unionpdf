@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { PdfCircleAnnoObject } from '@unionpdf/models';
 import './circle.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageCircleAnnotationProps {
+export interface PdfPageCircleAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfCircleAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageCircleAnnotation(props: PdfPageCircleAnnotationProps) {

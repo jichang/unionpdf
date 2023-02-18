@@ -5,6 +5,7 @@ import {
   PdfAnnotationSubtype,
   PdfPageObject,
   PdfTextAnnoObject,
+  Rotation,
 } from '@unionpdf/models';
 import { PdfPageTextAnnotation } from './text';
 
@@ -38,7 +39,14 @@ describe('PdfPageTextAnnotation', () => {
         },
       },
     };
-    const result = render(<PdfPageTextAnnotation annotation={text} />);
+    const result = render(
+      <PdfPageTextAnnotation
+        page={page}
+        annotation={text}
+        scaleFactor={0}
+        rotation={Rotation.Degree0}
+      />
+    );
 
     const spanElem = document.querySelector('span');
     expect(spanElem?.textContent).toBe(text.contents);

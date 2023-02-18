@@ -1,15 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
-import {
-  PdfActionType,
-  PdfLinkAnnoObject,
-  PdfPageObject,
-} from '@unionpdf/models';
+import { PdfActionType, PdfLinkAnnoObject } from '@unionpdf/models';
 import './link.css';
 import { usePdfNavigator } from '../../core/navigator.context';
 import { usePdfLinkAnnoContext } from './link.context';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageLinkAnnotationProps {
-  page: PdfPageObject;
+export interface PdfPageLinkAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfLinkAnnoObject;
 }
 

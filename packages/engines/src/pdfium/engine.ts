@@ -1,5 +1,4 @@
 import {
-  calculateSize,
   PdfActionObject,
   PdfAnnotationObject,
   PdfTextRectObject,
@@ -48,6 +47,7 @@ import {
   PdfSquigglyAnnoObject,
   PdfStrikeOutAnnoObject,
   PdfUnderlineAnnoObject,
+  transformSize,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -2546,7 +2546,7 @@ export class PdfiumEngine implements PdfEngine {
   ) {
     const format = BitmapFormat.Bitmap_BGRA;
     const bytesPerPixel = 4;
-    const bitmapSize = calculateSize(rect.size, scaleFactor * DPR, rotation);
+    const bitmapSize = transformSize(rect.size, rotation, scaleFactor * DPR);
     const bitmapHeapLength =
       bitmapSize.width * bitmapSize.height * bytesPerPixel;
     const bitmapHeapPtr = this.malloc(bitmapHeapLength);

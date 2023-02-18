@@ -1,8 +1,9 @@
 import React from 'react';
 import { PdfFreeTextAnnoObject } from '@unionpdf/models';
 import './freetext.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageFreeTextAnnotationProps {
+export interface PdfPageFreeTextAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfFreeTextAnnoObject;
 }
 

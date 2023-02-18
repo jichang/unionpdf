@@ -1,39 +1,55 @@
 import React, { useEffect, useRef } from 'react';
-import { PdfLineAnnoObject } from '@unionpdf/models';
+import {
+  PdfLineAnnoObject,
+  transformPosition,
+  transformRect,
+} from '@unionpdf/models';
 import './line.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageLineAnnotationProps {
+export interface PdfPageLineAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfLineAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageLineAnnotation(props: PdfPageLineAnnotationProps) {
-  const { annotation, width, height } = props;
+  const { page, annotation, rotation, scaleFactor } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { x, y } = annotation.rect.origin;
 
   useEffect(() => {
     const canvasElem = canvasRef.current;
     if (canvasElem) {
+      const rect = transformRect(
+        page.size,
+        annotation.rect,
+        rotation,
+        scaleFactor
+      );
+      const { origin, size } = rect;
+      canvasElem.width = size.width;
+      canvasElem.height = size.height;
       const ctx = canvasElem.getContext('2d');
       if (ctx) {
+        ctx.clearRect(0, 0, size.width, size.height);
         ctx.lineJoin = 'round';
-        const { startPoint, endPoint } = annotation;
+        const startPoint = transformPosition(
+          page.size,
+          annotation.startPoint,
+          rotation,
+          scaleFactor
+        );
+        const endPoint = transformPosition(
+          page.size,
+          annotation.startPoint,
+          rotation,
+          scaleFactor
+        );
         ctx.beginPath();
-        ctx.moveTo(startPoint.x - x, startPoint.y - y);
-        ctx.lineTo(endPoint.x - x, endPoint.y - y);
+        ctx.moveTo(startPoint.x - origin.x, startPoint.y - origin.y);
+        ctx.lineTo(endPoint.x - origin.x, endPoint.y - origin.y);
         ctx.stroke();
       }
     }
-  }, [annotation, x, y, width, height]);
+  }, [page, annotation, rotation, scaleFactor]);
 
-  return (
-    <canvas
-      className="pdf__annotation__canvas"
-      width={width}
-      height={height}
-      ref={canvasRef}
-    />
-  );
+  return <canvas className="pdf__annotation__canvas--line" ref={canvasRef} />;
 }

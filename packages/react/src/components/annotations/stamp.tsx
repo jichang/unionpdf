@@ -1,12 +1,10 @@
 import React from 'react';
 import { PdfStampAnnoObject } from '@unionpdf/models';
-import { PdfStamp } from '../common';
+import { PdfPageAnnotationProps, PdfStamp } from '../common';
 import './stamp.css';
 
-export interface PdfPageStampAnnotationProps {
+export interface PdfPageStampAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfStampAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageStampAnnotation(props: PdfPageStampAnnotationProps) {

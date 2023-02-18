@@ -1,16 +1,17 @@
 import {
   PdfAnnotationSubtype,
   PdfPageObject,
-  Position,
+  restorePosition,
   Rotation,
+  transformSize,
 } from '@unionpdf/models';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { calculateRectStyle } from '../helpers/annotation';
+import React, { useCallback, useMemo } from 'react';
 import { calculateBoundingRect } from '../helpers/editor';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import './canvas.css';
 import { Drawable, DrawablePath } from '../common';
+import { restoreRect } from '@unionpdf/models';
 
 export interface PdfEditorCanvasProps {
   page: PdfPageObject;
@@ -22,17 +23,24 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
   const { page, scaleFactor, rotation } = props;
 
   const style = useMemo(() => {
-    return calculateRectStyle(
-      { origin: { x: 0, y: 0 }, size: page.size },
-      scaleFactor,
-      rotation
-    );
-  }, [page, scaleFactor, rotation]);
+    const size = transformSize(page.size, rotation, scaleFactor);
+    return {
+      width: size.width,
+      height: size.height,
+    };
+  }, [page, rotation, scaleFactor]);
 
   const { exec, annotationTool } = usePdfEditor();
 
   const addPath = useCallback(
     (path: DrawablePath) => {
+      const pageSize = transformSize(page.size, rotation, scaleFactor);
+      const rect = restoreRect(
+        pageSize,
+        calculateBoundingRect([path]),
+        rotation,
+        scaleFactor
+      );
       exec({
         id: `${Date.now()}.${Math.random()}`,
         pageIndex: page.index,
@@ -40,12 +48,18 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
         annotation: {
           id: Date.now(),
           type: PdfAnnotationSubtype.INK,
-          rect: calculateBoundingRect([path]),
-          inkList: [path],
+          rect,
+          inkList: [
+            {
+              points: path.points.map((point) => {
+                return restorePosition(pageSize, point, rotation, scaleFactor);
+              }),
+            },
+          ],
         },
       });
     },
-    [page, exec]
+    [page, exec, rotation, scaleFactor]
   );
 
   return (

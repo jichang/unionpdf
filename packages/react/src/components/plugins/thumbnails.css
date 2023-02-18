@@ -7,7 +7,6 @@
 .pdf__thumbnails__grid {
   position: relative;
   display: grid;
-  border: 1px solid gray;
 
   background-color: white;
 }

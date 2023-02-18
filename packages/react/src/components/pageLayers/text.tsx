@@ -1,7 +1,6 @@
-import { ignore, PdfTextRectObject } from '@unionpdf/models';
+import { ignore, PdfTextRectObject, transformRect } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 import { usePdfEngine, usePdfDocument } from '../../core';
-import { calculateRectStyle } from '../helpers/annotation';
 import { PdfPageLayerComponentProps } from './layer';
 import './text.css';
 
@@ -27,8 +26,19 @@ export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
   return (
     <div className="pdf__page__layer pdf__page__layer--text">
       {isVisible
-        ? rects.map((rect, index) => {
-            const style = calculateRectStyle(rect.rect, scaleFactor, rotation);
+        ? rects.map((textRect, index) => {
+            const rect = transformRect(
+              page.size,
+              textRect.rect,
+              rotation,
+              scaleFactor
+            );
+            const style = {
+              top: rect.origin.y,
+              left: rect.origin.x,
+              width: rect.size.width,
+              height: rect.size.height,
+            };
 
             return (
               <div className="pdf__text__span" key={index} style={style}>
@@ -40,7 +50,7 @@ export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
                     lengthAdjust="spacingAndGlyphs"
                     fill="transparent"
                   >
-                    {rect.content}
+                    {textRect.content}
                   </text>
                 </svg>
               </div>

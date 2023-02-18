@@ -1,4 +1,29 @@
-import { Rotation } from './pdf';
+/*
+ * Clockwise direction
+ */
+export enum Rotation {
+  Degree0 = 0,
+  Degree90 = 1,
+  Degree180 = 2,
+  Degree270 = 3,
+}
+
+export function calculateDegree(rotation: Rotation) {
+  switch (rotation) {
+    case Rotation.Degree0:
+      return 0;
+    case Rotation.Degree90:
+      return 90;
+    case Rotation.Degree180:
+      return 180;
+    case Rotation.Degree270:
+      return 270;
+  }
+}
+
+export function calculateAngle(rotation: Rotation) {
+  return (calculateDegree(rotation) * Math.PI) / 180;
+}
 
 export interface Size {
   width: number;
@@ -14,9 +39,85 @@ export function swap(size: Size): Size {
   };
 }
 
+export function transformSize(
+  size: Size,
+  rotation: Rotation,
+  scaleFactor: number
+) {
+  size = rotation % 2 === 0 ? size : swap(size);
+
+  return {
+    width: Math.ceil(size.width * scaleFactor),
+    height: Math.ceil(size.height * scaleFactor),
+  };
+}
+
 export interface Position {
   x: number;
   y: number;
+}
+
+export function rotatePosition(
+  containerSize: Size,
+  position: Position,
+  rotation: Rotation
+): Position {
+  switch (rotation) {
+    case Rotation.Degree0:
+      return {
+        x: position.x,
+        y: position.y,
+      };
+    case Rotation.Degree90:
+      return {
+        x: containerSize.height - position.y,
+        y: position.x,
+      };
+    case Rotation.Degree180:
+      return {
+        x: containerSize.width - position.x,
+        y: containerSize.height - position.y,
+      };
+    case Rotation.Degree270:
+      return {
+        x: position.y,
+        y: containerSize.width - position.x,
+      };
+  }
+}
+
+export function scalePosition(
+  position: Position,
+  scaleFactor: number
+): Position {
+  return {
+    x: position.x * scaleFactor,
+    y: position.y * scaleFactor,
+  };
+}
+
+export function transformPosition(
+  containerSize: Size,
+  position: Position,
+  rotation: Rotation,
+  scaleFactor: number
+): Position {
+  return scalePosition(
+    rotatePosition(containerSize, position, rotation),
+    scaleFactor
+  );
+}
+
+export function restorePosition(
+  containerSize: Size,
+  position: Position,
+  rotation: Rotation,
+  scaleFactor: number
+): Position {
+  return scalePosition(
+    rotatePosition(containerSize, position, (4 - rotation) % 4),
+    1 / scaleFactor
+  );
 }
 
 export interface Rect {
@@ -24,16 +125,103 @@ export interface Rect {
   size: Size;
 }
 
-export function calculateSize(
-  size: Size,
-  scaleFactor: number,
+export function rotateRect(
+  containerSize: Size,
+  rect: Rect,
   rotation: Rotation
-) {
-  const rotatedPageSize = rotation % 2 === 0 ? size : swap(size);
-  const scaledPageSize = {
-    width: Math.ceil(rotatedPageSize.width * scaleFactor),
-    height: Math.ceil(rotatedPageSize.height * scaleFactor),
-  };
+): Rect {
+  switch (rotation) {
+    case Rotation.Degree0:
+      return rect;
+    case Rotation.Degree90:
+      return {
+        origin: {
+          x: containerSize.height - rect.origin.y - rect.size.height,
+          y: rect.origin.x,
+        },
+        size: swap(rect.size),
+      };
+    case Rotation.Degree180:
+      return {
+        origin: {
+          x: containerSize.width - rect.origin.x - rect.size.width,
+          y: containerSize.height - rect.origin.y - rect.size.height,
+        },
+        size: rect.size,
+      };
+    case Rotation.Degree270:
+      return {
+        origin: {
+          x: rect.origin.y,
+          y: containerSize.width - rect.origin.x - rect.size.width,
+        },
+        size: swap(rect.size),
+      };
+  }
+}
 
-  return scaledPageSize;
+export function scaleRect(rect: Rect, scaleFactor: number) {
+  return {
+    origin: {
+      x: rect.origin.x * scaleFactor,
+      y: rect.origin.y * scaleFactor,
+    },
+    size: {
+      width: rect.size.width * scaleFactor,
+      height: rect.size.height * scaleFactor,
+    },
+  };
+}
+
+export function transformRect(
+  containerSize: Size,
+  rect: Rect,
+  rotation: Rotation,
+  scaleFactor: number
+) {
+  return scaleRect(rotateRect(containerSize, rect, rotation), scaleFactor);
+}
+
+export function restoreRect(
+  containerSize: Size,
+  rect: Rect,
+  rotation: Rotation,
+  scaleFactor: number
+) {
+  return scaleRect(
+    rotateRect(containerSize, rect, (4 - rotation) % 4),
+    1 / scaleFactor
+  );
+}
+
+export function restoreOffset(
+  offset: Position,
+  rotation: Rotation,
+  scaleFactor: number
+) {
+  let offsetX = offset.x;
+  let offsetY = offset.y;
+  switch (rotation) {
+    case Rotation.Degree0:
+      offsetX = offset.x / scaleFactor;
+      offsetY = offset.y / scaleFactor;
+      break;
+    case Rotation.Degree90:
+      offsetX = offset.y / scaleFactor;
+      offsetY = -offset.x / scaleFactor;
+      break;
+    case Rotation.Degree180:
+      offsetX = -offset.x / scaleFactor;
+      offsetY = -offset.y / scaleFactor;
+      break;
+    case Rotation.Degree270:
+      offsetX = -offset.y / scaleFactor;
+      offsetY = offset.x / scaleFactor;
+      break;
+  }
+
+  return {
+    x: offsetX,
+    y: offsetY,
+  };
 }

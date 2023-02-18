@@ -5,6 +5,7 @@ import {
   PdfAnnotationSubtype,
   PdfPageObject,
   PdfFreeTextAnnoObject,
+  Rotation,
 } from '@unionpdf/models';
 import { PdfPageFreeTextAnnotation } from './freetext';
 
@@ -32,7 +33,14 @@ describe('PdfPageFreeText', () => {
         },
       },
     };
-    const result = render(<PdfPageFreeTextAnnotation annotation={text} />);
+    const result = render(
+      <PdfPageFreeTextAnnotation
+        page={page}
+        annotation={text}
+        scaleFactor={0}
+        rotation={Rotation.Degree0}
+      />
+    );
 
     const spanElem = document.querySelector('span');
     expect(spanElem?.textContent).toBe(text.contents);

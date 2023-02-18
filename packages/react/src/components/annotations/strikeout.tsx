@@ -1,11 +1,11 @@
 import React from 'react';
 import { PdfStrikeOutAnnoObject } from '@unionpdf/models';
 import './strikeout.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageStrikeOutAnnotationProps {
+export interface PdfPageStrikeOutAnnotationProps
+  extends PdfPageAnnotationProps {
   annotation: PdfStrikeOutAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageStrikeOutAnnotation(

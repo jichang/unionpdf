@@ -9,11 +9,11 @@ import {
   PdfPageObject,
   Rotation,
   Size,
-  calculateSize,
   PdfZoomMode,
+  transformSize,
+  transformPosition,
 } from '@unionpdf/models';
 import './pages.css';
-import { calculateRectStyle } from '../helpers/annotation';
 import {
   calculateScrollOffset,
   findScollableContainer,
@@ -75,7 +75,7 @@ export function PdfPages(props: PdfPagesProps) {
     let pageOffset = pageGap / 2;
     return pdfDoc?.pages.map((page) => {
       const offset = pageOffset;
-      const visualSize = calculateSize(page.size, scaleFactor, rotation);
+      const visualSize = transformSize(page.size, rotation, scaleFactor);
       pageOffset = pageOffset + visualSize.height + pageGap;
 
       return {
@@ -105,47 +105,16 @@ export function PdfPages(props: PdfPagesProps) {
         switch (destination.zoom.mode) {
           case PdfZoomMode.XYZ:
             {
-              const { x, y } = destination.zoom.params;
-              const style = calculateRectStyle(
-                { origin: { x, y }, size: { width: 0, height: 0 } },
+              const { x, y } = transformPosition(
+                page.size,
+                destination.zoom.params,
                 scaleFactor,
                 rotation
               );
-              const {
-                top = 0,
-                left = 0,
-                right = 0,
-                bottom = 0,
-                width,
-                height,
-              } = style;
-              let scrollOffset: { top: number; left: number };
-              switch (rotation) {
-                case 0:
-                  scrollOffset = {
-                    top: page.offset + top,
-                    left,
-                  };
-                  break;
-                case 1:
-                  scrollOffset = {
-                    top: page.offset + top,
-                    left: page.visualSize.width - width - right,
-                  };
-                  break;
-                case 2:
-                  scrollOffset = {
-                    top: page.offset + page.visualSize.height - bottom - height,
-                    left: page.visualSize.width - width - right,
-                  };
-                  break;
-                case 3:
-                  scrollOffset = {
-                    top: page.offset + page.visualSize.height - bottom - height,
-                    left,
-                  };
-                  break;
-              }
+              const scrollOffset: { top: number; left: number } = {
+                top: page.offset + y,
+                left: x,
+              };
               scrollableContainer.scrollTo({
                 top: scrollOffsetBase + scrollOffset.top,
                 left: scrollOffset.left,

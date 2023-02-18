@@ -1,4 +1,9 @@
-import { PdfAnnotationSubtype } from '@unionpdf/models';
+import {
+  PdfAnnotationSubtype,
+  restoreOffset,
+  restoreRect,
+  transformSize,
+} from '@unionpdf/models';
 import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
@@ -7,6 +12,7 @@ import {
   PdfPageAnnotationComponentContextProvider,
 } from '../common';
 import { deserialize } from '../helpers/editor';
+import { rotateImageData } from '../helpers/image';
 import { DraggableAnnotationData, PdfPageEditorAnnotation } from './annotation';
 import './annotations.css';
 import { usePdfEditor } from './editor.context';
@@ -65,17 +71,24 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
 
       const data = evt.dataTransfer.getData('application/json');
       if (data) {
-        const stopPosition = {
-          x: evt.nativeEvent.pageX,
-          y: evt.nativeEvent.pageY,
-        };
         const draggableData = JSON.parse(data) as DraggableData;
 
         if (draggableData.type === 'annotation') {
-          const { pageIndex, startPosition, cursorPosition } = draggableData;
+          const { pageIndex, startPosition } = draggableData;
           const annotation = deserialize(draggableData.annotation);
 
-          if (page.index === pageIndex) {
+          const isDroppedInSamePage = page.index === pageIndex;
+
+          const stopPosition = {
+            x: evt.nativeEvent.offsetX,
+            y: evt.nativeEvent.offsetY,
+          };
+          const offset = {
+            x: stopPosition.x - startPosition.x,
+            y: stopPosition.y - startPosition.y,
+          };
+          console.log(startPosition, stopPosition, offset);
+          if (isDroppedInSamePage) {
             exec({
               id: `${Date.now()}.${Math.random()}`,
               pageIndex: page.index,
@@ -83,10 +96,7 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
               annotation,
               tranformation: {
                 type: 'translate',
-                offset: {
-                  x: stopPosition.x - startPosition.x,
-                  y: stopPosition.y - startPosition.y,
-                },
+                offset: restoreOffset(offset, rotation, scaleFactor),
               },
             });
           } else {
@@ -102,6 +112,7 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
               action: 'create',
               annotation,
             });
+
             exec({
               id: `${Date.now()}.${Math.random()}`,
               pageIndex: page.index,
@@ -109,22 +120,32 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
               annotation,
               tranformation: {
                 type: 'translate',
-                offset: {
-                  x:
-                    evt.nativeEvent.offsetX -
-                    annotation.rect.origin.x -
-                    cursorPosition.x,
-                  y:
-                    evt.nativeEvent.offsetY -
-                    annotation.rect.origin.y -
-                    cursorPosition.y,
-                },
+                offset: restoreOffset(offset, rotation, scaleFactor),
               },
             });
           }
         } else if (draggableData.type === 'stamp') {
           const { index, cursorPosition } = draggableData;
           const stamp = stamps[index];
+          const size = {
+            width: stamp.source.width,
+            height: stamp.source.height,
+          };
+          const origin = {
+            x: evt.nativeEvent.offsetX - cursorPosition.x,
+            y: evt.nativeEvent.offsetY - cursorPosition.y,
+          };
+          const rect = restoreRect(
+            transformSize(page.size, rotation, scaleFactor),
+            {
+              origin,
+              size,
+            },
+            rotation,
+            scaleFactor
+          );
+
+          const content = rotateImageData(stamp.source, rotation);
 
           exec({
             id: `${Date.now()}.${Math.random()}`,
@@ -133,23 +154,14 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
             annotation: {
               id: Date.now(),
               type: PdfAnnotationSubtype.STAMP,
-              content: stamp.source,
-              rect: {
-                origin: {
-                  x: evt.nativeEvent.offsetX - cursorPosition.x,
-                  y: evt.nativeEvent.offsetY - cursorPosition.y,
-                },
-                size: {
-                  width: stamp.source.width,
-                  height: stamp.source.height,
-                },
-              },
+              content,
+              rect,
             },
           });
         }
       }
     },
-    [exec, page, annotations, stamps]
+    [exec, page, annotations, scaleFactor, rotation, stamps]
   );
 
   return (

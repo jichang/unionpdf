@@ -6,6 +6,7 @@ import {
   PdfPageObject,
   PdfWidgetAnnoObject,
   PDF_FORM_FIELD_TYPE,
+  Rotation,
 } from '@unionpdf/models';
 import { PdfPageWidgetAnnotation } from './widget';
 
@@ -41,7 +42,14 @@ describe('PdfPageWidget', () => {
         options: [],
       },
     };
-    const result = render(<PdfPageWidgetAnnotation annotation={widget} />);
+    const result = render(
+      <PdfPageWidgetAnnotation
+        page={page}
+        annotation={widget}
+        scaleFactor={0}
+        rotation={Rotation.Degree0}
+      />
+    );
 
     const elem = document.querySelector('.pdf__form__field');
     expect(elem).toBeDefined();

@@ -221,21 +221,19 @@ function App(props: AppProps) {
                               onToggleAttachments={toggleIsAttachmentsVisible}
                               onToggleSignatures={toggleSignaturesIsVisible}
                             />
-                          ) : null}
-                          {mode === PdfApplicationMode.View ? (
-                            <PdfToolbarViewPagesItemGroup
-                              className="pdf__toolbar__item__group--center"
-                              scaleFactor={scaleFactor}
-                              changeScaleFactor={changeScaleFactor}
-                              rotation={rotation}
-                              changeRotation={changeRotation}
-                              toggleIsSearchPanelOpened={
-                                toggleIsSearchPanelOpened
-                              }
-                            />
                           ) : (
                             <PdfToolbarEditPagesItemGroup />
                           )}
+                          <PdfToolbarViewPagesItemGroup
+                            className="pdf__toolbar__item__group--center"
+                            scaleFactor={scaleFactor}
+                            changeScaleFactor={changeScaleFactor}
+                            rotation={rotation}
+                            changeRotation={changeRotation}
+                            toggleIsSearchPanelOpened={
+                              toggleIsSearchPanelOpened
+                            }
+                          />
                           <PdfToolbarManageItemGroup className="pdf__toolbar__item__group--right">
                             <button
                               onClick={toggleMode}
@@ -247,7 +245,6 @@ function App(props: AppProps) {
                             </button>
                           </PdfToolbarManageItemGroup>
                         </PdfToolbar>
-                        {metadataIsVisible ? <PdfMetadata /> : null}
                         <PdfPageAnnotationComponentContextProvider
                           component={PdfPageDefaultAnnotation}
                         >
@@ -258,7 +255,7 @@ function App(props: AppProps) {
                           >
                             <PdfPages
                               prerenderRange={[-1, 1]}
-                              cacheRange={[-5, 5]}
+                              cacheRange={[-1, 1]}
                               scaleFactor={scaleFactor}
                               rotation={rotation}
                               pageLayers={[
@@ -270,6 +267,11 @@ function App(props: AppProps) {
                             />
                           </PdfLinkAnnoContextProvider>
                         </PdfPageAnnotationComponentContextProvider>
+                        {metadataIsVisible ? (
+                          <div className="app__dialog">
+                            <PdfMetadata />
+                          </div>
+                        ) : null}
                         {thumbnailsIsVisible ? (
                           <div className="app__pdf__thumbnails">
                             <PdfThumbnails
@@ -282,7 +284,12 @@ function App(props: AppProps) {
                             />
                           </div>
                         ) : null}
-                        {bookmarksIsVisible ? <PdfBookmarks /> : null}
+                        {bookmarksIsVisible ? (
+                          <div className="app__dialog">
+                            {' '}
+                            <PdfBookmarks />{' '}
+                          </div>
+                        ) : null}
                         {isSearchPanelOpened ? (
                           <div className="app__dialog">
                             <PdfSearchPanel />

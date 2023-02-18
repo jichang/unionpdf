@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { PdfSquareAnnoObject } from '@unionpdf/models';
 import './square.css';
+import { PdfPageAnnotationProps } from '../common';
 
-export interface PdfPageSquareAnnotationProps {
+export interface PdfPageSquareAnnotationProps extends PdfPageAnnotationProps {
   annotation: PdfSquareAnnoObject;
-  width: number;
-  height: number;
 }
 
 export function PdfPageSquareAnnotation(props: PdfPageSquareAnnotationProps) {

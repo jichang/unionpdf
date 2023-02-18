@@ -1,4 +1,4 @@
-import { Size, Rect, Position } from './geometry';
+import { Size, Rect, Position, Rotation } from './geometry';
 
 export interface PdfPageObject {
   index: number;
@@ -368,16 +368,6 @@ export interface PdfAttachmentObject {
   creationDate: string;
   checksum: string;
 }
-
-/*
- * Clockwise direction
- *
- * 0 - 0deg
- * 1 - 90deg
- * 2 - 180deg
- * 3 - 270deg
- */
-export type Rotation = 0 | 1 | 2 | 3;
 
 // source can be a URL points to a remote pdf file or array contains
 // pdf content

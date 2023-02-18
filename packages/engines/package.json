@@ -29,7 +29,8 @@
   },
   "keywords": [
     "PDF",
-    "Engines"
+    "Engines",
+    "Pdfium"
   ],
   "files": [
     "dist/cjs",
