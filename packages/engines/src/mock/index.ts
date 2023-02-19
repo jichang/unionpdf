@@ -1,6 +1,5 @@
 import {
   PdfDocumentObject,
-  PdfFileContent,
   PdfEngine,
   PdfPageObject,
   PdfAnnotationSubtype,

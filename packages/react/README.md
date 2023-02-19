@@ -137,5 +137,9 @@ A PDF Plugin is a component that can add specific functionalty to PDF document. 
 5. PdfMetadata for rendering file metadata
 6. PdfSearchPanel for searing text in pdf file
 7. PdfSignatures for retrieving signatures in pdf file
+8. PdfEditor for editing files
+9. PdfPrinter for printing files
+10. PdfDownloader for downloading file
+11. PdfUploader for uploading file
 
 To build a pdf plugin, you just need to use hooks usePdfDocument and usePdfEngine to provide functionalities. Do note that you should avoid coupling between plugins.
