@@ -1,6 +1,7 @@
 import React from 'react';
 import { createContext, useContext } from 'react';
 import {
+  Link,
   Button,
   Checkbox,
   Dialog,
@@ -15,22 +16,7 @@ import {
   ToolbarItemGroup,
 } from './ui';
 
-export interface UIComponents {
-  ToolbarComponent: typeof Toolbar;
-  ToolbarItemGroupComponent: typeof ToolbarItemGroup;
-  ButtonComponent: typeof Button;
-  SelectComponent: typeof Select;
-  InputComponent: typeof Input;
-  IconComponent: typeof Icon;
-  CheckboxComponent: typeof Checkbox;
-  FormComponent: typeof Form;
-  LabelComponent: typeof Label;
-  RadioButtonComponent: typeof RadioButton;
-  TextAreaComponnet: typeof TextArea;
-  DialogComponent: typeof Dialog;
-}
-
-export const DEFAULT_UI_COMPONENTS: UIComponents = {
+export const DEFAULT_UI_COMPONENTS = {
   ToolbarComponent: Toolbar,
   ToolbarItemGroupComponent: ToolbarItemGroup,
   ButtonComponent: Button,
@@ -43,7 +29,10 @@ export const DEFAULT_UI_COMPONENTS: UIComponents = {
   RadioButtonComponent: RadioButton,
   TextAreaComponnet: TextArea,
   DialogComponent: Dialog,
+  LinkComponent: Link,
 };
+
+export type UIComponents = typeof DEFAULT_UI_COMPONENTS;
 
 export const UIComponentsContext = createContext<UIComponents>(
   DEFAULT_UI_COMPONENTS
@@ -93,49 +82,7 @@ export function useInputComponent() {
   return useUIComponent('InputComponent');
 }
 
-export interface UIStrings {
-  unknownError: string;
-  rotate0Deg: string;
-  rotate90Deg: string;
-  rotate180Deg: string;
-  rotate270Deg: string;
-  thumbnails: string;
-  bookmarks: string;
-  saveAs: string;
-  print: string;
-  metadata: string;
-  title: string;
-  author: string;
-  subject: string;
-  keywords: string;
-  producer: string;
-  creator: string;
-  creationDate: string;
-  modificationDate: string;
-  search: string;
-  nextMatch: string;
-  previousMatch: string;
-  matchCase: string;
-  matchWholeWord: string;
-  matchConsecutive: string;
-  attchments: string;
-  fileName: string;
-  fileSize: string;
-  fileCreationDate: string;
-  download: string;
-  signatures: string;
-  pencil: string;
-  addTextBox: string;
-  addStamp: string;
-  extract: string;
-  addImage: string;
-  selection: string;
-  annotation: string;
-  createStamp: string;
-  cancel: string;
-}
-
-export const DEFAULT_UI_STRINGS: UIStrings = {
+export const DEFAULT_UI_STRINGS = {
   unknownError: 'Unknown Error',
   rotate0Deg: '0 degree',
   rotate90Deg: '90 degree',
@@ -161,11 +108,14 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   matchWholeWord: 'Match Whole Word',
   matchConsecutive: 'Match Consecutive',
   attchments: 'Attachments',
+  noAttachments: 'No Attachments',
   fileName: 'Name',
   fileSize: 'Size',
   fileCreationDate: 'Creation Date',
   download: 'Download',
+  upload: 'Upload',
   signatures: 'Signatures',
+  noSignatures: 'No Signatures',
   extract: 'Extract',
   pencil: 'Pencil',
   addTextBox: 'Add Text Box',
@@ -175,7 +125,17 @@ export const DEFAULT_UI_STRINGS: UIStrings = {
   annotation: 'Annotation',
   createStamp: 'Create Stamp',
   cancel: 'Cancel',
+  exit: 'Exit',
+  edit: 'Edit',
+  open: 'Open',
+  save: 'Save',
+  discard: 'Discard',
+  uncommittedWarning:
+    'You have changes that is not committed, do you want to save those changes ?',
+  printing: 'Printing',
 };
+
+export type UIStrings = typeof DEFAULT_UI_STRINGS;
 
 export const UIStringsContext = createContext<UIStrings>(DEFAULT_UI_STRINGS);
 

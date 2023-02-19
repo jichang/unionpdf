@@ -1,0 +1,17 @@
+.pdf__printer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+
+  background-color: white;
+}
+
+.pdf__printer__message {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.pdf__printer__action {
+  padding: 0.5rem;
+}

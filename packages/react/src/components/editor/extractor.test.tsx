@@ -7,7 +7,7 @@ import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 describe('PdfEditorExtractor', () => {
   test('should render pdf editor extractor', async () => {
     const result = render(
-      <PdfApplicationContextProvider mode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
         <PdfEditorExtractor />
       </PdfApplicationContextProvider>
     );

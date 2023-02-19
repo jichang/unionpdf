@@ -7,7 +7,7 @@ import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 describe('PdfEditorStamps', () => {
   test('should render pdf editor stamps', async () => {
     const result = render(
-      <PdfApplicationContextProvider mode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
         <PdfEditorStamps />
       </PdfApplicationContextProvider>
     );

@@ -11,22 +11,23 @@ import {
   Logger,
   PdfEngine,
   PdfEngineError,
+  PdfFile,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
   PdfApplicationMode,
   PdfEngineContextProvider,
-  PdfDocument,
   ThemeContextProvider,
   PdfNavigatorContextProvider,
   PdfApplication,
   PdfMetadata,
   PdfToolbar,
-  PdfToolbarBrowseItemGroup,
-  PdfToolbarViewPagesItemGroup,
-  PdfToolbarEditPagesItemGroup,
-  PdfToolbarManageItemGroup,
+  PdfToolbarPluginItemGroup,
+  PdfToolbarPagesItemGroup,
+  PdfToolbarEditorItemGroup,
+  PdfToolbarFileItemGroup,
   PdfThumbnails,
+  PdfDownloader,
   PdfPages,
   PdfBookmarks,
   PdfSignatures,
@@ -44,6 +45,12 @@ import {
   PdfPageEditorLayer,
   PdfEditorStampsContextProvider,
   Stamp,
+  PdfApplicationContextProvider,
+  useUIComponents,
+  useUIStrings,
+  PdfDocument,
+  PdfPrinter,
+  PrinterMethod,
 } from '../src/index';
 import {
   createPdfiumModule,
@@ -60,14 +67,6 @@ export interface AppProps {
 function App(props: AppProps) {
   const { logger, engine } = props;
   const [mode, setMode] = useState(PdfApplicationMode.View);
-
-  const toggleMode = useCallback(() => {
-    setMode((mode: PdfApplicationMode) => {
-      return mode === PdfApplicationMode.View
-        ? PdfApplicationMode.Edit
-        : PdfApplicationMode.View;
-    });
-  }, [setMode]);
 
   const pdfAppElemRef = useRef<HTMLDivElement>(null);
 
@@ -141,13 +140,24 @@ function App(props: AppProps) {
     });
   }, [setIsAttachmentsOpened]);
 
+  const [isDownloaderOpened, setIsDownloaderOpened] = useState(false);
+  const toggleIsSaverVisible = useCallback(() => {
+    setIsDownloaderOpened((isDownloaderOpened) => {
+      return !isDownloaderOpened;
+    });
+  }, [setIsDownloaderOpened]);
+
+  const [isPrinterOpened, setIsPrinterOpened] = useState(false);
+  const toggleIsPrinterVisible = useCallback(() => {
+    setIsPrinterOpened((isPrinterOpened) => {
+      return !isPrinterOpened;
+    });
+  }, [setIsPrinterOpened]);
+
   const [password, setPassword] = useState('');
   const [isPasswordOpened, setIsPasswordOpened] = useState(false);
 
-  const [file, setFile] = useState<{
-    id: string;
-    source: ArrayBuffer;
-  } | null>(null);
+  const [file, setFile] = useState<PdfFile | null>(null);
   const selectFile = useCallback(
     async (evt: ChangeEvent<HTMLInputElement>) => {
       const files = evt.target.files;
@@ -156,7 +166,8 @@ function App(props: AppProps) {
         const arrayBuffer = await readFile(file);
         setFile({
           id: file.name,
-          source: arrayBuffer,
+          name: file.name,
+          content: arrayBuffer,
         });
         setPassword('');
         setRotation(0);
@@ -177,17 +188,24 @@ function App(props: AppProps) {
     [setStamps]
   );
 
+  const { ButtonComponent } = useUIComponents();
+
+  const strings = useUIStrings();
+
   return (
     <div className="App">
       <div className="app__toolbar">
         <input type="file" onChange={selectFile} />
       </div>
-      {file ? (
-        <LoggerContextProvider logger={logger}>
-          <ThemeContextProvider
-            theme={{
-              background: 'blue',
-            }}
+      <LoggerContextProvider logger={logger}>
+        <ThemeContextProvider
+          theme={{
+            background: 'blue',
+          }}
+        >
+          <PdfApplicationContextProvider
+            supportsEdit={true}
+            onChangeMode={setMode}
           >
             <PdfEditorStampsContextProvider
               stamps={stamps}
@@ -195,11 +213,10 @@ function App(props: AppProps) {
               onRemoveStamp={() => {}}
             >
               <PdfEngineContextProvider engine={engine}>
-                <PdfApplication mode={mode}>
+                <PdfApplication>
                   <PdfNavigatorContextProvider>
                     <PdfDocument
-                      id={file.id}
-                      source={file.source}
+                      file={file}
                       password={password}
                       onOpenSuccess={() => {
                         setIsPasswordOpened(false);
@@ -213,7 +230,7 @@ function App(props: AppProps) {
                       <PdfEditorContextProvider>
                         <PdfToolbar>
                           {mode === PdfApplicationMode.View ? (
-                            <PdfToolbarBrowseItemGroup
+                            <PdfToolbarPluginItemGroup
                               className="pdf__toolbar__item__group--left"
                               onToggleMetadata={toggleMetadataIsVisible}
                               onToggleOutlines={toggleBookmarksIsVisible}
@@ -222,9 +239,9 @@ function App(props: AppProps) {
                               onToggleSignatures={toggleSignaturesIsVisible}
                             />
                           ) : (
-                            <PdfToolbarEditPagesItemGroup />
+                            <PdfToolbarEditorItemGroup />
                           )}
-                          <PdfToolbarViewPagesItemGroup
+                          <PdfToolbarPagesItemGroup
                             className="pdf__toolbar__item__group--center"
                             scaleFactor={scaleFactor}
                             changeScaleFactor={changeScaleFactor}
@@ -234,16 +251,11 @@ function App(props: AppProps) {
                               toggleIsSearchPanelOpened
                             }
                           />
-                          <PdfToolbarManageItemGroup className="pdf__toolbar__item__group--right">
-                            <button
-                              onClick={toggleMode}
-                              className="pdf__ui__button"
-                            >
-                              {mode === PdfApplicationMode.Edit
-                                ? 'View'
-                                : 'Edit'}
-                            </button>
-                          </PdfToolbarManageItemGroup>
+                          <PdfToolbarFileItemGroup
+                            className="pdf__toolbar__item__group--right"
+                            onSave={toggleIsSaverVisible}
+                            onPrint={toggleIsPrinterVisible}
+                          />
                         </PdfToolbar>
                         <PdfPageAnnotationComponentContextProvider
                           component={PdfPageDefaultAnnotation}
@@ -286,8 +298,7 @@ function App(props: AppProps) {
                         ) : null}
                         {bookmarksIsVisible ? (
                           <div className="app__dialog">
-                            {' '}
-                            <PdfBookmarks />{' '}
+                            <PdfBookmarks />
                           </div>
                         ) : null}
                         {isSearchPanelOpened ? (
@@ -312,6 +323,19 @@ function App(props: AppProps) {
                             />
                           </div>
                         ) : null}
+                        {isDownloaderOpened ? (
+                          <div className="app__dialog">
+                            <PdfDownloader />
+                          </div>
+                        ) : null}
+                        {isPrinterOpened ? (
+                          <div className="app__dialog">
+                            <PdfPrinter
+                              method={PrinterMethod.Iframe}
+                              onCancel={toggleIsPrinterVisible}
+                            />
+                          </div>
+                        ) : null}
                         <PdfEditor />
                       </PdfEditorContextProvider>
                     </PdfDocument>
@@ -319,9 +343,9 @@ function App(props: AppProps) {
                 </PdfApplication>
               </PdfEngineContextProvider>
             </PdfEditorStampsContextProvider>
-          </ThemeContextProvider>
-        </LoggerContextProvider>
-      ) : null}
+          </PdfApplicationContextProvider>
+        </ThemeContextProvider>
+      </LoggerContextProvider>
       {isPasswordOpened ? (
         <div className="app__dialog">
           <div>

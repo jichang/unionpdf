@@ -1,7 +1,11 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
+import {
+  createMockPdfDocument,
+  createMockPdfEngine,
+  createMockPdfFile,
+} from '@unionpdf/engines';
 import { PdfThumbnails } from './thumbnails';
 import { PdfDocumentObject, PdfEngineError, TaskBase } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
@@ -27,8 +31,7 @@ describe('PdfThumbnails', () => {
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
-          id="test"
-          source={new Uint8Array()}
+          file={createMockPdfFile()}
           password=""
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}

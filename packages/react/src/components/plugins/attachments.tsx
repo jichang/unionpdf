@@ -69,6 +69,11 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
               </tr>
             );
           })}
+          {attachments.length === 0 ? (
+            <tr key="no-attachemnts">
+              <td colSpan={3}>{strings.noAttachments}</td>
+            </tr>
+          ) : null}
         </tbody>
       </table>
       {children}

@@ -3,6 +3,7 @@ import {
   PdfEngineError,
   PdfEngineFeature,
   PdfEngineOperation,
+  PdfFile,
   PdfMetadataObject,
   PdfSignatureObject,
   PdfTextRectObject,
@@ -19,7 +20,7 @@ import {
   PdfDocumentObject,
   PdfEngine,
   PdfPageObject,
-  PdfSource,
+  PdfFileContent,
   Rect,
   Rotation,
   TaskAbortError,
@@ -159,15 +160,8 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
-  openDocument(id: string, data: PdfSource, password: string) {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'openDocument',
-      id,
-      data,
-      password
-    );
+  openDocument(file: PdfFile, password: string) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', file, password);
     const requestId = this.generateRequestId();
     const task = new WorkerTask<PdfDocumentObject>(this.worker, requestId);
 
@@ -176,7 +170,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'openDocument',
-        args: [id, data, password],
+        args: [file, password],
       },
     };
     this.proxy(task, request);

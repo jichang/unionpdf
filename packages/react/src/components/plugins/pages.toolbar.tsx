@@ -17,9 +17,7 @@ export interface PdfToolbarPagesItemGroupProps extends ComponentProps<'div'> {
   toggleIsSearchPanelOpened: () => void;
 }
 
-export function PdfToolbarViewPagesItemGroup(
-  props: PdfToolbarPagesItemGroupProps
-) {
+export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
   const {
     className,
     scaleFactor,

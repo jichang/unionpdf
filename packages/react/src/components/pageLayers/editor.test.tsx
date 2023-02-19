@@ -1,7 +1,11 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
+import {
+  createMockPdfDocument,
+  createMockPdfEngine,
+  createMockPdfFile,
+} from '@unionpdf/engines';
 import { PdfPages } from '../plugins/pages';
 import { PdfPageEditorLayer } from './editor';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
@@ -25,11 +29,13 @@ describe('PdfPageEditorLayer', () => {
       }),
     });
     const result = render(
-      <PdfApplicationContextProvider mode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider
+        initialMode={PdfApplicationMode.Edit}
+        supportsEdit={true}
+      >
         <PdfEngineContextProvider engine={engine}>
           <PdfDocument
-            id="test"
-            source={new Uint8Array()}
+            file={createMockPdfFile()}
             password=""
             onOpenSuccess={jest.fn()}
             onOpenFailure={jest.fn()}

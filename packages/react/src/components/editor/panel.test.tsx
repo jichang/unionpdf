@@ -7,7 +7,7 @@ import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 describe('PdfEditorPanel', () => {
   test('should render pdf editor panel', async () => {
     const result = render(
-      <PdfApplicationContextProvider mode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
         <PdfEditorPanel />
       </PdfApplicationContextProvider>
     );

@@ -8,3 +8,5 @@ export * from './attachments';
 export * from './pages';
 export * from './pages.toolbar';
 export * from './signatures';
+export * from './downloader';
+export * from './printer';

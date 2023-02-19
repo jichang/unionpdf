@@ -2,7 +2,11 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { PdfDocument } from './document';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
+import {
+  createMockPdfDocument,
+  createMockPdfEngine,
+  createMockPdfFile,
+} from '@unionpdf/engines';
 import { PdfDocumentObject, PdfEngineError, TaskBase } from '@unionpdf/models';
 import { usePdfDocument } from './document.context';
 import { PdfEngineContextProvider } from './engine.context';
@@ -31,15 +35,13 @@ describe('PdfDocument', () => {
     const onOpenSuccess = jest.fn();
     const onOpenFailure = jest.fn();
 
-    const id = 'test';
-    const source = new Uint8Array();
+    const file = createMockPdfFile();
     const password = '';
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
-          id="test"
+          file={file}
           password={password}
-          source={source}
           onOpenSuccess={onOpenSuccess}
           onOpenFailure={onOpenFailure}
         >
@@ -50,7 +52,7 @@ describe('PdfDocument', () => {
 
     expect(document.querySelector('.pdf__document')).toBeDefined();
     expect(engine.openDocument).toBeCalledTimes(1);
-    expect(engine.openDocument).toBeCalledWith(id, source, password);
+    expect(engine.openDocument).toBeCalledWith(file, password);
     expect(pdfDocInContext).toBe(null);
 
     act(() => {

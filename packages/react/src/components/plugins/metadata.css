@@ -1,3 +1,7 @@
+.pdf__metadata {
+  background-color: white;
+}
+
 .pdf__metadata table {
   width: 100%;
 }

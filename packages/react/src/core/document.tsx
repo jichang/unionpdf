@@ -8,29 +8,21 @@ import {
   useState,
 } from 'react';
 import { usePdfEngine } from './engine.context';
-import { PdfDocumentObject, PdfEngineError, PdfSource } from '@unionpdf/models';
+import { PdfDocumentObject, PdfEngineError, PdfFile } from '@unionpdf/models';
 import { useTheme } from './theme.context';
 import { PdfDocumentContextProvider } from './document.context';
 import './document.css';
 
 export interface PdfDocumentProps extends ComponentProps<'div'> {
-  id: string;
-  source: PdfSource;
+  file: PdfFile | null;
   password: string;
   onOpenSuccess?: (pdf: PdfDocumentObject) => void;
   onOpenFailure?: (error: PdfEngineError) => void;
 }
 
 export function PdfDocument(props: PdfDocumentProps) {
-  const {
-    id,
-    password,
-    source,
-    onOpenSuccess,
-    onOpenFailure,
-    children,
-    ...rest
-  } = props;
+  const { file, password, onOpenSuccess, onOpenFailure, children, ...rest } =
+    props;
   const [doc, setDoc] = useState<PdfDocumentObject | null>(null);
   const engine = usePdfEngine();
   const theme = useTheme();
@@ -43,9 +35,9 @@ export function PdfDocument(props: PdfDocumentProps) {
   onOpenFailureRef.current = onOpenFailure;
 
   useEffect(() => {
-    if (engine && id && source) {
+    if (engine && file) {
       let doc: PdfDocumentObject | undefined;
-      const task = engine.openDocument(id, source, password);
+      const task = engine.openDocument(file, password);
 
       task.wait(
         (_doc) => {
@@ -66,7 +58,7 @@ export function PdfDocument(props: PdfDocumentProps) {
         }
       };
     }
-  }, [engine, id, password, source]);
+  }, [engine, file, password]);
 
   const themeStyle = useMemo(() => {
     const styles = {} as Record<string, string | number>;

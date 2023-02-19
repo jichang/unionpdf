@@ -59,7 +59,10 @@ async function run() {
       if (file) {
         const arrayBuffer = await readFile(file);
         const password = passwordElem.value;
-        const task = engine.openDocument(file.name, arrayBuffer, password);
+        const task = engine.openDocument(
+          { id: file.name, name: file.name, content: arrayBuffer },
+          password
+        );
         task.wait(
           (doc) => {
             currDoc = doc;

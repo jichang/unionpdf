@@ -48,6 +48,7 @@ import {
   PdfStrikeOutAnnoObject,
   PdfUnderlineAnnoObject,
   transformSize,
+  PdfFile,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -395,16 +396,9 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(true);
   }
 
-  openDocument(id: string, arrayBuffer: ArrayBuffer, password: string) {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'openDocument',
-      id,
-      arrayBuffer,
-      password
-    );
-    const array = new Uint8Array(arrayBuffer);
+  openDocument(file: PdfFile, password: string) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', file, password);
+    const array = new Uint8Array(file.content);
     const length = array.length;
     const filePtr = this.malloc(length);
     this.wasmModule.HEAPU8.set(array, filePtr);
@@ -479,11 +473,12 @@ export class PdfiumEngine implements PdfEngine {
     this.free(sizePtr);
 
     const pdfDoc = {
-      id,
+      id: file.id,
+      name: file.name,
       pageCount,
       pages,
     };
-    this.docs[id] = {
+    this.docs[file.id] = {
       filePtr,
       docPtr,
       searchContexts: new Map(),

@@ -21,7 +21,7 @@ describe('PdfApplicationContextProvider ', () => {
       mode: PdfApplicationMode.Edit,
     };
     const result = render(
-      <PdfApplicationContextProvider mode={app.mode}>
+      <PdfApplicationContextProvider initialMode={app.mode}>
         <Consumer />
       </PdfApplicationContextProvider>
     );

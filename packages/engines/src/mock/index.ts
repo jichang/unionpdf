@@ -1,6 +1,6 @@
 import {
   PdfDocumentObject,
-  PdfSource,
+  PdfFileContent,
   PdfEngine,
   PdfPageObject,
   PdfAnnotationSubtype,
@@ -19,13 +19,14 @@ import {
   PdfSignatureObject,
   Rect,
   PdfRenderOptions,
+  PdfFile,
 } from '@unionpdf/models';
 
 export function createMockPdfEngine(
   partialEngine?: Partial<PdfEngine>
 ): PdfEngine {
   const engine: PdfEngine = {
-    openDocument: jest.fn((id: string, url: PdfSource, password: string) => {
+    openDocument: jest.fn((file: PdfFile, password: string) => {
       return new TaskBase();
     }),
     getMetadata: () => {
@@ -306,8 +307,17 @@ export function createMockPdfDocument(
 
   return {
     id: 'id',
+    name: 'name',
     pageCount: pageCount,
     pages: pages,
     ...pdf,
+  };
+}
+
+export function createMockPdfFile(pdf?: Partial<PdfFile>): PdfFile {
+  return {
+    id: 'id',
+    name: 'name',
+    content: new ArrayBuffer(0),
   };
 }

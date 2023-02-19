@@ -1,8 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
-import { PdfPageContentComponentProps, PdfPages } from '../plugins/pages';
+import {
+  createMockPdfDocument,
+  createMockPdfEngine,
+  createMockPdfFile,
+} from '@unionpdf/engines';
+import { PdfPages } from '../plugins/pages';
 import { PdfPageTextLayer } from './text';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
@@ -27,8 +31,7 @@ describe('PdfPageTextLayer', () => {
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
-          id="test"
-          source={new Uint8Array()}
+          file={createMockPdfFile()}
           password=""
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}

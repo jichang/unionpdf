@@ -1,10 +1,15 @@
-import React, { ComponentProps, useCallback } from 'react';
+import React, { ComponentProps, useCallback, useState } from 'react';
 import { useUIComponents, useUIStrings } from '../../ui/ui.context';
 import './toolbar.css';
 import { ErrorBoundary } from '../../ui/errorboundary';
-import { usePdfDocument, usePdfEngine } from '../../core';
-import { ignore } from '@unionpdf/models';
+import {
+  PdfApplicationMode,
+  usePdfApplication,
+  usePdfDocument,
+  usePdfEngine,
+} from '../../core';
 import classNames from 'classnames';
+import { StackStatus, usePdfEditor } from '../editor';
 
 export interface PdfToolbarProps extends ComponentProps<'div'> {}
 
@@ -21,7 +26,7 @@ export function PdfToolbar(props: PdfToolbarProps) {
   );
 }
 
-export interface PdfToolbarBrowseItemGroupProps extends ComponentProps<'div'> {
+export interface PdfToolbarPluginItemGroupProps extends ComponentProps<'div'> {
   onToggleMetadata: () => void;
   onToggleThumbnails: () => void;
   onToggleOutlines: () => void;
@@ -29,8 +34,8 @@ export interface PdfToolbarBrowseItemGroupProps extends ComponentProps<'div'> {
   onToggleSignatures: () => void;
 }
 
-export function PdfToolbarBrowseItemGroup(
-  props: PdfToolbarBrowseItemGroupProps
+export function PdfToolbarPluginItemGroup(
+  props: PdfToolbarPluginItemGroupProps
 ) {
   const {
     className,
@@ -46,63 +51,99 @@ export function PdfToolbarBrowseItemGroup(
   const strings = useUIStrings();
 
   return (
-    <ToolbarItemGroupComponent
-      className={classNames('pdf__toolbar__item__group', className)}
-      {...rest}
-    >
-      <ButtonComponent onClick={onToggleMetadata}>
-        {strings.metadata}
-      </ButtonComponent>
-      <ButtonComponent onClick={onToggleOutlines}>
-        {strings.bookmarks}
-      </ButtonComponent>
-      <ButtonComponent onClick={onToggleThumbnails}>
-        {strings.thumbnails}
-      </ButtonComponent>
-      <ButtonComponent onClick={onToggleAttachments}>
-        {strings.attchments}
-      </ButtonComponent>
-      <ButtonComponent onClick={onToggleSignatures}>
-        {strings.signatures}
-      </ButtonComponent>
-      {children}
-    </ToolbarItemGroupComponent>
+    <ErrorBoundary>
+      <ToolbarItemGroupComponent
+        className={classNames('pdf__toolbar__item__group', className)}
+        {...rest}
+      >
+        <ButtonComponent onClick={onToggleMetadata}>
+          {strings.metadata}
+        </ButtonComponent>
+        <ButtonComponent onClick={onToggleOutlines}>
+          {strings.bookmarks}
+        </ButtonComponent>
+        <ButtonComponent onClick={onToggleThumbnails}>
+          {strings.thumbnails}
+        </ButtonComponent>
+        <ButtonComponent onClick={onToggleAttachments}>
+          {strings.attchments}
+        </ButtonComponent>
+        <ButtonComponent onClick={onToggleSignatures}>
+          {strings.signatures}
+        </ButtonComponent>
+      </ToolbarItemGroupComponent>
+    </ErrorBoundary>
   );
 }
 
-export interface PdfToolbarManageItemGroupProps extends ComponentProps<'div'> {}
+export interface PdfToolbarFileItemGroupProps extends ComponentProps<'div'> {
+  onSave: () => void;
+  onPrint: () => void;
+}
 
-export function PdfToolbarManageItemGroup(
-  props: PdfToolbarManageItemGroupProps
-) {
-  const { className, children, ...rest } = props;
-  const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
+export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
+  const { className, onSave, onPrint, children, ...rest } = props;
+  const { ToolbarItemGroupComponent, ButtonComponent, DialogComponent } =
+    useUIComponents();
   const strings = useUIStrings();
-  const doc = usePdfDocument();
-  const engine = usePdfEngine();
 
-  const saveAs = useCallback(() => {
-    if (engine && doc) {
-      engine.saveAsCopy(doc).wait((buffer) => {
-        const url = URL.createObjectURL(new Blob([buffer]));
-        const linkElem = document.createElement('a');
-        linkElem.download = `${doc.id}`;
-        linkElem.href = url;
-        linkElem.click();
-      }, ignore);
+  const { mode, changeMode } = usePdfApplication();
+
+  const handleEdit = useCallback(() => {
+    changeMode(PdfApplicationMode.Edit);
+  }, [changeMode]);
+
+  const [isUncommittedWarningVisible, setIsUncommittedWarningVisible] =
+    useState(false);
+  const { queryStatus } = usePdfEditor();
+  const handleExit = useCallback(() => {
+    if (queryStatus() === StackStatus.Pending) {
+      setIsUncommittedWarningVisible(true);
+    } else {
+      changeMode(PdfApplicationMode.View);
     }
-  }, [engine, doc]);
+  }, [queryStatus, setIsUncommittedWarningVisible, changeMode]);
 
-  const print = useCallback(() => {}, [engine, doc]);
+  const handleDiscard = useCallback(() => {
+    setIsUncommittedWarningVisible(false);
+    changeMode(PdfApplicationMode.View);
+  }, [changeMode]);
+
+  const handleSave = useCallback(() => {
+    setIsUncommittedWarningVisible(false);
+    changeMode(PdfApplicationMode.View);
+    onSave();
+  }, [changeMode, onSave]);
 
   return (
-    <ToolbarItemGroupComponent
-      className={classNames('pdf__toolbar__item__group', className)}
-      {...rest}
-    >
-      <ButtonComponent onClick={saveAs}>{strings.saveAs}</ButtonComponent>
-      <ButtonComponent onClick={print}>{strings.print}</ButtonComponent>
-      {children}
-    </ToolbarItemGroupComponent>
+    <ErrorBoundary>
+      <ToolbarItemGroupComponent
+        className={classNames('pdf__toolbar__item__group', className)}
+        {...rest}
+      >
+        {mode === PdfApplicationMode.View ? (
+          <>
+            <ButtonComponent onClick={onSave}>{strings.saveAs}</ButtonComponent>
+            <ButtonComponent onClick={onPrint}>{strings.print}</ButtonComponent>
+            <ButtonComponent onClick={handleEdit}>
+              {strings.edit}
+            </ButtonComponent>
+          </>
+        ) : (
+          <ButtonComponent onClick={handleExit}>{strings.exit}</ButtonComponent>
+        )}
+      </ToolbarItemGroupComponent>
+      <DialogComponent open={isUncommittedWarningVisible}>
+        <div>
+          <p>{strings.uncommittedWarning}</p>
+        </div>
+        <footer>
+          <ButtonComponent onClick={handleDiscard}>
+            {strings.discard}
+          </ButtonComponent>
+          <ButtonComponent onClick={handleSave}>{strings.save}</ButtonComponent>
+        </footer>
+      </DialogComponent>
+    </ErrorBoundary>
   );
 }

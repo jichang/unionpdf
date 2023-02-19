@@ -7,6 +7,7 @@ export interface PdfPageObject {
 
 export interface PdfDocumentObject {
   id: string;
+  name: string;
   pageCount: number;
   pages: PdfPageObject[];
 }
@@ -369,10 +370,6 @@ export interface PdfAttachmentObject {
   checksum: string;
 }
 
-// source can be a URL points to a remote pdf file or array contains
-// pdf content
-export type PdfSource = ArrayBuffer;
-
 export enum PdfEngineFeature {
   RenderPage,
   RenderPageRect,
@@ -567,6 +564,16 @@ export class PdfEngineError extends Error {
   }
 }
 
+// source can be a URL points to a remote pdf file or array contains
+// pdf content
+export type PdfFileContent = ArrayBuffer;
+
+export interface PdfFile {
+  id: string;
+  name: string;
+  content: PdfFileContent;
+}
+
 export interface PdfEngine {
   isSupport?: (
     feature: PdfEngineFeature
@@ -574,8 +581,7 @@ export interface PdfEngine {
   initialize?: () => Task<boolean, PdfEngineError>;
   destroy?: () => Task<boolean, PdfEngineError>;
   openDocument: (
-    id: string,
-    data: PdfSource,
+    file: PdfFile,
     password: string
   ) => Task<PdfDocumentObject, PdfEngineError>;
   getMetadata: (

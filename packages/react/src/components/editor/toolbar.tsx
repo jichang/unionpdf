@@ -3,11 +3,10 @@ import React, { ComponentProps, useCallback } from 'react';
 import { ErrorBoundary, useUIComponents, useUIStrings } from '../../ui';
 import { PdfEditorTool, usePdfEditor } from './editor.context';
 
-export interface PdfToolbarEditPagesItemGroupProps
-  extends ComponentProps<'div'> {}
+export interface PdfToolbarEditorItemGroupProps extends ComponentProps<'div'> {}
 
-export function PdfToolbarEditPagesItemGroup(
-  props: PdfToolbarEditPagesItemGroupProps
+export function PdfToolbarEditorItemGroup(
+  props: PdfToolbarEditorItemGroupProps
 ) {
   const { className, children, ...rest } = props;
   const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
@@ -28,12 +27,17 @@ export function PdfToolbarEditPagesItemGroup(
     setTool(PdfEditorTool.Stamp);
   }, [setTool]);
 
+  const { commit } = usePdfEditor();
+
+  const handleSave = useCallback(() => {}, []);
+
   return (
     <ErrorBoundary>
       <ToolbarItemGroupComponent
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
+        <ButtonComponent onClick={handleSave}>{strings.save}</ButtonComponent>
         <ButtonComponent onClick={handleAnnotation}>
           {strings.annotation}
         </ButtonComponent>

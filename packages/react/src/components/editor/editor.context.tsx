@@ -44,11 +44,17 @@ export interface PdfEditorStacks {
   pages: Record<string, Operation[]>;
 }
 
+export enum StackStatus {
+  Empty,
+  Pending,
+}
+
 export interface PdfEditorContextVale {
   tool: PdfEditorTool;
   setTool: (tool: PdfEditorTool) => void;
   annotationTool: PdfAnnotationTool;
   setAnnotationTool: (tool: PdfAnnotationTool) => void;
+  queryStatus: () => StackStatus;
   queryByPageIndex: (pageIndex: number) => Operation[];
   exec: (operation: Operation) => void;
   undo: () => void;
@@ -61,6 +67,9 @@ export const PdfEditorContext = React.createContext<PdfEditorContextVale>({
   setTool: (tool: PdfEditorTool) => {},
   annotationTool: PdfAnnotationTool.Selection,
   setAnnotationTool: (tool: PdfAnnotationTool) => {},
+  queryStatus: () => {
+    return StackStatus.Empty;
+  },
   queryByPageIndex: (pageIndex: number) => {
     return [];
   },
@@ -88,6 +97,14 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     committed: [],
     pages: {},
   });
+
+  const queryStatus = useCallback(() => {
+    if (stacks.undo.length === 0) {
+      return StackStatus.Empty;
+    } else {
+      return StackStatus.Pending;
+    }
+  }, [stacks]);
 
   const queryByPageIndex = useCallback(
     (pageIndex: number) => {
@@ -169,7 +186,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     });
   }, [setStacks]);
 
-  const engine = usePdfEngine();
   const doc = usePdfDocument();
 
   const commit = useCallback(() => {
@@ -207,6 +223,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         setTool,
         annotationTool,
         setAnnotationTool,
+        queryStatus,
         queryByPageIndex,
         exec,
         undo,

@@ -4,6 +4,10 @@
   padding: 0.5rem;
 }
 
+.pdf__ui__button {
+  cursor: pointer;
+}
+
 .pdf__ui__icon {
   display: inline-block;
 

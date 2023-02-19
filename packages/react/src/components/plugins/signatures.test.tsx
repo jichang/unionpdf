@@ -2,7 +2,11 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
 import { PdfSignatures } from './signatures';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
+import {
+  createMockPdfDocument,
+  createMockPdfEngine,
+  createMockPdfFile,
+} from '@unionpdf/engines';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider, PdfDocument } from '../../core';
 
@@ -22,8 +26,7 @@ describe('PdfSignatures', () => {
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
-          id="test"
-          source={new Uint8Array()}
+          file={createMockPdfFile()}
           password=""
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}

@@ -1,7 +1,11 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
-import { createMockPdfDocument, createMockPdfEngine } from '@unionpdf/engines';
+import {
+  createMockPdfDocument,
+  createMockPdfEngine,
+  createMockPdfFile,
+} from '@unionpdf/engines';
 import { PdfPages } from '../plugins/pages';
 import { PdfPageAnnotationsLayer } from './annotations';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
@@ -32,8 +36,7 @@ describe('PdfPageAnnotationsLayer', () => {
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <PdfDocument
-          id="test"
-          source={new Uint8Array()}
+          file={createMockPdfFile()}
           password=""
           onOpenSuccess={jest.fn()}
           onOpenFailure={jest.fn()}

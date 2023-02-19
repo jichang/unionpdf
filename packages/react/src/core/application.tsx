@@ -1,16 +1,13 @@
 import React from 'react';
 import { ComponentProps } from 'react';
-import {
-  PdfApplicationContextProvider,
-  PdfApplicationMode,
-} from './application.context';
+import { PdfApplicationMode, usePdfApplication } from './application.context';
 
-export interface PdfApplicationProps extends ComponentProps<'div'> {
-  mode: PdfApplicationMode;
-}
+export interface PdfApplicationProps extends ComponentProps<'div'> {}
 
 export function PdfApplication(props: PdfApplicationProps) {
-  const { mode, children, ...rest } = props;
+  const { children, ...rest } = props;
+
+  const { mode } = usePdfApplication();
 
   return (
     <div
@@ -21,9 +18,7 @@ export function PdfApplication(props: PdfApplicationProps) {
       }`}
       {...rest}
     >
-      <PdfApplicationContextProvider mode={mode}>
-        {children}
-      </PdfApplicationContextProvider>
+      {children}
     </div>
   );
 }

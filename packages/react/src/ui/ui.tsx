@@ -56,6 +56,13 @@ export function Button(props: ButtonProps) {
   );
 }
 
+export interface LinkProps extends ComponentProps<'a'> {}
+
+export function Link(props: LinkProps) {
+  const { className, ...rest } = props;
+  return <a className={classNames('pdf__ui__link', className)} {...rest} />;
+}
+
 export interface ToolbarProps extends ComponentProps<'div'> {}
 
 export function Toolbar(props: ToolbarProps) {

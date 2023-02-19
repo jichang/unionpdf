@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { ignore, PdfSignatureObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
+import { useUIStrings } from '../../ui';
 
 export interface PdfSignaturesProps extends ComponentProps<'div'> {
   onSignaturesLoaded?: (signatures: PdfSignatureObject[]) => void;
@@ -33,6 +34,8 @@ export function PdfSignatures(props: PdfSignaturesProps) {
     }
   }, [engine, doc, onSignaturesLoaded]);
 
+  const strings = useUIStrings();
+
   return (
     <div className={classNames('pdf__signatures', className)} {...rest}>
       <table>
@@ -46,6 +49,11 @@ export function PdfSignatures(props: PdfSignaturesProps) {
               </tr>
             );
           })}
+          {signatures.length === 0 ? (
+            <tr key="no-signatures">
+              <td colSpan={3}>{strings.noSignatures}</td>
+            </tr>
+          ) : null}
         </tbody>
       </table>
       {children}
