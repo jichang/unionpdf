@@ -1,0 +1,36 @@
+.pdf__merger__toolbar {
+  display: flex;
+  padding: 1rem;
+}
+
+.pdf__merger__toolbar .pdf__toolbar__item__group--left {
+  display: flex;
+  justify-content: left;
+}
+
+.pdf__merger__toolbar .pdf__toolbar__item__group--center {
+  display: flex;
+  justify-content: center;
+}
+
+.pdf__merger__toolbar .pdf__toolbar__item__group--right {
+  display: flex;
+  justify-content: right;
+}
+
+.pdf__merger p {
+  padding: 1rem;
+  text-align: center;
+}
+
+.pdf__merger table {
+  width: 100%;
+}
+
+.pdf__merger table {
+  padding: 0.5rem;
+}
+
+.pdf__merger table td:last-child {
+  text-align: right;
+}

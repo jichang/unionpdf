@@ -172,6 +172,9 @@ export class EngineRunner {
       case 'extract':
         task = this.engine[name]!(...args);
         break;
+      case 'merge':
+        task = this.engine[name]!(...args);
+        break;
     }
 
     task.wait(

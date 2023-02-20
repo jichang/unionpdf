@@ -343,6 +343,10 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'number', 'number', 'number'] as const,
     'boolean',
   ] as const,
+  FPDF_ImportPages: [
+    ['number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
 };
 
 const LOG_SOURCE = 'PDFiumEngine';
@@ -1093,6 +1097,79 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
 
     return TaskBase.resolve(buffer);
+  }
+
+  merge(files: PdfFile[]): Task<PdfFile, Error> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'merge', files);
+
+    const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
+    if (!newDocPtr) {
+      return TaskBase.reject(new PdfEngineError('can not create new document'));
+    }
+
+    const ptrs: { docPtr: number; filePtr: number }[] = [];
+    for (const file of files.reverse()) {
+      const array = new Uint8Array(file.content);
+      const length = array.length;
+      const filePtr = this.malloc(length);
+      this.wasmModule.HEAPU8.set(array, filePtr);
+
+      const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(
+        filePtr,
+        length,
+        0
+      );
+      if (!docPtr) {
+        const lastError = this.wasmModuleWrapper.FPDF_GetLastError();
+        this.logger.error(
+          LOG_SOURCE,
+          LOG_CATEGORY,
+          `FPDF_LoadMemDocument failed with ${lastError}`
+        );
+        this.free(filePtr);
+
+        for (const ptr of ptrs) {
+          this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
+          this.free(ptr.filePtr);
+        }
+
+        return TaskBase.reject<PdfFile>(
+          new PdfEngineError(
+            `FPDF_LoadMemDocument failed with ${lastError}`,
+            lastError
+          )
+        );
+      }
+      ptrs.push({ filePtr, docPtr });
+
+      if (!this.wasmModuleWrapper.FPDF_ImportPages(newDocPtr, docPtr, 0, 0)) {
+        this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+
+        for (const ptr of ptrs) {
+          this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
+          this.free(ptr.filePtr);
+        }
+
+        return TaskBase.reject(
+          new PdfEngineError('can not import pages to new document')
+        );
+      }
+    }
+    const buffer = this.saveDocument(newDocPtr);
+
+    this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+
+    for (const ptr of ptrs) {
+      this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
+      this.free(ptr.filePtr);
+    }
+
+    const file: PdfFile = {
+      id: `${Math.random()}`,
+      name: `merged.${Math.random()}.pdf`,
+      content: buffer,
+    };
+    return TaskBase.resolve(file);
   }
 
   saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {

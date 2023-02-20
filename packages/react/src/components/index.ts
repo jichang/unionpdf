@@ -4,3 +4,4 @@ export * from './form';
 export * from './editor';
 export * from './pageLayers';
 export * from './plugins';
+export * from './merger';

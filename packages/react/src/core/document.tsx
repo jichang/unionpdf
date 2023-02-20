@@ -35,28 +35,32 @@ export function PdfDocument(props: PdfDocumentProps) {
   onOpenFailureRef.current = onOpenFailure;
 
   useEffect(() => {
-    if (engine && file) {
-      let doc: PdfDocumentObject | undefined;
-      const task = engine.openDocument(file, password);
+    if (engine) {
+      if (!file) {
+        setDoc(null);
+      } else {
+        let doc: PdfDocumentObject | undefined;
+        const task = engine.openDocument(file, password);
 
-      task.wait(
-        (_doc) => {
-          doc = _doc;
-          setDoc(doc);
-          onOpenSuccessRef.current?.(doc);
-        },
-        (error: Error) => {
-          onOpenFailureRef.current?.(error);
-        }
-      );
+        task.wait(
+          (_doc) => {
+            doc = _doc;
+            setDoc(doc);
+            onOpenSuccessRef.current?.(doc);
+          },
+          (error: Error) => {
+            onOpenFailureRef.current?.(error);
+          }
+        );
 
-      return () => {
-        task.abort();
+        return () => {
+          task.abort();
 
-        if (doc) {
-          engine.closeDocument(doc);
-        }
-      };
+          if (doc) {
+            engine.closeDocument(doc);
+          }
+        };
+      }
     }
   }, [engine, file, password]);
 

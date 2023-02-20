@@ -132,6 +132,7 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
         ) : (
           <ButtonComponent onClick={handleExit}>{strings.exit}</ButtonComponent>
         )}
+        {children}
       </ToolbarItemGroupComponent>
       <DialogComponent open={isUncommittedWarningVisible}>
         <div>

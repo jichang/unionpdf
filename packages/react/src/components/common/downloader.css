@@ -1,0 +1,17 @@
+.pdf__downloader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+
+  background-color: white;
+}
+
+.pdf__downloader__message {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+.pdf__downloader__action {
+  padding: 0.5rem;
+}

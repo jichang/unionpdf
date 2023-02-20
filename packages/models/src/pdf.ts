@@ -652,6 +652,7 @@ export interface PdfEngine {
     attachment: PdfAttachmentObject
   ) => Task<ArrayBuffer, PdfEngineError>;
   extract: (doc: PdfDocumentObject, pageIndexes: number[]) => Task<ArrayBuffer>;
+  merge: (files: PdfFile[]) => Task<PdfFile>;
   saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, PdfEngineError>;
   closeDocument: (doc: PdfDocumentObject) => Task<boolean, PdfEngineError>;
 }

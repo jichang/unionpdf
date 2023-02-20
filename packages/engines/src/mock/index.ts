@@ -244,6 +244,13 @@ export function createMockPdfEngine(
     extract: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
       return TaskBase.resolve(new ArrayBuffer(0));
     },
+    merge: (files: PdfFile[]) => {
+      return TaskBase.resolve({
+        id: 'id',
+        name: 'name',
+        content: new ArrayBuffer(0),
+      });
+    },
     startSearch: (doc: PdfDocumentObject, contextId: number) => {
       return TaskBase.resolve(true);
     },

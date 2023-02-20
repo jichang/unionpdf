@@ -133,6 +133,10 @@ export const DEFAULT_UI_STRINGS = {
   uncommittedWarning:
     'You have changes that is not committed, do you want to save those changes ?',
   printing: 'Printing',
+  remove: 'Remove',
+  noFiles: 'No Files',
+  merge: 'Merge',
+  merging: 'Merging',
 };
 
 export type UIStrings = typeof DEFAULT_UI_STRINGS;

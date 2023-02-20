@@ -580,6 +580,24 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  merge(files: PdfFile[]) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'merge', files);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<PdfFile>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'merge',
+        args: [files],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
   closeDocument(pdf: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', pdf);
     const requestId = this.generateRequestId();

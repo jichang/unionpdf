@@ -49,13 +49,17 @@ import {
   PdfDocument,
   PdfPrinter,
   PrinterMethod,
+  PdfMerger,
+  Toolbar,
+  ToolbarItemGroup,
+  Button,
+  Input,
+  Downloader,
 } from '../src/index';
-import {
-  createPdfiumModule,
-  PdfiumEngine,
-  pdfiumWasm,
-  PdfiumErrorCode,
-} from '@unionpdf/engines';
+import { PdfiumErrorCode, WebWorkerEngine } from '@unionpdf/engines';
+import { PdfiumEngine } from '@unionpdf/engines';
+import { createPdfiumModule } from '@unionpdf/engines';
+import { pdfiumWasm } from '@unionpdf/engines';
 
 export interface AppProps {
   logger: Logger;
@@ -175,6 +179,16 @@ function App(props: AppProps) {
     [setFile]
   );
 
+  const closeFile = useCallback(
+    (evt: React.MouseEvent<HTMLButtonElement>) => {
+      setFile(null);
+      setPassword('');
+      setRotation(0);
+      setScaleFactor(1);
+    },
+    [setFile]
+  );
+
   const [stamps, setStamps] = useState<Stamp[]>([]);
 
   const addStamp = useCallback(
@@ -186,11 +200,59 @@ function App(props: AppProps) {
     [setStamps]
   );
 
+  const [isMergerOpened, setIsMergerOpened] = useState(false);
+
+  const toggleIsMergerOpened = useCallback(() => {
+    setIsMergerOpened((isMergerOpened) => {
+      return !isMergerOpened;
+    });
+  }, [setIsMergerOpened]);
+
+  const [files, setFiles] = useState<PdfFile[]>([]);
+  const selectFiles = useCallback(
+    async (evt: ChangeEvent<HTMLInputElement>) => {
+      const rawFiles = evt.target.files;
+      if (rawFiles) {
+        const files: PdfFile[] = [];
+        for (let i = 0; i < rawFiles.length; i++) {
+          const rawFile = rawFiles[i];
+          const arrayBuffer = await readFile(rawFile);
+          files.push({
+            id: rawFile.name,
+            name: rawFile.name,
+            content: arrayBuffer,
+          });
+        }
+        setFiles(files);
+      }
+    },
+    [setFiles]
+  );
+
+  const removeFile = useCallback(
+    (file: PdfFile) => {
+      setFiles((files) => {
+        const index = files.findIndex((_file) => {
+          return _file.id === file.id;
+        });
+        if (index !== -1) {
+          return files.filter((_file) => {
+            return _file.id !== file.id;
+          });
+        }
+        return files;
+      });
+    },
+    [setFiles]
+  );
+
+  const exitMerger = useCallback(() => {
+    toggleIsMergerOpened();
+    setFiles([]);
+  }, [setFiles, toggleIsMergerOpened]);
+
   return (
     <div className="App">
-      <div className="app__toolbar">
-        <input type="file" onChange={selectFile} />
-      </div>
       <LoggerContextProvider logger={logger}>
         <ThemeContextProvider
           theme={{
@@ -249,7 +311,11 @@ function App(props: AppProps) {
                             className="pdf__toolbar__item__group--right"
                             onSave={toggleIsSaverVisible}
                             onPrint={toggleIsPrinterVisible}
-                          />
+                          >
+                            <button type="button" onClick={closeFile}>
+                              Close
+                            </button>
+                          </PdfToolbarFileItemGroup>
                         </PdfToolbar>
                         <PdfPageAnnotationComponentContextProvider
                           component={PdfPageDefaultAnnotation}
@@ -335,11 +401,36 @@ function App(props: AppProps) {
                     </PdfDocument>
                   </PdfNavigatorContextProvider>
                 </PdfApplication>
+                {isMergerOpened ? (
+                  <div>
+                    <Toolbar className="pdf__merger__toolbar">
+                      <ToolbarItemGroup className="pdf__toolbar__item__group--left">
+                        <Input type="file" multiple onChange={selectFiles} />
+                      </ToolbarItemGroup>
+                      <ToolbarItemGroup className="pdf__toolbar__item__group--right">
+                        <Button onClick={exitMerger}>Exit</Button>
+                      </ToolbarItemGroup>
+                    </Toolbar>
+                    <PdfMerger
+                      files={files}
+                      onRemoveFile={removeFile}
+                      onMerged={(mergedFile) => {}}
+                    />
+                  </div>
+                ) : null}
               </PdfEngineContextProvider>
             </PdfEditorStampsContextProvider>
           </PdfApplicationContextProvider>
         </ThemeContextProvider>
       </LoggerContextProvider>
+      {file === null && !isMergerOpened ? (
+        <div>
+          <Button type="button" onClick={toggleIsMergerOpened}>
+            Merge Files
+          </Button>
+          <Input type="file" onChange={selectFile} />
+        </div>
+      ) : null}
       {isPasswordOpened ? (
         <div className="app__dialog">
           <div>
@@ -371,11 +462,18 @@ async function readFile(file: File): Promise<ArrayBuffer> {
 
 async function run() {
   const logger = new ConsoleLogger();
-  const response = await fetch(pdfiumWasm);
-  const wasmBinary = await response.arrayBuffer();
-  const wasmModule = await createPdfiumModule({ wasmBinary });
-  const engine = new PdfiumEngine(wasmModule, logger);
-  engine.initialize();
+  const url = new URL(window.location.href);
+  const enableWebworker = url.searchParams.get('webworker');
+  let engine: PdfEngine;
+  if (enableWebworker) {
+    engine = new WebWorkerEngine(new URL('./webworker'), logger);
+  } else {
+    const response = await fetch(pdfiumWasm);
+    const wasmBinary = await response.arrayBuffer();
+    const wasmModule = await createPdfiumModule({ wasmBinary });
+    engine = new PdfiumEngine(wasmModule, logger);
+  }
+  engine.initialize?.();
 
   const appElem = document.querySelector('#root') as HTMLElement;
   const root = ReactDOM.createRoot(appElem);
