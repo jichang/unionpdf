@@ -34,7 +34,7 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
       rotation,
       scaleFactor
     );
-    console.log('annotation: ', page.size, annotation.rect, rect);
+
     return {
       ...styleProp,
       top: rect.origin.y,

@@ -87,7 +87,7 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
             x: stopPosition.x - startPosition.x,
             y: stopPosition.y - startPosition.y,
           };
-          console.log(startPosition, stopPosition, offset);
+
           if (isDroppedInSamePage) {
             exec({
               id: `${Date.now()}.${Math.random()}`,

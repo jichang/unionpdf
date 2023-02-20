@@ -110,7 +110,7 @@ export function PdfNavigatorContextProvider(
 
       setCurrPageIndex(data.destination.pageIndex);
     },
-    [currPageIndex, listeners, setCurrPageIndex, emit]
+    [currPageIndex, setCurrPageIndex, emit]
   );
 
   const addEventListener = useCallback(
@@ -143,7 +143,7 @@ export function PdfNavigatorContextProvider(
       );
       setListeners((listeners) => {
         const index = listeners.findIndex((_listener) => {
-          return (_listener.source === source && _listener.handler) !== handler;
+          return _listener.source === source && _listener.handler === handler;
         });
         if (index !== -1) {
           return listeners.filter((_listener) => {

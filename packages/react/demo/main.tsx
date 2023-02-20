@@ -46,8 +46,6 @@ import {
   PdfEditorStampsContextProvider,
   Stamp,
   PdfApplicationContextProvider,
-  useUIComponents,
-  useUIStrings,
   PdfDocument,
   PdfPrinter,
   PrinterMethod,
@@ -187,10 +185,6 @@ function App(props: AppProps) {
     },
     [setStamps]
   );
-
-  const { ButtonComponent } = useUIComponents();
-
-  const strings = useUIStrings();
 
   return (
     <div className="App">

@@ -61,38 +61,45 @@ export function PdfPages(props: PdfPagesProps) {
     prerenderRange = [0, 0],
     cacheRange = [0, 0],
     scaleFactor = 1,
-    rotation = 0,
+    rotation = Rotation.Degree0,
     pageLayers,
   } = props;
-  const pdfDoc = usePdfDocument();
+  const doc = usePdfDocument();
   const logger = useLogger();
 
-  const pdfPages: PdfPage[] = useMemo(() => {
-    if (!pdfDoc) {
+  const pages: PdfPage[] = useMemo(() => {
+    if (!doc) {
       return [];
     }
 
-    let pageOffset = pageGap / 2;
-    return pdfDoc?.pages.map((page) => {
-      const offset = pageOffset;
-      const visualSize = transformSize(page.size, rotation, scaleFactor);
-      pageOffset = pageOffset + visualSize.height + pageGap;
+    let offset = 0;
+    return doc?.pages.map((page) => {
+      const height = rotation % 2 === 0 ? page.size.height : page.size.width;
 
-      return {
+      const pdfPage: PdfPage = {
         ...page,
         offset,
-        visualSize,
       };
+
+      offset += height;
+
+      return pdfPage;
     });
-  }, [pdfDoc, pageGap, scaleFactor, rotation]);
+  }, [doc, rotation]);
 
   const containerElemRef = useRef<HTMLDivElement | null>(null);
-  const gotoPage = useCallback(
-    (data: PdfNavigatorGotoPageEvent['data']) => {
+  const { addEventListener, removeEventListener } = usePdfNavigator();
+  useEffect(() => {
+    const scrollTo = (evt: PdfNavigatorEvent, source: string) => {
+      if (evt.kind === 'GotoPage' && source === PDF_NAVIGATOR_SOURCE_PAGES) {
+        return;
+      }
+      const data = evt.data;
+
       const containerElem = containerElemRef.current;
       if (containerElem) {
         const { destination } = data;
-        const page = pdfPages[destination.pageIndex];
+        const page = pages[destination.pageIndex];
         if (!page) {
           return;
         }
@@ -101,6 +108,7 @@ export function PdfPages(props: PdfPagesProps) {
         const scrollOffsetBase =
           calculateScrollOffset(containerElem, scrollableContainer) +
           pageGap / 2;
+        const pageOffset = page.offset * scaleFactor + pageGap * page.index;
 
         switch (destination.zoom.mode) {
           case PdfZoomMode.XYZ:
@@ -112,7 +120,7 @@ export function PdfPages(props: PdfPagesProps) {
                 rotation
               );
               const scrollOffset: { top: number; left: number } = {
-                top: page.offset + y,
+                top: pageOffset + y,
                 left: x,
               };
               scrollableContainer.scrollTo({
@@ -124,31 +132,26 @@ export function PdfPages(props: PdfPagesProps) {
           default:
             scrollableContainer.scrollTo({
               left: 0,
-              top: page.offset + scrollOffsetBase,
+              top: pageOffset + scrollOffsetBase,
             });
         }
       }
-    },
-    [logger, pageGap, pdfPages, scaleFactor, rotation]
-  );
-
-  const { addEventListener, removeEventListener } = usePdfNavigator();
-  useEffect(() => {
-    const handle = (evt: PdfNavigatorEvent, source: string) => {
-      switch (evt.kind) {
-        case 'GotoPage':
-          if (source !== PDF_NAVIGATOR_SOURCE_PAGES) {
-            gotoPage(evt.data);
-          }
-          break;
-      }
     };
-    addEventListener(PDF_NAVIGATOR_SOURCE_PAGES, handle);
+
+    addEventListener(PDF_NAVIGATOR_SOURCE_PAGES + scaleFactor, scrollTo);
 
     return () => {
-      removeEventListener(PDF_NAVIGATOR_SOURCE_PAGES, handle);
+      removeEventListener(PDF_NAVIGATOR_SOURCE_PAGES + scaleFactor, scrollTo);
     };
-  }, [addEventListener, removeEventListener, gotoPage]);
+  }, [
+    addEventListener,
+    removeEventListener,
+    logger,
+    pageGap,
+    pages,
+    scaleFactor,
+    rotation,
+  ]);
 
   return (
     <ErrorBoundary>
@@ -158,7 +161,7 @@ export function PdfPages(props: PdfPagesProps) {
           style={{ paddingTop: pageGap / 2, paddingBottom: pageGap / 2 }}
         >
           <PdfPagesContent
-            pdfPages={pdfPages}
+            pages={pages}
             pageGap={pageGap}
             scaleFactor={scaleFactor}
             rotation={rotation}
@@ -174,12 +177,11 @@ export function PdfPages(props: PdfPagesProps) {
 
 export interface PdfPage extends PdfPageObject {
   offset: number;
-  visualSize: Size;
 }
 
 export interface PdfPagesContentProps {
   pageGap: number;
-  pdfPages: PdfPage[];
+  pages: PdfPage[];
   prerenderRange: [number, number];
   cacheRange: [number, number];
   scaleFactor: number;
@@ -189,7 +191,7 @@ export interface PdfPagesContentProps {
 
 export function PdfPagesContent(props: PdfPagesContentProps) {
   const {
-    pdfPages,
+    pages,
     pageGap,
     rotation,
     scaleFactor,
@@ -237,7 +239,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
 
   return (
     <>
-      {pdfPages.map((page) => {
+      {pages.map((page) => {
         const isVisible = visibleEntryIds.has(page.index);
         const inVisibleRange =
           page.index >= minVisiblePageIndex + prerenderRange[0] &&
@@ -257,7 +259,6 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
             pageGap={pageGap}
             scaleFactor={scaleFactor}
             rotation={rotation}
-            visualSize={page.visualSize}
           >
             {layers.map((Layer, index) => {
               return (
@@ -271,7 +272,6 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
                   pageGap={pageGap}
                   scaleFactor={scaleFactor}
                   rotation={rotation}
-                  visualSize={page.visualSize}
                 />
               );
             })}
@@ -291,12 +291,13 @@ export interface PdfPageProps extends ComponentProps<'div'> {
   pageGap: number;
   scaleFactor: number;
   rotation: Rotation;
-  visualSize: Size;
 }
 
 export function PdfPage(props: PdfPageProps) {
   const { children, ...rest } = props;
-  const { isCurrent, page, pageGap, visualSize } = rest;
+  const { isCurrent, page, pageGap, rotation, scaleFactor } = rest;
+
+  const visualSize = transformSize(page.size, rotation, scaleFactor);
 
   return (
     <IntersectionObserverEntry

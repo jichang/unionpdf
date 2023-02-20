@@ -9,7 +9,6 @@ export interface PdfPageLayerComponentProps {
   page: PdfPageObject;
   scaleFactor: number;
   rotation: Rotation;
-  visualSize: Size;
   pageGap: number;
 }
 
