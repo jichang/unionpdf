@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-lerna run clean && npm run format && lerna run build && lerna run typecheck && lerna run test
+npm run lerna -- run clean && npm run format && npm run lerna -- run build && npm run lerna -- run typecheck && npm run lerna -- run test
