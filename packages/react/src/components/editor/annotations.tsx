@@ -79,13 +79,13 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
 
           const isDroppedInSamePage = page.index === pageIndex;
 
-          const stopPosition = {
+          const endPosition = {
             x: evt.nativeEvent.offsetX,
             y: evt.nativeEvent.offsetY,
           };
           const offset = {
-            x: stopPosition.x - startPosition.x,
-            y: stopPosition.y - startPosition.y,
+            x: endPosition.x - startPosition.x,
+            y: endPosition.y - startPosition.y,
           };
 
           if (isDroppedInSamePage) {
@@ -94,9 +94,9 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
               pageIndex: page.index,
               action: 'transform',
               annotation,
-              tranformation: {
-                type: 'translate',
+              params: {
                 offset: restoreOffset(offset, rotation, scaleFactor),
+                scale: { width: 1, height: 1 },
               },
             });
           } else {
@@ -118,9 +118,9 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
               pageIndex: page.index,
               action: 'transform',
               annotation,
-              tranformation: {
-                type: 'translate',
+              params: {
                 offset: restoreOffset(offset, rotation, scaleFactor),
+                scale: { width: 1, height: 1 },
               },
             });
           }

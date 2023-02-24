@@ -16,12 +16,13 @@ export interface DrawablePath {
 }
 
 export interface DrawableHandle {
+  clearCanvas: () => void;
   queryPaths: () => DrawablePath[];
   queryImage: () => ImageData | undefined;
 }
 
 export interface DrawableProps extends ComponentProps<'canvas'> {
-  componentRef?: React.MutableRefObject<DrawableHandle | undefined>;
+  componentRef?: React.MutableRefObject<DrawableHandle | null>;
   onAddPath: (path: DrawablePath) => void;
 }
 
@@ -36,6 +37,15 @@ export function Drawable(props: DrawableProps) {
     componentRef,
     () => {
       return {
+        clearCanvas: () => {
+          const canvasElem = canvasRef.current;
+          if (canvasElem) {
+            const ctx = canvasElem.getContext('2d');
+            if (ctx) {
+              ctx.clearRect(0, 0, Number(width), Number(height));
+            }
+          }
+        },
         queryPaths: () => {
           return paths;
         },

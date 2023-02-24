@@ -6,11 +6,11 @@ import {
   transformSize,
 } from '@unionpdf/models';
 import classNames from 'classnames';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { calculateBoundingRect } from '../helpers/editor';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import './canvas.css';
-import { Drawable, DrawablePath } from '../common';
+import { Drawable, DrawableHandle, DrawablePath } from '../common';
 import { restoreRect } from '@unionpdf/models';
 
 export interface PdfEditorCanvasProps {
@@ -29,6 +29,8 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
       height: size.height,
     };
   }, [page, rotation, scaleFactor]);
+
+  const drawableRef = useRef<DrawableHandle | null>(null);
 
   const { exec, annotationTool } = usePdfEditor();
 
@@ -58,6 +60,7 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
           ],
         },
       });
+      drawableRef.current?.clearCanvas();
     },
     [page, exec, rotation, scaleFactor]
   );
@@ -70,6 +73,7 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
           ? 'pdf__editor__canvas--active'
           : 'pdf__editor__canvas--inactive'
       )}
+      componentRef={drawableRef}
       width={style.width}
       height={style.height}
       onAddPath={addPath}

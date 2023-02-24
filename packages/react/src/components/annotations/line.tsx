@@ -39,7 +39,7 @@ export function PdfPageLineAnnotation(props: PdfPageLineAnnotationProps) {
         );
         const endPoint = transformPosition(
           page.size,
-          annotation.startPoint,
+          annotation.endPoint,
           rotation,
           scaleFactor
         );

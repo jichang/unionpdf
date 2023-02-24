@@ -4,7 +4,10 @@ import {
   PdfInkListObject,
   Position,
   Rect,
+  Rotation,
+  Size,
 } from '@unionpdf/models';
+import { PdfPageAnnotationResizerPosition } from '../editor';
 import { Operation } from '../editor/editor.context';
 
 export function apply(
@@ -20,11 +23,9 @@ export function apply(
           if (annotation.id !== operation.annotation.id) {
             return annotation;
           } else {
-            const {
-              tranformation: { offset },
-            } = operation;
+            const { params } = operation;
 
-            return translate(offset, annotation);
+            return transform(params, annotation);
           }
         });
       case 'remove':
@@ -66,10 +67,13 @@ export function calculateBoundingRect(inkLists: PdfInkListObject[]): Rect {
   };
 }
 
-export function translate(offset: Position, annotation: PdfAnnotationObject) {
-  const {
-    rect: { origin, size },
-  } = annotation;
+export function transform(
+  params: { offset: Position; scale: Size },
+  annotation: PdfAnnotationObject
+) {
+  const { offset, scale } = params;
+  const { rect } = annotation;
+  const { origin, size } = rect;
 
   let updated = {
     ...annotation,
@@ -78,7 +82,10 @@ export function translate(offset: Position, annotation: PdfAnnotationObject) {
         x: origin.x + offset.x,
         y: origin.y + offset.y,
       },
-      size,
+      size: {
+        width: size.width * scale.width,
+        height: size.height * scale.height,
+      },
     },
   };
 
@@ -88,8 +95,11 @@ export function translate(offset: Position, annotation: PdfAnnotationObject) {
         return {
           points: inkList.points.map((point) => {
             return {
-              x: point.x + offset.x,
-              y: point.y + offset.y,
+              x:
+                updated.rect.origin.x + (point.x - rect.origin.x) * scale.width,
+              y:
+                updated.rect.origin.y +
+                (point.y - rect.origin.y) * scale.height,
             };
           }),
         };
@@ -99,24 +109,194 @@ export function translate(offset: Position, annotation: PdfAnnotationObject) {
     case PdfAnnotationSubtype.POLYLINE:
       updated.vertices = updated.vertices.map((point) => {
         return {
-          x: point.x + offset.x,
-          y: point.y + offset.y,
+          x: updated.rect.origin.x + (point.x - rect.origin.x) * scale.width,
+          y: updated.rect.origin.y + (point.y - rect.origin.y) * scale.height,
         };
       });
       break;
     case PdfAnnotationSubtype.LINE:
       updated.startPoint = {
-        x: updated.startPoint.x + offset.x,
-        y: updated.startPoint.y + offset.y,
+        x:
+          updated.rect.origin.x +
+          (updated.startPoint.x - rect.origin.x) * scale.width,
+        y:
+          updated.rect.origin.y +
+          (updated.startPoint.y - rect.origin.y) * scale.height,
       };
       updated.endPoint = {
-        x: updated.endPoint.x + offset.x,
-        y: updated.endPoint.y + offset.y,
+        x:
+          updated.rect.origin.x +
+          (updated.endPoint.x - rect.origin.x) * scale.width,
+        y:
+          updated.rect.origin.y +
+          (updated.endPoint.y - rect.origin.y) * scale.height,
       };
       break;
   }
 
   return updated;
+}
+
+export function calculateTransformation(
+  rect: Rect,
+  offset: Position,
+  rotation: Rotation,
+  resizerPosition: PdfPageAnnotationResizerPosition
+) {
+  const transformation = {
+    offset: {
+      x: 0,
+      y: 0,
+    },
+    scale: {
+      width: 1,
+      height: 1,
+    },
+  };
+  if (offset.x === 0 && offset.y === 0) {
+    return transformation;
+  }
+
+  switch (rotation) {
+    case Rotation.Degree0:
+      {
+        switch (resizerPosition) {
+          case PdfPageAnnotationResizerPosition.TopLeft:
+            transformation.offset.x = offset.x;
+            transformation.offset.y = offset.y;
+            transformation.scale.width =
+              (rect.size.width - offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.y) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.TopRight:
+            transformation.offset.y = offset.y;
+            transformation.scale.width =
+              (rect.size.width + offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.y) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomRight:
+            transformation.scale.width =
+              (rect.size.width + offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.y) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomLeft:
+            transformation.offset.x = offset.x;
+            transformation.scale.width =
+              (rect.size.width - offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.y) / rect.size.height;
+            break;
+        }
+      }
+      break;
+    case Rotation.Degree90:
+      {
+        switch (resizerPosition) {
+          case PdfPageAnnotationResizerPosition.TopLeft:
+            transformation.offset.x = offset.y;
+            transformation.scale.width =
+              (rect.size.width - offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.x) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.TopRight:
+            transformation.offset.x = offset.y;
+            transformation.offset.y = -offset.x;
+            transformation.scale.width =
+              (rect.size.width - offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.x) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomRight:
+            transformation.offset.y = -offset.x;
+            transformation.scale.width =
+              (rect.size.width + offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.x) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomLeft:
+            transformation.scale.width =
+              (rect.size.width + offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.x) / rect.size.height;
+            break;
+        }
+      }
+      break;
+    case Rotation.Degree180:
+      {
+        switch (resizerPosition) {
+          case PdfPageAnnotationResizerPosition.TopLeft:
+            transformation.scale.width =
+              (rect.size.width - offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.y) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.TopRight:
+            transformation.offset.x = -offset.x;
+            transformation.scale.width =
+              (rect.size.width + offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.y) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomRight:
+            transformation.offset.x = -offset.x;
+            transformation.offset.y = -offset.y;
+            transformation.scale.width =
+              (rect.size.width + offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.y) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomLeft:
+            transformation.offset.y = -offset.y;
+            transformation.scale.width =
+              (rect.size.width - offset.x) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.y) / rect.size.height;
+            break;
+        }
+      }
+      break;
+    case Rotation.Degree270:
+      {
+        switch (resizerPosition) {
+          case PdfPageAnnotationResizerPosition.TopLeft:
+            transformation.offset.y = offset.x;
+            transformation.scale.width =
+              (rect.size.width - offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.x) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.TopRight:
+            transformation.scale.width =
+              (rect.size.width - offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.x) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomRight:
+            transformation.offset.x = -offset.y;
+            transformation.scale.width =
+              (rect.size.width + offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height + offset.x) / rect.size.height;
+            break;
+          case PdfPageAnnotationResizerPosition.BottomLeft:
+            transformation.offset.x = -offset.y;
+            transformation.offset.y = offset.x;
+            transformation.scale.width =
+              (rect.size.width + offset.y) / rect.size.width;
+            transformation.scale.height =
+              (rect.size.height - offset.x) / rect.size.height;
+            break;
+        }
+      }
+      break;
+  }
+
+  return transformation;
 }
 
 export function serialze(annotation: PdfAnnotationObject) {

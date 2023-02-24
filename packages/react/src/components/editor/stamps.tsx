@@ -38,7 +38,7 @@ export function PdfEditorStamps() {
 
   const { onAddStamp } = usePdfEditorStamps();
 
-  const drawableHandleRef = useRef<DrawableHandle>();
+  const drawableHandleRef = useRef<DrawableHandle>(null);
   const submit = useCallback(() => {
     if (drawableHandleRef.current) {
       const imageData = drawableHandleRef.current.queryImage();

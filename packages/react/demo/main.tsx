@@ -260,6 +260,7 @@ function App(props: AppProps) {
           }}
         >
           <PdfApplicationContextProvider
+            initialMode={PdfApplicationMode.Edit}
             supportsEdit={true}
             onChangeMode={setMode}
           >

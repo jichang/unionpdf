@@ -1,4 +1,4 @@
-import { PdfAnnotationObject, Position } from '@unionpdf/models';
+import { PdfAnnotationObject, Position, Size } from '@unionpdf/models';
 import React, {
   ReactNode,
   useCallback,
@@ -31,9 +31,9 @@ export type Operation =
       pageIndex: number;
       action: 'transform';
       annotation: PdfAnnotationObject;
-      tranformation: {
-        type: 'translate';
+      params: {
         offset: Position;
+        scale: Size;
       };
     };
 
