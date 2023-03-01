@@ -5,11 +5,7 @@ import {
   PdfPageWidgetAnnotation,
   PdfPagePopupAnnotation,
 } from '../annotations';
-import {
-  PdfAnnotationSubtype,
-  PdfAnnotationSubtypeName,
-} from '@unionpdf/models';
-import classNames from 'classnames';
+import { PdfAnnotationSubtype } from '@unionpdf/models';
 import { PdfPageAnnotationComponentProps } from './annotations.context';
 import { PdfPageAnnotation } from './annotation';
 
@@ -56,10 +52,6 @@ export function PdfPageDefaultAnnotation(
   return (
     <PdfPageAnnotation
       page={page}
-      className={classNames(
-        'pdf__annotation',
-        `pdf__annotation--${PdfAnnotationSubtypeName[annotation.type]}`
-      )}
       annotation={annotation}
       scaleFactor={scaleFactor}
       rotation={rotation}

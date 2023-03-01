@@ -181,6 +181,7 @@ export function createMockPdfEngine(
         rotation: Rotation
       ) => {
         const link: PdfLinkAnnoObject = {
+          pageIndex: page.index,
           id: page.index + 1,
           type: PdfAnnotationSubtype.LINK,
           target: {

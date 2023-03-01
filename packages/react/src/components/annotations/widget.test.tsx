@@ -20,6 +20,7 @@ describe('PdfPageWidget', () => {
       },
     };
     const widget: PdfWidgetAnnoObject = {
+      pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.WIDGET,
       rect: {

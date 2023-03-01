@@ -296,6 +296,10 @@ export function calculateTransformation(
       break;
   }
 
+  if (transformation.scale.width < 0 || transformation.scale.height < 0) {
+    debugger;
+  }
+
   return transformation;
 }
 

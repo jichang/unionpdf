@@ -48,6 +48,7 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
         pageIndex: page.index,
         action: 'create',
         annotation: {
+          pageIndex: page.index,
           id: Date.now(),
           type: PdfAnnotationSubtype.INK,
           rect,

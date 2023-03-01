@@ -1810,6 +1810,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.TEXT,
       contents,
@@ -1858,6 +1859,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.FREETEXT,
       contents,
@@ -1923,6 +1925,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.LINK,
       text,
@@ -1951,6 +1954,7 @@ export class PdfiumEngine implements PdfEngine {
     const field = this.readPdfWidgetAnnoField(formHandle, annotationPtr);
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.WIDGET,
       rect,
@@ -1975,6 +1979,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.FILEATTACHMENT,
       rect,
@@ -2042,6 +2047,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.INK,
       rect,
@@ -2067,6 +2073,7 @@ export class PdfiumEngine implements PdfEngine {
     const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POLYGON,
       rect,
@@ -2092,6 +2099,7 @@ export class PdfiumEngine implements PdfEngine {
     const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POLYLINE,
       rect,
@@ -2141,6 +2149,7 @@ export class PdfiumEngine implements PdfEngine {
     this.free(endPointPtr);
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.LINE,
       rect,
@@ -2166,6 +2175,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.HIGHLIGHT,
       rect,
@@ -2189,6 +2199,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.UNDERLINE,
       rect,
@@ -2212,6 +2223,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.STRIKEOUT,
       rect,
@@ -2235,6 +2247,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.SQUIGGLY,
       rect,
@@ -2258,6 +2271,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.CARET,
       rect,
@@ -2293,6 +2307,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.STAMP,
       rect,
@@ -2317,6 +2332,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.CIRCLE,
       rect,
@@ -2340,6 +2356,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.SQUARE,
       rect,
@@ -2364,6 +2381,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      pageIndex: page.index,
       id: index,
       type,
       rect,
@@ -2425,6 +2443,7 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(popupAnnotationPtr);
 
     return {
+      pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POPUP,
       rect,

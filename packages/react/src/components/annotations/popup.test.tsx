@@ -18,6 +18,7 @@ describe('PdfPagePopup', () => {
       },
     };
     const popup: PdfPopupAnnoObject = {
+      pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.POPUP,
       contents: 'Popup',

@@ -1,6 +1,7 @@
 import React, { ComponentProps, useMemo } from 'react';
 import {
   PdfAnnotationObject,
+  PdfAnnotationSubtypeName,
   PdfPageObject,
   Rotation,
   transformRect,
@@ -48,7 +49,11 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
     <div
       style={style}
       data-subtype={annotation.type}
-      className={classNames('pdf__annotation', className)}
+      className={classNames(
+        'pdf__annotation',
+        `pdf__annotation--${PdfAnnotationSubtypeName[annotation.type]}`,
+        className
+      )}
       data-page-index={page.index}
       {...rest}
     >

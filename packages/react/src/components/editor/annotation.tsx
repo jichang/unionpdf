@@ -1,16 +1,6 @@
-import {
-  PdfAnnotationObject,
-  PdfAnnotationSubtype,
-  PdfAnnotationSubtypeName,
-} from '@unionpdf/models';
+import { PdfAnnotationObject, PdfAnnotationSubtype } from '@unionpdf/models';
 import { PdfPageObject, Rotation } from '@unionpdf/models';
-import React, {
-  ComponentProps,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { ComponentProps, useCallback } from 'react';
 import './annotation.css';
 import {
   PdfPageInkAnnotation,
@@ -28,10 +18,9 @@ import {
   PdfPageStrikeOutAnnotation,
 } from '../annotations';
 import classNames from 'classnames';
-import { usePdfEditor } from './editor.context';
+import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import { PdfPageAnnotation } from '../common';
 import { Position } from '@unionpdf/models';
-import { calculateTransformation, serialze } from '../helpers/editor';
 
 export const ResizablePdfAnnotationSubTypes = [
   PdfAnnotationSubtype.INK,
@@ -65,7 +54,7 @@ export interface PdfPageEditorAnnotationProps {
 export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
 
-  const { exec } = usePdfEditor();
+  const { annotationTool, exec } = usePdfEditor();
 
   const handleKeyUp = useCallback(
     (evt: React.KeyboardEvent) => {
@@ -80,167 +69,6 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
     },
     [annotation, page, exec]
   );
-
-  const [isDraggingMover, setIsDraggingMover] = useState(false);
-
-  const handleDragMoverStart = useCallback(
-    (evt: React.DragEvent<HTMLDivElement>) => {
-      const target = evt.nativeEvent.target as HTMLDivElement;
-      const draggableData: DraggableAnnotationData = {
-        type: 'annotation',
-        pageIndex: page.index,
-        annotation: serialze(annotation),
-        startPosition: {
-          x:
-            (target.parentElement as HTMLDivElement).offsetLeft +
-            evt.nativeEvent.offsetX,
-          y:
-            (target.parentElement as HTMLDivElement).offsetTop +
-            evt.nativeEvent.offsetY,
-        },
-      };
-      evt.dataTransfer.dropEffect = 'move';
-      evt.dataTransfer.setData(
-        'application/json',
-        JSON.stringify(draggableData)
-      );
-    },
-    [page, annotation]
-  );
-
-  const handleDragMover = useCallback(
-    (evt: React.DragEvent<HTMLDivElement>) => {
-      evt.dataTransfer.dropEffect = 'move';
-      setIsDraggingMover(true);
-    },
-    [setIsDraggingMover]
-  );
-
-  const handleDragMoverEnd = useCallback(
-    (evt: React.DragEvent<HTMLDivElement>) => {
-      setIsDraggingMover(false);
-    },
-    [setIsDraggingMover]
-  );
-
-  const [isDraggingResizer, setIsDraggingResizer] = useState(false);
-  const [resizerPosition, setResizerPosition] = useState(
-    PdfPageAnnotationResizerPosition.TopLeft
-  );
-  const [startPosition, setStartPosition] = useState<Position>({ x: 0, y: 0 });
-  const [endPosition, setEndPosition] = useState<Position>({ x: 0, y: 0 });
-
-  const handleDragResizerStart = useCallback(
-    (evt: React.DragEvent<HTMLButtonElement>) => {
-      const target = evt.nativeEvent.target as HTMLButtonElement;
-      setIsDraggingResizer(true);
-
-      const resizerPosition = Number(
-        target.dataset.position
-      ) as PdfPageAnnotationResizerPosition;
-
-      setResizerPosition(resizerPosition);
-      setStartPosition({ x: evt.pageX, y: evt.pageY });
-      setEndPosition({ x: evt.pageX, y: evt.pageY });
-
-      evt.dataTransfer.dropEffect = 'move';
-    },
-    [setIsDraggingResizer, setResizerPosition, setStartPosition, setEndPosition]
-  );
-
-  const handleDragResizer = useCallback(
-    (evt: React.DragEvent<HTMLButtonElement>) => {
-      evt.dataTransfer.dropEffect = 'move';
-
-      if (!isDraggingResizer) {
-        return;
-      }
-
-      setEndPosition({
-        x: evt.pageX,
-        y: evt.pageY,
-      });
-    },
-    [isDraggingResizer, setEndPosition]
-  );
-
-  const handleDragResizerEnd = useCallback(
-    (evt: React.DragEvent<HTMLButtonElement>) => {
-      evt.stopPropagation();
-
-      const offset = {
-        x: (evt.pageX - startPosition.x) / scaleFactor,
-        y: (evt.pageY - startPosition.y) / scaleFactor,
-      };
-
-      const { rect } = annotation;
-
-      const transformation = calculateTransformation(
-        rect,
-        offset,
-        rotation,
-        resizerPosition
-      );
-
-      exec({
-        id: `${Date.now()}.${Math.random()}`,
-        pageIndex: page.index,
-        action: 'transform',
-        annotation,
-        params: transformation,
-      });
-
-      setIsDraggingResizer(false);
-      setStartPosition({ x: 0, y: 0 });
-      setEndPosition({ x: 0, y: 0 });
-    },
-    [
-      setIsDraggingResizer,
-      startPosition,
-      setStartPosition,
-      setEndPosition,
-      exec,
-      page,
-      annotation,
-      rotation,
-      scaleFactor,
-    ]
-  );
-
-  const transformedRect = useMemo(() => {
-    const offset = {
-      x: (endPosition.x - startPosition.x) / scaleFactor,
-      y: (endPosition.y - startPosition.y) / scaleFactor,
-    };
-
-    const { rect } = annotation;
-    const { origin, size } = rect;
-
-    const transformation = calculateTransformation(
-      rect,
-      offset,
-      rotation,
-      resizerPosition
-    );
-
-    return {
-      origin: {
-        x: origin.x + transformation.offset.x,
-        y: origin.y + transformation.offset.y,
-      },
-      size: {
-        width: size.width * transformation.scale.width,
-        height: size.height * transformation.scale.height,
-      },
-    };
-  }, [
-    annotation.rect,
-    startPosition,
-    endPosition,
-    resizerPosition,
-    scaleFactor,
-    rotation,
-  ]);
 
   let content: React.ReactElement | null = null;
   switch (annotation.type) {
@@ -394,57 +222,37 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   return (
     <PdfPageAnnotation
       page={page}
-      className={classNames(
-        'pdf__annotation--editor',
-        `pdf__annotation--${PdfAnnotationSubtypeName[annotation.type]}`,
-        {
-          'pdf__annotation--dragging': isDraggingMover,
-        }
-      )}
-      annotation={{ ...annotation, rect: transformedRect }}
+      className={classNames('pdf__annotation--editor')}
+      annotation={annotation}
       scaleFactor={scaleFactor}
       tabIndex={0}
       rotation={rotation}
       onKeyUp={handleKeyUp}
     >
+      {content}
       <div
+        data-annotation-id={annotation.id}
+        data-draggable-type="mover"
         className="pdf__annotation__mover"
-        draggable={true}
-        onDragStart={handleDragMoverStart}
-        onDrag={handleDragMover}
-        onDragEnd={handleDragMoverEnd}
-      >
-        {content}
-      </div>
-      {ResizablePdfAnnotationSubTypes.includes(annotation.type) ? (
+      />
+      {annotationTool === PdfAnnotationTool.Selection &&
+      ResizablePdfAnnotationSubTypes.includes(annotation.type) ? (
         <>
           <PdfPageAnnotationResizer
-            draggable={true}
+            annotation={annotation}
             position={PdfPageAnnotationResizerPosition.TopLeft}
-            onDragStart={handleDragResizerStart}
-            onDrag={handleDragResizer}
-            onDragEnd={handleDragResizerEnd}
           />
           <PdfPageAnnotationResizer
-            draggable={true}
+            annotation={annotation}
             position={PdfPageAnnotationResizerPosition.TopRight}
-            onDragStart={handleDragResizerStart}
-            onDrag={handleDragResizer}
-            onDragEnd={handleDragResizerEnd}
           />
           <PdfPageAnnotationResizer
-            draggable={true}
+            annotation={annotation}
             position={PdfPageAnnotationResizerPosition.BottomRight}
-            onDragStart={handleDragResizerStart}
-            onDrag={handleDragResizer}
-            onDragEnd={handleDragResizerEnd}
           />
           <PdfPageAnnotationResizer
-            draggable={true}
+            annotation={annotation}
             position={PdfPageAnnotationResizerPosition.BottomLeft}
-            onDragStart={handleDragResizerStart}
-            onDrag={handleDragResizer}
-            onDragEnd={handleDragResizerEnd}
           />
         </>
       ) : null}
@@ -454,6 +262,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
 
 export interface PdfPageAnnotationResizerProps
   extends ComponentProps<'button'> {
+  annotation: PdfAnnotationObject;
   position: PdfPageAnnotationResizerPosition;
 }
 
@@ -465,11 +274,13 @@ export const PdfPageAnnotationResizerPositionClassName = {
 };
 
 export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
-  const { position, className, children, ...rest } = props;
+  const { annotation, position, className, children, ...rest } = props;
 
   return (
     <button
-      data-position={position}
+      data-annotation-id={annotation.id}
+      data-draggable-type="resizer"
+      data-resizer-position={position}
       className={classNames(
         'pdf__annotation__resizer',
         `pdf__annotation__resizer--${PdfPageAnnotationResizerPositionClassName[position]}`,

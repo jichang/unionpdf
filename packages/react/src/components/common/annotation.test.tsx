@@ -20,6 +20,7 @@ describe('PdfPageAnnotation', () => {
     };
 
     const link: PdfLinkAnnoObject = {
+      pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.LINK,
       target: {

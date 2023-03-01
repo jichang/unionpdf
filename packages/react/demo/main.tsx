@@ -68,7 +68,7 @@ export interface AppProps {
 
 function App(props: AppProps) {
   const { logger, engine } = props;
-  const [mode, setMode] = useState(PdfApplicationMode.View);
+  const [mode, setMode] = useState(PdfApplicationMode.Edit);
 
   const pdfAppElemRef = useRef<HTMLDivElement>(null);
 
@@ -112,7 +112,6 @@ function App(props: AppProps) {
   const changeRotation = useCallback(
     (evt: ChangeEvent<HTMLSelectElement>) => {
       const rotation = parseInt(evt.target.value, 10) as Rotation;
-      console.log(rotation);
       setRotation(rotation);
     },
     [setRotation]
@@ -260,7 +259,7 @@ function App(props: AppProps) {
           }}
         >
           <PdfApplicationContextProvider
-            initialMode={PdfApplicationMode.Edit}
+            initialMode={mode}
             supportsEdit={true}
             onChangeMode={setMode}
           >

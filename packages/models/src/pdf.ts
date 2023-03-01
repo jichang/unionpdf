@@ -192,6 +192,7 @@ export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
 }
 
 export interface PdfAnnotationObjectBase {
+  pageIndex: number;
   id: number;
   type: PdfAnnotationSubtype;
   rect: Rect;

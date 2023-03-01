@@ -51,7 +51,7 @@ export interface PdfPagesProps {
 }
 
 export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
-export const LOG_SOURCE = 'PdfPages';
+export const PAGES_LOG_SOURCE = 'PdfPages';
 
 export const PDF_PAGE_DEFAULT_GAP = 8;
 

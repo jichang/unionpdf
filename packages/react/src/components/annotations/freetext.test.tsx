@@ -19,6 +19,7 @@ describe('PdfPageFreeText', () => {
       },
     };
     const text: PdfFreeTextAnnoObject = {
+      pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.FREETEXT,
       contents: 'Link',

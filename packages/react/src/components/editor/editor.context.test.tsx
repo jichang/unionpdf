@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  PdfEditorContextVale,
+  PdfEditorContextValue,
   PdfEditorContextProvider,
   usePdfEditor,
   PdfEditorTool,
@@ -9,7 +9,7 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 
 describe('PdfEditorContextProvider ', () => {
-  let editorInContext: PdfEditorContextVale | null;
+  let editorInContext: PdfEditorContextValue | null;
   function Consumer() {
     editorInContext = usePdfEditor();
 
