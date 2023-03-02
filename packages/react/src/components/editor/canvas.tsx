@@ -45,7 +45,6 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
       );
       exec({
         id: `${Date.now()}.${Math.random()}`,
-        pageIndex: page.index,
         action: 'create',
         annotation: {
           pageIndex: page.index,

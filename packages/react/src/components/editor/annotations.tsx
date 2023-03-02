@@ -1,6 +1,5 @@
 import {
   PdfAnnotationSubtype,
-  Position,
   restoreOffset,
   restoreRect,
   transformSize,
@@ -13,30 +12,18 @@ import {
   PdfPageAnnotations,
   PdfPageAnnotationComponentContextProvider,
 } from '../common';
-import { calculateTransformation, deserialize } from '../helpers/editor';
+import { calculateTransformation } from '../helpers/editor';
 import { rotateImageData } from '../helpers/image';
-import {
-  DraggableAnnotationData,
-  PdfPageAnnotationResizerPosition,
-  PdfPageEditorAnnotation,
-} from './annotation';
+import { PdfPageEditorAnnotation } from './annotation';
 import './annotations.css';
-import {
-  CACHE_LOG_SOURCE,
-  PdfAnnotationMark,
-  usePdfCache,
-} from './cache.context';
-import { usePdfEditor } from './editor.context';
+import { DraggableType, ResizerPosition, usePdfDrag } from './drag.context';
+import { LOG_SOURCE, usePdfEditor } from './editor.context';
 import { DraggableStampData } from './stamps';
 import { usePdfEditorStamps } from './stamps.context';
 
 export type DraggableData = DraggableStampData;
 
-export enum PointerEventPurpose {
-  None,
-  Moving,
-  Resizing,
-}
+export const EDITOR_ANNOTATIONS_LOG_SOURCE = 'PdfEditorAnnotations';
 
 export interface PdfEditorAnnotationsProps {
   page: PdfPageObject;
@@ -49,11 +36,10 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
   const { page, annotations, scaleFactor, rotation } = props;
 
   const logger = useLogger();
-  const { setAnnotation, getAnnotation } = usePdfCache();
   const { exec, replace } = usePdfEditor();
 
   const { stamps } = usePdfEditorStamps();
-  const [isOver, setIsOver] = useState(false);
+  const [isDropTarget, setIsDropTarget] = useState(false);
 
   const handleDragEnter = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
@@ -61,10 +47,10 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
       if (target.classList.contains('pdf__annotations--editor')) {
         evt.preventDefault();
         evt.dataTransfer.dropEffect = 'move';
-        setIsOver(true);
+        setIsDropTarget(true);
       }
     },
-    [setIsOver]
+    [setIsDropTarget]
   );
 
   const handleDragOver = useCallback((evt: React.DragEvent<HTMLDivElement>) => {
@@ -79,10 +65,10 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
       const target = evt.target as HTMLElement;
       if (target.classList.contains('pdf__annotations--editor')) {
         evt.preventDefault();
-        setIsOver(false);
+        setIsDropTarget(false);
       }
     },
-    [setIsOver]
+    [setIsDropTarget]
   );
 
   const handleDrop = useCallback(
@@ -117,7 +103,6 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
 
         exec({
           id: `${Date.now()}.${Math.random()}`,
-          pageIndex: page.index,
           action: 'create',
           annotation: {
             pageIndex: page.index,
@@ -132,17 +117,19 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
     [exec, page, annotations, scaleFactor, rotation, stamps]
   );
 
-  const pointerEventPurpose = useRef(PointerEventPurpose.None);
-  const startPositionRef = useRef<Position | null>(null);
+  const {
+    setAnnotation,
+    setDraggableType,
+    setResizerPosition,
+    setStartPosition,
+    draggableType,
+    resizerPosition,
+    annotation,
+    startPosition,
+  } = usePdfDrag();
 
   const handlePointerDown = useCallback(
     (evt: React.PointerEvent) => {
-      logger.debug(
-        CACHE_LOG_SOURCE,
-        'PointerEvent',
-        'pointer down',
-        evt.nativeEvent
-      );
       const target = evt.nativeEvent.target as HTMLDivElement;
 
       const annotationId = target.dataset.annotationId;
@@ -157,34 +144,47 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
         return;
       }
 
-      const draggableType = target.dataset.draggableType;
+      const draggableTypeName = target.dataset.draggableType;
 
-      switch (draggableType) {
+      let draggableType = DraggableType.None;
+      switch (draggableTypeName) {
         case 'mover':
-          pointerEventPurpose.current = PointerEventPurpose.Moving;
+          draggableType = DraggableType.Mover;
           break;
         case 'resizer':
-          pointerEventPurpose.current = PointerEventPurpose.Resizing;
+          draggableType = DraggableType.Resizer;
           break;
         default:
-          pointerEventPurpose.current = PointerEventPurpose.None;
           break;
       }
 
-      if (pointerEventPurpose.current === PointerEventPurpose.None) {
+      if (draggableType === DraggableType.None) {
         return;
       }
 
-      setAnnotation(PdfAnnotationMark.Dragging, annotation);
+      logger.debug(
+        EDITOR_ANNOTATIONS_LOG_SOURCE,
+        'PointerEvent',
+        'pointer down',
+        evt.nativeEvent
+      );
 
-      startPositionRef.current = {
+      setDraggableType(draggableType);
+      if (draggableType === DraggableType.Resizer) {
+        const resizerPositionName = target.dataset.resizerPosition;
+        const resizerPosition = Number(resizerPositionName) as ResizerPosition;
+        setResizerPosition(resizerPosition);
+      }
+
+      setAnnotation(annotation);
+
+      setStartPosition({
         x: evt.nativeEvent.pageX,
         y: evt.nativeEvent.pageY,
-      };
+      });
 
       exec({
         id: `${Date.now()}.${Math.random()}`,
-        pageIndex: page.index,
         action: 'transform',
         annotation,
         params: {
@@ -199,27 +199,43 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
         },
       });
     },
-    [logger, page, annotations, exec, setAnnotation]
+    [
+      logger,
+      page,
+      annotations,
+      exec,
+      setAnnotation,
+      setDraggableType,
+      setResizerPosition,
+      setStartPosition,
+    ]
   );
 
   const handlePointerMove = useCallback(
     (evt: React.PointerEvent) => {
-      if (pointerEventPurpose.current === PointerEventPurpose.None) {
+      if (draggableType === DraggableType.None) {
         return;
       }
 
-      const startPosition = startPositionRef.current;
       if (!startPosition) {
         return;
       }
 
-      const annotation = getAnnotation(PdfAnnotationMark.Dragging);
       if (!annotation) {
         return;
       }
 
-      const target = evt.nativeEvent.target as HTMLDivElement;
-      if (pointerEventPurpose.current === PointerEventPurpose.Moving) {
+      logger.debug(
+        EDITOR_ANNOTATIONS_LOG_SOURCE,
+        'PointerEvent',
+        'pointer move',
+        draggableType,
+        evt.pageX,
+        evt.pageY,
+        startPosition
+      );
+
+      if (draggableType === DraggableType.Mover) {
         const endPosition = {
           x: evt.nativeEvent.pageX,
           y: evt.nativeEvent.pageY,
@@ -231,7 +247,6 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
 
         replace({
           id: `${Date.now()}.${Math.random()}`,
-          pageIndex: page.index,
           action: 'transform',
           annotation,
           params: {
@@ -239,7 +254,7 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
             scale: { width: 1, height: 1 },
           },
         });
-      } else if (pointerEventPurpose.current === PointerEventPurpose.Resizing) {
+      } else if (draggableType === DraggableType.Resizer) {
         const endPosition = {
           x: evt.nativeEvent.pageX,
           y: evt.nativeEvent.pageY,
@@ -251,10 +266,6 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
 
         const { rect } = annotation;
 
-        const resizerPosition = Number(
-          target.dataset.resizerPosition
-        ) as PdfPageAnnotationResizerPosition;
-
         const transformation = calculateTransformation(
           rect,
           offset,
@@ -264,66 +275,121 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
 
         replace({
           id: `${Date.now()}.${Math.random()}`,
-          pageIndex: page.index,
           action: 'transform',
           annotation,
           params: transformation,
         });
       }
-
-      logger.debug(
-        CACHE_LOG_SOURCE,
-        'PointerEvent',
-        'pointer move',
-        evt.nativeEvent
-      );
     },
-    [logger, page, getAnnotation, replace]
+    [
+      logger,
+      page,
+      annotation,
+      draggableType,
+      startPosition,
+      resizerPosition,
+      replace,
+    ]
   );
 
   const handlePointerUp = useCallback(
     (evt: React.PointerEvent) => {
-      if (pointerEventPurpose.current === PointerEventPurpose.None) {
+      logger.debug(
+        EDITOR_ANNOTATIONS_LOG_SOURCE,
+        'PointerEvent',
+        'pointer up',
+        evt.nativeEvent
+      );
+
+      if (draggableType === DraggableType.None) {
         return;
       }
 
-      pointerEventPurpose.current = PointerEventPurpose.None;
-      startPositionRef.current = null;
-      setAnnotation(PdfAnnotationMark.Dragging, undefined);
+      setDraggableType(DraggableType.None);
+      setStartPosition(null);
+      setAnnotation(null);
     },
-    [setAnnotation]
+    [logger, draggableType, setDraggableType, setStartPosition, setAnnotation]
   );
 
-  const handlePointerEnter = useCallback((evt: React.PointerEvent) => {
-    if (pointerEventPurpose.current === PointerEventPurpose.None) {
-      return;
-    }
+  const handlePointerCancel = useCallback(
+    (evt: React.PointerEvent) => {
+      logger.debug(
+        EDITOR_ANNOTATIONS_LOG_SOURCE,
+        'pointer cancel',
+        evt.nativeEvent
+      );
 
-    console.log('pointer enter', evt.nativeEvent);
-  }, []);
+      setDraggableType(DraggableType.None);
+      setStartPosition(null);
+      setAnnotation(null);
+    },
+    [logger, setDraggableType, setStartPosition, setAnnotation]
+  );
 
-  const handlePointerLeave = useCallback((evt: React.PointerEvent) => {
-    if (pointerEventPurpose.current === PointerEventPurpose.None) {
-      return;
-    }
+  const handlePointerEnter = useCallback(
+    (evt: React.PointerEvent) => {
+      if (draggableType !== DraggableType.Mover || !annotation) {
+        return;
+      }
+      console.log('pointer enter', evt.nativeEvent);
 
-    console.log('pointer leave', evt.nativeEvent);
-  }, []);
+      const newAnnotation: PdfAnnotationObject = {
+        ...annotation,
+        id: Date.now(),
+        pageIndex: page.index,
+        rect: {
+          origin: {
+            x: 0,
+            y: 0,
+          },
+          size: {
+            width: annotation.rect.size.width,
+            height: annotation.rect.size.height,
+          },
+        },
+      };
 
-  const handlePointerOut = useCallback((evt: React.PointerEvent) => {
-    if (pointerEventPurpose.current === PointerEventPurpose.None) {
-      return;
-    }
+      exec({
+        id: `${Date.now()}.${Math.random()}`,
+        action: 'create',
+        annotation: newAnnotation,
+      });
 
-    console.log('pointer out', evt.nativeEvent);
-  }, []);
-  const handlePointerCancel = useCallback((evt: React.PointerEvent) => {
-    if (pointerEventPurpose.current === PointerEventPurpose.None) {
-      return;
-    }
+      exec({
+        id: `${Date.now()}.${Math.random()}`,
+        action: 'transform',
+        annotation: newAnnotation,
+        params: {
+          offset: { x: 0, y: 0 },
+          scale: { width: 1, height: 1 },
+        },
+      });
 
-    console.log('pointer cancel', evt.nativeEvent);
-  }, []);
+      setAnnotation(newAnnotation);
+      setIsDropTarget(true);
+    },
+    [setIsDropTarget, draggableType, page, annotation, setAnnotation]
+  );
+
+  const handlePointerLeave = useCallback(
+    (evt: React.PointerEvent) => {
+      if (draggableType !== DraggableType.Mover || !annotation) {
+        return;
+      }
+
+      console.log('pointer leave', evt.nativeEvent);
+
+      exec({
+        id: `${Date.now()}.${Math.random()}`,
+        action: 'remove',
+        annotation,
+      });
+
+      setIsDropTarget(false);
+    },
+    [setIsDropTarget, exec, annotation]
+  );
 
   return (
     <PdfPageAnnotationComponentContextProvider
@@ -331,7 +397,7 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
     >
       <div
         className={classNames('pdf__annotations--editor', {
-          'pdf__annotations--droptarget': isOver,
+          'pdf__annotations--droptarget': isDropTarget,
         })}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
@@ -340,10 +406,9 @@ export function PdfEditorAnnotations(props: PdfEditorAnnotationsProps) {
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerMove={handlePointerMove}
+        onPointerCancel={handlePointerCancel}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
-        onPointerOut={handlePointerOut}
-        onPointerCancel={handlePointerCancel}
       >
         <PdfPageAnnotations
           annotations={annotations}

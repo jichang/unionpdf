@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { useLogger, usePdfDocument, usePdfEngine } from '../../core';
-import { PdfCacheContextProvider } from './cache.context';
+import { PdfDragContextProvider } from './drag.context';
 
 export const LOG_SOURCE = 'PdfEditorContext';
 
@@ -25,13 +25,11 @@ export enum PdfAnnotationTool {
 export type Operation =
   | {
       id: string;
-      pageIndex: number;
       action: 'create' | 'remove';
       annotation: PdfAnnotationObject;
     }
   | {
       id: string;
-      pageIndex: number;
       action: 'transform';
       annotation: PdfAnnotationObject;
       params: {
@@ -128,8 +126,9 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     (operation: Operation) => {
       logger.debug(LOG_SOURCE, 'exec operation: ', operation);
       setStacks((stacks) => {
+        const { annotation } = operation;
         const { undo, redo, committed, pages } = stacks;
-        const pageStack = pages[operation.pageIndex] || [];
+        const pageStack = pages[annotation.pageIndex] || [];
 
         return {
           undo: [...undo, operation],
@@ -137,7 +136,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
           committed,
           pages: {
             ...pages,
-            [operation.pageIndex]: [...pageStack, operation],
+            [annotation.pageIndex]: [...pageStack, operation],
           },
         };
       });
@@ -154,8 +153,9 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
           return stacks;
         }
 
+        const { annotation } = operation;
         const rest = undo.slice(0, undo.length - 1);
-        const pageStack = pages[operation.pageIndex];
+        const pageStack = pages[annotation.pageIndex];
         const pageStackRest = pageStack.slice(0, pageStack.length - 1);
 
         return {
@@ -164,7 +164,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
           committed,
           pages: {
             ...pages,
-            [operation.pageIndex]: [...pageStackRest, operation],
+            [annotation.pageIndex]: [...pageStackRest, operation],
           },
         };
       });
@@ -182,7 +182,8 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       }
 
       const operation = undo[undo.length - 1];
-      const pageStack = pages[operation.pageIndex] || [];
+      const { annotation } = operation;
+      const pageStack = pages[annotation.pageIndex] || [];
 
       return {
         undo: undo.slice(0, undo.length - 1),
@@ -190,7 +191,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         committed,
         pages: {
           ...pages,
-          [operation.pageIndex]: pageStack.filter((_operation) => {
+          [annotation.pageIndex]: pageStack.filter((_operation) => {
             return _operation.id !== operation.id;
           }),
         },
@@ -208,7 +209,8 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       }
 
       const operation = redo[redo.length - 1];
-      const pageStack = pages[operation.pageIndex] || [];
+      const { annotation } = operation;
+      const pageStack = pages[annotation.pageIndex] || [];
 
       return {
         undo: [...undo, operation],
@@ -216,7 +218,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         committed,
         pages: {
           ...pages,
-          [operation.pageIndex]: [...pageStack, operation],
+          [annotation.pageIndex]: [...pageStack, operation],
         },
       };
     });
@@ -269,7 +271,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         commit,
       }}
     >
-      <PdfCacheContextProvider>{children}</PdfCacheContextProvider>
+      <PdfDragContextProvider>{children}</PdfDragContextProvider>
     </PdfEditorContext.Provider>
   );
 }

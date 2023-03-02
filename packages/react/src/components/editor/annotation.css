@@ -4,10 +4,6 @@
   box-shadow: 0 0 1px black;
 }
 
-.pdf__annotation--editor.pdf__annotation--dragging {
-  opacity: 0.01;
-}
-
 .pdf__annotation__mover {
   position: absolute;
   top: 0;

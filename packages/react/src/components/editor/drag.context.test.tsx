@@ -1,25 +1,25 @@
 import React from 'react';
 import {
-  PdfCacheContextVale,
-  PdfCacheContextProvider,
-  usePdfCache,
-} from './cache.context';
+  PdfDragContextVale,
+  PdfDragContextProvider,
+  usePdfDrag,
+} from './drag.context';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 
 describe('PdfCacheContextProvider ', () => {
-  let cacheInContext: PdfCacheContextVale | null;
+  let cacheInContext: PdfDragContextVale | null;
   function Consumer() {
-    cacheInContext = usePdfCache();
+    cacheInContext = usePdfDrag();
 
     return <div></div>;
   }
 
   test('should assign context value', () => {
     const result = render(
-      <PdfCacheContextProvider>
+      <PdfDragContextProvider>
         <Consumer />
-      </PdfCacheContextProvider>
+      </PdfDragContextProvider>
     );
 
     expect(cacheInContext?.setAnnotation).toBeDefined();

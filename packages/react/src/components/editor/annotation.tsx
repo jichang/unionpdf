@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import { PdfPageAnnotation } from '../common';
 import { Position } from '@unionpdf/models';
+import { ResizerPosition } from './drag.context';
 
 export const ResizablePdfAnnotationSubTypes = [
   PdfAnnotationSubtype.INK,
@@ -29,13 +30,6 @@ export const ResizablePdfAnnotationSubTypes = [
   PdfAnnotationSubtype.POLYGON,
   PdfAnnotationSubtype.POLYLINE,
 ];
-
-export enum PdfPageAnnotationResizerPosition {
-  TopLeft = 0,
-  TopRight = 1,
-  BottomRight = 2,
-  BottomLeft = 3,
-}
 
 export interface DraggableAnnotationData {
   type: 'annotation';
@@ -61,7 +55,6 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       if (evt.key === 'Delete' || evt.key === 'Backspace') {
         exec({
           id: `${Date.now()}.${Math.random()}`,
-          pageIndex: page.index,
           action: 'remove',
           annotation,
         });
@@ -240,19 +233,19 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
         <>
           <PdfPageAnnotationResizer
             annotation={annotation}
-            position={PdfPageAnnotationResizerPosition.TopLeft}
+            position={ResizerPosition.TopLeft}
           />
           <PdfPageAnnotationResizer
             annotation={annotation}
-            position={PdfPageAnnotationResizerPosition.TopRight}
+            position={ResizerPosition.TopRight}
           />
           <PdfPageAnnotationResizer
             annotation={annotation}
-            position={PdfPageAnnotationResizerPosition.BottomRight}
+            position={ResizerPosition.BottomRight}
           />
           <PdfPageAnnotationResizer
             annotation={annotation}
-            position={PdfPageAnnotationResizerPosition.BottomLeft}
+            position={ResizerPosition.BottomLeft}
           />
         </>
       ) : null}
@@ -263,14 +256,14 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
 export interface PdfPageAnnotationResizerProps
   extends ComponentProps<'button'> {
   annotation: PdfAnnotationObject;
-  position: PdfPageAnnotationResizerPosition;
+  position: ResizerPosition;
 }
 
-export const PdfPageAnnotationResizerPositionClassName = {
-  [PdfPageAnnotationResizerPosition.TopLeft]: 'topleft',
-  [PdfPageAnnotationResizerPosition.TopRight]: 'topright',
-  [PdfPageAnnotationResizerPosition.BottomRight]: 'bottomright',
-  [PdfPageAnnotationResizerPosition.BottomLeft]: 'bottomleft',
+export const ResizerPositionClassName = {
+  [ResizerPosition.TopLeft]: 'topleft',
+  [ResizerPosition.TopRight]: 'topright',
+  [ResizerPosition.BottomRight]: 'bottomright',
+  [ResizerPosition.BottomLeft]: 'bottomleft',
 };
 
 export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
@@ -283,7 +276,7 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
       data-resizer-position={position}
       className={classNames(
         'pdf__annotation__resizer',
-        `pdf__annotation__resizer--${PdfPageAnnotationResizerPositionClassName[position]}`,
+        `pdf__annotation__resizer--${ResizerPositionClassName[position]}`,
         className
       )}
       {...rest}

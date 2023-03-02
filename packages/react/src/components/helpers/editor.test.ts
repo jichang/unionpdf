@@ -9,7 +9,6 @@ describe('apply', () => {
       {
         id: '0',
         action: 'create',
-        pageIndex: 0,
         annotation: {} as PdfAnnotationObject,
       },
     ];

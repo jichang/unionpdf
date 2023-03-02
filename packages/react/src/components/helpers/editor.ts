@@ -7,7 +7,7 @@ import {
   Rotation,
   Size,
 } from '@unionpdf/models';
-import { PdfPageAnnotationResizerPosition } from '../editor';
+import { ResizerPosition } from '../editor';
 import { Operation } from '../editor/editor.context';
 
 export function apply(
@@ -141,7 +141,7 @@ export function calculateTransformation(
   rect: Rect,
   offset: Position,
   rotation: Rotation,
-  resizerPosition: PdfPageAnnotationResizerPosition
+  resizerPosition: ResizerPosition
 ) {
   const transformation = {
     offset: {
@@ -161,7 +161,7 @@ export function calculateTransformation(
     case Rotation.Degree0:
       {
         switch (resizerPosition) {
-          case PdfPageAnnotationResizerPosition.TopLeft:
+          case ResizerPosition.TopLeft:
             transformation.offset.x = offset.x;
             transformation.offset.y = offset.y;
             transformation.scale.width =
@@ -169,20 +169,20 @@ export function calculateTransformation(
             transformation.scale.height =
               (rect.size.height - offset.y) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.TopRight:
+          case ResizerPosition.TopRight:
             transformation.offset.y = offset.y;
             transformation.scale.width =
               (rect.size.width + offset.x) / rect.size.width;
             transformation.scale.height =
               (rect.size.height - offset.y) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomRight:
+          case ResizerPosition.BottomRight:
             transformation.scale.width =
               (rect.size.width + offset.x) / rect.size.width;
             transformation.scale.height =
               (rect.size.height + offset.y) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomLeft:
+          case ResizerPosition.BottomLeft:
             transformation.offset.x = offset.x;
             transformation.scale.width =
               (rect.size.width - offset.x) / rect.size.width;
@@ -195,14 +195,14 @@ export function calculateTransformation(
     case Rotation.Degree90:
       {
         switch (resizerPosition) {
-          case PdfPageAnnotationResizerPosition.TopLeft:
+          case ResizerPosition.TopLeft:
             transformation.offset.x = offset.y;
             transformation.scale.width =
               (rect.size.width - offset.y) / rect.size.width;
             transformation.scale.height =
               (rect.size.height - offset.x) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.TopRight:
+          case ResizerPosition.TopRight:
             transformation.offset.x = offset.y;
             transformation.offset.y = -offset.x;
             transformation.scale.width =
@@ -210,14 +210,14 @@ export function calculateTransformation(
             transformation.scale.height =
               (rect.size.height + offset.x) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomRight:
+          case ResizerPosition.BottomRight:
             transformation.offset.y = -offset.x;
             transformation.scale.width =
               (rect.size.width + offset.y) / rect.size.width;
             transformation.scale.height =
               (rect.size.height + offset.x) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomLeft:
+          case ResizerPosition.BottomLeft:
             transformation.scale.width =
               (rect.size.width + offset.y) / rect.size.width;
             transformation.scale.height =
@@ -229,20 +229,20 @@ export function calculateTransformation(
     case Rotation.Degree180:
       {
         switch (resizerPosition) {
-          case PdfPageAnnotationResizerPosition.TopLeft:
+          case ResizerPosition.TopLeft:
             transformation.scale.width =
               (rect.size.width - offset.x) / rect.size.width;
             transformation.scale.height =
               (rect.size.height - offset.y) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.TopRight:
+          case ResizerPosition.TopRight:
             transformation.offset.x = -offset.x;
             transformation.scale.width =
               (rect.size.width + offset.x) / rect.size.width;
             transformation.scale.height =
               (rect.size.height - offset.y) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomRight:
+          case ResizerPosition.BottomRight:
             transformation.offset.x = -offset.x;
             transformation.offset.y = -offset.y;
             transformation.scale.width =
@@ -250,7 +250,7 @@ export function calculateTransformation(
             transformation.scale.height =
               (rect.size.height + offset.y) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomLeft:
+          case ResizerPosition.BottomLeft:
             transformation.offset.y = -offset.y;
             transformation.scale.width =
               (rect.size.width - offset.x) / rect.size.width;
@@ -263,27 +263,27 @@ export function calculateTransformation(
     case Rotation.Degree270:
       {
         switch (resizerPosition) {
-          case PdfPageAnnotationResizerPosition.TopLeft:
+          case ResizerPosition.TopLeft:
             transformation.offset.y = offset.x;
             transformation.scale.width =
               (rect.size.width - offset.y) / rect.size.width;
             transformation.scale.height =
               (rect.size.height - offset.x) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.TopRight:
+          case ResizerPosition.TopRight:
             transformation.scale.width =
               (rect.size.width - offset.y) / rect.size.width;
             transformation.scale.height =
               (rect.size.height + offset.x) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomRight:
+          case ResizerPosition.BottomRight:
             transformation.offset.x = -offset.y;
             transformation.scale.width =
               (rect.size.width + offset.y) / rect.size.width;
             transformation.scale.height =
               (rect.size.height + offset.x) / rect.size.height;
             break;
-          case PdfPageAnnotationResizerPosition.BottomLeft:
+          case ResizerPosition.BottomLeft:
             transformation.offset.x = -offset.y;
             transformation.offset.y = offset.x;
             transformation.scale.width =

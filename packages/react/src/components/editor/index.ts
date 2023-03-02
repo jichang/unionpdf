@@ -7,4 +7,4 @@ export * from './extractor';
 export * from './stamps.context';
 export * from './stamps';
 export * from './editor.context';
-export * from './cache.context';
+export * from './drag.context';
