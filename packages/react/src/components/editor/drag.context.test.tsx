@@ -22,7 +22,7 @@ describe('PdfCacheContextProvider ', () => {
       </PdfDragContextProvider>
     );
 
-    expect(cacheInContext?.setAnnotation).toBeDefined();
+    expect(cacheInContext?.draggableData).toBe(null);
 
     result?.unmount();
   });

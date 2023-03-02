@@ -303,35 +303,52 @@ export function calculateTransformation(
   return transformation;
 }
 
-export function serialze(annotation: PdfAnnotationObject) {
-  if (annotation.type === PdfAnnotationSubtype.STAMP) {
-    return JSON.stringify({
-      ...annotation,
-      content: {
-        width: annotation.content.width,
-        height: annotation.content.height,
-        data: [...annotation.content.data],
-        colorSpace: annotation.content.colorSpace,
+export function clone(annotation: PdfAnnotationObject) {
+  const { rect } = annotation;
+  const { origin, size } = rect;
+
+  let updated: typeof annotation = {
+    ...annotation,
+    id: Date.now(),
+    rect: {
+      origin: {
+        ...origin,
       },
-    });
-  } else {
-    return JSON.stringify(annotation);
-  }
-}
+      size: {
+        ...size,
+      },
+    },
+  };
 
-export function deserialize(data: string): PdfAnnotationObject {
-  const annotation = JSON.parse(data) as PdfAnnotationObject;
-  if (annotation.type === PdfAnnotationSubtype.STAMP) {
-    const { content } = annotation;
-    const data = new Uint8ClampedArray(content.data);
-
-    return {
-      ...annotation,
-      content: new ImageData(data, content.width, content.height, {
-        colorSpace: annotation.content.colorSpace,
-      }),
-    };
-  } else {
-    return annotation;
+  switch (updated.type) {
+    case PdfAnnotationSubtype.INK:
+      updated.inkList = updated.inkList.map((inkList) => {
+        return {
+          points: inkList.points.map((point) => {
+            return {
+              ...point,
+            };
+          }),
+        };
+      });
+      break;
+    case PdfAnnotationSubtype.POLYGON:
+    case PdfAnnotationSubtype.POLYLINE:
+      updated.vertices = updated.vertices.map((point) => {
+        return {
+          ...point,
+        };
+      });
+      break;
+    case PdfAnnotationSubtype.LINE:
+      updated.startPoint = {
+        ...updated.startPoint,
+      };
+      updated.endPoint = {
+        ...updated.endPoint,
+      };
+      break;
   }
+
+  return updated;
 }

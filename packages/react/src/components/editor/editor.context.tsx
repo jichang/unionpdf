@@ -9,7 +9,7 @@ import React, {
 import { useLogger, usePdfDocument, usePdfEngine } from '../../core';
 import { PdfDragContextProvider } from './drag.context';
 
-export const LOG_SOURCE = 'PdfEditorContext';
+export const EDITOR_CONTEXT_LOG_SOURCE = 'PdfEditorContext';
 
 export enum PdfEditorTool {
   Annotation,
@@ -124,7 +124,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const exec = useCallback(
     (operation: Operation) => {
-      logger.debug(LOG_SOURCE, 'exec operation: ', operation);
+      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'exec operation: ', operation);
       setStacks((stacks) => {
         const { annotation } = operation;
         const { undo, redo, committed, pages } = stacks;
@@ -146,7 +146,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const replace = useCallback(
     (operation: Operation) => {
-      logger.debug(LOG_SOURCE, 'replace operation: ', operation);
+      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'replace operation: ', operation);
       setStacks((stacks) => {
         const { undo, redo, committed, pages } = stacks;
         if (undo.length === 0) {
@@ -174,7 +174,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const undo = useCallback(() => {
     setStacks((stacks) => {
-      logger.debug(LOG_SOURCE, 'undo operation');
+      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'undo operation');
       const { undo, redo, committed, pages } = stacks;
 
       if (undo.length === 0) {
@@ -201,7 +201,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const redo = useCallback(() => {
     setStacks((stacks) => {
-      logger.debug(LOG_SOURCE, 'redo operation');
+      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'redo operation');
       const { undo, redo, committed, pages } = stacks;
 
       if (redo.length === 0) {
@@ -227,7 +227,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   const doc = usePdfDocument();
 
   const commit = useCallback(() => {
-    logger.debug(LOG_SOURCE, 'commit operation');
+    logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'commit operation');
     setStacks((stacks) => {
       const { undo, committed } = stacks;
 
