@@ -41,7 +41,6 @@ export type Operation =
 export interface PdfEditorStacks {
   undo: Operation[];
   redo: Operation[];
-  committed: Operation[];
   pages: Record<string, Operation[]>;
 }
 
@@ -98,7 +97,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   const [stacks, setStacks] = useState<PdfEditorStacks>({
     undo: [],
     redo: [],
-    committed: [],
     pages: {},
   });
 
@@ -124,16 +122,20 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const exec = useCallback(
     (operation: Operation) => {
-      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'exec operation: ', operation);
+      logger.debug(
+        EDITOR_CONTEXT_LOG_SOURCE,
+        'operation',
+        'exec operation: ',
+        operation
+      );
       setStacks((stacks) => {
         const { annotation } = operation;
-        const { undo, redo, committed, pages } = stacks;
+        const { undo, redo, pages } = stacks;
         const pageStack = pages[annotation.pageIndex] || [];
 
         return {
           undo: [...undo, operation],
           redo,
-          committed,
           pages: {
             ...pages,
             [annotation.pageIndex]: [...pageStack, operation],
@@ -146,9 +148,14 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const replace = useCallback(
     (operation: Operation) => {
-      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'replace operation: ', operation);
+      logger.debug(
+        EDITOR_CONTEXT_LOG_SOURCE,
+        'operation',
+        'replace operation: ',
+        operation
+      );
       setStacks((stacks) => {
-        const { undo, redo, committed, pages } = stacks;
+        const { undo, redo, pages } = stacks;
         if (undo.length === 0) {
           return stacks;
         }
@@ -161,7 +168,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         return {
           undo: [...rest, operation],
           redo,
-          committed,
           pages: {
             ...pages,
             [annotation.pageIndex]: [...pageStackRest, operation],
@@ -174,8 +180,8 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const undo = useCallback(() => {
     setStacks((stacks) => {
-      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'undo operation');
-      const { undo, redo, committed, pages } = stacks;
+      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'operation', 'undo operation');
+      const { undo, redo, pages } = stacks;
 
       if (undo.length === 0) {
         return stacks;
@@ -188,7 +194,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       return {
         undo: undo.slice(0, undo.length - 1),
         redo: [...redo, operation],
-        committed,
         pages: {
           ...pages,
           [annotation.pageIndex]: pageStack.filter((_operation) => {
@@ -201,8 +206,8 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const redo = useCallback(() => {
     setStacks((stacks) => {
-      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'redo operation');
-      const { undo, redo, committed, pages } = stacks;
+      logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'operation', 'redo operation');
+      const { undo, redo, pages } = stacks;
 
       if (redo.length === 0) {
         return stacks;
@@ -215,7 +220,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       return {
         undo: [...undo, operation],
         redo: redo.slice(0, redo.length - 1),
-        committed,
         pages: {
           ...pages,
           [annotation.pageIndex]: [...pageStack, operation],
@@ -224,32 +228,117 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     });
   }, [logger, setStacks]);
 
+  const engine = usePdfEngine();
   const doc = usePdfDocument();
 
   const commit = useCallback(() => {
-    logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'commit operation');
-    setStacks((stacks) => {
-      const { undo, committed } = stacks;
+    logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'operation', 'commit operation');
+    const { undo } = stacks;
 
-      if (undo.length === 0) {
-        return stacks;
+    if (undo.length === 0) {
+      return;
+    }
+
+    const commitOperations = undo.reduce((operations, operation) => {
+      let result: Operation[] = [];
+      switch (operation.action) {
+        case 'create':
+          result = [...operations, operation];
+          break;
+        case 'remove':
+          {
+            const index = operations.findIndex((_operation) => {
+              return _operation.annotation.id === operation.annotation.id;
+            });
+            if (index === -1) {
+              result = [...operations, operation];
+            } else {
+              if (operations[index].action === 'create') {
+                result = operations.filter((_operation) => {
+                  return _operation.annotation.id !== operation.annotation.id;
+                });
+              } else {
+                result = operations.filter((_operation) => {
+                  return _operation.annotation.id === operation.annotation.id;
+                });
+                result.push(operation);
+              }
+            }
+          }
+          break;
+        case 'transform':
+          result = operations.map((_operation) => {
+            if (operation.annotation.id !== operation.annotation.id) {
+              return _operation;
+            }
+
+            let result = _operation;
+            switch (_operation.action) {
+              case 'create':
+                result.annotation.rect = {
+                  origin: {
+                    x:
+                      result.annotation.rect.origin.x +
+                      operation.params.offset.x,
+                    y:
+                      result.annotation.rect.origin.y +
+                      operation.params.offset.y,
+                  },
+                  size: {
+                    width:
+                      result.annotation.rect.size.width *
+                      operation.params.scale.width,
+                    height:
+                      result.annotation.rect.size.height *
+                      operation.params.scale.height,
+                  },
+                };
+                break;
+              case 'remove':
+                break;
+              case 'transform':
+                result = {
+                  ..._operation,
+                  params: {
+                    offset: {
+                      x: _operation.params.offset.x + operation.params.offset.x,
+                      y: _operation.params.offset.x + operation.params.offset.y,
+                    },
+                    scale: {
+                      width:
+                        _operation.params.scale.width *
+                        operation.params.scale.width,
+                      height:
+                        _operation.params.scale.height *
+                        operation.params.scale.height,
+                    },
+                  },
+                };
+                break;
+            }
+
+            return result;
+          });
+          break;
       }
 
-      return {
-        undo: [],
-        redo: [],
-        committed: [...committed, ...undo],
-        pages: {},
-      };
+      return result;
+    }, [] as Operation[]);
+
+    // engine.update(commitOperation);
+
+    setStacks({
+      undo: [],
+      redo: [],
+      pages: {},
     });
-  }, [logger, setStacks]);
+  }, [logger, stacks, engine, setStacks]);
 
   useEffect(() => {
     return () => {
       setStacks({
         undo: [],
         redo: [],
-        committed: [],
         pages: {},
       });
     };
