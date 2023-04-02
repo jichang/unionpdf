@@ -283,6 +283,10 @@ export const wrappedModuleMethods = {
     'number',
   ] as const,
   FPDFText_GetFontSize: [['number', 'number'], 'number'] as const,
+  FPDFText_GetFontInfo: [
+    ['number', 'number', 'number', 'number', 'number'],
+    'number',
+  ] as const,
   FPDFText_GetBoundedText: [
     ['number', 'number', 'number', 'number', 'number', 'number', 'number'],
     'number',
@@ -1480,22 +1484,45 @@ export class PdfiumEngine implements PdfEngine {
         textPagePtr,
         left,
         top,
-        1,
-        1
+        2,
+        2
       );
-      if (charIndex < 0) {
-        continue;
-      }
+      let fontFamily = '';
+      let fontSize = rect.size.height;
+      if (charIndex >= 0) {
+        fontSize = this.wasmModuleWrapper.FPDFText_GetFontSize(
+          textPagePtr,
+          charIndex
+        );
 
-      const fontSize = this.wasmModuleWrapper.FPDFText_GetFontSize(
-        textPagePtr,
-        charIndex
-      );
+        const fontNameLength = this.wasmModuleWrapper.FPDFText_GetFontInfo(
+          textPagePtr,
+          charIndex,
+          0,
+          0,
+          0
+        );
+
+        const bytesCount = fontNameLength + 1; // include NIL
+        const textBufferPtr = this.malloc(bytesCount);
+        const flagsPtr = this.malloc(4);
+        this.wasmModuleWrapper.FPDFText_GetFontInfo(
+          textPagePtr,
+          charIndex,
+          textBufferPtr,
+          bytesCount,
+          flagsPtr
+        );
+        fontFamily = this.wasmModule.UTF8ToString(textBufferPtr);
+        this.free(textBufferPtr);
+        this.free(flagsPtr);
+      }
 
       const textRect: PdfTextRectObject = {
         content,
         rect,
         font: {
+          family: fontFamily,
           size: fontSize,
         },
       };
@@ -1769,15 +1796,15 @@ export class PdfiumEngine implements PdfEngine {
       0
     );
     const bytesCount = (utf16Length + 1) * 2; // include NIL
-    const contentBuffer = this.malloc(bytesCount);
+    const contentBufferPtr = this.malloc(bytesCount);
     this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
       annotationPtr,
       'Contents',
-      contentBuffer,
+      contentBufferPtr,
       bytesCount
     );
-    const contents = this.wasmModule.UTF16ToString(contentBuffer);
-    this.free(contentBuffer);
+    const contents = this.wasmModule.UTF16ToString(contentBufferPtr);
+    this.free(contentBufferPtr);
 
     const redPtr = this.malloc(4);
     const greenPtr = this.malloc(4);
@@ -1841,15 +1868,15 @@ export class PdfiumEngine implements PdfEngine {
       0
     );
     const bytesCount = (utf16Length + 1) * 2; // include NIL
-    const contentBuffer = this.malloc(bytesCount);
+    const contentBufferPtr = this.malloc(bytesCount);
     this.wasmModuleWrapper.FPDFAnnot_GetStringValue(
       annotationPtr,
       'Contents',
-      contentBuffer,
+      contentBufferPtr,
       bytesCount
     );
-    const contents = this.wasmModule.UTF16ToString(contentBuffer);
-    this.free(contentBuffer);
+    const contents = this.wasmModule.UTF16ToString(contentBufferPtr);
+    this.free(contentBufferPtr);
 
     const popup = this.readPdfAnnoLinkedPopup(
       page,
@@ -1895,18 +1922,18 @@ export class PdfiumEngine implements PdfEngine {
       0
     );
     const bytesCount = (utf16Length + 1) * 2; // include NIL
-    const textBuffer = this.malloc(bytesCount);
+    const textBufferPtr = this.malloc(bytesCount);
     this.wasmModuleWrapper.FPDFText_GetBoundedText(
       textPagePtr,
       left,
       top,
       right,
       bottom,
-      textBuffer,
+      textBufferPtr,
       utf16Length
     );
-    const text = this.wasmModule.UTF16ToString(textBuffer);
-    this.free(textBuffer);
+    const text = this.wasmModule.UTF16ToString(textBufferPtr);
+    this.free(textBufferPtr);
 
     const target = this.readPdfLinkAnnoTarget(
       docPtr,

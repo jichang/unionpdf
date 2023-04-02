@@ -1,12 +1,13 @@
-.pdf__text__span {
+.pdf__page__layer--text {
+}
+
+.pdf__text__rect {
   position: absolute;
 
   color: transparent;
   cursor: text;
-}
 
-.pdf__text__span svg {
-  position: absolute;
-  top: 0;
-  left: 0;
+  line-height: 1;
+
+  overflow: hidden;
 }

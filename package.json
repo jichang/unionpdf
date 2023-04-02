@@ -17,6 +17,7 @@
   },
   "scripts": {
     "lerna": "lerna",
+    "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
     "typecheck": "lerna run typecheck",
     "test": "lerna run test",

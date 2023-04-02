@@ -114,6 +114,7 @@ export interface PdfBookmarksObject {
 
 export interface PdfTextRectObject {
   font: {
+    family: string;
     size: number;
   };
   content: string;

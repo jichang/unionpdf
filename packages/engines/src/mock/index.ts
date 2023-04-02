@@ -219,6 +219,7 @@ export function createMockPdfEngine(
           {
             content: 'pdf text',
             font: {
+              family: 'sans-serif',
               size: 12,
             },
             rect: {

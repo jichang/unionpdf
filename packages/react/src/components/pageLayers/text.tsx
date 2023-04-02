@@ -38,22 +38,25 @@ export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
               left: rect.origin.x,
               width: rect.size.width,
               height: rect.size.height,
+              fontSize: Math.ceil(textRect.font.size),
+              fontFamily: textRect.font.family,
             };
 
             return (
-              <div className="pdf__text__span" key={index} style={style}>
+              <span className="pdf__text__rect" key={index} style={style}>
                 <svg viewBox={`0 0 ${style.width} ${style.height}`}>
                   <text
-                    y="50%"
+                    y="75%"
                     fontSize={style.height}
                     textLength={style.width}
                     lengthAdjust="spacingAndGlyphs"
                     fill="transparent"
+                    height={style.height}
                   >
                     {textRect.content}
                   </text>
                 </svg>
-              </div>
+              </span>
             );
           })
         : null}

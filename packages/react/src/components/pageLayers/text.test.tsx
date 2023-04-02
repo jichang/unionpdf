@@ -49,7 +49,7 @@ describe('PdfPageTextLayer', () => {
       intersectionObserver.simulate([{ isIntersecting: true }]);
     });
 
-    expect(document.querySelectorAll('.pdf__text__span').length).toEqual(
+    expect(document.querySelectorAll('.pdf__text__rect').length).toEqual(
       pdf.pageCount
     );
 
