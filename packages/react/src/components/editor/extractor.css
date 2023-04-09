@@ -16,3 +16,12 @@
 .pdf__editor__extractor .pdf__thumbnails {
   flex: 1;
 }
+
+.pdf__editor__extractor__footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-top: 1px solid #ececec;
+}

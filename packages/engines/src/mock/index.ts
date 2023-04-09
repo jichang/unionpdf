@@ -243,8 +243,11 @@ export function createMockPdfEngine(
     saveAsCopy: (pdf: PdfDocumentObject) => {
       return TaskBase.resolve(new ArrayBuffer(0));
     },
-    extract: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
+    extractPages: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
       return TaskBase.resolve(new ArrayBuffer(0));
+    },
+    extractText: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
+      return TaskBase.resolve('');
     },
     merge: (files: PdfFile[]) => {
       return TaskBase.resolve({

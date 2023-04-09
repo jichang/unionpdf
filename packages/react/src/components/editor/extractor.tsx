@@ -31,14 +31,28 @@ export function PdfEditorExtractor() {
   const doc = usePdfDocument();
   const engine = usePdfEngine();
 
-  const extract = useCallback(() => {
+  const extractPages = useCallback(() => {
     if (engine && doc) {
-      const task = engine.extract(doc, selectedIndexes);
+      const task = engine.extractPages(doc, selectedIndexes);
       task.wait((buffer) => {
         const blob = new Blob([buffer]);
         const url = URL.createObjectURL(blob);
         const linkElem = document.createElement('a');
         linkElem.download = `${doc.id}`;
+        linkElem.href = url;
+        linkElem.click();
+      }, ignore);
+    }
+  }, [doc, engine, selectedIndexes]);
+
+  const extractText = useCallback(() => {
+    if (engine && doc) {
+      const task = engine.extractText(doc, selectedIndexes);
+      task.wait((buffer) => {
+        const blob = new Blob([buffer]);
+        const url = URL.createObjectURL(blob);
+        const linkElem = document.createElement('a');
+        linkElem.download = `${doc.id}.txt`;
         linkElem.href = url;
         linkElem.click();
       }, ignore);
@@ -56,7 +70,12 @@ export function PdfEditorExtractor() {
         onClickCheckbox={handleClickCheckbox}
       />
       <div className="pdf__editor__extractor__footer">
-        <ButtonComponent onClick={extract}>{strings.extract}</ButtonComponent>
+        <ButtonComponent onClick={extractPages}>
+          {strings.extractPages}
+        </ButtonComponent>
+        <ButtonComponent onClick={extractText}>
+          {strings.extractText}
+        </ButtonComponent>
       </div>
     </div>
   );

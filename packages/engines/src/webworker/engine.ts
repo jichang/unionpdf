@@ -562,8 +562,8 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
-  extract(pdf: PdfDocumentObject, pageIndexes: number[]) {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extract', pdf);
+  extractPages(pdf: PdfDocumentObject, pageIndexes: number[]) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extractPages', pdf);
     const requestId = this.generateRequestId();
     const task = new WorkerTask<ArrayBuffer>(this.worker, requestId);
 
@@ -571,7 +571,25 @@ export class WebWorkerEngine implements PdfEngine {
       id: requestId,
       type: 'ExecuteRequest',
       data: {
-        name: 'extract',
+        name: 'extractPages',
+        args: [pdf, pageIndexes],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  extractText(pdf: PdfDocumentObject, pageIndexes: number[]) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extractText', pdf);
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<string>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'extractText',
         args: [pdf, pageIndexes],
       },
     };

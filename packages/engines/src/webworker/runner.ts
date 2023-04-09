@@ -169,7 +169,10 @@ export class EngineRunner {
       case 'readAttachmentContent':
         task = this.engine[name]!(...args);
         break;
-      case 'extract':
+      case 'extractPages':
+        task = this.engine[name]!(...args);
+        break;
+      case 'extractText':
         task = this.engine[name]!(...args);
         break;
       case 'merge':

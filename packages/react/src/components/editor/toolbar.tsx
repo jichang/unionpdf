@@ -13,23 +13,25 @@ export function PdfToolbarEditorItemGroup(
 
   const strings = useUIStrings();
 
-  const { setTool } = usePdfEditor();
+  const { setTool, toggleTool } = usePdfEditor();
 
   const handleAnnotation = useCallback(() => {
     setTool(PdfEditorTool.Annotation);
   }, [setTool]);
 
   const handleExtract = useCallback(() => {
-    setTool(PdfEditorTool.Extract);
-  }, [setTool]);
+    toggleTool(PdfEditorTool.Extract);
+  }, [toggleTool]);
 
   const handleSignature = useCallback(() => {
-    setTool(PdfEditorTool.Stamp);
-  }, [setTool]);
+    toggleTool(PdfEditorTool.Stamp);
+  }, [toggleTool]);
 
   const { commit } = usePdfEditor();
 
-  const handleSave = useCallback(() => {}, []);
+  const handleSave = useCallback(() => {
+    commit();
+  }, [commit]);
 
   return (
     <ErrorBoundary>

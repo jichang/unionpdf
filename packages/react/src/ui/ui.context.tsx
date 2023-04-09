@@ -137,6 +137,8 @@ export const DEFAULT_UI_STRINGS = {
   noFiles: 'No Files',
   merge: 'Merge',
   merging: 'Merging',
+  extractPages: 'Extract Pages',
+  extractText: 'Extract Text',
 };
 
 export type UIStrings = typeof DEFAULT_UI_STRINGS;

@@ -301,6 +301,10 @@ export const wrappedModuleMethods = {
   FPDFText_GetSchCount: [['number'] as const, 'number'] as const,
   FPDFText_FindClose: [['number'] as const, ''] as const,
   FPDFText_ClosePage: [['number'] as const, ''] as const,
+  FPDFText_GetText: [
+    ['number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
   FPDFPage_CloseAnnot: [['number'] as const, ''] as const,
   FPDFDoc_GetAttachmentCount: [['number'] as const, 'number'] as const,
   FPDFDoc_GetAttachment: [['number', 'number'] as const, 'number'] as const,
@@ -1059,11 +1063,17 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(buffer);
   }
 
-  extract(
+  extractPages(
     doc: PdfDocumentObject,
     pageIndexes: number[]
   ): Task<ArrayBuffer, Error> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extract', doc, pageIndexes);
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'extractPages',
+      doc,
+      pageIndexes
+    );
 
     if (!this.docs[doc.id]) {
       return TaskBase.reject(new PdfEngineError('document does not exist'));
@@ -1101,6 +1111,46 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
 
     return TaskBase.resolve(buffer);
+  }
+
+  extractText(
+    doc: PdfDocumentObject,
+    pageIndexes: number[]
+  ): Task<string, Error> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'extractText',
+      doc,
+      pageIndexes
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const strings: string[] = [];
+    for (let i = 0; i < pageIndexes.length; i++) {
+      const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(
+        docPtr,
+        pageIndexes[i]
+      );
+      const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
+      const charCount = this.wasmModuleWrapper.FPDFText_CountChars(textPagePtr);
+      const bufferPtr = this.malloc((charCount + 1) * 2);
+      this.wasmModuleWrapper.FPDFText_GetText(
+        textPagePtr,
+        0,
+        charCount,
+        bufferPtr
+      );
+      const text = this.wasmModule.UTF16ToString(bufferPtr);
+      this.free(bufferPtr);
+      strings.push(text);
+    }
+
+    return TaskBase.resolve(strings.join('\n\n'));
   }
 
   merge(files: PdfFile[]): Task<PdfFile, Error> {

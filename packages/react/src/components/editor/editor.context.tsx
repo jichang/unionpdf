@@ -52,6 +52,7 @@ export enum StackStatus {
 export interface PdfEditorContextValue {
   tool: PdfEditorTool;
   setTool: (tool: PdfEditorTool) => void;
+  toggleTool: (tool: PdfEditorTool) => void;
   annotationTool: PdfAnnotationTool;
   setAnnotationTool: (tool: PdfAnnotationTool) => void;
   queryStatus: () => StackStatus;
@@ -66,6 +67,7 @@ export interface PdfEditorContextValue {
 export const PdfEditorContext = React.createContext<PdfEditorContextValue>({
   tool: PdfEditorTool.Annotation,
   setTool: (tool: PdfEditorTool) => {},
+  toggleTool: (tool: PdfEditorTool) => {},
   annotationTool: PdfAnnotationTool.Selection,
   setAnnotationTool: (tool: PdfAnnotationTool) => {},
   queryStatus: () => {
@@ -90,6 +92,20 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const logger = useLogger();
   const [tool, setTool] = useState(PdfEditorTool.Annotation);
+
+  const toggleTool = useCallback(
+    (tool: PdfEditorTool) => {
+      setTool((currTool) => {
+        if (currTool === tool) {
+          return PdfEditorTool.Annotation;
+        } else {
+          return tool;
+        }
+      });
+    },
+    [setTool]
+  );
+
   const [annotationTool, setAnnotationTool] = useState(
     PdfAnnotationTool.Selection
   );
@@ -349,6 +365,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       value={{
         tool,
         setTool,
+        toggleTool,
         annotationTool,
         setAnnotationTool,
         queryStatus,
