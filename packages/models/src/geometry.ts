@@ -1,5 +1,6 @@
 /*
  * Clockwise direction
+ * @public
  */
 export enum Rotation {
   Degree0 = 0,
@@ -8,6 +9,13 @@ export enum Rotation {
   Degree270 = 3,
 }
 
+/**
+ * Calculate degree that match the rotation type
+ * @param rotation type of rotation
+ * @returns rotated degree
+ *
+ * @public
+ */
 export function calculateDegree(rotation: Rotation) {
   switch (rotation) {
     case Rotation.Degree0:
@@ -21,15 +29,41 @@ export function calculateDegree(rotation: Rotation) {
   }
 }
 
+/**
+ * Calculate angle that match the rotation type
+ * @param rotation type of rotation
+ * @returns rotated angle
+ *
+ * @public
+ */
 export function calculateAngle(rotation: Rotation) {
   return (calculateDegree(rotation) * Math.PI) / 180;
 }
 
+/**
+ * Represent the size of object
+ *
+ * @public
+ */
 export interface Size {
+  /*
+   * width of the object
+   */
   width: number;
+
+  /*
+   * height of the object
+   */
   height: number;
 }
 
+/**
+ * Swap the width and height of the size object
+ * @param size the original size
+ * @returns swapped size
+ *
+ * @public
+ */
 export function swap(size: Size): Size {
   const { width, height } = size;
 

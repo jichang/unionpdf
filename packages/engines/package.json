@@ -44,6 +44,8 @@
   },
   "homepage": "https://github.com/jichang/unionpdf#readme",
   "devDependencies": {
+    "@microsoft/api-documenter": "^7.21.7",
+    "@microsoft/api-extractor": "^7.34.4",
     "@parcel/packager-ts": "^2.8.3",
     "@parcel/transformer-typescript-types": "^2.8.3",
     "@types/jest": "^29.5.0",
