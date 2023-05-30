@@ -7,8 +7,8 @@ import {
   Rotation,
   Size,
 } from '@unionpdf/models';
-import { ResizerPosition } from '../editor';
 import { Operation } from '../editor/editor.context';
+import { ResizerPosition } from '../editor/annotations.context';
 
 export function apply(
   annotations: PdfAnnotationObject[],
@@ -294,10 +294,6 @@ export function calculateTransformation(
         }
       }
       break;
-  }
-
-  if (transformation.scale.width < 0 || transformation.scale.height < 0) {
-    debugger;
   }
 
   return transformation;

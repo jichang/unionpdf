@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import {
+  PdfAnnotationObjectStatus,
   PdfAnnotationSubtype,
   PdfPageObject,
   PdfTextAnnoObject,
@@ -19,6 +20,7 @@ describe('PdfPageTextAnnotation', () => {
       },
     };
     const text: PdfTextAnnoObject = {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.TEXT,

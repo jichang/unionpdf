@@ -50,8 +50,8 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
       style={style}
       data-subtype={annotation.type}
       className={classNames(
-        'pdf__annotation',
-        `pdf__annotation--${PdfAnnotationSubtypeName[annotation.type]}`,
+        'pdf__page__annotation',
+        `pdf__page__annotation--${PdfAnnotationSubtypeName[annotation.type]}`,
         className
       )}
       data-page-index={page.index}

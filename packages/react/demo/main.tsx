@@ -54,7 +54,7 @@ import {
   ToolbarItemGroup,
   Button,
   Input,
-  Downloader,
+  PdfToolbarEditorFileItemGroup,
 } from '../src/index';
 import { PdfiumErrorCode, WebWorkerEngine } from '@unionpdf/engines';
 import { PdfiumEngine } from '@unionpdf/engines';
@@ -199,6 +199,17 @@ function App(props: AppProps) {
     [setStamps]
   );
 
+  const removeStamp = useCallback(
+    (stamp: Stamp) => {
+      setStamps((stamps) => {
+        return stamps.filter((_stamp) => {
+          return _stamp.source !== stamp.source;
+        });
+      });
+    },
+    [setStamps]
+  );
+
   const [isMergerOpened, setIsMergerOpened] = useState(false);
 
   const toggleIsMergerOpened = useCallback(() => {
@@ -260,13 +271,12 @@ function App(props: AppProps) {
         >
           <PdfApplicationContextProvider
             initialMode={mode}
-            supportsEdit={true}
             onChangeMode={setMode}
           >
             <PdfEditorStampsContextProvider
               stamps={stamps}
               onAddStamp={addStamp}
-              onRemoveStamp={() => {}}
+              onRemoveStamp={removeStamp}
             >
               <PdfEngineContextProvider engine={engine}>
                 <PdfApplication>
@@ -307,15 +317,19 @@ function App(props: AppProps) {
                               toggleIsSearchPanelOpened
                             }
                           />
-                          <PdfToolbarFileItemGroup
-                            className="pdf__toolbar__item__group--right"
-                            onSave={toggleIsSaverVisible}
-                            onPrint={toggleIsPrinterVisible}
-                          >
-                            <button type="button" onClick={closeFile}>
-                              Close
-                            </button>
-                          </PdfToolbarFileItemGroup>
+                          {mode === PdfApplicationMode.View ? (
+                            <PdfToolbarFileItemGroup
+                              className="pdf__toolbar__item__group--right"
+                              onSave={toggleIsSaverVisible}
+                              onPrint={toggleIsPrinterVisible}
+                            >
+                              <button type="button" onClick={closeFile}>
+                                Close
+                              </button>
+                            </PdfToolbarFileItemGroup>
+                          ) : (
+                            <PdfToolbarEditorFileItemGroup className="pdf__toolbar__item__group--right" />
+                          )}
                         </PdfToolbar>
                         <PdfPageAnnotationComponentContextProvider
                           component={PdfPageDefaultAnnotation}

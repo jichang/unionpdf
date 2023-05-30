@@ -1,11 +1,21 @@
 import { PdfDocumentObject } from '@unionpdf/models';
 import React, { ReactNode, useContext } from 'react';
 
-export const PdfDocumentContext = React.createContext<PdfDocumentObject | null>(
-  null
-);
+export interface PdfDocumentContextValue {
+  version: number;
+  setVersion: (version: number) => void;
+  doc: PdfDocumentObject | null;
+}
+
+export const PdfDocumentContext = React.createContext<PdfDocumentContextValue>({
+  version: 0,
+  setVersion: () => {},
+  doc: null,
+});
 
 export interface PdfDocumentContextProviderProps {
+  version: number;
+  setVersion: (version: number) => void;
   doc: PdfDocumentObject;
   children: ReactNode;
 }
@@ -13,10 +23,10 @@ export interface PdfDocumentContextProviderProps {
 export function PdfDocumentContextProvider(
   props: PdfDocumentContextProviderProps
 ) {
-  const { children, doc } = props;
+  const { children, ...rest } = props;
 
   return (
-    <PdfDocumentContext.Provider value={doc}>
+    <PdfDocumentContext.Provider value={rest}>
       {children}
     </PdfDocumentContext.Provider>
   );

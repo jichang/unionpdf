@@ -3,10 +3,14 @@ import { PdfDocumentObject } from '@unionpdf/models';
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { PdfDocumentContextProvider, usePdfDocument } from './document.context';
+import {
+  PdfDocumentContextProvider,
+  PdfDocumentContextValue,
+  usePdfDocument,
+} from './document.context';
 
 describe('PdfDocumentContextProvider ', () => {
-  let pdfDocInContext: PdfDocumentObject | null;
+  let pdfDocInContext: PdfDocumentContextValue | null;
   function Consumer() {
     pdfDocInContext = usePdfDocument();
 
@@ -14,14 +18,19 @@ describe('PdfDocumentContextProvider ', () => {
   }
 
   test('should assign context value', async () => {
-    const pdf = createMockPdfDocument();
+    const doc = createMockPdfDocument();
+    const version = Date.now();
     const result = render(
-      <PdfDocumentContextProvider doc={pdf}>
+      <PdfDocumentContextProvider
+        version={version}
+        setVersion={jest.fn()}
+        doc={doc}
+      >
         <Consumer />
       </PdfDocumentContextProvider>
     );
 
-    expect(pdfDocInContext).toEqual(pdf);
+    expect(pdfDocInContext).toMatchObject({ doc, version });
 
     result.unmount();
   });

@@ -28,7 +28,7 @@ export function PdfEditorExtractor() {
   const { ButtonComponent } = useUIComponents();
   const strings = useUIStrings();
 
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const engine = usePdfEngine();
 
   const extractPages = useCallback(() => {

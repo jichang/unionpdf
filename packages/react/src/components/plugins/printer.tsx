@@ -19,7 +19,7 @@ export function PdfPrinter(props: PdfPrinterProps) {
   const strings = useUIStrings();
   const { ButtonComponent } = useUIComponents();
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const [buffer, setBuffer] = useState<ArrayBuffer | null>(null);
 
   useEffect(() => {

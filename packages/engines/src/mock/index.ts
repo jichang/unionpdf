@@ -19,6 +19,7 @@ import {
   Rect,
   PdfRenderOptions,
   PdfFile,
+  PdfAnnotationObjectStatus,
 } from '@unionpdf/models';
 
 export function createMockPdfEngine(
@@ -181,6 +182,7 @@ export function createMockPdfEngine(
         rotation: Rotation
       ) => {
         const link: PdfLinkAnnoObject = {
+          status: PdfAnnotationObjectStatus.Commited,
           pageIndex: page.index,
           id: page.index + 1,
           type: PdfAnnotationSubtype.LINK,
@@ -208,6 +210,15 @@ export function createMockPdfEngine(
         return TaskBase.resolve(annotations);
       }
     ),
+    createPageAnnotation: jest.fn(() => {
+      return TaskBase.resolve(true);
+    }),
+    transformPageAnnotation: () => {
+      return TaskBase.resolve(true);
+    },
+    removePageAnnotation: jest.fn(() => {
+      return TaskBase.resolve(true);
+    }),
     getPageTextRects: jest.fn(
       (
         doc: PdfDocumentObject,

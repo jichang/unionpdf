@@ -192,7 +192,13 @@ export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
   open: boolean;
 }
 
+export enum PdfAnnotationObjectStatus {
+  Created,
+  Commited,
+}
+
 export interface PdfAnnotationObjectBase {
+  status: PdfAnnotationObjectStatus;
   pageIndex: number;
   id: number;
   type: PdfAnnotationSubtype;
@@ -616,6 +622,22 @@ export interface PdfEngine {
     scaleFactor: number,
     rotation: Rotation
   ) => Task<PdfAnnotationObject[], PdfEngineError>;
+  createPageAnnotation: (
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject
+  ) => Task<boolean, PdfEngineError>;
+  transformPageAnnotation: (
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject,
+    rect: Rect
+  ) => Task<boolean, PdfEngineError>;
+  removePageAnnotation: (
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject
+  ) => Task<boolean, PdfEngineError>;
   getPageTextRects: (
     doc: PdfDocumentObject,
     page: PdfPageObject,

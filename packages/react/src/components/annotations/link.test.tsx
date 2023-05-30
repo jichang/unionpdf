@@ -4,6 +4,7 @@ import { act, fireEvent, render } from '@testing-library/react';
 import { PdfPageLinkAnnotation } from './link';
 import {
   PdfActionType,
+  PdfAnnotationObjectStatus,
   PdfAnnotationSubtype,
   PdfLinkAnnoObject,
   PdfPageObject,
@@ -22,6 +23,7 @@ describe('PdfPageLink', () => {
       },
     };
     const link: PdfLinkAnnoObject = {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.LINK,

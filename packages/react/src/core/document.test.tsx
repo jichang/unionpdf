@@ -8,11 +8,11 @@ import {
   createMockPdfFile,
 } from '@unionpdf/engines';
 import { PdfDocumentObject, PdfEngineError, TaskBase } from '@unionpdf/models';
-import { usePdfDocument } from './document.context';
+import { PdfDocumentContextValue, usePdfDocument } from './document.context';
 import { PdfEngineContextProvider } from './engine.context';
 
 describe('PdfDocument', () => {
-  let pdfDocInContext: PdfDocumentObject | null = null;
+  let pdfDocInContext: PdfDocumentContextValue | null = null;
   function Consumer() {
     pdfDocInContext = usePdfDocument();
 
@@ -61,7 +61,7 @@ describe('PdfDocument', () => {
 
     expect(onOpenSuccess).toBeCalledTimes(1);
     expect(onOpenSuccess).toBeCalledWith(doc);
-    expect(pdfDocInContext).toBe(doc);
+    expect(pdfDocInContext).toMatchObject({ doc });
 
     result.unmount();
 

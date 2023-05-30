@@ -36,7 +36,7 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
     SelectComponent,
   } = useUIComponents();
 
-  const pdfDoc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const { currPageIndex, gotoPage } = usePdfNavigator();
 
   const navigate = useCallback(
@@ -104,7 +104,7 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
           className="pdf__toolbar__input pdf__toolbar__input--page"
           value={currPageIndex + 1}
           min="1"
-          max={pdfDoc?.pageCount}
+          max={doc?.pageCount}
           type="number"
           onChange={navigate}
         />

@@ -6,6 +6,7 @@ import {
   PdfPageObject,
   PdfFreeTextAnnoObject,
   Rotation,
+  PdfAnnotationObjectStatus,
 } from '@unionpdf/models';
 import { PdfPageFreeTextAnnotation } from './freetext';
 
@@ -19,6 +20,7 @@ describe('PdfPageFreeText', () => {
       },
     };
     const text: PdfFreeTextAnnoObject = {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.FREETEXT,

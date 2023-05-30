@@ -13,7 +13,7 @@ export interface PdfPageCanvasLayerProps extends PdfPageLayerComponentProps {}
 
 export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
   const { mode } = usePdfApplication();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const engine = usePdfEngine();
   const {
     page,

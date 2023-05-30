@@ -1,4 +1,4 @@
-import { PdfAnnotationObject } from '@unionpdf/models';
+import { PdfAnnotationObject, PdfPageObject } from '@unionpdf/models';
 import { Operation } from '../editor/editor.context';
 import { apply } from './editor';
 
@@ -9,6 +9,7 @@ describe('apply', () => {
       {
         id: '0',
         action: 'create',
+        page: {} as PdfPageObject,
         annotation: {} as PdfAnnotationObject,
       },
     ];

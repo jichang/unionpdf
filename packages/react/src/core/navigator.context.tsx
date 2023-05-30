@@ -54,7 +54,7 @@ export function PdfNavigatorContextProvider(
 
   const [currPageIndex, setCurrPageIndex] = useState(0);
 
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   useEffect(() => {
     setCurrPageIndex(0);
   }, [doc, setCurrPageIndex]);

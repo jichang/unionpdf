@@ -15,7 +15,7 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
   const { className, children, ...rest } = props;
 
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const [attachments, setAttachments] = useState<PdfAttachmentObject[]>([]);
 
   useEffect(() => {

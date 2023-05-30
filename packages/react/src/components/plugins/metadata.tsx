@@ -9,7 +9,7 @@ export interface PdfMedataProps extends ComponentProps<'div'> {}
 
 export function PdfMetadata(props: PdfMedataProps) {
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const strings = useUIStrings();
   const [metadata, setMetadata] = useState<PdfMetadataObject | null>(null);
 

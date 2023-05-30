@@ -1,4 +1,10 @@
-import { PdfAnnotationObject, Position, Size } from '@unionpdf/models';
+import {
+  PdfAnnotationObject,
+  PdfAnnotationObjectStatus,
+  PdfPageObject,
+  Position,
+  Size,
+} from '@unionpdf/models';
 import React, {
   ReactNode,
   useCallback,
@@ -7,7 +13,6 @@ import React, {
   useState,
 } from 'react';
 import { useLogger, usePdfDocument, usePdfEngine } from '../../core';
-import { PdfDragContextProvider } from './drag.context';
 
 export const EDITOR_CONTEXT_LOG_SOURCE = 'PdfEditorContext';
 
@@ -26,11 +31,13 @@ export type Operation =
   | {
       id: string;
       action: 'create' | 'remove';
+      page: PdfPageObject;
       annotation: PdfAnnotationObject;
     }
   | {
       id: string;
       action: 'transform';
+      page: PdfPageObject;
       annotation: PdfAnnotationObject;
       params: {
         offset: Position;
@@ -49,6 +56,10 @@ export enum StackStatus {
   Pending,
 }
 
+export enum PdfAnnotationMarker {
+  Dragging,
+}
+
 export interface PdfEditorContextValue {
   tool: PdfEditorTool;
   setTool: (tool: PdfEditorTool) => void;
@@ -58,10 +69,10 @@ export interface PdfEditorContextValue {
   queryStatus: () => StackStatus;
   queryByPageIndex: (pageIndex: number) => Operation[];
   exec: (operation: Operation) => void;
-  replace: (operation: Operation) => void;
   undo: () => void;
   redo: () => void;
   commit: () => void;
+  discard: () => void;
 }
 
 export const PdfEditorContext = React.createContext<PdfEditorContextValue>({
@@ -77,10 +88,10 @@ export const PdfEditorContext = React.createContext<PdfEditorContextValue>({
     return [];
   },
   exec: (operation: Operation) => {},
-  replace: (operation: Operation) => {},
   undo: () => {},
   redo: () => {},
   commit: () => {},
+  discard: () => {},
 });
 
 export interface PdfEditorContextProviderProps {
@@ -91,6 +102,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   const { children } = props;
 
   const logger = useLogger();
+  const { setVersion } = usePdfDocument();
   const [tool, setTool] = useState(PdfEditorTool.Annotation);
 
   const toggleTool = useCallback(
@@ -162,38 +174,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     [logger, setStacks]
   );
 
-  const replace = useCallback(
-    (operation: Operation) => {
-      logger.debug(
-        EDITOR_CONTEXT_LOG_SOURCE,
-        'operation',
-        'replace operation: ',
-        operation
-      );
-      setStacks((stacks) => {
-        const { undo, redo, pages } = stacks;
-        if (undo.length === 0) {
-          return stacks;
-        }
-
-        const { annotation } = operation;
-        const rest = undo.slice(0, undo.length - 1);
-        const pageStack = pages[annotation.pageIndex];
-        const pageStackRest = pageStack.slice(0, pageStack.length - 1);
-
-        return {
-          undo: [...rest, operation],
-          redo,
-          pages: {
-            ...pages,
-            [annotation.pageIndex]: [...pageStackRest, operation],
-          },
-        };
-      });
-    },
-    [logger, setStacks]
-  );
-
   const undo = useCallback(() => {
     setStacks((stacks) => {
       logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'operation', 'undo operation');
@@ -245,11 +225,15 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   }, [logger, setStacks]);
 
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
 
   const commit = useCallback(() => {
     logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'operation', 'commit operation');
     const { undo } = stacks;
+
+    if (!engine || !doc) {
+      return;
+    }
 
     if (undo.length === 0) {
       return;
@@ -263,22 +247,13 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
           break;
         case 'remove':
           {
-            const index = operations.findIndex((_operation) => {
-              return _operation.annotation.id === operation.annotation.id;
+            result = operations.filter((_operation) => {
+              return _operation.annotation.id !== operation.annotation.id;
             });
-            if (index === -1) {
+            if (
+              operation.annotation.status === PdfAnnotationObjectStatus.Commited
+            ) {
               result = [...operations, operation];
-            } else {
-              if (operations[index].action === 'create') {
-                result = operations.filter((_operation) => {
-                  return _operation.annotation.id !== operation.annotation.id;
-                });
-              } else {
-                result = operations.filter((_operation) => {
-                  return _operation.annotation.id === operation.annotation.id;
-                });
-                result.push(operation);
-              }
             }
           }
           break;
@@ -341,14 +316,45 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       return result;
     }, [] as Operation[]);
 
-    // engine.update(commitOperation);
+    for (const commitOperation of commitOperations) {
+      const { action, page, annotation } = commitOperation;
+      switch (action) {
+        case 'transform':
+          const { params } = commitOperation;
+          engine.transformPageAnnotation(doc, page, annotation, {
+            origin: {
+              x: annotation.rect.origin.x + params.offset.x,
+              y: annotation.rect.origin.y + params.offset.y,
+            },
+            size: {
+              width: annotation.rect.size.width * params.scale.width,
+              height: annotation.rect.size.height * params.scale.height,
+            },
+          });
+          break;
+        case 'remove':
+          engine.removePageAnnotation(doc, page, annotation);
+          break;
+      }
+    }
 
     setStacks({
       undo: [],
       redo: [],
       pages: {},
     });
-  }, [logger, stacks, engine, setStacks]);
+    setVersion(Date.now());
+  }, [logger, stacks, engine, doc, setVersion, setStacks]);
+
+  const discard = useCallback(() => {
+    logger.debug(EDITOR_CONTEXT_LOG_SOURCE, 'operation', 'discard operation');
+
+    setStacks({
+      undo: [],
+      redo: [],
+      pages: {},
+    });
+  }, [logger, setStacks]);
 
   useEffect(() => {
     return () => {
@@ -371,13 +377,13 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         queryStatus,
         queryByPageIndex,
         exec,
-        replace,
         undo,
         redo,
         commit,
+        discard,
       }}
     >
-      <PdfDragContextProvider>{children}</PdfDragContextProvider>
+      {children}
     </PdfEditorContext.Provider>
   );
 }

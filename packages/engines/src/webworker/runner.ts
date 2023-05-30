@@ -142,6 +142,15 @@ export class EngineRunner {
       case 'getPageAnnotations':
         task = this.engine[name]!(...args);
         break;
+      case 'createPageAnnotation':
+        task = this.engine[name]!(...args);
+        break;
+      case 'transformPageAnnotation':
+        task = this.engine[name]!(...args);
+        break;
+      case 'removePageAnnotation':
+        task = this.engine[name]!(...args);
+        break;
       case 'getPageTextRects':
         task = this.engine[name]!(...args);
         break;

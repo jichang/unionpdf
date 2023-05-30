@@ -29,10 +29,7 @@ describe('PdfPageEditorLayer', () => {
       }),
     });
     const result = render(
-      <PdfApplicationContextProvider
-        initialMode={PdfApplicationMode.Edit}
-        supportsEdit={true}
-      >
+      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
         <PdfEngineContextProvider engine={engine}>
           <PdfDocument
             file={createMockPdfFile()}

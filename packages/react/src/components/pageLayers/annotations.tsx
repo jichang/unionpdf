@@ -8,7 +8,7 @@ import './annotations.css';
 export function PdfPageAnnotationsLayer(props: PdfPageLayerComponentProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { version, doc } = usePdfDocument();
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function PdfPageAnnotationsLayer(props: PdfPageLayerComponentProps) {
         task.abort();
       };
     }
-  }, [isVisible, engine, doc, page, scaleFactor, rotation]);
+  }, [isVisible, engine, doc, version, page, scaleFactor, rotation]);
 
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">

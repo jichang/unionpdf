@@ -2,14 +2,8 @@ import React, { ComponentProps, useCallback, useState } from 'react';
 import { useUIComponents, useUIStrings } from '../../ui/ui.context';
 import './toolbar.css';
 import { ErrorBoundary } from '../../ui/errorboundary';
-import {
-  PdfApplicationMode,
-  usePdfApplication,
-  usePdfDocument,
-  usePdfEngine,
-} from '../../core';
+import { PdfApplicationMode, usePdfApplication } from '../../core';
 import classNames from 'classnames';
-import { StackStatus, usePdfEditor } from '../editor';
 
 export interface PdfToolbarProps extends ComponentProps<'div'> {}
 
@@ -77,43 +71,29 @@ export function PdfToolbarPluginItemGroup(
 }
 
 export interface PdfToolbarFileItemGroupProps extends ComponentProps<'div'> {
+  enableEdit?: boolean;
   onSave: () => void;
   onPrint: () => void;
 }
 
 export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
-  const { className, onSave, onPrint, children, ...rest } = props;
+  const {
+    className,
+    enableEdit = true,
+    onSave,
+    onPrint,
+    children,
+    ...rest
+  } = props;
   const { ToolbarItemGroupComponent, ButtonComponent, DialogComponent } =
     useUIComponents();
   const strings = useUIStrings();
 
-  const { mode, changeMode } = usePdfApplication();
+  const { setMode } = usePdfApplication();
 
   const handleEdit = useCallback(() => {
-    changeMode(PdfApplicationMode.Edit);
-  }, [changeMode]);
-
-  const [isUncommittedWarningVisible, setIsUncommittedWarningVisible] =
-    useState(false);
-  const { queryStatus } = usePdfEditor();
-  const handleExit = useCallback(() => {
-    if (queryStatus() === StackStatus.Pending) {
-      setIsUncommittedWarningVisible(true);
-    } else {
-      changeMode(PdfApplicationMode.View);
-    }
-  }, [queryStatus, setIsUncommittedWarningVisible, changeMode]);
-
-  const handleDiscard = useCallback(() => {
-    setIsUncommittedWarningVisible(false);
-    changeMode(PdfApplicationMode.View);
-  }, [changeMode]);
-
-  const handleSave = useCallback(() => {
-    setIsUncommittedWarningVisible(false);
-    changeMode(PdfApplicationMode.View);
-    onSave();
-  }, [changeMode, onSave]);
+    setMode(PdfApplicationMode.Edit);
+  }, [setMode]);
 
   return (
     <ErrorBoundary>
@@ -121,30 +101,13 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        {mode === PdfApplicationMode.View ? (
-          <>
-            <ButtonComponent onClick={onSave}>{strings.saveAs}</ButtonComponent>
-            <ButtonComponent onClick={onPrint}>{strings.print}</ButtonComponent>
-            <ButtonComponent onClick={handleEdit}>
-              {strings.edit}
-            </ButtonComponent>
-          </>
-        ) : (
-          <ButtonComponent onClick={handleExit}>{strings.exit}</ButtonComponent>
-        )}
+        {enableEdit ? (
+          <ButtonComponent onClick={handleEdit}>{strings.edit}</ButtonComponent>
+        ) : null}
+        <ButtonComponent onClick={onSave}>{strings.saveAs}</ButtonComponent>
+        <ButtonComponent onClick={onPrint}>{strings.print}</ButtonComponent>
         {children}
       </ToolbarItemGroupComponent>
-      <DialogComponent open={isUncommittedWarningVisible}>
-        <div>
-          <p>{strings.uncommittedWarning}</p>
-        </div>
-        <footer>
-          <ButtonComponent onClick={handleDiscard}>
-            {strings.discard}
-          </ButtonComponent>
-          <ButtonComponent onClick={handleSave}>{strings.save}</ButtonComponent>
-        </footer>
-      </DialogComponent>
     </ErrorBoundary>
   );
 }

@@ -49,6 +49,7 @@ import {
   PdfUnderlineAnnoObject,
   transformSize,
   PdfFile,
+  PdfAnnotationObjectStatus,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -210,6 +211,7 @@ export const wrappedModuleMethods = {
   ] as const,
   FPDFPage_GetAnnotCount: [['number'] as const, 'number'] as const,
   FPDFPage_GetAnnot: [['number', 'number'] as const, 'number'] as const,
+  FPDFPage_RemoveAnnot: [['number', 'number'] as const, 'boolean'] as const,
   FPDF_ClosePage: [['number'] as const, ''] as const,
   FPDFAnnot_GetSubtype: [['number'] as const, 'number'] as const,
   FPDFAnnot_GetRect: [['number', 'number'] as const, 'boolean'] as const,
@@ -743,6 +745,89 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(annotations);
+  }
+
+  createPageAnnotation(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject
+  ): Task<boolean, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'createPageAnnotation',
+      doc,
+      page,
+      annotation
+    );
+    return TaskBase.resolve(true);
+  }
+
+  transformPageAnnotation(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject,
+    rect: Rect
+  ): Task<boolean, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'transformPageAnnotation',
+      doc,
+      page,
+      annotation
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
+
+    const pageRectPtr = this.malloc(4 * 4);
+    /*
+    const top = this.wasmModuleWrapper.FPDF_DeviceToPage(pagePtr,
+                                                      int start_x,
+                                                      int start_y,
+                                                      int size_x,
+                                                      int size_y,
+                                                      int rotate,
+                                                      int device_x,
+                                                      int device_y,
+                                                      double* page_x,
+                                                      double* page_y);*/
+
+    return TaskBase.resolve(true);
+  }
+
+  removePageAnnotation(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject
+  ): Task<boolean, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'removePageAnnotation',
+      doc,
+      page,
+      annotation
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
+    const result = this.wasmModuleWrapper.FPDFPage_RemoveAnnot(
+      pagePtr,
+      annotation.id
+    );
+
+    return TaskBase.resolve(result);
   }
 
   getPageTextRects(
@@ -1887,6 +1972,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.TEXT,
@@ -1936,6 +2022,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.FREETEXT,
@@ -2002,6 +2089,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.LINK,
@@ -2031,6 +2119,7 @@ export class PdfiumEngine implements PdfEngine {
     const field = this.readPdfWidgetAnnoField(formHandle, annotationPtr);
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.WIDGET,
@@ -2056,6 +2145,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.FILEATTACHMENT,
@@ -2124,6 +2214,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.INK,
@@ -2150,6 +2241,7 @@ export class PdfiumEngine implements PdfEngine {
     const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POLYGON,
@@ -2176,6 +2268,7 @@ export class PdfiumEngine implements PdfEngine {
     const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POLYLINE,
@@ -2226,6 +2319,7 @@ export class PdfiumEngine implements PdfEngine {
     this.free(endPointPtr);
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.LINE,
@@ -2252,6 +2346,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.HIGHLIGHT,
@@ -2276,6 +2371,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.UNDERLINE,
@@ -2300,6 +2396,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.STRIKEOUT,
@@ -2324,6 +2421,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.SQUIGGLY,
@@ -2348,6 +2446,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.CARET,
@@ -2384,6 +2483,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.STAMP,
@@ -2409,6 +2509,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.CIRCLE,
@@ -2433,6 +2534,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.SQUARE,
@@ -2458,6 +2560,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type,
@@ -2520,6 +2623,7 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(popupAnnotationPtr);
 
     return {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POPUP,

@@ -129,6 +129,7 @@ export const DEFAULT_UI_STRINGS = {
   edit: 'Edit',
   open: 'Open',
   save: 'Save',
+  commit: 'Commit',
   discard: 'Discard',
   uncommittedWarning:
     'You have changes that is not committed, do you want to save those changes ?',

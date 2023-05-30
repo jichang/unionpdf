@@ -1,4 +1,5 @@
 import {
+  PdfAnnotationObjectStatus,
   PdfAnnotationSubtype,
   PdfPageObject,
   restorePosition,
@@ -46,7 +47,9 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
       exec({
         id: `${Date.now()}.${Math.random()}`,
         action: 'create',
+        page,
         annotation: {
+          status: PdfAnnotationObjectStatus.Created,
           pageIndex: page.index,
           id: Date.now(),
           type: PdfAnnotationSubtype.INK,

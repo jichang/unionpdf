@@ -17,7 +17,7 @@ export function PdfSignatures(props: PdfSignaturesProps) {
   const { onSignaturesLoaded, className, children, ...rest } = props;
 
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const [signatures, setSignatures] = useState<PdfSignatureObject[]>([]);
 
   useEffect(() => {

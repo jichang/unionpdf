@@ -18,7 +18,7 @@ export interface PdfBookmarksProps {}
 
 export function PdfBookmarks(props: PdfBookmarksProps) {
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const [bookmarks, setBookmarks] = useState<PdfBookmarksObject>({
     bookmarks: [],
   });

@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import {
+  PdfAnnotationObjectStatus,
   PdfAnnotationSubtype,
   PdfPageObject,
   PdfPopupAnnoObject,
@@ -18,6 +19,7 @@ describe('PdfPagePopup', () => {
       },
     };
     const popup: PdfPopupAnnoObject = {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.POPUP,

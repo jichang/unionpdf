@@ -7,6 +7,7 @@ import {
   PdfWidgetAnnoObject,
   PDF_FORM_FIELD_TYPE,
   Rotation,
+  PdfAnnotationObjectStatus,
 } from '@unionpdf/models';
 import { PdfPageWidgetAnnotation } from './widget';
 
@@ -20,6 +21,7 @@ describe('PdfPageWidget', () => {
       },
     };
     const widget: PdfWidgetAnnoObject = {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.WIDGET,

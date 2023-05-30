@@ -22,7 +22,7 @@ export function PdfSearchPanel(props: PdfSearchPanelProps) {
   const { className, children, ...rest } = props;
 
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const { gotoPage } = usePdfNavigator();
   const [contextId] = useState(() => {
     return Date.now();

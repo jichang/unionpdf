@@ -331,6 +331,95 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  createPageAnnotation(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject
+  ) {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'createPageAnnotations',
+      doc,
+      page,
+      annotation
+    );
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<boolean>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'createPageAnnotation',
+        args: [doc, page, annotation],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  transformPageAnnotation(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject,
+    rect: Rect
+  ): Task<boolean, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'transformPageAnnotation',
+      doc,
+      page,
+      annotation,
+      rect
+    );
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<boolean>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'transformPageAnnotation',
+        args: [doc, page, annotation, rect],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  removePageAnnotation(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject
+  ) {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'removePageAnnotations',
+      doc,
+      page,
+      annotation
+    );
+    const requestId = this.generateRequestId();
+    const task = new WorkerTask<boolean>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'removePageAnnotation',
+        args: [doc, page, annotation],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
   getPageTextRects(
     doc: PdfDocumentObject,
     page: PdfPageObject,

@@ -1,20 +1,15 @@
-import {
-  PdfAnnotationObject,
-  ignore,
-  PdfAnnotationSubtype,
-} from '@unionpdf/models';
-import React, { useEffect, useMemo, useState } from 'react';
+import { PdfAnnotationObject, ignore } from '@unionpdf/models';
+import React, { useEffect, useState } from 'react';
 import {
   PdfApplicationMode,
   usePdfApplication,
   usePdfDocument,
   usePdfEngine,
 } from '../../core';
-import { PdfEditorAnnotations, PdfEditorCanvas } from '../editor';
-import { apply } from '../helpers/editor';
-import './editor.css';
+import { PdfPageEditorAnnotations, PdfEditorCanvas } from '../editor';
 import { PdfPageLayerComponentProps } from './layer';
 import { PdfAnnotationTool, usePdfEditor } from '../editor/editor.context';
+import './editor.css';
 
 export interface PdfPageEditorLayerProps extends PdfPageLayerComponentProps {}
 
@@ -23,7 +18,7 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
   const { mode } = usePdfApplication();
 
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { version, doc } = usePdfDocument();
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
 
   useEffect(() => {
@@ -41,18 +36,9 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
         task.abort();
       };
     }
-  }, [isVisible, mode, engine, doc, page, scaleFactor, rotation]);
+  }, [isVisible, mode, engine, version, doc, page, scaleFactor, rotation]);
 
-  const { annotationTool, queryByPageIndex } = usePdfEditor();
-  const operations = queryByPageIndex(page.index) || [];
-
-  const editableAnnotations = useMemo(() => {
-    return apply(annotations, operations).filter(
-      (annotation: PdfAnnotationObject) => {
-        return annotation.type !== PdfAnnotationSubtype.WIDGET;
-      }
-    );
-  }, [operations, annotations]);
+  const { annotationTool } = usePdfEditor();
 
   if (mode === PdfApplicationMode.View) {
     return null;
@@ -60,9 +46,9 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
 
   return (
     <div className="pdf__page__layer pdf__page__layer--editor">
-      <PdfEditorAnnotations
+      <PdfPageEditorAnnotations
         page={page}
-        annotations={editableAnnotations}
+        annotations={annotations}
         scaleFactor={scaleFactor}
         rotation={rotation}
       />

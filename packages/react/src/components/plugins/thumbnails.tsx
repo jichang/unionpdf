@@ -47,7 +47,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
     selectedIndexes = [],
     onClickCheckbox: onClickThumbnail,
   } = props;
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const { currPageIndex, gotoPage } = usePdfNavigator();
 
   const jumpToPage = useCallback(
@@ -166,7 +166,7 @@ export interface PdfThumbnailProps {
 
 export function PdfThumbnail(props: PdfThumbnailProps) {
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const {
     page,
     scaleFactor,

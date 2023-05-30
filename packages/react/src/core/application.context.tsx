@@ -1,4 +1,10 @@
-import React, { ReactNode, useCallback, useContext, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 export enum PdfApplicationMode {
   View,
@@ -6,21 +12,20 @@ export enum PdfApplicationMode {
 }
 
 export interface PdfApplicationContextValue {
-  supportsEdit: boolean;
   mode: PdfApplicationMode;
-  changeMode: (mode: PdfApplicationMode) => void;
+  setMode: (mode: PdfApplicationMode) => void;
+  toggleMode: () => void;
 }
 
 export const PdfApplicationContext =
   React.createContext<PdfApplicationContextValue>({
-    supportsEdit: false,
     mode: PdfApplicationMode.View,
-    changeMode: () => {},
+    setMode: () => {},
+    toggleMode: () => {},
   });
 
 export interface PdfApplicationContextProviderProps {
   children: ReactNode;
-  supportsEdit?: boolean;
   initialMode?: PdfApplicationMode;
   onChangeMode?: (mode: PdfApplicationMode) => void;
 }
@@ -28,22 +33,30 @@ export interface PdfApplicationContextProviderProps {
 export function PdfApplicationContextProvider(
   props: PdfApplicationContextProviderProps
 ) {
-  const { children, initialMode, supportsEdit = false, onChangeMode } = props;
+  const {
+    children,
+    initialMode = PdfApplicationMode.View,
+    onChangeMode,
+  } = props;
 
-  const [mode, setMode] = useState(initialMode || PdfApplicationMode.View);
+  const [mode, setMode] = useState(initialMode);
 
-  const changeMode = useCallback(
-    (mode: PdfApplicationMode) => {
-      if (supportsEdit) {
-        setMode(mode);
-        onChangeMode?.(mode);
+  const toggleMode = useCallback(() => {
+    setMode((mode) => {
+      if (mode === PdfApplicationMode.Edit) {
+        return PdfApplicationMode.View;
+      } else {
+        return PdfApplicationMode.Edit;
       }
-    },
-    [setMode, supportsEdit, onChangeMode]
-  );
+    });
+  }, [setMode]);
+
+  useEffect(() => {
+    onChangeMode?.(mode);
+  }, [mode, onChangeMode]);
 
   return (
-    <PdfApplicationContext.Provider value={{ supportsEdit, mode, changeMode }}>
+    <PdfApplicationContext.Provider value={{ toggleMode, mode, setMode }}>
       {children}
     </PdfApplicationContext.Provider>
   );

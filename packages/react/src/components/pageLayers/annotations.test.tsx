@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import {
   createMockPdfDocument,
   createMockPdfEngine,
@@ -16,7 +16,7 @@ import { PdfPageAnnotationComponentContextProvider } from '../common';
 
 describe('PdfPageAnnotationsLayer', () => {
   function PdfPageAnnotation() {
-    return <div className="pdf__annotation"></div>;
+    return <div className="pdf__page__annotation--custom"></div>;
   }
 
   test('should render pdf annotations', async () => {
@@ -58,9 +58,9 @@ describe('PdfPageAnnotationsLayer', () => {
       intersectionObserver.simulate([{ isIntersecting: true }]);
     });
 
-    expect(document.querySelectorAll('.pdf__annotation').length).toEqual(
-      pdf.pageCount
-    );
+    expect(
+      document.querySelectorAll('.pdf__page__annotation--custom').length
+    ).toEqual(pdf.pageCount);
 
     result.unmount();
     intersectionObserver.restore();

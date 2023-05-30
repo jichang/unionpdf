@@ -23,6 +23,9 @@ export interface PdfDocumentProps extends ComponentProps<'div'> {
 export function PdfDocument(props: PdfDocumentProps) {
   const { file, password, onOpenSuccess, onOpenFailure, children, ...rest } =
     props;
+  const [version, setVersion] = useState<number>(() => {
+    return Date.now();
+  });
   const [doc, setDoc] = useState<PdfDocumentObject | null>(null);
   const engine = usePdfEngine();
   const theme = useTheme();
@@ -76,7 +79,11 @@ export function PdfDocument(props: PdfDocumentProps) {
   return (
     <div className="pdf__document" style={themeStyle} {...rest}>
       {doc ? (
-        <PdfDocumentContextProvider doc={doc}>
+        <PdfDocumentContextProvider
+          doc={doc}
+          version={version}
+          setVersion={setVersion}
+        >
           {children}
         </PdfDocumentContextProvider>
       ) : null}

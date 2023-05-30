@@ -20,10 +20,7 @@ import {
 } from '../helpers/scrollable';
 import { ErrorBoundary } from '../../ui/errorboundary';
 import { usePdfDocument } from '../../core/document.context';
-import {
-  PdfNavigatorGotoPageEvent,
-  PdfNavigatorEvent,
-} from '../../core/navigator.context';
+import { PdfNavigatorEvent } from '../../core/navigator.context';
 import { usePdfNavigator } from '../../core/navigator.context';
 import {
   IntersectionObserverContextProvider,
@@ -64,7 +61,7 @@ export function PdfPages(props: PdfPagesProps) {
     rotation = Rotation.Degree0,
     pageLayers,
   } = props;
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const logger = useLogger();
 
   const pages: PdfPage[] = useMemo(() => {

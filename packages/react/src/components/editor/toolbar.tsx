@@ -1,7 +1,8 @@
 import classNames from 'classnames';
-import React, { ComponentProps, useCallback } from 'react';
+import React, { ComponentProps, useCallback, useState } from 'react';
 import { ErrorBoundary, useUIComponents, useUIStrings } from '../../ui';
-import { PdfEditorTool, usePdfEditor } from './editor.context';
+import { PdfEditorTool, StackStatus, usePdfEditor } from './editor.context';
+import { PdfApplicationMode, usePdfApplication } from '../../core';
 
 export interface PdfToolbarEditorItemGroupProps extends ComponentProps<'div'> {}
 
@@ -27,19 +28,12 @@ export function PdfToolbarEditorItemGroup(
     toggleTool(PdfEditorTool.Stamp);
   }, [toggleTool]);
 
-  const { commit } = usePdfEditor();
-
-  const handleSave = useCallback(() => {
-    commit();
-  }, [commit]);
-
   return (
     <ErrorBoundary>
       <ToolbarItemGroupComponent
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <ButtonComponent onClick={handleSave}>{strings.save}</ButtonComponent>
         <ButtonComponent onClick={handleAnnotation}>
           {strings.annotation}
         </ButtonComponent>
@@ -50,6 +44,70 @@ export function PdfToolbarEditorItemGroup(
           {strings.addStamp}
         </ButtonComponent>
       </ToolbarItemGroupComponent>
+    </ErrorBoundary>
+  );
+}
+
+export interface PdfToolbarEditorFileItemGroupProps
+  extends ComponentProps<'div'> {}
+
+export function PdfToolbarEditorFileItemGroup(
+  props: PdfToolbarEditorFileItemGroupProps
+) {
+  const { className, children, ...rest } = props;
+
+  const [isUncommittedWarningVisible, setIsUncommittedWarningVisible] =
+    useState(false);
+
+  const strings = useUIStrings();
+  const { ToolbarItemGroupComponent, ButtonComponent, DialogComponent } =
+    useUIComponents();
+
+  const { commit, queryStatus } = usePdfEditor();
+  const { setMode } = usePdfApplication();
+
+  const handleExit = useCallback(() => {
+    if (queryStatus() === StackStatus.Pending) {
+      setIsUncommittedWarningVisible(true);
+    } else {
+      setMode(PdfApplicationMode.View);
+    }
+  }, [queryStatus, setIsUncommittedWarningVisible, setMode]);
+
+  const handleDiscard = useCallback(() => {
+    setIsUncommittedWarningVisible(false);
+    setMode(PdfApplicationMode.View);
+  }, [setMode]);
+
+  const handleCommit = useCallback(() => {
+    commit();
+    setIsUncommittedWarningVisible(false);
+  }, [setIsUncommittedWarningVisible, commit]);
+
+  return (
+    <ErrorBoundary>
+      <ToolbarItemGroupComponent
+        className={classNames('pdf__toolbar__item__group', className)}
+        {...rest}
+      >
+        <ButtonComponent onClick={handleCommit}>
+          {strings.commit}
+        </ButtonComponent>
+        <ButtonComponent onClick={handleExit}>{strings.exit}</ButtonComponent>
+      </ToolbarItemGroupComponent>
+      <DialogComponent open={isUncommittedWarningVisible}>
+        <div>
+          <p>{strings.uncommittedWarning}</p>
+        </div>
+        <footer>
+          <ButtonComponent onClick={handleDiscard}>
+            {strings.discard}
+          </ButtonComponent>
+          <ButtonComponent onClick={handleCommit}>
+            {strings.commit}
+          </ButtonComponent>
+        </footer>
+      </DialogComponent>
     </ErrorBoundary>
   );
 }

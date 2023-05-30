@@ -10,7 +10,7 @@ export interface PdfUploaderProps {
 export function PdfUploader(props: PdfUploaderProps) {
   const { onUpload } = props;
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
 
   useEffect(() => {
     if (engine && doc) {

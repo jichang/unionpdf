@@ -9,7 +9,7 @@ export interface PdfPageTextLayerProps extends PdfPageLayerComponentProps {}
 export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();
-  const doc = usePdfDocument();
+  const { doc } = usePdfDocument();
   const [rects, setRects] = useState<PdfTextRectObject[]>([]);
 
   useEffect(() => {

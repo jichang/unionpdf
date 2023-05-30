@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import {
+  PdfAnnotationObjectStatus,
   PdfAnnotationSubtype,
   PdfLinkAnnoObject,
   PdfPageObject,
@@ -20,6 +21,7 @@ describe('PdfPageAnnotation', () => {
     };
 
     const link: PdfLinkAnnoObject = {
+      status: PdfAnnotationObjectStatus.Commited,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.LINK,
@@ -60,7 +62,7 @@ describe('PdfPageAnnotation', () => {
     );
 
     const linkElem = document.querySelector(
-      '.pdf__annotation'
+      '.pdf__page__annotation'
     ) as HTMLDivElement;
     expect(linkElem?.getAttribute('style')).toEqual(
       'top: 0px; left: 0px; width: 100px; height: 100px;'
