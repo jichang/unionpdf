@@ -262,58 +262,70 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
           }
           break;
         case 'transform':
-          result = operations.map((_operation) => {
-            if (operation.annotation.id !== operation.annotation.id) {
-              return _operation;
-            }
+          {
+            const needReduce = operations.findIndex((_operation) => {
+              return _operation.annotation.id === operation.annotation.id;
+            });
+            if (!needReduce) {
+              result = [...operations, operation];
+            } else {
+              operations.forEach((_operation) => {
+                if (operation.annotation.id !== operation.annotation.id) {
+                  return _operation;
+                }
 
-            let result = _operation;
-            switch (_operation.action) {
-              case 'create':
-                result.annotation.rect = {
-                  origin: {
-                    x:
-                      result.annotation.rect.origin.x +
-                      operation.params.offset.x,
-                    y:
-                      result.annotation.rect.origin.y +
-                      operation.params.offset.y,
-                  },
-                  size: {
-                    width:
-                      result.annotation.rect.size.width *
-                      operation.params.scale.width,
-                    height:
-                      result.annotation.rect.size.height *
-                      operation.params.scale.height,
-                  },
-                };
-                break;
-              case 'remove':
-                break;
-              case 'transform':
-                result = {
-                  ..._operation,
-                  params: {
-                    offset: {
-                      x: _operation.params.offset.x + operation.params.offset.x,
-                      y: _operation.params.offset.y + operation.params.offset.y,
-                    },
-                    scale: {
-                      width:
-                        _operation.params.scale.width *
-                        operation.params.scale.width,
-                      height:
-                        _operation.params.scale.height *
-                        operation.params.scale.height,
-                    },
-                  },
-                };
-                break;
-            }
+                switch (_operation.action) {
+                  case 'create':
+                    _operation.annotation.rect = {
+                      origin: {
+                        x:
+                          _operation.annotation.rect.origin.x +
+                          operation.params.offset.x,
+                        y:
+                          _operation.annotation.rect.origin.y +
+                          operation.params.offset.y,
+                      },
+                      size: {
+                        width:
+                          _operation.annotation.rect.size.width *
+                          operation.params.scale.width,
+                        height:
+                          _operation.annotation.rect.size.height *
+                          operation.params.scale.height,
+                      },
+                    };
+                    break;
+                  case 'remove':
+                    // should not happen
+                    break;
+                  case 'transform':
+                    _operation.params = {
+                      offset: {
+                        x:
+                          _operation.params.offset.x +
+                          operation.params.offset.x,
+                        y:
+                          _operation.params.offset.y +
+                          operation.params.offset.y,
+                      },
+                      scale: {
+                        width:
+                          _operation.params.scale.width *
+                          operation.params.scale.width,
+                        height:
+                          _operation.params.scale.height *
+                          operation.params.scale.height,
+                      },
+                    };
+                    break;
+                }
 
-            return result;
-          });
+                return result;
+              });
+
+              result = operations;
+            }
+          }
           break;
       }
 
@@ -323,6 +335,9 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     for (const commitOperation of commitOperations) {
       const { action, page, annotation } = commitOperation;
       switch (action) {
+        case 'create':
+          engine.createPageAnnotation(doc, page, annotation);
+          break;
         case 'transform':
           const { params } = commitOperation;
           const task = engine.transformPageAnnotation(doc, page, annotation, {

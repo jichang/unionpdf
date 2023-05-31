@@ -211,6 +211,7 @@ export const wrappedModuleMethods = {
   ] as const,
   FPDFPage_GetAnnotCount: [['number'] as const, 'number'] as const,
   FPDFPage_GetAnnot: [['number', 'number'] as const, 'number'] as const,
+  FPDFPage_CreateAnnot: [['number', 'number'] as const, 'number'] as const,
   FPDFPage_RemoveAnnot: [['number', 'number'] as const, 'boolean'] as const,
   FPDF_ClosePage: [['number'] as const, ''] as const,
   FPDFAnnot_GetSubtype: [['number'] as const, 'number'] as const,
@@ -761,6 +762,36 @@ export class PdfiumEngine implements PdfEngine {
       page,
       annotation
     );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
+    const annotationPtr = this.wasmModuleWrapper.FPDFPage_CreateAnnot(
+      pagePtr,
+      annotation.type
+    );
+    if (!annotationPtr) {
+      return TaskBase.reject(
+        new PdfEngineError('can not create annotation with specified type')
+      );
+    }
+
+    if (
+      !this.setAnnotationRect(page, pagePtr, annotationPtr, annotation.rect)
+    ) {
+      this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+      this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+      return TaskBase.reject(
+        new PdfEngineError('can not set the rect of the rect')
+      );
+    }
+
+    this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+
     return TaskBase.resolve(true);
   }
 
@@ -786,56 +817,20 @@ export class PdfiumEngine implements PdfEngine {
     const { docPtr } = this.docs[doc.id];
 
     const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
-
-    const pageXPtr = this.malloc(8);
-    const pageYPtr = this.malloc(8);
-    if (
-      !this.wasmModuleWrapper.FPDF_DeviceToPage(
-        pagePtr,
-        0,
-        0,
-        page.size.width,
-        page.size.height,
-        0,
-        rect.origin.x,
-        rect.origin.y,
-        pageXPtr,
-        pageYPtr
-      )
-    ) {
-      this.free(pageXPtr);
-      this.free(pageYPtr);
-      return TaskBase.reject(
-        new PdfEngineError('can not calculate the coord of the rect')
-      );
-    }
-    const pageX = this.wasmModule.getValue(pageXPtr, 'double');
-    const pageY = this.wasmModule.getValue(pageYPtr, 'double');
-    this.free(pageXPtr);
-    this.free(pageYPtr);
-
-    const pageRectPtr = this.malloc(4 * 4);
-    this.wasmModule.setValue(pageRectPtr, pageX, 'float');
-    this.wasmModule.setValue(pageRectPtr + 4, pageY, 'float');
-    this.wasmModule.setValue(pageRectPtr + 8, pageX + rect.size.width, 'float');
-    this.wasmModule.setValue(
-      pageRectPtr + 12,
-      pageY - rect.size.height,
-      'float'
-    );
-
     const annotationPtr = this.wasmModuleWrapper.FPDFPage_GetAnnot(
       pagePtr,
       annotation.id
     );
-    if (!this.wasmModuleWrapper.FPDFAnnot_SetRect(annotationPtr, pageRectPtr)) {
-      this.free(pageRectPtr);
+    if (!this.setAnnotationRect(page, pagePtr, annotationPtr, rect)) {
+      this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+      this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
       return TaskBase.reject(
         new PdfEngineError('can not set the rect of the rect')
       );
     }
 
-    this.free(pageRectPtr);
+    this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(true);
   }
@@ -866,6 +861,56 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return TaskBase.resolve(result);
+  }
+
+  setAnnotationRect(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    rect: Rect
+  ) {
+    const pageXPtr = this.malloc(8);
+    const pageYPtr = this.malloc(8);
+    if (
+      !this.wasmModuleWrapper.FPDF_DeviceToPage(
+        pagePtr,
+        0,
+        0,
+        page.size.width,
+        page.size.height,
+        0,
+        rect.origin.x,
+        rect.origin.y,
+        pageXPtr,
+        pageYPtr
+      )
+    ) {
+      this.free(pageXPtr);
+      this.free(pageYPtr);
+      return false;
+    }
+    const pageX = this.wasmModule.getValue(pageXPtr, 'double');
+    const pageY = this.wasmModule.getValue(pageYPtr, 'double');
+    this.free(pageXPtr);
+    this.free(pageYPtr);
+
+    const pageRectPtr = this.malloc(4 * 4);
+    this.wasmModule.setValue(pageRectPtr, pageX, 'float');
+    this.wasmModule.setValue(pageRectPtr + 4, pageY, 'float');
+    this.wasmModule.setValue(pageRectPtr + 8, pageX + rect.size.width, 'float');
+    this.wasmModule.setValue(
+      pageRectPtr + 12,
+      pageY - rect.size.height,
+      'float'
+    );
+
+    if (!this.wasmModuleWrapper.FPDFAnnot_SetRect(annotationPtr, pageRectPtr)) {
+      this.free(pageRectPtr);
+      return false;
+    }
+    this.free(pageRectPtr);
+
+    return true;
   }
 
   getPageTextRects(

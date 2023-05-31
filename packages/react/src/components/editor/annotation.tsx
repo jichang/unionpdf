@@ -391,6 +391,7 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
         `pdf__page__annotation__resizer--${ResizerPositionClassName[position]}`,
         className
       )}
+      type="button"
       {...rest}
     >
       +
