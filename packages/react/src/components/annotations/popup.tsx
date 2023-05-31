@@ -34,7 +34,7 @@ export function PdfPagePopupAnnotation(props: PdfPagePopupAnnotationProps) {
   return (
     <div
       data-subtype={annotation.type}
-      className="pdf__annotation pdf__annotation--popup"
+      className="pdf__page__annotation pdf__page__annotation--popup"
       style={style}
     >
       <span>{annotation.contents}</span>

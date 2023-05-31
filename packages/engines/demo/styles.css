@@ -10,7 +10,7 @@ body {
   width: 100%;
 }
 
-.pdf__application--edit .pdf__annotation--link {
+.pdf__application--edit .pdf__page__annotation--link {
   border: 1px solid black;
 
   opacity: 0.5;

@@ -11,5 +11,5 @@ export interface PdfPageStrikeOutAnnotationProps
 export function PdfPageStrikeOutAnnotation(
   props: PdfPageStrikeOutAnnotationProps
 ) {
-  return <div className="pdf__annotation__strikeout"></div>;
+  return <div className="pdf__page__annotation__strikeout"></div>;
 }

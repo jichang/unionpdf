@@ -240,6 +240,10 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     }
 
     const commitOperations = undo.reduce((operations, operation) => {
+      if (operations.length === 0) {
+        return [operation];
+      }
+
       let result: Operation[] = [];
       switch (operation.action) {
         case 'create':
@@ -293,7 +297,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
                   params: {
                     offset: {
                       x: _operation.params.offset.x + operation.params.offset.x,
-                      y: _operation.params.offset.x + operation.params.offset.y,
+                      y: _operation.params.offset.y + operation.params.offset.y,
                     },
                     scale: {
                       width:
@@ -321,7 +325,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       switch (action) {
         case 'transform':
           const { params } = commitOperation;
-          engine.transformPageAnnotation(doc, page, annotation, {
+          const task = engine.transformPageAnnotation(doc, page, annotation, {
             origin: {
               x: annotation.rect.origin.x + params.offset.x,
               y: annotation.rect.origin.y + params.offset.y,

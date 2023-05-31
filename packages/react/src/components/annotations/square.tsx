@@ -8,5 +8,5 @@ export interface PdfPageSquareAnnotationProps extends PdfPageAnnotationProps {
 }
 
 export function PdfPageSquareAnnotation(props: PdfPageSquareAnnotationProps) {
-  return <div className="pdf__annotation__square" />;
+  return <div className="pdf__page__annotation__square" />;
 }

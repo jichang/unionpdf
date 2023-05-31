@@ -48,7 +48,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
   const handleDragEnter = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
       const target = evt.target as HTMLElement;
-      if (target.classList.contains('pdf__annotations--editor')) {
+      if (target.classList.contains('pdf__page__annotations--editor')) {
         evt.preventDefault();
         evt.dataTransfer.dropEffect = 'move';
         setIsDropTarget(true);
@@ -59,7 +59,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
 
   const handleDragOver = useCallback((evt: React.DragEvent<HTMLDivElement>) => {
     const target = evt.target as HTMLElement;
-    if (target.classList.contains('pdf__annotations--editor')) {
+    if (target.classList.contains('pdf__page__annotations--editor')) {
       evt.preventDefault();
     }
   }, []);
@@ -67,7 +67,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
   const handleDragLeave = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
       const target = evt.target as HTMLElement;
-      if (target.classList.contains('pdf__annotations--editor')) {
+      if (target.classList.contains('pdf__page__annotations--editor')) {
         evt.preventDefault();
         setIsDropTarget(false);
       }
@@ -318,8 +318,8 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
   return (
     <AnnotationsContext.Provider value={handles}>
       <div
-        className={classNames('pdf__annotations--editor', {
-          'pdf__annotations--droptarget': isDropTarget,
+        className={classNames('pdf__page__annotations--editor', {
+          'pdf__page__annotations--droptarget': isDropTarget,
         })}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}

@@ -8,5 +8,5 @@ export interface PdfPageCircleAnnotationProps extends PdfPageAnnotationProps {
 }
 
 export function PdfPageCircleAnnotation(props: PdfPageCircleAnnotationProps) {
-  return <div className="pdf__annotation__circle" />;
+  return <div className="pdf__page__annotation__circle" />;
 }

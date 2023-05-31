@@ -211,7 +211,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   return (
     <PdfPageAnnotation
       page={page}
-      className={classNames('pdf__annotation--editor')}
+      className={classNames('pdf__page__annotation--editor')}
       annotation={annotation}
       rotation={rotation}
       scaleFactor={scaleFactor}
@@ -315,7 +315,7 @@ export function PdfPageAnnotationMover(props: PdfPageAnnotationMoverProps) {
   return (
     <div
       ref={componentRef}
-      className={classNames('pdf__annotation__mover', className)}
+      className={classNames('pdf__page__annotation__mover', className)}
       {...rest}
     >
       {children}
@@ -387,8 +387,8 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
     <button
       ref={componentRef}
       className={classNames(
-        'pdf__annotation__resizer',
-        `pdf__annotation__resizer--${ResizerPositionClassName[position]}`,
+        'pdf__page__annotation__resizer',
+        `pdf__page__annotation__resizer--${ResizerPositionClassName[position]}`,
         className
       )}
       {...rest}

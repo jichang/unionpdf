@@ -46,9 +46,11 @@ describe('PdfPagePopup', () => {
       />
     );
 
-    const textElem = document.querySelector('.pdf__annotation--popup');
+    const textElem = document.querySelector('.pdf__page__annotation--popup');
     expect(textElem).toBeDefined();
-    const spanElem = document.querySelector('.pdf__annotation--popup span');
+    const spanElem = document.querySelector(
+      '.pdf__page__annotation--popup span'
+    );
     expect(spanElem?.textContent).toBe(popup.contents);
 
     result.unmount();

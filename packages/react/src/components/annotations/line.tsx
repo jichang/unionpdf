@@ -51,5 +51,7 @@ export function PdfPageLineAnnotation(props: PdfPageLineAnnotationProps) {
     }
   }, [page, annotation, rotation, scaleFactor]);
 
-  return <canvas className="pdf__annotation__canvas--line" ref={canvasRef} />;
+  return (
+    <canvas className="pdf__page__annotation__canvas--line" ref={canvasRef} />
+  );
 }

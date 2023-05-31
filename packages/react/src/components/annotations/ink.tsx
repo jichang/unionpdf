@@ -65,7 +65,7 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
 
   return (
     <canvas
-      className="pdf__annotation__canvas pdf__annotation__canvas--ink"
+      className="pdf__page__annotation__canvas pdf__page__annotation__canvas--ink"
       ref={canvasRef}
     />
   );

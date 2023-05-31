@@ -11,7 +11,7 @@ export function PdfPageCaretAnnotation(props: PdfPageCaretAnnotationProps) {
   const { annotation } = props;
   return (
     <div
-      className="pdf__annotation__caret"
+      className="pdf__page__annotation__caret"
       style={{ fontSize: annotation.rect.size.height }}
     >
       ,

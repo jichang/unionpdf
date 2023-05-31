@@ -58,6 +58,9 @@ export function PdfPagePolylineAnnotation(
   }, [page, annotation, rotation, scaleFactor]);
 
   return (
-    <canvas className="pdf__annotation__canvas--polyline" ref={canvasRef} />
+    <canvas
+      className="pdf__page__annotation__canvas--polyline"
+      ref={canvasRef}
+    />
   );
 }

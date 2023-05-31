@@ -1,10 +1,10 @@
-.pdf__annotation--editor {
+.pdf__page__annotation--editor {
   cursor: move;
 
   box-shadow: 0 0 1px black;
 }
 
-.pdf__annotation__mover {
+.pdf__page__annotation__mover {
   position: absolute;
   top: 0;
   left: 0;
@@ -13,29 +13,29 @@
   height: 100%;
 }
 
-.pdf__annotation__resizer {
+.pdf__page__annotation__resizer {
   position: absolute;
 
   width: 1rem;
   height: 1rem;
 }
 
-.pdf__annotation__resizer--topleft {
+.pdf__page__annotation__resizer--topleft {
   top: 0;
   left: 0;
 }
 
-.pdf__annotation__resizer--topright {
+.pdf__page__annotation__resizer--topright {
   top: 0;
   right: 0;
 }
 
-.pdf__annotation__resizer--bottomright {
+.pdf__page__annotation__resizer--bottomright {
   bottom: 0;
   right: 0;
 }
 
-.pdf__annotation__resizer--bottomleft {
+.pdf__page__annotation__resizer--bottomleft {
   bottom: 0;
   left: 0;
 }

@@ -1,6 +1,11 @@
 import { ignore, PdfAnnotationObject } from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
-import { usePdfEngine, usePdfDocument } from '../../core';
+import {
+  usePdfEngine,
+  usePdfDocument,
+  usePdfApplication,
+  PdfApplicationMode,
+} from '../../core';
 import { PdfPageLayerComponentProps } from './layer';
 import { PdfPageAnnotations } from '../common';
 import './annotations.css';
@@ -8,11 +13,18 @@ import './annotations.css';
 export function PdfPageAnnotationsLayer(props: PdfPageLayerComponentProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();
+  const { mode } = usePdfApplication();
   const { version, doc } = usePdfDocument();
   const [annotations, setAnnotations] = useState<PdfAnnotationObject[]>([]);
 
   useEffect(() => {
-    if (engine && doc && page && isVisible) {
+    if (
+      mode !== PdfApplicationMode.Edit &&
+      engine &&
+      doc &&
+      page &&
+      isVisible
+    ) {
       const task = engine.getPageAnnotations(doc, page, scaleFactor, rotation);
       task.wait(setAnnotations, ignore);
 
@@ -20,7 +32,7 @@ export function PdfPageAnnotationsLayer(props: PdfPageLayerComponentProps) {
         task.abort();
       };
     }
-  }, [isVisible, engine, doc, version, page, scaleFactor, rotation]);
+  }, [mode, isVisible, engine, doc, version, page, scaleFactor, rotation]);
 
   return (
     <div className="pdf__page__layer pdf__page__layer--annotations">
