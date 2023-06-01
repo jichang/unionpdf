@@ -1,4 +1,5 @@
 import {
+  PdfAnnotationTransformation,
   PdfAttachmentObject,
   PdfEngineError,
   PdfEngineFeature,
@@ -364,7 +365,7 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-    rect: Rect
+    transformation: PdfAnnotationTransformation
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
@@ -373,7 +374,7 @@ export class WebWorkerEngine implements PdfEngine {
       doc,
       page,
       annotation,
-      rect
+      transformation
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -383,7 +384,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'transformPageAnnotation',
-        args: [doc, page, annotation, rect],
+        args: [doc, page, annotation, transformation],
       },
     };
     this.proxy(task, request);

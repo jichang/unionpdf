@@ -50,6 +50,7 @@ import {
   transformSize,
   PdfFile,
   PdfAnnotationObjectStatus,
+  PdfAnnotationTransformation,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -262,6 +263,11 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'number', 'number'] as const,
     'number',
   ] as const,
+  FPDFAnnot_AddInkStroke: [
+    ['number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_RemoveInkList: [['number'] as const, 'boolean'] as const,
   FPDFAnnot_GetVertices: [
     ['number', 'number', 'number'] as const,
     'number',
@@ -789,6 +795,14 @@ export class PdfiumEngine implements PdfEngine {
       );
     }
 
+    switch (annotation.type) {
+      case PdfAnnotationSubtype.INK:
+        this.addInkStroke(page, pagePtr, annotationPtr, annotation.inkList);
+        break;
+      case PdfAnnotationSubtype.STAMP:
+        break;
+    }
+
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
@@ -799,7 +813,7 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-    rect: Rect
+    transformation: PdfAnnotationTransformation
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
@@ -807,7 +821,8 @@ export class PdfiumEngine implements PdfEngine {
       'transformPageAnnotation',
       doc,
       page,
-      annotation
+      annotation,
+      transformation
     );
 
     if (!this.docs[doc.id]) {
@@ -821,12 +836,61 @@ export class PdfiumEngine implements PdfEngine {
       pagePtr,
       annotation.id
     );
+    const rect = {
+      origin: {
+        x: annotation.rect.origin.x + transformation.offset.x,
+        y: annotation.rect.origin.y + transformation.offset.y,
+      },
+      size: {
+        width: annotation.rect.size.width * transformation.scale.width,
+        height: annotation.rect.size.height * transformation.scale.height,
+      },
+    };
     if (!this.setAnnotationRect(page, pagePtr, annotationPtr, rect)) {
       this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
       this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
       return TaskBase.reject(
-        new PdfEngineError('can not set the rect of the rect')
+        new PdfEngineError('can not set the rect of the annotation')
       );
+    }
+
+    switch (annotation.type) {
+      case PdfAnnotationSubtype.INK:
+        {
+          if (!this.wasmModuleWrapper.FPDFAnnot_RemoveInkList(annotationPtr)) {
+            this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+            this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+            return TaskBase.reject(
+              new PdfEngineError('can not remove the ink list of annotation')
+            );
+          }
+          const inkList = annotation.inkList.map((inkStroke) => {
+            return {
+              points: inkStroke.points.map((point) => {
+                return {
+                  x:
+                    rect.origin.x +
+                    (point.x - annotation.rect.origin.x) *
+                      transformation.scale.width,
+                  y:
+                    rect.origin.y +
+                    (point.y - annotation.rect.origin.y) *
+                      transformation.scale.height,
+                };
+              }),
+            };
+          });
+          if (!this.addInkStroke(page, pagePtr, annotationPtr, inkList)) {
+            this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+            this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+            return TaskBase.reject(
+              new PdfEngineError(
+                'can not add stroke to the ink list of annotation'
+              )
+            );
+          }
+        }
+        break;
     }
 
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
@@ -909,6 +973,44 @@ export class PdfiumEngine implements PdfEngine {
       return false;
     }
     this.free(pageRectPtr);
+
+    return true;
+  }
+
+  addInkStroke(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    inkList: PdfInkListObject[]
+  ) {
+    for (const inkStroke of inkList) {
+      const inkPointsCount = inkStroke.points.length;
+      const inkPointsPtr = this.malloc(inkPointsCount * 8);
+      for (let i = 0; i < inkPointsCount; i++) {
+        const point = inkStroke.points[i];
+        const { x, y } = this.convertDevicePointToPagePoint(
+          pagePtr,
+          page,
+          point
+        );
+
+        this.wasmModule.setValue(inkPointsPtr + i * 8, x, 'float');
+        this.wasmModule.setValue(inkPointsPtr + i * 8 + 4, y, 'float');
+      }
+
+      if (
+        this.wasmModuleWrapper.FPDFAnnot_AddInkStroke(
+          annotationPtr,
+          inkPointsPtr,
+          inkPointsCount
+        ) === -1
+      ) {
+        this.free(inkPointsPtr);
+        return false;
+      }
+
+      this.free(inkPointsPtr);
+    }
 
     return true;
   }
@@ -2275,12 +2377,9 @@ export class PdfiumEngine implements PdfEngine {
         );
 
         for (let j = 0; j < pointsCount; j++) {
-          const pointX = this.wasmModule.getValue(
-            pointsPtr + j * pointMemorySize,
-            'float'
-          );
+          const pointX = this.wasmModule.getValue(pointsPtr + j * 8, 'float');
           const pointY = this.wasmModule.getValue(
-            pointsPtr + j * pointMemorySize + 4,
+            pointsPtr + j * 8 + 4,
             'float'
           );
           const { x, y } = this.convertPagePointToDevicePoint(pagePtr, page, {
@@ -3216,6 +3315,33 @@ export class PdfiumEngine implements PdfEngine {
       creationDate,
       checksum,
     };
+  }
+
+  private convertDevicePointToPagePoint(
+    pagePtr: number,
+    page: PdfPageObject,
+    position: Position
+  ) {
+    const pageXPtr = this.malloc(8);
+    const pageYPtr = this.malloc(8);
+    this.wasmModuleWrapper.FPDF_DeviceToPage(
+      pagePtr,
+      0,
+      0,
+      page.size.width,
+      page.size.height,
+      0,
+      position.x,
+      position.y,
+      pageXPtr,
+      pageYPtr
+    );
+    const x = this.wasmModule.getValue(pageXPtr, 'double');
+    const y = this.wasmModule.getValue(pageYPtr, 'double');
+    this.free(pageXPtr);
+    this.free(pageYPtr);
+
+    return { x, y };
   }
 
   private convertPagePointToDevicePoint(

@@ -340,16 +340,12 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
           break;
         case 'transform':
           const { params } = commitOperation;
-          const task = engine.transformPageAnnotation(doc, page, annotation, {
-            origin: {
-              x: annotation.rect.origin.x + params.offset.x,
-              y: annotation.rect.origin.y + params.offset.y,
-            },
-            size: {
-              width: annotation.rect.size.width * params.scale.width,
-              height: annotation.rect.size.height * params.scale.height,
-            },
-          });
+          const task = engine.transformPageAnnotation(
+            doc,
+            page,
+            annotation,
+            params
+          );
           break;
         case 'remove':
           engine.removePageAnnotation(doc, page, annotation);

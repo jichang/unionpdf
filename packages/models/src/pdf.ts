@@ -559,6 +559,11 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
   }
 }
 
+export interface PdfAnnotationTransformation {
+  offset: Position;
+  scale: Size;
+}
+
 export interface PdfRenderOptions {
   withAnnotations: boolean;
 }
@@ -631,7 +636,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-    rect: Rect
+    transformation: PdfAnnotationTransformation
   ) => Task<boolean, PdfEngineError>;
   removePageAnnotation: (
     doc: PdfDocumentObject,
