@@ -6,7 +6,7 @@ import {
 } from './stamps.context';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { Stamp } from '../common';
+import { Stamp } from './stamps';
 
 describe('PdfEditorStampsContextProvider ', () => {
   let stampsInContext: PdfEditorStampsContextValue | null;

@@ -35,6 +35,9 @@ describe('PdfPageWidget', () => {
           width: 100,
         },
       },
+      appearances: {
+        normal: '',
+      },
       field: {
         flag: 0,
         type: PDF_FORM_FIELD_TYPE.CHECKBOX,

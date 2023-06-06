@@ -1,6 +1,7 @@
 import {
   PdfAnnotationObjectStatus,
   PdfAnnotationSubtype,
+  PdfStampContentType,
   Position,
   restoreOffset,
   restoreRect,
@@ -103,7 +104,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
           scaleFactor
         );
 
-        const content = rotateImageData(stamp.source, rotation);
+        const imageData = rotateImageData(stamp.source, rotation);
 
         exec({
           id: `${Date.now()}.${Math.random()}`,
@@ -114,8 +115,16 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
             pageIndex: page.index,
             id: Date.now(),
             type: PdfAnnotationSubtype.STAMP,
-            content,
+            contents: [
+              {
+                type: PdfStampContentType.IMAGE,
+                imageData,
+              },
+            ],
             rect,
+            appearances: {
+              normal: '',
+            },
           },
         });
       }

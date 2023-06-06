@@ -41,6 +41,9 @@ describe('PdfPageTextAnnotation', () => {
           width: 100,
         },
       },
+      appearances: {
+        normal: '',
+      },
     };
     const result = render(
       <PdfPageTextAnnotation

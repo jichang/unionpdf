@@ -37,3 +37,8 @@
 .pdf__editor__stamp.pdf__editro__stamp--dragging {
   opacity: 0;
 }
+
+.pdf__editor__stamp__canvas {
+  width: 100%;
+  height: 100%;
+}

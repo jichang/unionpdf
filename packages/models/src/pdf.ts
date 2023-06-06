@@ -197,6 +197,10 @@ export enum PdfAnnotationObjectStatus {
   Commited,
 }
 
+export enum AppearanceMode {
+  Normal = 0,
+}
+
 export interface PdfAnnotationObjectBase {
   status: PdfAnnotationObjectStatus;
   pageIndex: number;
@@ -204,6 +208,9 @@ export interface PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype;
   rect: Rect;
   popup?: PdfPopupAnnoObject | undefined;
+  appearances: {
+    normal: string;
+  };
 }
 
 export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
@@ -252,6 +259,22 @@ export enum PDF_FORM_FIELD_FLAG {
   CHOICE_COMBO = 1 << 17,
   CHOICE_EDIT = 1 << 18,
   CHOICE_MULTL_SELECT = 1 << 21,
+}
+
+export enum PdfStampContentType {
+  UNKNOWN = 0,
+  TEXT = 1,
+  PATH = 2,
+  IMAGE = 3,
+  SHADING = 4,
+  FORM = 5,
+}
+
+export enum PdfSegmentObjectType {
+  UNKNOWN = -1,
+  LINETO = 0,
+  BEZIERTO = 1,
+  MOVETO = 2,
 }
 
 export interface PdfWidgetAnnoOption {
@@ -310,9 +333,30 @@ export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
   };
 }
 
+export interface PdfSegmentObject {
+  type: PdfSegmentObjectType;
+  point: Position;
+  isClosed: boolean;
+}
+
 export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.STAMP;
-  content: ImageData;
+  contents: Array<
+    | {
+        type: PdfStampContentType.PATH;
+        bounds: {
+          left: number;
+          bottom: number;
+          right: number;
+          top: number;
+        };
+        segments: PdfSegmentObject[];
+      }
+    | {
+        type: PdfStampContentType.IMAGE;
+        imageData: ImageData;
+      }
+  >;
 }
 
 export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {

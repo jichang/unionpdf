@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Stamp } from '../common';
+import { Stamp } from './stamps';
 
 export interface PdfEditorStampsContextValue {
   stamps: Stamp[];

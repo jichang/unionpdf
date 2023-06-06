@@ -1,14 +1,8 @@
 import { Position } from '@unionpdf/models';
 import classNames from 'classnames';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useUIComponents, useUIStrings } from '../../ui';
-import {
-  Drawable,
-  DrawableHandle,
-  DrawablePath,
-  PdfStamp,
-  Stamp,
-} from '../common';
+import { Drawable, DrawableHandle, DrawablePath } from '../common';
 import { usePdfEditorStamps } from './stamps.context';
 import './stamps.css';
 
@@ -94,6 +88,10 @@ export interface DraggableStampData {
   cursorPosition: Position;
 }
 
+export interface Stamp {
+  source: ImageData;
+}
+
 export interface PdfEditorStampProps {
   index: number;
   stamp: Stamp;
@@ -138,6 +136,22 @@ export function PdfEditorStamp(props: PdfEditorStampProps) {
     [setIsDragging]
   );
 
+  const canvasElemRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvasElem = canvasElemRef.current;
+    if (canvasElem) {
+      canvasElem.width = stamp.source.width;
+      canvasElem.height = stamp.source.height;
+      const ctx = canvasElem.getContext('2d');
+
+      if (ctx) {
+        ctx.resetTransform();
+        ctx?.clearRect(0, 0, stamp.source.width, stamp.source.height);
+        ctx.putImageData(stamp.source, 0, 0);
+      }
+    }
+  }, [stamp.source]);
+
   return (
     <div
       tabIndex={0}
@@ -149,7 +163,7 @@ export function PdfEditorStamp(props: PdfEditorStampProps) {
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
     >
-      <PdfStamp index={index} stamp={stamp} />
+      <canvas className="pdf__editor__stamp__canvas" ref={canvasElemRef} />
     </div>
   );
 }

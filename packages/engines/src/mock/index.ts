@@ -204,6 +204,9 @@ export function createMockPdfEngine(
               height: 100,
             },
           },
+          appearances: {
+            normal: '',
+          },
         };
         const annotations: PdfAnnotationObject[] = [];
         annotations.push(link);

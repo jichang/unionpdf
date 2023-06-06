@@ -51,6 +51,10 @@ import {
   PdfFile,
   PdfAnnotationObjectStatus,
   PdfAnnotationTransformation,
+  PdfStampContentType,
+  PdfSegmentObjectType,
+  PdfSegmentObject,
+  AppearanceMode,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -119,11 +123,46 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'number', 'number', 'number', 'number'] as const,
     '',
   ] as const,
+  FPDFBitmap_Create: [
+    ['number', 'number', 'number'] as const,
+    'number',
+  ] as const,
   FPDFBitmap_CreateEx: [
     ['number', 'number', 'number', 'number', 'number'] as const,
     'number',
   ] as const,
   FPDFBitmap_Destroy: [['number'] as const, ''] as const,
+  FPDFPageObj_Destroy: [['number'] as const, ''] as const,
+  FPDFPageObj_NewImageObj: [['number'] as const, 'number'] as const,
+  FPDFPageObj_SetMatrix: [['number', 'number'] as const, 'boolean'] as const,
+  FPDFPageObj_GetBounds: [
+    ['number', 'number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FPDFPageObj_Transform: [
+    [
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+      'number',
+    ] as const,
+    '',
+  ] as const,
+  FPDFImageObj_SetBitmap: [
+    ['number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FPDFPath_CountSegments: [['number'] as const, 'number'] as const,
+  FPDFPath_GetPathSegment: [['number', 'number'] as const, 'number'] as const,
+  FPDFPathSegment_GetType: [['number'] as const, 'number'] as const,
+  FPDFPathSegment_GetPoint: [
+    ['number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FPDFPathSegment_GetClose: [['number'] as const, 'boolean'] as const,
   FPDFBookmark_GetFirstChild: [
     ['number', 'number'] as const,
     'number',
@@ -213,9 +252,18 @@ export const wrappedModuleMethods = {
   FPDFPage_GetAnnotCount: [['number'] as const, 'number'] as const,
   FPDFPage_GetAnnot: [['number', 'number'] as const, 'number'] as const,
   FPDFPage_CreateAnnot: [['number', 'number'] as const, 'number'] as const,
+  FPDFPage_InsertObject: [['number', 'number'] as const, 'boolean'] as const,
   FPDFPage_RemoveAnnot: [['number', 'number'] as const, 'boolean'] as const,
+  FPDFPage_GenerateContent: [['number'] as const, 'boolean'] as const,
   FPDF_ClosePage: [['number'] as const, ''] as const,
   FPDFAnnot_GetSubtype: [['number'] as const, 'number'] as const,
+  FPDFAnnot_GetAP: [
+    ['number', 'number', 'number', 'number'] as const,
+    'number',
+  ] as const,
+  FPDFAnnot_GetObjectCount: [['number'] as const, 'number'] as const,
+  FPDFAnnot_GetObject: [['number', 'number'] as const, 'number'] as const,
+  FPDFAnnot_AppendObject: [['number', 'number'] as const, 'boolean'] as const,
   FPDFAnnot_GetRect: [['number', 'number'] as const, 'boolean'] as const,
   FPDFAnnot_SetRect: [['number', 'number'] as const, 'boolean'] as const,
   FPDFAnnot_GetLink: [['number'], 'number'] as const,
@@ -276,6 +324,7 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'number'] as const,
     'number',
   ] as const,
+  FPDFPageObj_GetType: [['number'] as const, 'number'] as const,
   FPDFLink_GetDest: [['number', 'number'] as const, 'number'] as const,
   FPDFLink_GetAction: [['number'] as const, 'number'] as const,
   FPDFText_LoadPage: [['number'] as const, 'number'] as const,
@@ -800,10 +849,12 @@ export class PdfiumEngine implements PdfEngine {
         this.addInkStroke(page, pagePtr, annotationPtr, annotation.inkList);
         break;
       case PdfAnnotationSubtype.STAMP:
+        this.addStamp(docPtr, page, pagePtr, annotationPtr, annotation);
         break;
     }
 
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+    this.wasmModuleWrapper.FPDFPage_GenerateContent(pagePtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(true);
@@ -894,6 +945,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+    this.wasmModuleWrapper.FPDFPage_GenerateContent(pagePtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(true);
@@ -923,6 +975,8 @@ export class PdfiumEngine implements PdfEngine {
       pagePtr,
       annotation.id
     );
+    this.wasmModuleWrapper.FPDFPage_GenerateContent(pagePtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(result);
   }
@@ -1011,6 +1065,129 @@ export class PdfiumEngine implements PdfEngine {
 
       this.free(inkPointsPtr);
     }
+
+    return true;
+  }
+
+  addStamp(
+    docPtr: number,
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    annotation: PdfStampAnnoObject
+  ) {
+    for (const content of annotation.contents) {
+      switch (content.type) {
+        case PdfStampContentType.IMAGE:
+          return this.addBitMap(
+            docPtr,
+            page,
+            pagePtr,
+            annotationPtr,
+            annotation.rect.origin,
+            content.imageData
+          );
+      }
+    }
+  }
+
+  addBitMap(
+    docPtr: number,
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    position: Position,
+    imageData: ImageData
+  ) {
+    const imageObjectPtr =
+      this.wasmModuleWrapper.FPDFPageObj_NewImageObj(docPtr);
+    if (!imageObjectPtr) {
+      return false;
+    }
+
+    const format = BitmapFormat.Bitmap_BGRA;
+    const bytesPerPixel = 4;
+    const pixelCount = imageData.width * imageData.height;
+    const bitmapHeapLength = pixelCount * bytesPerPixel;
+    const bitmapHeapPtr = this.malloc(bitmapHeapLength);
+
+    for (let i = 0; i < pixelCount; i++) {
+      this.wasmModule.setValue(
+        bitmapHeapPtr + i * bytesPerPixel,
+        imageData.data[i * bytesPerPixel + 2],
+        'i8'
+      );
+      this.wasmModule.setValue(
+        bitmapHeapPtr + i * bytesPerPixel + 1,
+        imageData.data[i * bytesPerPixel + 1],
+        'i8'
+      );
+      this.wasmModule.setValue(
+        bitmapHeapPtr + i * bytesPerPixel + 2,
+        imageData.data[i * bytesPerPixel],
+        'i8'
+      );
+      this.wasmModule.setValue(
+        bitmapHeapPtr + i * bytesPerPixel + 3,
+        imageData.data[i * bytesPerPixel + 3],
+        'i8'
+      );
+    }
+
+    const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
+      imageData.width,
+      imageData.height,
+      format,
+      bitmapHeapPtr,
+      imageData.width * bytesPerPixel
+    );
+    if (!bitmapPtr) {
+      this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
+      this.free(bitmapHeapPtr);
+      return false;
+    }
+
+    const matrixPtr = this.malloc(6 * 4);
+    this.wasmModule.setValue(matrixPtr, imageData.width, 'float');
+    this.wasmModule.setValue(matrixPtr, 0, 'float');
+    this.wasmModule.setValue(matrixPtr, 0, 'float');
+    this.wasmModule.setValue(matrixPtr, imageData.height, 'float');
+    this.wasmModule.setValue(matrixPtr, 0, 'float');
+    this.wasmModule.setValue(matrixPtr, 0, 'float');
+    if (
+      !this.wasmModuleWrapper.FPDFPageObj_SetMatrix(imageObjectPtr, matrixPtr)
+    ) {
+      this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
+      this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
+      this.free(matrixPtr);
+      this.free(bitmapHeapPtr);
+      return false;
+    }
+    this.free(matrixPtr);
+    this.wasmModuleWrapper.FPDFPageObj_Transform(
+      imageObjectPtr,
+      1,
+      0,
+      0,
+      1,
+      position.x,
+      position.y
+    );
+
+    if (
+      !this.wasmModuleWrapper.FPDFAnnot_AppendObject(
+        annotationPtr,
+        imageObjectPtr
+      )
+    ) {
+      this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
+      this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
+      this.free(bitmapHeapPtr);
+      return false;
+    }
+
+    this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
+    this.free(bitmapHeapPtr);
 
     return true;
   }
@@ -2015,9 +2192,7 @@ export class PdfiumEngine implements PdfEngine {
             page,
             pagePtr,
             annotationPtr,
-            index,
-            scaleFactor,
-            rotation
+            index
           );
         }
         break;
@@ -2106,6 +2281,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfTextAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const annoRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, annoRect);
 
@@ -2170,6 +2346,9 @@ export class PdfiumEngine implements PdfEngine {
       },
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2179,6 +2358,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfFreeTextAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const annoRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, annoRect);
 
@@ -2214,6 +2394,9 @@ export class PdfiumEngine implements PdfEngine {
       contents,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2230,6 +2413,7 @@ export class PdfiumEngine implements PdfEngine {
       return;
     }
 
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const annoRect = this.readPageAnnoRect(annotationPtr);
     const { left, top, right, bottom } = annoRect;
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, annoRect);
@@ -2282,6 +2466,9 @@ export class PdfiumEngine implements PdfEngine {
       target,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2292,6 +2479,7 @@ export class PdfiumEngine implements PdfEngine {
     formHandle: number,
     index: number
   ): PdfWidgetAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2311,6 +2499,9 @@ export class PdfiumEngine implements PdfEngine {
       rect,
       field,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2320,6 +2511,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfFileAttachmentAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2336,6 +2528,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.FILEATTACHMENT,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2345,6 +2540,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfInkAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2403,6 +2599,9 @@ export class PdfiumEngine implements PdfEngine {
       rect,
       popup,
       inkList,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2412,6 +2611,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfPolygonAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2430,6 +2630,9 @@ export class PdfiumEngine implements PdfEngine {
       rect,
       popup,
       vertices,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2439,6 +2642,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfPolylineAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2457,6 +2661,9 @@ export class PdfiumEngine implements PdfEngine {
       rect,
       popup,
       vertices,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2466,6 +2673,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfLineAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2509,6 +2717,9 @@ export class PdfiumEngine implements PdfEngine {
       popup,
       startPoint,
       endPoint,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2518,6 +2729,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfHighlightAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2534,6 +2746,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.HIGHLIGHT,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2543,6 +2758,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfUnderlineAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2559,6 +2775,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.UNDERLINE,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2568,6 +2787,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfStrikeOutAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2584,6 +2804,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.STRIKEOUT,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2593,6 +2816,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfSquigglyAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2609,6 +2833,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.SQUIGGLY,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2618,6 +2845,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfCaretAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2634,6 +2862,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.CARET,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2642,10 +2873,9 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     pagePtr: number,
     annotationPtr: number,
-    index: number,
-    scaleFactor: number,
-    rotation: Rotation
+    index: number
   ): PdfStampAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2654,15 +2884,63 @@ export class PdfiumEngine implements PdfEngine {
       annotationPtr,
       index
     );
+    const contents: PdfStampAnnoObject['contents'] = [];
 
-    const content = this.renderPageRectToImageData(
-      docPtr,
-      page,
-      rect,
-      scaleFactor,
-      rotation,
-      { withAnnotations: true }
-    );
+    const objectCount =
+      this.wasmModuleWrapper.FPDFAnnot_GetObjectCount(annotationPtr);
+    for (let i = 0; i < objectCount; i++) {
+      const annotationObjectPtr = this.wasmModuleWrapper.FPDFAnnot_GetObject(
+        annotationPtr,
+        i
+      );
+      const type = this.wasmModuleWrapper.FPDFPageObj_GetType(
+        annotationObjectPtr
+      ) as PdfStampContentType;
+      switch (type) {
+        case PdfStampContentType.PATH:
+          {
+            const segmentCount =
+              this.wasmModuleWrapper.FPDFPath_CountSegments(
+                annotationObjectPtr
+              );
+
+            const leftPtr = this.malloc(4);
+            const bottomPtr = this.malloc(4);
+            const rightPtr = this.malloc(4);
+            const topPtr = this.malloc(4);
+            this.wasmModuleWrapper.FPDFPageObj_GetBounds(
+              annotationObjectPtr,
+              leftPtr,
+              bottomPtr,
+              rightPtr,
+              topPtr
+            );
+            const left = this.wasmModule.getValue(leftPtr, 'float');
+            const bottom = this.wasmModule.getValue(bottomPtr, 'float');
+            const right = this.wasmModule.getValue(rightPtr, 'float');
+            const top = this.wasmModule.getValue(topPtr, 'float');
+            const bounds = { left, bottom, right, top };
+            this.free(leftPtr);
+            this.free(bottomPtr);
+            this.free(rightPtr);
+            this.free(topPtr);
+            const segments: PdfSegmentObject[] = [];
+            for (let i = 0; i < segmentCount; i++) {
+              const segment = this.readPdfSegment(annotationObjectPtr, i);
+              segments.push(segment);
+            }
+
+            contents.push({
+              type: PdfStampContentType.PATH,
+              bounds,
+              segments,
+            });
+          }
+          break;
+        case PdfStampContentType.IMAGE:
+          break;
+      }
+    }
 
     return {
       status: PdfAnnotationObjectStatus.Commited,
@@ -2671,7 +2949,41 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.STAMP,
       rect,
       popup,
-      content,
+      contents,
+      appearances: {
+        normal: appearence,
+      },
+    };
+  }
+
+  private readPdfSegment(
+    annotationObjectPtr: number,
+    segmentIndex: number
+  ): PdfSegmentObject {
+    const segmentPtr = this.wasmModuleWrapper.FPDFPath_GetPathSegment(
+      annotationObjectPtr,
+      segmentIndex
+    );
+    const segmentType =
+      this.wasmModuleWrapper.FPDFPathSegment_GetType(segmentPtr);
+    const isClosed =
+      this.wasmModuleWrapper.FPDFPathSegment_GetClose(segmentPtr);
+    const pointXPtr = this.malloc(4);
+    const pointYPtr = this.malloc(4);
+    this.wasmModuleWrapper.FPDFPathSegment_GetPoint(
+      segmentPtr,
+      pointXPtr,
+      pointYPtr
+    );
+    const pointX = this.wasmModule.getValue(pointXPtr, 'float');
+    const pointY = this.wasmModule.getValue(pointYPtr, 'float');
+    this.free(pointXPtr);
+    this.free(pointYPtr);
+
+    return {
+      type: segmentType,
+      point: { x: pointX, y: pointY },
+      isClosed,
     };
   }
 
@@ -2681,6 +2993,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfCircleAnnoObject {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2697,6 +3010,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.CIRCLE,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2706,6 +3022,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfSquareAnnoObject {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2722,6 +3039,9 @@ export class PdfiumEngine implements PdfEngine {
       type: PdfAnnotationSubtype.SQUARE,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2732,6 +3052,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfUnsupportedAnnoObject {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const pageRect = this.readPageAnnoRect(annotationPtr);
     const rect = this.convertPageRectToDeviceRect(page, pagePtr, pageRect);
     const popup = this.readPdfAnnoLinkedPopup(
@@ -2748,6 +3069,9 @@ export class PdfiumEngine implements PdfEngine {
       type,
       rect,
       popup,
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -2757,6 +3081,7 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
     index: number
   ): PdfPopupAnnoObject | undefined {
+    const appearence = this.readPageAnnoAppearanceStream(annotationPtr);
     const popupAnnotationPtr = this.wasmModuleWrapper.FPDFAnnot_GetLinkedAnnot(
       annotationPtr,
       'Popup'
@@ -2812,6 +3137,9 @@ export class PdfiumEngine implements PdfEngine {
       rect,
       contents,
       open: open === 'true',
+      appearances: {
+        normal: appearence,
+      },
     };
   }
 
@@ -3397,6 +3725,30 @@ export class PdfiumEngine implements PdfEngine {
     };
 
     return rect;
+  }
+
+  private readPageAnnoAppearanceStream(
+    annotationPtr: number,
+    mode = AppearanceMode.Normal
+  ) {
+    const utf16Length = this.wasmModuleWrapper.FPDFAnnot_GetAP(
+      annotationPtr,
+      mode,
+      0,
+      0
+    );
+    const bytesCount = (utf16Length + 1) * 2; // include NIL
+    const bufferPtr = this.malloc(bytesCount);
+    this.wasmModuleWrapper.FPDFAnnot_GetAP(
+      annotationPtr,
+      mode,
+      bufferPtr,
+      bytesCount
+    );
+    const ap = this.wasmModule.UTF16ToString(bufferPtr);
+    this.free(bufferPtr);
+
+    return ap;
   }
 
   private readPageAnnoRect(annotationPtr: number) {

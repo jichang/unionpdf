@@ -56,6 +56,9 @@ describe('PdfPageLink', () => {
           width: 100,
         },
       },
+      appearances: {
+        normal: '',
+      },
     };
     const onClick = jest.fn();
     const result = render(

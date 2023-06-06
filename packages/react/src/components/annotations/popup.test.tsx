@@ -34,6 +34,9 @@ describe('PdfPagePopup', () => {
           width: 100,
         },
       },
+      appearances: {
+        normal: '',
+      },
       open: false,
     };
     const result = render(

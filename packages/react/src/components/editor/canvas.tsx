@@ -61,6 +61,9 @@ export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
               }),
             },
           ],
+          appearances: {
+            normal: '',
+          },
         },
       });
       drawableRef.current?.clearCanvas();
