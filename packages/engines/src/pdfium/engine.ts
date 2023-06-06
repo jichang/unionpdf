@@ -55,6 +55,7 @@ import {
   PdfSegmentObjectType,
   PdfSegmentObject,
   AppearanceMode,
+  PdfImageObject,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -131,6 +132,10 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'number', 'number', 'number'] as const,
     'number',
   ] as const,
+  FPDFBitmap_GetBuffer: [['number'] as const, 'number'] as const,
+  FPDFBitmap_GetWidth: [['number'] as const, 'number'] as const,
+  FPDFBitmap_GetHeight: [['number'] as const, 'number'] as const,
+  FPDFBitmap_GetFormat: [['number'] as const, 'number'] as const,
   FPDFBitmap_Destroy: [['number'] as const, ''] as const,
   FPDFPageObj_Destroy: [['number'] as const, ''] as const,
   FPDFPageObj_NewImageObj: [['number'] as const, 'number'] as const,
@@ -155,6 +160,7 @@ export const wrappedModuleMethods = {
     ['number', 'number', 'number', 'number'] as const,
     'boolean',
   ] as const,
+  FPDFImageObj_GetBitmap: [['number'] as const, 'number'] as const,
   FPDFPath_CountSegments: [['number'] as const, 'number'] as const,
   FPDFPath_GetPathSegment: [['number', 'number'] as const, 'number'] as const,
   FPDFPathSegment_GetType: [['number'] as const, 'number'] as const,
@@ -844,17 +850,39 @@ export class PdfiumEngine implements PdfEngine {
       );
     }
 
+    let isSucceed = false;
     switch (annotation.type) {
       case PdfAnnotationSubtype.INK:
-        this.addInkStroke(page, pagePtr, annotationPtr, annotation.inkList);
+        isSucceed = this.addInkStroke(
+          page,
+          pagePtr,
+          annotationPtr,
+          annotation.inkList
+        );
         break;
       case PdfAnnotationSubtype.STAMP:
-        this.addStamp(docPtr, page, pagePtr, annotationPtr, annotation);
+        isSucceed = this.addStamp(
+          docPtr,
+          page,
+          pagePtr,
+          annotationPtr,
+          annotation
+        );
         break;
     }
 
-    this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
+    if (!isSucceed) {
+      this.wasmModuleWrapper.FPDFPage_RemoveAnnot(pagePtr, annotationPtr);
+      this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+
+      return TaskBase.reject(
+        new PdfEngineError('can not add content of the annotation')
+      );
+    }
+
     this.wasmModuleWrapper.FPDFPage_GenerateContent(pagePtr);
+
+    this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(true);
@@ -944,8 +972,9 @@ export class PdfiumEngine implements PdfEngine {
         break;
     }
 
-    this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
     this.wasmModuleWrapper.FPDFPage_GenerateContent(pagePtr);
+
+    this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(true);
@@ -1079,7 +1108,7 @@ export class PdfiumEngine implements PdfEngine {
     for (const content of annotation.contents) {
       switch (content.type) {
         case PdfStampContentType.IMAGE:
-          return this.addBitMap(
+          return this.addImageObject(
             docPtr,
             page,
             pagePtr,
@@ -1089,9 +1118,11 @@ export class PdfiumEngine implements PdfEngine {
           );
       }
     }
+
+    return false;
   }
 
-  addBitMap(
+  addImageObject(
     docPtr: number,
     page: PdfPageObject,
     pagePtr: number,
@@ -1106,64 +1137,74 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     const format = BitmapFormat.Bitmap_BGRA;
+    const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_Create(
+      imageData.width,
+      imageData.height,
+      format
+    );
+    if (!bitmapPtr) {
+      this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
+      return false;
+    }
+
+    const bitmapBufferPtr =
+      this.wasmModuleWrapper.FPDFBitmap_GetBuffer(bitmapPtr);
     const bytesPerPixel = 4;
     const pixelCount = imageData.width * imageData.height;
-    const bitmapHeapLength = pixelCount * bytesPerPixel;
-    const bitmapHeapPtr = this.malloc(bitmapHeapLength);
 
     for (let i = 0; i < pixelCount; i++) {
       this.wasmModule.setValue(
-        bitmapHeapPtr + i * bytesPerPixel,
-        imageData.data[i * bytesPerPixel + 2],
+        bitmapBufferPtr + i * bytesPerPixel,
+        imageData.data[i * bytesPerPixel + 3],
         'i8'
       );
       this.wasmModule.setValue(
-        bitmapHeapPtr + i * bytesPerPixel + 1,
-        imageData.data[i * bytesPerPixel + 1],
-        'i8'
-      );
-      this.wasmModule.setValue(
-        bitmapHeapPtr + i * bytesPerPixel + 2,
+        bitmapBufferPtr + i * bytesPerPixel + 1,
         imageData.data[i * bytesPerPixel],
         'i8'
       );
       this.wasmModule.setValue(
-        bitmapHeapPtr + i * bytesPerPixel + 3,
-        imageData.data[i * bytesPerPixel + 3],
+        bitmapBufferPtr + i * bytesPerPixel + 2,
+        imageData.data[i * bytesPerPixel + 1],
+        'i8'
+      );
+      this.wasmModule.setValue(
+        bitmapBufferPtr + i * bytesPerPixel + 3,
+        imageData.data[i * bytesPerPixel + 2],
         'i8'
       );
     }
 
-    const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
-      imageData.width,
-      imageData.height,
-      format,
-      bitmapHeapPtr,
-      imageData.width * bytesPerPixel
-    );
-    if (!bitmapPtr) {
+    if (
+      !this.wasmModuleWrapper.FPDFImageObj_SetBitmap(
+        pagePtr,
+        0,
+        imageObjectPtr,
+        bitmapPtr
+      )
+    ) {
+      this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
       this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
-      this.free(bitmapHeapPtr);
       return false;
     }
 
     const matrixPtr = this.malloc(6 * 4);
     this.wasmModule.setValue(matrixPtr, imageData.width, 'float');
-    this.wasmModule.setValue(matrixPtr, 0, 'float');
-    this.wasmModule.setValue(matrixPtr, 0, 'float');
-    this.wasmModule.setValue(matrixPtr, imageData.height, 'float');
-    this.wasmModule.setValue(matrixPtr, 0, 'float');
-    this.wasmModule.setValue(matrixPtr, 0, 'float');
+    this.wasmModule.setValue(matrixPtr + 4, 0, 'float');
+    this.wasmModule.setValue(matrixPtr + 8, 0, 'float');
+    this.wasmModule.setValue(matrixPtr + 12, imageData.height, 'float');
+    this.wasmModule.setValue(matrixPtr + 16, 0, 'float');
+    this.wasmModule.setValue(matrixPtr + 20, 0, 'float');
     if (
       !this.wasmModuleWrapper.FPDFPageObj_SetMatrix(imageObjectPtr, matrixPtr)
     ) {
       this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
       this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
       this.free(matrixPtr);
-      this.free(bitmapHeapPtr);
       return false;
     }
     this.free(matrixPtr);
+
     this.wasmModuleWrapper.FPDFPageObj_Transform(
       imageObjectPtr,
       1,
@@ -1182,12 +1223,11 @@ export class PdfiumEngine implements PdfEngine {
     ) {
       this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
       this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
-      this.free(bitmapHeapPtr);
       return false;
     }
 
+    this.wasmModuleWrapper.FPDFPage_GenerateContent(pagePtr);
     this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
-    this.free(bitmapHeapPtr);
 
     return true;
   }
@@ -2938,6 +2978,11 @@ export class PdfiumEngine implements PdfEngine {
           }
           break;
         case PdfStampContentType.IMAGE:
+          const { imageData } = this.readImageObject(annotationObjectPtr);
+          contents.push({
+            type: PdfStampContentType.IMAGE,
+            imageData,
+          });
           break;
       }
     }
@@ -2984,6 +3029,48 @@ export class PdfiumEngine implements PdfEngine {
       type: segmentType,
       point: { x: pointX, y: pointY },
       isClosed,
+    };
+  }
+
+  private readImageObject(imageObjectPtr: number): PdfImageObject {
+    const bitmapPtr =
+      this.wasmModuleWrapper.FPDFImageObj_GetBitmap(imageObjectPtr);
+    const bitmapBufferPtr =
+      this.wasmModuleWrapper.FPDFBitmap_GetBuffer(bitmapPtr);
+    const bitmapWidth = this.wasmModuleWrapper.FPDFBitmap_GetWidth(bitmapPtr);
+    const bitmapHeight = this.wasmModuleWrapper.FPDFBitmap_GetHeight(bitmapPtr);
+    const format = this.wasmModuleWrapper.FPDFBitmap_GetFormat(
+      bitmapPtr
+    ) as BitmapFormat;
+
+    const pixelCount = bitmapWidth * bitmapHeight;
+    const bytesPerPixel = 4;
+    const array = new Uint8ClampedArray(pixelCount * bytesPerPixel);
+    const dataView = new DataView(array.buffer);
+    for (let i = 0; i < pixelCount; i++) {
+      switch (format) {
+        case BitmapFormat.Bitmap_BGR:
+          dataView.setInt8(
+            i * bytesPerPixel,
+            this.wasmModule.getValue(bitmapBufferPtr + i * 3 + 2, 'i8')
+          );
+          dataView.setInt8(
+            i * bytesPerPixel + 1,
+            this.wasmModule.getValue(bitmapBufferPtr + i * 3 + 1, 'i8')
+          );
+          dataView.setInt8(
+            i * bytesPerPixel + 2,
+            this.wasmModule.getValue(bitmapBufferPtr + i * 3, 'i8')
+          );
+          dataView.setInt8(i * bytesPerPixel + 3, 255);
+          break;
+      }
+    }
+
+    const imageData = new ImageData(array, bitmapWidth, bitmapHeight);
+
+    return {
+      imageData,
     };
   }
 

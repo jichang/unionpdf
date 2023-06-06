@@ -339,6 +339,10 @@ export interface PdfSegmentObject {
   isClosed: boolean;
 }
 
+export interface PdfImageObject {
+  imageData: ImageData;
+}
+
 export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.STAMP;
   contents: Array<
