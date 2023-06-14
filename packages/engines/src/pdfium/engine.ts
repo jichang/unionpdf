@@ -1130,49 +1130,57 @@ export class PdfiumEngine implements PdfEngine {
     position: Position,
     imageData: ImageData
   ) {
-    const imageObjectPtr =
-      this.wasmModuleWrapper.FPDFPageObj_NewImageObj(docPtr);
-    if (!imageObjectPtr) {
-      return false;
-    }
-
-    const format = BitmapFormat.Bitmap_BGRA;
-    const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_Create(
-      imageData.width,
-      imageData.height,
-      format
-    );
-    if (!bitmapPtr) {
-      this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
-      return false;
-    }
-
-    const bitmapBufferPtr =
-      this.wasmModuleWrapper.FPDFBitmap_GetBuffer(bitmapPtr);
     const bytesPerPixel = 4;
     const pixelCount = imageData.width * imageData.height;
 
+    const bitmapBufferPtr = this.malloc(bytesPerPixel * pixelCount);
+    if (!bitmapBufferPtr) {
+      return false;
+    }
+
     for (let i = 0; i < pixelCount; i++) {
-      this.wasmModule.setValue(
-        bitmapBufferPtr + i * bytesPerPixel,
-        imageData.data[i * bytesPerPixel + 3],
-        'i8'
-      );
+      const red = imageData.data[i * bytesPerPixel];
+      const green = imageData.data[i * bytesPerPixel + 1];
+      const blue = imageData.data[i * bytesPerPixel + 2];
+      const alpha = imageData.data[i * bytesPerPixel + 3];
+
+      this.wasmModule.setValue(bitmapBufferPtr + i * bytesPerPixel, blue, 'i8');
       this.wasmModule.setValue(
         bitmapBufferPtr + i * bytesPerPixel + 1,
-        imageData.data[i * bytesPerPixel],
+        green,
         'i8'
       );
       this.wasmModule.setValue(
         bitmapBufferPtr + i * bytesPerPixel + 2,
-        imageData.data[i * bytesPerPixel + 1],
+        red,
         'i8'
       );
       this.wasmModule.setValue(
         bitmapBufferPtr + i * bytesPerPixel + 3,
-        imageData.data[i * bytesPerPixel + 2],
+        alpha,
         'i8'
       );
+    }
+
+    const format = BitmapFormat.Bitmap_BGRA;
+    const bitmapPtr = this.wasmModuleWrapper.FPDFBitmap_CreateEx(
+      imageData.width,
+      imageData.height,
+      format,
+      bitmapBufferPtr,
+      0
+    );
+    if (!bitmapPtr) {
+      this.free(bitmapBufferPtr);
+      return false;
+    }
+
+    const imageObjectPtr =
+      this.wasmModuleWrapper.FPDFPageObj_NewImageObj(docPtr);
+    if (!imageObjectPtr) {
+      this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
+      this.free(bitmapBufferPtr);
+      return false;
     }
 
     if (
@@ -1185,6 +1193,7 @@ export class PdfiumEngine implements PdfEngine {
     ) {
       this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
       this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
+      this.free(bitmapBufferPtr);
       return false;
     }
 
@@ -1198,9 +1207,10 @@ export class PdfiumEngine implements PdfEngine {
     if (
       !this.wasmModuleWrapper.FPDFPageObj_SetMatrix(imageObjectPtr, matrixPtr)
     ) {
+      this.free(matrixPtr);
       this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
       this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
-      this.free(matrixPtr);
+      this.free(bitmapBufferPtr);
       return false;
     }
     this.free(matrixPtr);
@@ -1223,11 +1233,13 @@ export class PdfiumEngine implements PdfEngine {
     ) {
       this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
       this.wasmModuleWrapper.FPDFPageObj_Destroy(imageObjectPtr);
+      this.free(bitmapBufferPtr);
       return false;
     }
 
     this.wasmModuleWrapper.FPDFPage_GenerateContent(pagePtr);
     this.wasmModuleWrapper.FPDFBitmap_Destroy(bitmapPtr);
+    this.free(bitmapBufferPtr);
 
     return true;
   }
@@ -3046,23 +3058,27 @@ export class PdfiumEngine implements PdfEngine {
     const pixelCount = bitmapWidth * bitmapHeight;
     const bytesPerPixel = 4;
     const array = new Uint8ClampedArray(pixelCount * bytesPerPixel);
-    const dataView = new DataView(array.buffer);
     for (let i = 0; i < pixelCount; i++) {
       switch (format) {
         case BitmapFormat.Bitmap_BGR:
-          dataView.setInt8(
-            i * bytesPerPixel,
-            this.wasmModule.getValue(bitmapBufferPtr + i * 3 + 2, 'i8')
-          );
-          dataView.setInt8(
-            i * bytesPerPixel + 1,
-            this.wasmModule.getValue(bitmapBufferPtr + i * 3 + 1, 'i8')
-          );
-          dataView.setInt8(
-            i * bytesPerPixel + 2,
-            this.wasmModule.getValue(bitmapBufferPtr + i * 3, 'i8')
-          );
-          dataView.setInt8(i * bytesPerPixel + 3, 255);
+          {
+            const blue = this.wasmModule.getValue(
+              bitmapBufferPtr + i * 3,
+              'i8'
+            );
+            const green = this.wasmModule.getValue(
+              bitmapBufferPtr + i * 3 + 1,
+              'i8'
+            );
+            const red = this.wasmModule.getValue(
+              bitmapBufferPtr + i * 3 + 2,
+              'i8'
+            );
+            array[i * bytesPerPixel] = red;
+            array[i * bytesPerPixel + 1] = green;
+            array[i * bytesPerPixel + 2] = blue;
+            array[i * bytesPerPixel + 3] = 100;
+          }
           break;
       }
     }
