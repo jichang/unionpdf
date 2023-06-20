@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
-import { ErrorBoundary } from '../../ui';
 import './editor.css';
 import { PdfEditorTool, usePdfEditor } from '../editor/editor.context';
 import { PdfEditorPanel } from '../editor/panel';
-import { PdfApplicationMode, usePdfApplication } from '../../core';
+import {
+  ErrorBoundary,
+  PdfApplicationMode,
+  usePdfApplication,
+} from '../../core';
 import { PdfEditorExtractor, PdfEditorStamps } from '../editor';
 
 export function PdfEditor() {

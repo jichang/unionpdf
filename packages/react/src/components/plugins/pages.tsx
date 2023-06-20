@@ -18,15 +18,15 @@ import {
   calculateScrollOffset,
   findScollableContainer,
 } from '../helpers/scrollable';
-import { ErrorBoundary } from '../../ui/errorboundary';
+import { ErrorBoundary } from '../../core';
 import { usePdfDocument } from '../../core/document.context';
 import { PdfNavigatorEvent } from '../../core/navigator.context';
 import { usePdfNavigator } from '../../core/navigator.context';
 import {
   IntersectionObserverContextProvider,
   useIntersectionObserver,
-} from '../../ui/intersectionobserver.context';
-import { IntersectionObserverEntry } from '../../ui/intersectionobserver.entry';
+} from '../../core';
+import { IntersectionObserverEntry } from '../../core';
 import { useLogger } from '../../core';
 import classNames from 'classnames';
 import { PdfPageLayerComponent } from '../pageLayers';

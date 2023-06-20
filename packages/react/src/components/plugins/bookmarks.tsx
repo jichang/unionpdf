@@ -5,7 +5,7 @@ import {
   ignore,
 } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ErrorBoundary } from '../../ui/errorboundary';
+import { ErrorBoundary } from '../../core';
 import './bookmarks.css';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';

@@ -11,12 +11,12 @@ import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
 import { useUIComponents } from '../../ui';
-import { ErrorBoundary } from '../../ui/errorboundary';
+import { ErrorBoundary } from '../../core/errorboundary';
 import {
   IntersectionObserverContextProvider,
   useIntersectionObserver,
-} from '../../ui/intersectionobserver.context';
-import { IntersectionObserverEntry } from '../../ui/intersectionobserver.entry';
+} from '../../core';
+import { IntersectionObserverEntry } from '../../core';
 import './thumbnails.css';
 
 export type Direction = 'horizontal' | 'vertical';

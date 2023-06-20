@@ -1,3 +1,6 @@
+export * from './errorboundary';
+export * from './intersectionobserver.context';
+export * from './intersectionobserver.entry';
 export * from './navigator.context';
 export * from './application';
 export * from './application.context';

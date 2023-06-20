@@ -1,7 +1,7 @@
 import React, { ComponentProps, useCallback, useState } from 'react';
 import { useUIComponents, useUIStrings } from '../../ui/ui.context';
 import './toolbar.css';
-import { ErrorBoundary } from '../../ui/errorboundary';
+import { ErrorBoundary } from '../../core';
 import { PdfApplicationMode, usePdfApplication } from '../../core';
 import classNames from 'classnames';
 

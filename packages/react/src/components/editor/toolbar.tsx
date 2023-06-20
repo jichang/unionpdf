@@ -1,8 +1,12 @@
 import classNames from 'classnames';
 import React, { ComponentProps, useCallback, useState } from 'react';
-import { ErrorBoundary, useUIComponents, useUIStrings } from '../../ui';
+import { useUIComponents, useUIStrings } from '../../ui';
 import { PdfEditorTool, StackStatus, usePdfEditor } from './editor.context';
-import { PdfApplicationMode, usePdfApplication } from '../../core';
+import {
+  ErrorBoundary,
+  PdfApplicationMode,
+  usePdfApplication,
+} from '../../core';
 
 export interface PdfToolbarEditorItemGroupProps extends ComponentProps<'div'> {}
 
