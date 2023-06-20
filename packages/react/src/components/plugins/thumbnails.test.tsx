@@ -11,6 +11,7 @@ import { PdfDocumentObject, PdfEngineError, TaskBase } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { PdfNativeAdapterProvider } from '../../adapters/native';
 
 describe('PdfThumbnails', () => {
   test('should render pdf thumbnails', async () => {
@@ -29,19 +30,21 @@ describe('PdfThumbnails', () => {
     });
 
     const result = render(
-      <PdfEngineContextProvider engine={engine}>
-        <PdfDocument
-          file={createMockPdfFile()}
-          password=""
-          onOpenSuccess={jest.fn()}
-          onOpenFailure={jest.fn()}
-        >
-          <PdfThumbnails
-            layout={{ direction: 'vertical', itemsCount: 2 }}
-            size={{ width: 100, height: 100 }}
-          />
-        </PdfDocument>
-      </PdfEngineContextProvider>
+      <PdfNativeAdapterProvider>
+        <PdfEngineContextProvider engine={engine}>
+          <PdfDocument
+            file={createMockPdfFile()}
+            password=""
+            onOpenSuccess={jest.fn()}
+            onOpenFailure={jest.fn()}
+          >
+            <PdfThumbnails
+              layout={{ direction: 'vertical', itemsCount: 2 }}
+              size={{ width: 100, height: 100 }}
+            />
+          </PdfDocument>
+        </PdfEngineContextProvider>
+      </PdfNativeAdapterProvider>
     );
 
     act(() => {

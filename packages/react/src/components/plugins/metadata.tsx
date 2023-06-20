@@ -2,7 +2,7 @@ import React, { ComponentProps, useEffect, useState } from 'react';
 import { ignore, PdfMetadataObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
-import { useUIStrings } from '../../ui/ui.context';
+import { useUIStrings } from '../../adapters';
 import './metadata.css';
 
 export interface PdfMedataProps extends ComponentProps<'div'> {}

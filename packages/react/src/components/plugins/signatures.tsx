@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { ignore, PdfSignatureObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
-import { useUIStrings } from '../../ui';
+import { useUIStrings } from '../../adapters';
 
 export interface PdfSignaturesProps extends ComponentProps<'div'> {
   onSignaturesLoaded?: (signatures: PdfSignatureObject[]) => void;

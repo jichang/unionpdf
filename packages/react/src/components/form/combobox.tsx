@@ -5,7 +5,7 @@ import {
 } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
-import { useUIComponents } from '../../ui';
+import { useUIComponents } from '../../adapters';
 
 export interface ComboboxFieldProps {
   field: PdfWidgetAnnoObject['field'];
@@ -48,9 +48,10 @@ export function ComboboxField(props: ComboboxFieldProps) {
     [isMultipleChoice, setValues]
   );
 
-  const { SelectComponent } = useUIComponents();
+  const { Select } = useUIComponents();
+
   return (
-    <SelectComponent
+    <Select
       required={isRequired}
       disabled={isDisabled}
       multiple={isMultipleChoice}

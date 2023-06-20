@@ -1,14 +1,14 @@
 import classNames from 'classnames';
 import React from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
-import { useUIComponents, useUIStrings } from '../../ui/ui.context';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import './panel.css';
 
 export interface PdfEditorPanelProps {}
 
 export function PdfEditorPanel(props: PdfEditorPanelProps) {
-  const { ButtonComponent } = useUIComponents();
+  const { Button } = useUIComponents();
 
   const strings = useUIStrings();
 
@@ -22,7 +22,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
   return (
     <div className="pdf__editor__panel">
       <div className="pdf__editor__panel__tools">
-        <ButtonComponent
+        <Button
           onClick={(evt) => {
             setAnnotationTool(PdfAnnotationTool.Selection);
           }}
@@ -33,8 +33,8 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
           )}
         >
           {strings.selection}
-        </ButtonComponent>
-        <ButtonComponent
+        </Button>
+        <Button
           onClick={(evt) => {
             setAnnotationTool(PdfAnnotationTool.Pencil);
           }}
@@ -45,7 +45,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
           )}
         >
           {strings.pencil}
-        </ButtonComponent>
+        </Button>
       </div>
     </div>
   );

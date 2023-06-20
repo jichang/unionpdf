@@ -10,7 +10,7 @@ import React, { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
-import { useUIComponents } from '../../ui';
+import { useUIComponents } from '../../adapters';
 import { ErrorBoundary } from '../../core/errorboundary';
 import {
   IntersectionObserverContextProvider,
@@ -192,7 +192,7 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
     }
   }, [src, engine, doc, page, scaleFactor, rotation, isVisible]);
 
-  const { InputComponent } = useUIComponents();
+  const { Input } = useUIComponents();
 
   const onClickCheckbox = useCallback(() => {
     props.onClickCheckbox?.(page);
@@ -214,7 +214,7 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
         height={page.size.height * scaleFactor}
       />
       {enableCheckbox ? (
-        <InputComponent
+        <Input
           checked={isSelected}
           className="pdf__thumbnail__checkbox"
           type="checkbox"

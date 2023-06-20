@@ -1,7 +1,7 @@
 import { PdfWidgetAnnoObject, PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
 import React from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
-import { useUIComponents } from '../../ui';
+import { useUIComponents } from '../../adapters';
 
 export interface PushButtonFieldProps {
   field: PdfWidgetAnnoObject['field'];
@@ -17,11 +17,11 @@ export function PushButtonField(props: PushButtonFieldProps) {
   const isDisabled =
     mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
 
-  const { ButtonComponent } = useUIComponents();
+  const { Button } = useUIComponents();
 
   return (
-    <ButtonComponent disabled={isDisabled} aria-label={name}>
+    <Button disabled={isDisabled} aria-label={name}>
       {name}
-    </ButtonComponent>
+    </Button>
   );
 }

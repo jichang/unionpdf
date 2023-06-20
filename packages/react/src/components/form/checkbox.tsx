@@ -1,7 +1,7 @@
 import { PdfWidgetAnnoObject, PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
-import { useUIComponents } from '../../ui';
+import { useUIComponents } from '../../adapters';
 
 export interface CheckboxFieldProps {
   field: PdfWidgetAnnoObject['field'];
@@ -26,10 +26,10 @@ export function CheckboxField(props: CheckboxFieldProps) {
     mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
 
-  const { CheckboxComponent } = useUIComponents();
+  const { Checkbox } = useUIComponents();
 
   return (
-    <CheckboxComponent
+    <Checkbox
       required={isRequired}
       disabled={isDisabled}
       name={name}

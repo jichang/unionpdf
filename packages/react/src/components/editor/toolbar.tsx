@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { ComponentProps, useCallback, useState } from 'react';
-import { useUIComponents, useUIStrings } from '../../ui';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import { PdfEditorTool, StackStatus, usePdfEditor } from './editor.context';
 import {
   ErrorBoundary,
@@ -14,7 +14,7 @@ export function PdfToolbarEditorItemGroup(
   props: PdfToolbarEditorItemGroupProps
 ) {
   const { className, children, ...rest } = props;
-  const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
+  const { ToolbarItemGroup, Button } = useUIComponents();
 
   const strings = useUIStrings();
 
@@ -34,20 +34,14 @@ export function PdfToolbarEditorItemGroup(
 
   return (
     <ErrorBoundary>
-      <ToolbarItemGroupComponent
+      <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <ButtonComponent onClick={handleAnnotation}>
-          {strings.annotation}
-        </ButtonComponent>
-        <ButtonComponent onClick={handleExtract}>
-          {strings.extract}
-        </ButtonComponent>
-        <ButtonComponent onClick={handleSignature}>
-          {strings.addStamp}
-        </ButtonComponent>
-      </ToolbarItemGroupComponent>
+        <Button onClick={handleAnnotation}>{strings.annotation}</Button>
+        <Button onClick={handleExtract}>{strings.extract}</Button>
+        <Button onClick={handleSignature}>{strings.addStamp}</Button>
+      </ToolbarItemGroup>
     </ErrorBoundary>
   );
 }
@@ -64,8 +58,7 @@ export function PdfToolbarEditorFileItemGroup(
     useState(false);
 
   const strings = useUIStrings();
-  const { ToolbarItemGroupComponent, ButtonComponent, DialogComponent } =
-    useUIComponents();
+  const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
 
   const { commit, queryStatus } = usePdfEditor();
   const { setMode } = usePdfApplication();
@@ -90,28 +83,22 @@ export function PdfToolbarEditorFileItemGroup(
 
   return (
     <ErrorBoundary>
-      <ToolbarItemGroupComponent
+      <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <ButtonComponent onClick={handleCommit}>
-          {strings.commit}
-        </ButtonComponent>
-        <ButtonComponent onClick={handleExit}>{strings.exit}</ButtonComponent>
-      </ToolbarItemGroupComponent>
-      <DialogComponent open={isUncommittedWarningVisible}>
+        <Button onClick={handleCommit}>{strings.commit}</Button>
+        <Button onClick={handleExit}>{strings.exit}</Button>
+      </ToolbarItemGroup>
+      <Dialog open={isUncommittedWarningVisible}>
         <div>
           <p>{strings.uncommittedWarning}</p>
         </div>
         <footer>
-          <ButtonComponent onClick={handleDiscard}>
-            {strings.discard}
-          </ButtonComponent>
-          <ButtonComponent onClick={handleCommit}>
-            {strings.commit}
-          </ButtonComponent>
+          <Button onClick={handleDiscard}>{strings.discard}</Button>
+          <Button onClick={handleCommit}>{strings.commit}</Button>
         </footer>
-      </DialogComponent>
+      </Dialog>
     </ErrorBoundary>
   );
 }

@@ -2,7 +2,7 @@ import { ignore } from '@unionpdf/models';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { usePdfEngine, usePdfDocument } from '../../core';
-import { useUIComponents, useUIStrings } from '../../ui';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import './printer.css';
 
 export enum PrinterMethod {
@@ -17,7 +17,7 @@ export interface PdfPrinterProps {
 export function PdfPrinter(props: PdfPrinterProps) {
   const { method, onCancel } = props;
   const strings = useUIStrings();
-  const { ButtonComponent } = useUIComponents();
+  const { Button } = useUIComponents();
   const engine = usePdfEngine();
   const { doc } = usePdfDocument();
   const [buffer, setBuffer] = useState<ArrayBuffer | null>(null);
@@ -61,7 +61,7 @@ export function PdfPrinter(props: PdfPrinterProps) {
         {strings.printing}: {doc?.name}
       </p>
       <div className="pdf__printer__action">
-        <ButtonComponent onClick={onCancel}>{strings.cancel}</ButtonComponent>
+        <Button onClick={onCancel}>{strings.cancel}</Button>
       </div>
     </div>
   );

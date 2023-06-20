@@ -9,6 +9,7 @@ import {
 } from '@unionpdf/engines';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider, PdfDocument } from '../../core';
+import { PdfNativeAdapterProvider } from '../../adapters/native';
 
 describe('PdfSearchPanel', () => {
   it('Toolbar should render div with children', () => {
@@ -24,16 +25,18 @@ describe('PdfSearchPanel', () => {
       }),
     });
     const result = render(
-      <PdfEngineContextProvider engine={engine}>
-        <PdfDocument
-          file={createMockPdfFile()}
-          password=""
-          onOpenSuccess={jest.fn()}
-          onOpenFailure={jest.fn()}
-        >
-          <PdfSearchPanel />
-        </PdfDocument>
-      </PdfEngineContextProvider>
+      <PdfNativeAdapterProvider>
+        <PdfEngineContextProvider engine={engine}>
+          <PdfDocument
+            file={createMockPdfFile()}
+            password=""
+            onOpenSuccess={jest.fn()}
+            onOpenFailure={jest.fn()}
+          >
+            <PdfSearchPanel />
+          </PdfDocument>
+        </PdfEngineContextProvider>
+      </PdfNativeAdapterProvider>
     );
 
     act(() => {

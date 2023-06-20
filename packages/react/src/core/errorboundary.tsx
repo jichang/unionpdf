@@ -1,5 +1,5 @@
 import React from 'react';
-import { UIStringsContext } from '../ui/ui.context';
+import { UIStringsContext } from '../adapters';
 
 export interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -32,7 +32,7 @@ export class ErrorBoundary extends React.Component<
       return (
         <UIStringsContext.Consumer>
           {(strings) => {
-            return <h1>{strings.unknownError}</h1>;
+            return <h1>{strings?.unknownError}</h1>;
           }}
         </UIStringsContext.Consumer>
       );

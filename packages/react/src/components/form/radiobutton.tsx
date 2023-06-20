@@ -6,7 +6,7 @@ import {
 } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
-import { useUIComponents } from '../../ui';
+import { useUIComponents } from '../../adapters';
 
 export interface RadioButtonFieldProps {
   field: PdfWidgetAnnoObject['field'];
@@ -44,10 +44,10 @@ export function RadioButtonField(props: RadioButtonFieldProps) {
     mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
 
-  const { RadioButtonComponent } = useUIComponents();
+  const { RadioButton } = useUIComponents();
 
   return (
-    <RadioButtonComponent
+    <RadioButton
       required={isRequired}
       disabled={isDisabled}
       name={name}

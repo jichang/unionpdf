@@ -1,5 +1,5 @@
-import React, { ComponentProps, useCallback, useState } from 'react';
-import { useUIComponents, useUIStrings } from '../../ui/ui.context';
+import React, { ComponentProps, useCallback } from 'react';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import './toolbar.css';
 import { ErrorBoundary } from '../../core';
 import { PdfApplicationMode, usePdfApplication } from '../../core';
@@ -9,13 +9,13 @@ export interface PdfToolbarProps extends ComponentProps<'div'> {}
 
 export function PdfToolbar(props: PdfToolbarProps) {
   const { children, ...rest } = props;
-  const { ToolbarComponent } = useUIComponents();
+  const { Toolbar } = useUIComponents();
 
   return (
     <ErrorBoundary>
-      <ToolbarComponent className="pdf__toolbar" {...rest}>
+      <Toolbar className="pdf__toolbar" {...rest}>
         {children}
-      </ToolbarComponent>
+      </Toolbar>
     </ErrorBoundary>
   );
 }
@@ -41,31 +41,21 @@ export function PdfToolbarPluginItemGroup(
     onToggleSignatures,
     ...rest
   } = props;
-  const { ToolbarItemGroupComponent, ButtonComponent } = useUIComponents();
+  const { ToolbarItemGroup, Button } = useUIComponents();
   const strings = useUIStrings();
 
   return (
     <ErrorBoundary>
-      <ToolbarItemGroupComponent
+      <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <ButtonComponent onClick={onToggleMetadata}>
-          {strings.metadata}
-        </ButtonComponent>
-        <ButtonComponent onClick={onToggleOutlines}>
-          {strings.bookmarks}
-        </ButtonComponent>
-        <ButtonComponent onClick={onToggleThumbnails}>
-          {strings.thumbnails}
-        </ButtonComponent>
-        <ButtonComponent onClick={onToggleAttachments}>
-          {strings.attchments}
-        </ButtonComponent>
-        <ButtonComponent onClick={onToggleSignatures}>
-          {strings.signatures}
-        </ButtonComponent>
-      </ToolbarItemGroupComponent>
+        <Button onClick={onToggleMetadata}>{strings.metadata}</Button>
+        <Button onClick={onToggleOutlines}>{strings.bookmarks}</Button>
+        <Button onClick={onToggleThumbnails}>{strings.thumbnails}</Button>
+        <Button onClick={onToggleAttachments}>{strings.attchments}</Button>
+        <Button onClick={onToggleSignatures}>{strings.signatures}</Button>
+      </ToolbarItemGroup>
     </ErrorBoundary>
   );
 }
@@ -85,8 +75,7 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
     children,
     ...rest
   } = props;
-  const { ToolbarItemGroupComponent, ButtonComponent, DialogComponent } =
-    useUIComponents();
+  const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
   const strings = useUIStrings();
 
   const { setMode } = usePdfApplication();
@@ -97,17 +86,17 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
 
   return (
     <ErrorBoundary>
-      <ToolbarItemGroupComponent
+      <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
         {enableEdit ? (
-          <ButtonComponent onClick={handleEdit}>{strings.edit}</ButtonComponent>
+          <Button onClick={handleEdit}>{strings.edit}</Button>
         ) : null}
-        <ButtonComponent onClick={onSave}>{strings.saveAs}</ButtonComponent>
-        <ButtonComponent onClick={onPrint}>{strings.print}</ButtonComponent>
+        <Button onClick={onSave}>{strings.saveAs}</Button>
+        <Button onClick={onPrint}>{strings.print}</Button>
         {children}
-      </ToolbarItemGroupComponent>
+      </ToolbarItemGroup>
     </ErrorBoundary>
   );
 }

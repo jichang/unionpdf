@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUIComponents, useUIStrings } from '../../ui/ui.context';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import { userUrl } from '../../hooks/useUrl';
 
 export interface DownloaderProps {
@@ -9,7 +9,7 @@ export interface DownloaderProps {
 
 export function Downloader(props: DownloaderProps) {
   const { name, content } = props;
-  const { LinkComponent } = useUIComponents();
+  const { Link } = useUIComponents();
   const strings = useUIStrings();
   const url = userUrl(content);
 
@@ -17,9 +17,9 @@ export function Downloader(props: DownloaderProps) {
     <div className="pdf__downloader">
       <p className="pdf__downloader__message">{name}</p>
       <div className="pdf__downloader__action">
-        <LinkComponent download={name} href={url}>
+        <Link download={name} href={url}>
           {strings.download}
-        </LinkComponent>
+        </Link>
       </div>
     </div>
   );

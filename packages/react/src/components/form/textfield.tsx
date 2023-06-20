@@ -6,7 +6,7 @@ import {
 } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
-import { useUIComponents } from '../../ui';
+import { useUIComponents } from '../../adapters';
 
 export interface TextFieldProps {
   field: PdfWidgetAnnoObject['field'];
@@ -43,10 +43,10 @@ export function TextField(props: TextFieldProps) {
   const isPassword = !!(flag & PDF_FORM_FIELD_FLAG.TEXT_PASSWORD);
   const isMultipleLine = !!(flag & PDF_FORM_FIELD_FLAG.TEXT_MULTIPLINE);
 
-  const { TextAreaComponnet, InputComponent } = useUIComponents();
+  const { TextArea, Input } = useUIComponents();
 
   return isMultipleLine ? (
-    <TextAreaComponnet
+    <TextArea
       required={isRequired}
       disabled={isDisabled}
       name={name}
@@ -55,7 +55,7 @@ export function TextField(props: TextFieldProps) {
       onChange={changeValue}
     />
   ) : (
-    <InputComponent
+    <Input
       required={isRequired}
       disabled={isDisabled}
       type={isPassword ? 'password' : 'text'}

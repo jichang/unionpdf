@@ -1,7 +1,7 @@
 import { Position } from '@unionpdf/models';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useUIComponents, useUIStrings } from '../../ui';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import { Drawable, DrawableHandle, DrawablePath } from '../common';
 import { usePdfEditorStamps } from './stamps.context';
 import './stamps.css';
@@ -12,7 +12,7 @@ export function PdfEditorStamps() {
   const { stamps } = usePdfEditorStamps();
 
   const strings = useUIStrings();
-  const { DialogComponent, ButtonComponent } = useUIComponents();
+  const { Dialog, Button } = useUIComponents();
 
   const [drawableDialogIsShown, setDrawableDialogIsShown] = useState(false);
   const [paths, setPaths] = useState<DrawablePath[]>([]);
@@ -46,20 +46,20 @@ export function PdfEditorStamps() {
   return (
     <div className="pdf__editor__stamps">
       <header className="pdf__editor__stamps__header">
-        <ButtonComponent
+        <Button
           onClick={() => {
             setDrawableDialogIsShown(true);
           }}
         >
           {strings.createStamp}
-        </ButtonComponent>
+        </Button>
       </header>
       <div className="pdf__editor__stamps__list">
         {stamps.map((stamp, index) => {
           return <PdfEditorStamp key={index} index={index} stamp={stamp} />;
         })}
       </div>
-      <DialogComponent
+      <Dialog
         open={drawableDialogIsShown}
         onClose={() => {
           setDrawableDialogIsShown(false);
@@ -72,12 +72,10 @@ export function PdfEditorStamps() {
           onAddPath={onAddPath}
         />
         <div>
-          <ButtonComponent onClick={cancel}>{strings.cancel}</ButtonComponent>
-          <ButtonComponent onClick={submit}>
-            {strings.createStamp}
-          </ButtonComponent>
+          <Button onClick={cancel}>{strings.cancel}</Button>
+          <Button onClick={submit}>{strings.createStamp}</Button>
         </div>
-      </DialogComponent>
+      </Dialog>
     </div>
   );
 }

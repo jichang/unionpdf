@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import { PdfPageAnnotation } from '../common';
 import { ResizerPosition, useAnnotationsContext } from './annotations.context';
+import { useUIComponents } from '../../adapters';
 
 export const ResizablePdfAnnotationSubTypes = [
   PdfAnnotationSubtype.INK,
@@ -383,8 +384,10 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
     }
   }, [annotation, position, onPointerDown, onPointerCancel, onPointerUp]);
 
+  const { Button } = useUIComponents();
+
   return (
-    <button
+    <Button
       ref={componentRef}
       className={classNames(
         'pdf__page__annotation__resizer',
@@ -395,6 +398,6 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
       {...rest}
     >
       +
-    </button>
+    </Button>
   );
 }

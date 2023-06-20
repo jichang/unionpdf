@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { Button, Select, Toolbar } from './ui';
+import { Button, Select, Toolbar } from './components';
 
 describe('UI', () => {
   it('Button should render button with label', () => {

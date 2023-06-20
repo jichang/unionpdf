@@ -1,6 +1,6 @@
 import { PdfZoomMode, Rotation } from '@unionpdf/models';
 import React, { ChangeEvent, ComponentProps, useCallback } from 'react';
-import { useUIComponents, useUIStrings } from '../../ui/ui.context';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import './pages.toolbar.css';
 import { ErrorBoundary } from '../../core';
 import { usePdfDocument } from '../../core/document.context';
@@ -29,12 +29,7 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
     ...rest
   } = props;
   const strings = useUIStrings();
-  const {
-    ButtonComponent,
-    ToolbarItemGroupComponent,
-    InputComponent,
-    SelectComponent,
-  } = useUIComponents();
+  const { Button, ToolbarItemGroup, Input, Select } = useUIComponents();
 
   const { doc } = usePdfDocument();
   const { currPageIndex, gotoPage } = usePdfNavigator();
@@ -81,17 +76,17 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
 
   return (
     <ErrorBoundary>
-      <ToolbarItemGroupComponent
+      <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <SelectComponent
+        <Select
           className="pdf__toolbar__select pdf__toolbar__select--rotation"
           value={rotation}
           onChange={changeRotation}
           options={rotationOptions}
         />
-        <InputComponent
+        <Input
           className="pdf__toolbar__input pdf__toolbar__input--scalefactor"
           type="number"
           min="0.25"
@@ -100,7 +95,7 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
           value={scaleFactor}
           onChange={changeScaleFactor}
         />
-        <InputComponent
+        <Input
           className="pdf__toolbar__input pdf__toolbar__input--page"
           value={currPageIndex + 1}
           min="1"
@@ -108,10 +103,8 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
           type="number"
           onChange={navigate}
         />
-        <ButtonComponent onClick={toggleIsSearchPanelOpened}>
-          {strings.search}
-        </ButtonComponent>
-      </ToolbarItemGroupComponent>
+        <Button onClick={toggleIsSearchPanelOpened}>{strings.search}</Button>
+      </ToolbarItemGroup>
     </ErrorBoundary>
   );
 }

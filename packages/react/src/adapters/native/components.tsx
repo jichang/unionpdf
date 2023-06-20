@@ -1,15 +1,26 @@
-import React, { ComponentProps, useEffect, useRef } from 'react';
-import './ui.css';
+import React, { useEffect, useRef } from 'react';
 import classNames from 'classnames';
-
-export interface IconProps extends ComponentProps<'span'> {
-  name: string;
-}
+import './components.css';
+import {
+  IconProps,
+  ToolbarProps,
+  ToolbarItemGroupProps,
+  SelectProps,
+  InputProps,
+  TextAreaProps,
+  CheckboxProps,
+  RadioButtonProps,
+  LabelProps,
+  FormProps,
+  DialogProps,
+  ButtonProps,
+  LinkProps,
+} from '../uicomponents.context';
 
 export function Icon(props: IconProps) {
   const { name, className, ...rest } = props;
 
-  let svg = null;
+  let svg: JSX.Element | null = null;
   switch (name) {
     case 'ArrowRight':
       svg = (
@@ -47,8 +58,6 @@ export function Icon(props: IconProps) {
   );
 }
 
-export interface ButtonProps extends ComponentProps<'button'> {}
-
 export function Button(props: ButtonProps) {
   const { className, ...rest } = props;
   return (
@@ -56,14 +65,10 @@ export function Button(props: ButtonProps) {
   );
 }
 
-export interface LinkProps extends ComponentProps<'a'> {}
-
 export function Link(props: LinkProps) {
   const { className, ...rest } = props;
   return <a className={classNames('pdf__ui__link', className)} {...rest} />;
 }
-
-export interface ToolbarProps extends ComponentProps<'div'> {}
 
 export function Toolbar(props: ToolbarProps) {
   const { className, ...rest } = props;
@@ -71,8 +76,6 @@ export function Toolbar(props: ToolbarProps) {
     <div className={classNames('pdf__ui__toolbar', className)} {...rest} />
   );
 }
-
-export interface ToolbarItemGroupProps extends ComponentProps<'div'> {}
 
 export function ToolbarItemGroup(props: ToolbarItemGroupProps) {
   const { className, ...rest } = props;
@@ -82,13 +85,6 @@ export function ToolbarItemGroup(props: ToolbarItemGroupProps) {
       {...rest}
     />
   );
-}
-
-export interface SelectProps extends ComponentProps<'select'> {
-  options: {
-    label: string;
-    value: string;
-  }[];
 }
 
 export function Select(props: SelectProps) {
@@ -107,8 +103,6 @@ export function Select(props: SelectProps) {
   );
 }
 
-export interface InputProps extends ComponentProps<'input'> {}
-
 export function Input(props: InputProps) {
   const { className, ...rest } = props;
   return (
@@ -116,16 +110,12 @@ export function Input(props: InputProps) {
   );
 }
 
-export interface TextAreaProps extends ComponentProps<'textarea'> {}
-
 export function TextArea(props: TextAreaProps) {
   const { className, ...rest } = props;
   return (
     <textarea className={classNames('pdf__ui__input', className)} {...rest} />
   );
 }
-
-export interface CheckboxProps extends ComponentProps<'input'> {}
 
 export function Checkbox(props: CheckboxProps) {
   const { className, ...rest } = props;
@@ -138,8 +128,6 @@ export function Checkbox(props: CheckboxProps) {
   );
 }
 
-export interface RadioButtonProps extends ComponentProps<'input'> {}
-
 export function RadioButton(props: RadioButtonProps) {
   const { className, ...rest } = props;
   return (
@@ -151,8 +139,6 @@ export function RadioButton(props: RadioButtonProps) {
   );
 }
 
-export interface LabelProps extends ComponentProps<'label'> {}
-
 export function Label(props: LabelProps) {
   const { className, ...rest } = props;
 
@@ -161,15 +147,11 @@ export function Label(props: LabelProps) {
   );
 }
 
-export interface FormProps extends ComponentProps<'form'> {}
-
 export function Form(props: FormProps) {
   const { className, ...rest } = props;
 
   return <form className={classNames('pdf__ui__form', className)} {...rest} />;
 }
-
-export interface DialogProps extends ComponentProps<'dialog'> {}
 
 export function Dialog(props: DialogProps) {
   const { open, className, ...rest } = props;
@@ -192,3 +174,19 @@ export function Dialog(props: DialogProps) {
     />
   );
 }
+
+export const components = {
+  Dialog,
+  Toolbar,
+  ToolbarItemGroup,
+  Button,
+  Icon,
+  Link,
+  Form,
+  Label,
+  Select,
+  Input,
+  TextArea,
+  RadioButton,
+  Checkbox,
+};

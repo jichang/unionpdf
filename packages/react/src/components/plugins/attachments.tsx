@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { ignore, PdfAttachmentObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
-import { useUIStrings } from '../../ui/ui.context';
+import { useUIComponents, useUIStrings } from '../../adapters';
 
 export interface PdfAttachmentsProps extends ComponentProps<'div'> {}
 
@@ -29,6 +29,7 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
     }
   }, [engine, doc]);
 
+  const { Button } = useUIComponents();
   const strings = useUIStrings();
 
   return (
@@ -48,7 +49,7 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
                 <td>{attachment.name}</td>
                 <td>{attachment.creationDate}</td>
                 <td>
-                  <button
+                  <Button
                     onClick={async () => {
                       if (engine && doc) {
                         engine
@@ -64,7 +65,7 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
                     }}
                   >
                     {strings.download}
-                  </button>
+                  </Button>
                 </td>
               </tr>
             );

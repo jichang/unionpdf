@@ -1,7 +1,7 @@
 import { ignore, PdfPageObject } from '@unionpdf/models';
 import React, { useCallback, useState } from 'react';
 import { usePdfDocument, usePdfEngine } from '../../core';
-import { useUIComponents, useUIStrings } from '../../ui';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import { PdfThumbnails } from '../plugins/thumbnails';
 import './extractor.css';
 
@@ -25,7 +25,7 @@ export function PdfEditorExtractor() {
     [setSelectedIndexes]
   );
 
-  const { ButtonComponent } = useUIComponents();
+  const { Button } = useUIComponents();
   const strings = useUIStrings();
 
   const { doc } = usePdfDocument();
@@ -70,12 +70,8 @@ export function PdfEditorExtractor() {
         onClickCheckbox={handleClickCheckbox}
       />
       <div className="pdf__editor__extractor__footer">
-        <ButtonComponent onClick={extractPages}>
-          {strings.extractPages}
-        </ButtonComponent>
-        <ButtonComponent onClick={extractText}>
-          {strings.extractText}
-        </ButtonComponent>
+        <Button onClick={extractPages}>{strings.extractPages}</Button>
+        <Button onClick={extractText}>{strings.extractText}</Button>
       </div>
     </div>
   );

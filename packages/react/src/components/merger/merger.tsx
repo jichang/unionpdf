@@ -1,7 +1,7 @@
 import { PdfFile } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { usePdfEngine } from '../../core';
-import { useUIComponents, useUIStrings } from '../../ui/ui.context';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import { Downloader } from '../common';
 import './merger.css';
 
@@ -21,7 +21,7 @@ export interface PdfMergerProps {
 export function PdfMerger(props: PdfMergerProps) {
   const { files, onRemoveFile } = props;
   const strings = useUIStrings();
-  const { ButtonComponent } = useUIComponents();
+  const { Button } = useUIComponents();
 
   const [step, setStep] = useState(MergeStep.Prepare);
 
@@ -61,22 +61,20 @@ export function PdfMerger(props: PdfMergerProps) {
                       <tr key={file.name}>
                         <td>{file.name}</td>
                         <td>
-                          <ButtonComponent
+                          <Button
                             onClick={() => {
                               onRemoveFile(file);
                             }}
                           >
                             {strings.remove}
-                          </ButtonComponent>
+                          </Button>
                         </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
-              <ButtonComponent onClick={startMerge}>
-                {strings.merge}
-              </ButtonComponent>
+              <Button onClick={startMerge}>{strings.merge}</Button>
             </div>
           )}
         </section>

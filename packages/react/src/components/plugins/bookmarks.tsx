@@ -10,7 +10,7 @@ import './bookmarks.css';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
-import { useUIComponents } from '../../ui';
+import { useUIComponents } from '../../adapters';
 
 export const PDF_NAVIGATOR_SOURCE_BOOKMARKS = 'PdfBookmarks';
 
@@ -95,7 +95,7 @@ export interface PdfBookmarkEntryProps {
 
 export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
   const { currPageIndex, bookmark, onClick } = props;
-  const { IconComponent } = useUIComponents();
+  const { Icon } = useUIComponents();
 
   let isCurrent = false;
 
@@ -142,7 +142,7 @@ export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
       }`}
     >
       <div className="pdf__bookmarks__entry__header">
-        <IconComponent name={iconName} onClick={toggleIsFold} />
+        <Icon name={iconName} onClick={toggleIsFold} />
         <span className="title" onClick={activiate}>
           {bookmark.title}
         </span>
