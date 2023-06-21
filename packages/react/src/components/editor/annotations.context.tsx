@@ -28,12 +28,12 @@ export interface DraggableData {
 
 export interface AnnotationsContextValue {
   onPointerDown: (
-    evt: PointerEvent,
+    evt: React.PointerEvent,
     annotation: PdfAnnotationObject,
     option: DraggableOption
   ) => void;
-  onPointerUp: (evt: PointerEvent) => void;
-  onPointerCancel: (evt: PointerEvent) => void;
+  onPointerUp: (evt: React.PointerEvent) => void;
+  onPointerCancel: (evt: React.PointerEvent) => void;
 }
 
 export const AnnotationsContext = React.createContext<AnnotationsContextValue>({

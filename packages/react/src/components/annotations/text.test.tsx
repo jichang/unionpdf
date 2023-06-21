@@ -20,7 +20,7 @@ describe('PdfPageTextAnnotation', () => {
       },
     };
     const text: PdfTextAnnoObject = {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.TEXT,

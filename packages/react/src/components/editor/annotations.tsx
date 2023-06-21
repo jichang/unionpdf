@@ -186,7 +186,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
 
   const handlePointerDown = useCallback(
     (
-      evt: PointerEvent,
+      evt: React.PointerEvent,
       annotation: PdfAnnotationObject,
       option: DraggableOption
     ) => {
@@ -225,7 +225,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
   );
 
   const handlePointerCancel = useCallback(
-    (evt: PointerEvent) => {
+    (evt: React.PointerEvent) => {
       draggableDataRef.current = null;
       setStartPosition(null);
       setEndPosition(null);
@@ -234,7 +234,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
   );
 
   const handlePointerUp = useCallback(
-    (evt: PointerEvent) => {
+    (evt: React.PointerEvent) => {
       const draggableData = draggableDataRef.current;
       if (draggableData && startPosition && endPosition) {
         const endPosition = {

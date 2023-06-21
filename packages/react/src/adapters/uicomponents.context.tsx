@@ -11,6 +11,9 @@ export interface ButtonProps extends ComponentProps<'button'> {}
 export interface IconProps extends ComponentProps<'span'> {
   name: string;
 }
+export interface IconButtonProps extends ComponentProps<'button'> {
+  iconName: string;
+}
 
 export interface FormProps extends ComponentProps<'form'> {}
 export interface LabelProps extends ComponentProps<'label'> {}
@@ -35,6 +38,7 @@ export interface UIComponents {
   ToolbarItemGroup: UIComponent<ToolbarItemGroupProps>;
   Link: UIComponent<LinkProps>;
   Button: UIComponent<ButtonProps>;
+  IconButton: UIComponent<IconButtonProps>;
   Icon: UIComponent<IconProps>;
   Form: UIComponent<FormProps>;
   Label: UIComponent<LabelProps>;

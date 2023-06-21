@@ -15,9 +15,6 @@
 
 .pdf__page__annotation__resizer {
   position: absolute;
-
-  width: 1rem;
-  height: 1rem;
 }
 
 .pdf__page__annotation__resizer--topleft {

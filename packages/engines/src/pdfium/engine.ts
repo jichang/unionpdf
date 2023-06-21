@@ -1071,11 +1071,7 @@ export class PdfiumEngine implements PdfEngine {
       const inkPointsPtr = this.malloc(inkPointsCount * 8);
       for (let i = 0; i < inkPointsCount; i++) {
         const point = inkStroke.points[i];
-        const { x, y } = this.convertDevicePointToPagePoint(
-          pagePtr,
-          page,
-          point
-        );
+        const { x, y } = this.convertDevicePointToPagePoint(page, point);
 
         this.wasmModule.setValue(inkPointsPtr + i * 8, x, 'float');
         this.wasmModule.setValue(inkPointsPtr + i * 8 + 4, y, 'float');
@@ -2385,7 +2381,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.TEXT,
@@ -2439,7 +2435,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.FREETEXT,
@@ -2510,7 +2506,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.LINK,
@@ -2544,7 +2540,7 @@ export class PdfiumEngine implements PdfEngine {
     const field = this.readPdfWidgetAnnoField(formHandle, annotationPtr);
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.WIDGET,
@@ -2574,7 +2570,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.FILEATTACHMENT,
@@ -2630,7 +2626,7 @@ export class PdfiumEngine implements PdfEngine {
             pointsPtr + j * 8 + 4,
             'float'
           );
-          const { x, y } = this.convertPagePointToDevicePoint(pagePtr, page, {
+          const { x, y } = this.convertPagePointToDevicePoint(page, {
             x: pointX,
             y: pointY,
           });
@@ -2644,7 +2640,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.INK,
@@ -2675,7 +2671,7 @@ export class PdfiumEngine implements PdfEngine {
     const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POLYGON,
@@ -2706,7 +2702,7 @@ export class PdfiumEngine implements PdfEngine {
     const vertices = this.readPdfAnnoVertices(page, pagePtr, annotationPtr);
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POLYLINE,
@@ -2745,14 +2741,14 @@ export class PdfiumEngine implements PdfEngine {
 
     const startPointX = this.wasmModule.getValue(startPointPtr, 'float');
     const startPointY = this.wasmModule.getValue(startPointPtr + 4, 'float');
-    const startPoint = this.convertPagePointToDevicePoint(pagePtr, page, {
+    const startPoint = this.convertPagePointToDevicePoint(page, {
       x: startPointX,
       y: startPointY,
     });
 
     const endPointX = this.wasmModule.getValue(endPointPtr, 'float');
     const endPointY = this.wasmModule.getValue(endPointPtr + 4, 'float');
-    const endPoint = this.convertPagePointToDevicePoint(pagePtr, page, {
+    const endPoint = this.convertPagePointToDevicePoint(page, {
       x: endPointX,
       y: endPointY,
     });
@@ -2761,7 +2757,7 @@ export class PdfiumEngine implements PdfEngine {
     this.free(endPointPtr);
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.LINE,
@@ -2792,7 +2788,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.HIGHLIGHT,
@@ -2821,7 +2817,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.UNDERLINE,
@@ -2850,7 +2846,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.STRIKEOUT,
@@ -2879,7 +2875,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.SQUIGGLY,
@@ -2908,7 +2904,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.CARET,
@@ -3000,7 +2996,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.STAMP,
@@ -3107,7 +3103,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.CIRCLE,
@@ -3136,7 +3132,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.SQUARE,
@@ -3166,7 +3162,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type,
@@ -3233,7 +3229,7 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDFPage_CloseAnnot(popupAnnotationPtr);
 
     return {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: page.index,
       id: index,
       type: PdfAnnotationSubtype.POPUP,
@@ -3274,7 +3270,7 @@ export class PdfiumEngine implements PdfEngine {
         'float'
       );
 
-      const { x, y } = this.convertPagePointToDevicePoint(pagePtr, page, {
+      const { x, y } = this.convertPagePointToDevicePoint(page, {
         x: pointX,
         y: pointY,
       });
@@ -3749,55 +3745,21 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   private convertDevicePointToPagePoint(
-    pagePtr: number,
     page: PdfPageObject,
     position: Position
   ) {
-    const pageXPtr = this.malloc(8);
-    const pageYPtr = this.malloc(8);
-    this.wasmModuleWrapper.FPDF_DeviceToPage(
-      pagePtr,
-      0,
-      0,
-      page.size.width,
-      page.size.height,
-      0,
-      position.x,
-      position.y,
-      pageXPtr,
-      pageYPtr
-    );
-    const x = this.wasmModule.getValue(pageXPtr, 'double');
-    const y = this.wasmModule.getValue(pageYPtr, 'double');
-    this.free(pageXPtr);
-    this.free(pageYPtr);
+    const x = position.x;
+    const y = page.size.height - position.y;
 
     return { x, y };
   }
 
   private convertPagePointToDevicePoint(
-    pagePtr: number,
     page: PdfPageObject,
     position: Position
   ) {
-    const deviceXPtr = this.malloc(4);
-    const deviceYPtr = this.malloc(4);
-    this.wasmModuleWrapper.FPDF_PageToDevice(
-      pagePtr,
-      0,
-      0,
-      page.size.width,
-      page.size.height,
-      0,
-      position.x,
-      position.y,
-      deviceXPtr,
-      deviceYPtr
-    );
-    const x = this.wasmModule.getValue(deviceXPtr, 'i32');
-    const y = this.wasmModule.getValue(deviceYPtr, 'i32');
-    this.free(deviceXPtr);
-    this.free(deviceYPtr);
+    const x = position.x;
+    const y = page.size.height - position.y;
 
     return { x, y };
   }
@@ -3812,7 +3774,7 @@ export class PdfiumEngine implements PdfEngine {
       bottom: number;
     }
   ): Rect {
-    const { x, y } = this.convertPagePointToDevicePoint(pagePtr, page, {
+    const { x, y } = this.convertPagePointToDevicePoint(page, {
       x: pageRect.left,
       y: pageRect.top,
     });

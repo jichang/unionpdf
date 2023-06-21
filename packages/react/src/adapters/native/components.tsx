@@ -15,6 +15,8 @@ import {
   DialogProps,
   ButtonProps,
   LinkProps,
+  UIComponents,
+  IconButtonProps,
 } from '../uicomponents.context';
 
 export function Icon(props: IconProps) {
@@ -22,6 +24,17 @@ export function Icon(props: IconProps) {
 
   let svg: JSX.Element | null = null;
   switch (name) {
+    case 'Drag':
+      svg = (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1024 1024"
+          focusable="false"
+        >
+          <path d="M406.4 246.4L480 176V384c0 19.2 12.8 32 32 32s32-12.8 32-32V176l73.6 73.6c6.4 3.2 12.8 6.4 22.4 6.4s16-3.2 22.4-9.6c12.8-12.8 12.8-32 0-44.8l-128-128c-3.2-3.2-6.4-6.4-9.6-6.4-6.4-3.2-16-3.2-25.6 0-3.2 3.2-6.4 3.2-9.6 6.4l-128 128c-12.8 12.8-12.8 32 0 44.8s32 12.8 44.8 0zM617.6 777.6L544 851.2V640c0-19.2-12.8-32-32-32s-32 12.8-32 32v211.2l-73.6-73.6c-12.8-12.8-32-12.8-44.8 0s-12.8 32 0 44.8l128 128c3.2 3.2 6.4 6.4 9.6 6.4 3.2 3.2 9.6 3.2 12.8 3.2s9.6 0 12.8-3.2c3.2-3.2 6.4-3.2 9.6-6.4l128-128c12.8-12.8 12.8-32 0-44.8s-32-12.8-44.8 0zM956.8 524.8c3.2-6.4 3.2-16 0-25.6-3.2-3.2-3.2-6.4-6.4-9.6l-128-128c-12.8-12.8-32-12.8-44.8 0s-12.8 32 0 44.8l73.6 73.6H640c-19.2 0-32 12.8-32 32s12.8 32 32 32h211.2l-73.6 73.6c-12.8 12.8-12.8 32 0 44.8 6.4 6.4 16 9.6 22.4 9.6s16-3.2 22.4-9.6l128-128c3.2 0 6.4-6.4 6.4-9.6zM172.8 544H384c19.2 0 32-12.8 32-32s-12.8-32-32-32H172.8l73.6-73.6c12.8-12.8 12.8-32 0-44.8s-32-12.8-44.8 0l-128 128c-3.2 3.2-6.4 6.4-6.4 9.6-3.2 6.4-3.2 16 0 25.6 3.2 3.2 3.2 6.4 6.4 9.6l128 128c6.4 6.4 12.8 9.6 22.4 9.6s16-3.2 22.4-9.6c12.8-12.8 12.8-32 0-44.8L172.8 544z" />
+        </svg>
+      );
+      break;
     case 'ArrowRight':
       svg = (
         <svg
@@ -62,6 +75,19 @@ export function Button(props: ButtonProps) {
   const { className, ...rest } = props;
   return (
     <button className={classNames('pdf__ui__button', className)} {...rest} />
+  );
+}
+
+export function IconButton(props: IconButtonProps) {
+  const { iconName, className, children, ...rest } = props;
+  return (
+    <button
+      className={classNames('pdf__ui__button pdf__ui__button--icon', className)}
+      {...rest}
+    >
+      <Icon name={iconName} />
+      {children}
+    </button>
   );
 }
 
@@ -175,11 +201,12 @@ export function Dialog(props: DialogProps) {
   );
 }
 
-export const components = {
+export const components: UIComponents = {
   Dialog,
   Toolbar,
   ToolbarItemGroup,
   Button,
+  IconButton,
   Icon,
   Link,
   Form,

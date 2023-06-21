@@ -284,39 +284,33 @@ export function PdfPageAnnotationMover(props: PdfPageAnnotationMoverProps) {
   const { onPointerDown, onPointerCancel, onPointerUp } =
     useAnnotationsContext();
 
-  const componentRef = useRef<HTMLDivElement>(null);
+  const handlePointerDown = React.useCallback(
+    (evt: React.PointerEvent) => {
+      onPointerDown(evt, annotation, { type: 'mover' });
+    },
+    [annotation, onPointerDown]
+  );
 
-  useEffect(() => {
-    const componentElem = componentRef.current;
-    if (componentElem) {
-      const handlePointerDown = (evt: PointerEvent) => {
-        onPointerDown(evt, annotation, { type: 'mover' });
-      };
+  const handlePointerUp = React.useCallback(
+    (evt: React.PointerEvent) => {
+      onPointerUp(evt);
+    },
+    [onPointerUp]
+  );
 
-      const handlePointerUp = (evt: PointerEvent) => {
-        onPointerUp(evt);
-      };
-
-      const handlePointerCancel = (evt: PointerEvent) => {
-        onPointerCancel(evt);
-      };
-
-      componentElem.addEventListener('pointerdown', handlePointerDown);
-      componentElem.addEventListener('pointerup', handlePointerUp);
-      componentElem.addEventListener('pointercancel', handlePointerCancel);
-
-      return () => {
-        componentElem.removeEventListener('pointerdown', handlePointerDown);
-        componentElem.removeEventListener('pointerup', handlePointerUp);
-        componentElem.removeEventListener('pointercancel', handlePointerCancel);
-      };
-    }
-  }, [annotation, onPointerDown, onPointerCancel, onPointerUp]);
+  const handlePointerCancel = React.useCallback(
+    (evt: React.PointerEvent) => {
+      onPointerCancel(evt);
+    },
+    [onPointerCancel]
+  );
 
   return (
     <div
-      ref={componentRef}
       className={classNames('pdf__page__annotation__mover', className)}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       {...rest}
     >
       {children}
@@ -355,49 +349,42 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
   const { onPointerDown, onPointerCancel, onPointerUp } =
     useAnnotationsContext();
 
-  const componentRef = useRef<HTMLButtonElement>(null);
+  const handlePointerDown = React.useCallback(
+    (evt: React.PointerEvent) => {
+      onPointerDown(evt, annotation, { type: 'resizer', position });
+    },
+    [annotation, position, onPointerDown]
+  );
 
-  useEffect(() => {
-    const componentElem = componentRef.current;
-    if (componentElem) {
-      const handlePointerDown = (evt: PointerEvent) => {
-        onPointerDown(evt, annotation, { type: 'resizer', position });
-      };
+  const handlePointerUp = React.useCallback(
+    (evt: React.PointerEvent) => {
+      onPointerUp(evt);
+    },
+    [onPointerUp]
+  );
 
-      const handlePointerUp = (evt: PointerEvent) => {
-        onPointerUp(evt);
-      };
+  const handlePointerCancel = React.useCallback(
+    (evt: React.PointerEvent) => {
+      onPointerCancel(evt);
+    },
+    [onPointerCancel]
+  );
 
-      const handlePointerCancel = (evt: PointerEvent) => {
-        onPointerCancel(evt);
-      };
-
-      componentElem.addEventListener('pointerdown', handlePointerDown);
-      componentElem.addEventListener('pointerup', handlePointerUp);
-      componentElem.addEventListener('pointercancel', handlePointerCancel);
-
-      return () => {
-        componentElem.removeEventListener('pointerdown', handlePointerDown);
-        componentElem.removeEventListener('pointerup', handlePointerUp);
-        componentElem.removeEventListener('pointercancel', handlePointerCancel);
-      };
-    }
-  }, [annotation, position, onPointerDown, onPointerCancel, onPointerUp]);
-
-  const { Button } = useUIComponents();
+  const { IconButton } = useUIComponents();
 
   return (
-    <Button
-      ref={componentRef}
+    <IconButton
       className={classNames(
         'pdf__page__annotation__resizer',
         `pdf__page__annotation__resizer--${ResizerPositionClassName[position]}`,
         className
       )}
       type="button"
+      iconName="Drag"
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
       {...rest}
-    >
-      +
-    </Button>
+    />
   );
 }

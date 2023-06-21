@@ -239,117 +239,110 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       return;
     }
 
-    const commitOperations = undo.reduce((operations, operation) => {
-      if (operations.length === 0) {
-        return [operation];
+    const operations: Operation[] = [];
+    const pageOperations: Record<number, Operation[]> = {};
+
+    for (const operation of undo) {
+      if (!pageOperations[operation.page.index]) {
+        pageOperations[operation.page.index] = [];
       }
-
-      let result: Operation[] = [];
-      switch (operation.action) {
-        case 'create':
-          result = [...operations, operation];
-          break;
-        case 'remove':
-          {
-            result = operations.filter((_operation) => {
-              return _operation.annotation.id !== operation.annotation.id;
-            });
-            if (
-              operation.annotation.status === PdfAnnotationObjectStatus.Commited
-            ) {
-              result = [...operations, operation];
-            }
-          }
-          break;
-        case 'transform':
-          {
-            const needReduce = operations.findIndex((_operation) => {
-              return _operation.annotation.id === operation.annotation.id;
-            });
-            if (!needReduce) {
-              result = [...operations, operation];
-            } else {
-              operations.forEach((_operation) => {
-                if (operation.annotation.id !== operation.annotation.id) {
-                  return _operation;
-                }
-
-                switch (_operation.action) {
-                  case 'create':
-                    _operation.annotation.rect = {
+      const operations = pageOperations[operation.page.index];
+      const previousOperationIndex = operations.findIndex((_operation) => {
+        return operation.annotation.id === _operation.annotation.id;
+      });
+      if (previousOperationIndex === -1) {
+        operations.push(operation);
+      } else {
+        switch (operation.action) {
+          case 'create':
+            // should not happen
+            break;
+          case 'transform':
+            {
+              const previousOperation = operations[previousOperationIndex];
+              switch (previousOperation.action) {
+                case 'create':
+                  {
+                    previousOperation.annotation.rect = {
                       origin: {
                         x:
-                          _operation.annotation.rect.origin.x +
+                          previousOperation.annotation.rect.origin.x +
                           operation.params.offset.x,
                         y:
-                          _operation.annotation.rect.origin.y +
+                          previousOperation.annotation.rect.origin.y +
                           operation.params.offset.y,
                       },
                       size: {
                         width:
-                          _operation.annotation.rect.size.width *
+                          previousOperation.annotation.rect.size.width *
                           operation.params.scale.width,
                         height:
-                          _operation.annotation.rect.size.height *
+                          previousOperation.annotation.rect.size.height *
                           operation.params.scale.height,
                       },
                     };
-                    break;
-                  case 'remove':
-                    // should not happen
-                    break;
-                  case 'transform':
-                    _operation.params = {
+                  }
+                  break;
+                case 'transform':
+                  {
+                    previousOperation.params = {
                       offset: {
                         x:
-                          _operation.params.offset.x +
+                          previousOperation.params.offset.x +
                           operation.params.offset.x,
                         y:
-                          _operation.params.offset.y +
+                          previousOperation.params.offset.y +
                           operation.params.offset.y,
                       },
                       scale: {
                         width:
-                          _operation.params.scale.width *
+                          previousOperation.params.scale.width *
                           operation.params.scale.width,
                         height:
-                          _operation.params.scale.height *
+                          previousOperation.params.scale.height *
                           operation.params.scale.height,
                       },
                     };
-                    break;
-                }
-
-                return result;
-              });
-
-              result = operations;
+                  }
+                  break;
+                case 'remove':
+                  // should not happen
+                  break;
+              }
             }
-          }
-          break;
+            break;
+          case 'remove':
+            operations[previousOperationIndex] = operation;
+            break;
+        }
       }
+    }
 
-      return result;
-    }, [] as Operation[]);
+    for (const pageIndex in pageOperations) {
+      const operations = pageOperations[pageIndex];
+      operations.sort((operationA, operationB) => {
+        return operationB.annotation.id - operationA.annotation.id;
+      });
 
-    for (const commitOperation of commitOperations) {
-      const { action, page, annotation } = commitOperation;
-      switch (action) {
-        case 'create':
-          engine.createPageAnnotation(doc, page, annotation);
-          break;
-        case 'transform':
-          const { params } = commitOperation;
-          const task = engine.transformPageAnnotation(
-            doc,
-            page,
-            annotation,
-            params
-          );
-          break;
-        case 'remove':
-          engine.removePageAnnotation(doc, page, annotation);
-          break;
+      for (const operation of operations) {
+        const { action, page, annotation } = operation;
+        switch (action) {
+          case 'create':
+            engine.createPageAnnotation(doc, page, annotation);
+            break;
+          case 'transform':
+            const { params } = operation;
+            const task = engine.transformPageAnnotation(
+              doc,
+              page,
+              annotation,
+              params
+            );
+            break;
+          case 'remove':
+            engine.removePageAnnotation(doc, page, annotation);
+            break;
+        }
       }
     }
 

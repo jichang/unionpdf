@@ -20,7 +20,7 @@ describe('PdfPageFreeText', () => {
       },
     };
     const text: PdfFreeTextAnnoObject = {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.FREETEXT,

@@ -23,7 +23,7 @@ describe('PdfPageLink', () => {
       },
     };
     const link: PdfLinkAnnoObject = {
-      status: PdfAnnotationObjectStatus.Commited,
+      status: PdfAnnotationObjectStatus.Committed,
       pageIndex: 0,
       id: 0,
       type: PdfAnnotationSubtype.LINK,

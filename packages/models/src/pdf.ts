@@ -194,7 +194,7 @@ export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
 
 export enum PdfAnnotationObjectStatus {
   Created,
-  Commited,
+  Committed,
 }
 
 export enum AppearanceMode {
