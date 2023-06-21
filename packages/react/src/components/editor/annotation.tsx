@@ -41,7 +41,16 @@ export interface PdfPageEditorAnnotationProps {
 export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
 
-  const { annotationTool, exec } = usePdfEditor();
+  const { annotationTool, exec, copy } = usePdfEditor();
+
+  const handleKeyDown = useCallback(
+    (evt: React.KeyboardEvent) => {
+      if (evt.key === 'c' && (evt.ctrlKey || evt.metaKey)) {
+        copy(annotation);
+      }
+    },
+    [annotation, copy]
+  );
 
   const handleKeyUp = useCallback(
     (evt: React.KeyboardEvent) => {
@@ -217,6 +226,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       rotation={rotation}
       scaleFactor={scaleFactor}
       tabIndex={0}
+      onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
     >
       <PdfPageAnnotationMover

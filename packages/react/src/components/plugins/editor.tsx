@@ -6,12 +6,16 @@ import {
   ErrorBoundary,
   PdfApplicationMode,
   usePdfApplication,
+  usePdfDocument,
+  usePdfNavigator,
 } from '../../core';
 import { PdfEditorExtractor, PdfEditorStamps } from '../editor';
 
 export function PdfEditor() {
   const { mode } = usePdfApplication();
-  const { tool, redo, undo } = usePdfEditor();
+  const { doc } = usePdfDocument();
+  const pdfNavigator = usePdfNavigator();
+  const { tool, redo, undo, paste } = usePdfEditor();
 
   useEffect(() => {
     if (mode === PdfApplicationMode.Edit) {
@@ -23,6 +27,11 @@ export function PdfEditor() {
           } else if (evt.key === 'y') {
             evt.preventDefault();
             redo();
+          } else if (evt.key === 'v') {
+            if (doc) {
+              const page = doc.pages[pdfNavigator.currPageIndex];
+              paste(page);
+            }
           }
         }
       };
@@ -33,7 +42,7 @@ export function PdfEditor() {
         window.removeEventListener('keydown', handleKey);
       };
     }
-  }, [mode, undo, redo]);
+  }, [mode, doc, pdfNavigator, undo, redo, paste]);
 
   if (mode === PdfApplicationMode.View) {
     return null;

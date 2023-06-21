@@ -1,6 +1,5 @@
 import {
   PdfAnnotationObject,
-  PdfAnnotationObjectStatus,
   PdfPageObject,
   Position,
   Size,
@@ -13,6 +12,7 @@ import React, {
   useState,
 } from 'react';
 import { useLogger, usePdfDocument, usePdfEngine } from '../../core';
+import { clone } from '../helpers/editor';
 
 export const EDITOR_CONTEXT_LOG_SOURCE = 'PdfEditorContext';
 
@@ -73,6 +73,8 @@ export interface PdfEditorContextValue {
   redo: () => void;
   commit: () => void;
   discard: () => void;
+  copy: (annotation: PdfAnnotationObject) => void;
+  paste: (page: PdfPageObject) => void;
 }
 
 export const PdfEditorContext = React.createContext<PdfEditorContextValue>({
@@ -92,6 +94,8 @@ export const PdfEditorContext = React.createContext<PdfEditorContextValue>({
   redo: () => {},
   commit: () => {},
   discard: () => {},
+  copy: () => {},
+  paste: () => {},
 });
 
 export interface PdfEditorContextProviderProps {
@@ -364,14 +368,38 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     });
   }, [logger, setStacks]);
 
+  const [annotation, setAnnotation] = useState<PdfAnnotationObject>();
+
+  const copy = useCallback(
+    (annotation: PdfAnnotationObject) => {
+      setAnnotation(annotation);
+    },
+    [setAnnotation]
+  );
+
+  const paste = useCallback(
+    (page: PdfPageObject) => {
+      if (annotation) {
+        const cloned = clone(annotation);
+        cloned.id = Date.now();
+        cloned.pageIndex = page.index;
+        exec({
+          id: `${Date.now()}.${Math.random()}`,
+          action: 'create',
+          page,
+          annotation: cloned,
+        });
+      }
+    },
+    [annotation, exec]
+  );
+
   useEffect(() => {
-    return () => {
-      setStacks({
-        undo: [],
-        redo: [],
-        pages: {},
-      });
-    };
+    setStacks({
+      undo: [],
+      redo: [],
+      pages: {},
+    });
   }, [doc]);
 
   return (
@@ -384,6 +412,8 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         setAnnotationTool,
         queryStatus,
         queryByPageIndex,
+        copy,
+        paste,
         exec,
         undo,
         redo,

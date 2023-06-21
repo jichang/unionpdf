@@ -327,6 +327,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
   return (
     <AnnotationsContext.Provider value={handles}>
       <div
+        tabIndex={0}
         className={classNames('pdf__page__annotations--editor', {
           'pdf__page__annotations--droptarget': isDropTarget,
         })}
