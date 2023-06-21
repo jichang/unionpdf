@@ -18,6 +18,7 @@
   "scripts": {
     "lerna": "lerna",
     "bootstrap": "lerna bootstrap",
+    "doc": "lerna run doc",
     "build": "lerna run build",
     "typecheck": "lerna run typecheck",
     "test": "lerna run test",

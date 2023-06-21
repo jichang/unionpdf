@@ -16,7 +16,7 @@
   },
   "scripts": {
     "api-extractor": "api-extractor",
-    "doc": "api-extractor run --local --verbose && api-documenter markdown",
+    "doc": "api-extractor run --local --verbose && api-documenter markdown --input-folder ./temp",
     "typecheck": "tsc --noEmit",
     "clean": "del-cli --force dist .parcel-cache",
     "build": "parcel build",

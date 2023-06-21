@@ -5,3 +5,4 @@ dist
 .parcel-cache
 !src/pdfium/pdfium.js
 !src/pdfium/debug/pdfium.js
+temp

@@ -1,4 +1,4 @@
-/*
+/**
  * Clockwise direction
  * @public
  */
@@ -46,12 +46,12 @@ export function calculateAngle(rotation: Rotation) {
  * @public
  */
 export interface Size {
-  /*
+  /**
    * width of the object
    */
   width: number;
 
-  /*
+  /**
    * height of the object
    */
   height: number;
@@ -73,6 +73,15 @@ export function swap(size: Size): Size {
   };
 }
 
+/**
+ * Transform size with specified rotation angle and scale factor
+ * @param size orignal size of rect
+ * @param rotation rotation angle
+ * @param scaleFactor scale factor
+ * @returns size that has been transformed
+ *
+ * @public
+ */
 export function transformSize(
   size: Size,
   rotation: Rotation,
@@ -86,8 +95,20 @@ export function transformSize(
   };
 }
 
+/**
+ * position of point
+ *
+ * @public
+ */
 export interface Position {
+  /**
+   * x coordinate
+   */
   x: number;
+
+  /**
+   * y coordinate
+   */
   y: number;
 }
 
