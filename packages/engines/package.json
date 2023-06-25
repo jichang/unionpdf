@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/engines",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -64,7 +64,7 @@
     "typescript": "~5.0.4"
   },
   "dependencies": {
-    "@unionpdf/models": "^0.15.0",
+    "@unionpdf/models": "^0.16.0",
     "buffer": "^6.0.3",
     "process": "^0.11.10"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/react",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "@types/classnames": "^2.3.1",
-    "@unionpdf/models": "^0.15.0",
+    "@unionpdf/models": "^0.16.0",
     "classnames": "^2.3.2"
   },
   "peerDependencies": {
