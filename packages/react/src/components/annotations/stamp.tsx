@@ -2,7 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import {
   PdfSegmentObjectType,
   PdfStampAnnoObject,
-  PdfStampContentType,
+  PdfPageObjectType,
+  PdfImageObject,
+  PdfFormObject,
+  PdfPathObject,
 } from '@unionpdf/models';
 import { PdfPageAnnotationProps } from '../common';
 import './stamp.css';
@@ -28,52 +31,7 @@ export function PdfPageStampAnnotation(props: PdfPageStampAnnotationProps) {
         ctx?.clearRect(0, 0, size.width, size.height);
 
         for (const content of annotation.contents) {
-          switch (content.type) {
-            case PdfStampContentType.IMAGE:
-              ctx.putImageData(content.imageData, 0, 0);
-              break;
-            case PdfStampContentType.PATH:
-              {
-                ctx.beginPath();
-                const segmentCount = content.segments.length;
-                let i = 0;
-                while (i < segmentCount) {
-                  const segment = content.segments[i];
-                  switch (segment.type) {
-                    case PdfSegmentObjectType.MOVETO:
-                      ctx.moveTo(segment.point.x, segment.point.y);
-                      i++;
-                      break;
-                    case PdfSegmentObjectType.LINETO:
-                      ctx.lineTo(segment.point.x, segment.point.y);
-                      i++;
-                      break;
-                    case PdfSegmentObjectType.BEZIERTO:
-                      const points = content.segments
-                        .slice(i, i + 3)
-                        .map((segment) => {
-                          return segment.point;
-                        });
-                      if (points.length === 3) {
-                        ctx.bezierCurveTo(
-                          points[0].x,
-                          points[0].y,
-                          points[1].x,
-                          points[1].y,
-                          points[2].x,
-                          points[2].y
-                        );
-                      }
-                      i = i + 3;
-                      break;
-                    default:
-                      i++;
-                  }
-                }
-                ctx.stroke();
-              }
-              break;
-          }
+          renderObject(ctx, content);
         }
       }
     }
@@ -82,4 +40,59 @@ export function PdfPageStampAnnotation(props: PdfPageStampAnnotationProps) {
   return (
     <canvas className="pdf__page__annotation__stamp" ref={canvasElemRef} />
   );
+}
+
+export function renderObject(
+  ctx: CanvasRenderingContext2D,
+  object: PdfImageObject | PdfFormObject | PdfPathObject
+) {
+  switch (object.type) {
+    case PdfPageObjectType.FORM:
+      for (const subObject of object.objects) {
+        renderObject(ctx, subObject);
+      }
+      break;
+    case PdfPageObjectType.IMAGE:
+      ctx.putImageData(object.imageData, 0, 0);
+      break;
+    case PdfPageObjectType.PATH:
+      {
+        ctx.beginPath();
+        const segmentCount = object.segments.length;
+        let i = 0;
+        while (i < segmentCount) {
+          const segment = object.segments[i];
+          switch (segment.type) {
+            case PdfSegmentObjectType.MOVETO:
+              ctx.moveTo(segment.point.x, segment.point.y);
+              i++;
+              break;
+            case PdfSegmentObjectType.LINETO:
+              ctx.lineTo(segment.point.x, segment.point.y);
+              i++;
+              break;
+            case PdfSegmentObjectType.BEZIERTO:
+              const points = object.segments.slice(i, i + 3).map((segment) => {
+                return segment.point;
+              });
+              if (points.length === 3) {
+                ctx.bezierCurveTo(
+                  points[0].x,
+                  points[0].y,
+                  points[1].x,
+                  points[1].y,
+                  points[2].x,
+                  points[2].y
+                );
+              }
+              i = i + 3;
+              break;
+            default:
+              i++;
+          }
+        }
+        ctx.stroke();
+      }
+      break;
+  }
 }

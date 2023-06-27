@@ -1,7 +1,7 @@
 import {
   PdfAnnotationObjectStatus,
   PdfAnnotationSubtype,
-  PdfStampContentType,
+  PdfPageObjectType,
   Position,
   restoreOffset,
   restoreRect,
@@ -117,7 +117,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
             type: PdfAnnotationSubtype.STAMP,
             contents: [
               {
-                type: PdfStampContentType.IMAGE,
+                type: PdfPageObjectType.IMAGE,
                 imageData,
               },
             ],

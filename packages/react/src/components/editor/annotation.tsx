@@ -26,7 +26,6 @@ import { useUIComponents } from '../../adapters';
 export const ResizablePdfAnnotationSubTypes = [
   PdfAnnotationSubtype.INK,
   PdfAnnotationSubtype.LINE,
-  PdfAnnotationSubtype.STAMP,
   PdfAnnotationSubtype.POLYGON,
   PdfAnnotationSubtype.POLYLINE,
 ];

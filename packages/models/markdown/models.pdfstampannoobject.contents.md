@@ -9,7 +9,7 @@
 ```typescript
 contents: Array<
   | {
-      type: PdfStampContentType.PATH;
+      type: PdfPageObjectType.PATH;
       bounds: {
         left: number;
         bottom: number;
@@ -19,7 +19,7 @@ contents: Array<
       segments: PdfSegmentObject[];
     }
   | {
-      type: PdfStampContentType.IMAGE;
+      type: PdfPageObjectType.IMAGE;
       imageData: ImageData;
     }
 >;

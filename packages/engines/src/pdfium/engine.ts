@@ -51,11 +51,12 @@ import {
   PdfFile,
   PdfAnnotationObjectStatus,
   PdfAnnotationTransformation,
-  PdfStampContentType,
-  PdfSegmentObjectType,
   PdfSegmentObject,
   AppearanceMode,
   PdfImageObject,
+  PdfPageObjectType,
+  PdfPathObject,
+  PdfFormObject,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -169,6 +170,8 @@ export const wrappedModuleMethods = {
     'boolean',
   ] as const,
   FPDFPathSegment_GetClose: [['number'] as const, 'boolean'] as const,
+  FPDFFormObj_CountObjects: [['number'] as const, 'number'] as const,
+  FPDFFormObj_GetObject: [['number', 'number'] as const, 'number'] as const,
   FPDFBookmark_GetFirstChild: [
     ['number', 'number'] as const,
     'number',
@@ -1103,7 +1106,7 @@ export class PdfiumEngine implements PdfEngine {
   ) {
     for (const content of annotation.contents) {
       switch (content.type) {
-        case PdfStampContentType.IMAGE:
+        case PdfPageObjectType.IMAGE:
           return this.addImageObject(
             docPtr,
             page,
@@ -2941,57 +2944,10 @@ export class PdfiumEngine implements PdfEngine {
         annotationPtr,
         i
       );
-      const type = this.wasmModuleWrapper.FPDFPageObj_GetType(
-        annotationObjectPtr
-      ) as PdfStampContentType;
-      switch (type) {
-        case PdfStampContentType.PATH:
-          {
-            const segmentCount =
-              this.wasmModuleWrapper.FPDFPath_CountSegments(
-                annotationObjectPtr
-              );
 
-            const leftPtr = this.malloc(4);
-            const bottomPtr = this.malloc(4);
-            const rightPtr = this.malloc(4);
-            const topPtr = this.malloc(4);
-            this.wasmModuleWrapper.FPDFPageObj_GetBounds(
-              annotationObjectPtr,
-              leftPtr,
-              bottomPtr,
-              rightPtr,
-              topPtr
-            );
-            const left = this.wasmModule.getValue(leftPtr, 'float');
-            const bottom = this.wasmModule.getValue(bottomPtr, 'float');
-            const right = this.wasmModule.getValue(rightPtr, 'float');
-            const top = this.wasmModule.getValue(topPtr, 'float');
-            const bounds = { left, bottom, right, top };
-            this.free(leftPtr);
-            this.free(bottomPtr);
-            this.free(rightPtr);
-            this.free(topPtr);
-            const segments: PdfSegmentObject[] = [];
-            for (let i = 0; i < segmentCount; i++) {
-              const segment = this.readPdfSegment(annotationObjectPtr, i);
-              segments.push(segment);
-            }
-
-            contents.push({
-              type: PdfStampContentType.PATH,
-              bounds,
-              segments,
-            });
-          }
-          break;
-        case PdfStampContentType.IMAGE:
-          const { imageData } = this.readImageObject(annotationObjectPtr);
-          contents.push({
-            type: PdfStampContentType.IMAGE,
-            imageData,
-          });
-          break;
+      const pageObj = this.readPdfPageObject(annotationObjectPtr);
+      if (pageObj) {
+        contents.push(pageObj);
       }
     }
 
@@ -3006,6 +2962,57 @@ export class PdfiumEngine implements PdfEngine {
       appearances: {
         normal: appearence,
       },
+    };
+  }
+
+  private readPdfPageObject(pageObjectPtr: number) {
+    const type = this.wasmModuleWrapper.FPDFPageObj_GetType(
+      pageObjectPtr
+    ) as PdfPageObjectType;
+    switch (type) {
+      case PdfPageObjectType.PATH:
+        return this.readPathObject(pageObjectPtr);
+      case PdfPageObjectType.IMAGE:
+        return this.readImageObject(pageObjectPtr);
+      case PdfPageObjectType.FORM:
+        return this.readFormObject(pageObjectPtr);
+    }
+  }
+
+  private readPathObject(pageObjectPtr: number): PdfPathObject {
+    const segmentCount =
+      this.wasmModuleWrapper.FPDFPath_CountSegments(pageObjectPtr);
+
+    const leftPtr = this.malloc(4);
+    const bottomPtr = this.malloc(4);
+    const rightPtr = this.malloc(4);
+    const topPtr = this.malloc(4);
+    this.wasmModuleWrapper.FPDFPageObj_GetBounds(
+      pageObjectPtr,
+      leftPtr,
+      bottomPtr,
+      rightPtr,
+      topPtr
+    );
+    const left = this.wasmModule.getValue(leftPtr, 'float');
+    const bottom = this.wasmModule.getValue(bottomPtr, 'float');
+    const right = this.wasmModule.getValue(rightPtr, 'float');
+    const top = this.wasmModule.getValue(topPtr, 'float');
+    const bounds = { left, bottom, right, top };
+    this.free(leftPtr);
+    this.free(bottomPtr);
+    this.free(rightPtr);
+    this.free(topPtr);
+    const segments: PdfSegmentObject[] = [];
+    for (let i = 0; i < segmentCount; i++) {
+      const segment = this.readPdfSegment(pageObjectPtr, i);
+      segments.push(segment);
+    }
+
+    return {
+      type: PdfPageObjectType.PATH,
+      bounds,
+      segments,
     };
   }
 
@@ -3082,7 +3089,29 @@ export class PdfiumEngine implements PdfEngine {
     const imageData = new ImageData(array, bitmapWidth, bitmapHeight);
 
     return {
+      type: PdfPageObjectType.IMAGE,
       imageData,
+    };
+  }
+
+  private readFormObject(formObjectPtr: number): PdfFormObject {
+    const objectCount =
+      this.wasmModuleWrapper.FPDFFormObj_CountObjects(formObjectPtr);
+    const objects: (PdfFormObject | PdfImageObject | PdfPathObject)[] = [];
+    for (let i = 0; i < objectCount; i++) {
+      const pageObjectPtr = this.wasmModuleWrapper.FPDFFormObj_GetObject(
+        formObjectPtr,
+        i
+      );
+      const pageObj = this.readPdfPageObject(pageObjectPtr);
+      if (pageObj) {
+        objects.push(pageObj);
+      }
+    }
+
+    return {
+      type: PdfPageObjectType.FORM,
+      objects,
     };
   }
 

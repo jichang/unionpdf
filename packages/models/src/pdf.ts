@@ -261,7 +261,7 @@ export enum PDF_FORM_FIELD_FLAG {
   CHOICE_MULTL_SELECT = 1 << 21,
 }
 
-export enum PdfStampContentType {
+export enum PdfPageObjectType {
   UNKNOWN = 0,
   TEXT = 1,
   PATH = 2,
@@ -339,28 +339,25 @@ export interface PdfSegmentObject {
   isClosed: boolean;
 }
 
+export interface PdfPathObject {
+  type: PdfPageObjectType.PATH;
+  bounds: { left: number; bottom: number; right: number; top: number };
+  segments: PdfSegmentObject[];
+}
+
 export interface PdfImageObject {
+  type: PdfPageObjectType.IMAGE;
   imageData: ImageData;
+}
+
+export interface PdfFormObject {
+  type: PdfPageObjectType.FORM;
+  objects: (PdfImageObject | PdfPathObject | PdfFormObject)[];
 }
 
 export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.STAMP;
-  contents: Array<
-    | {
-        type: PdfStampContentType.PATH;
-        bounds: {
-          left: number;
-          bottom: number;
-          right: number;
-          top: number;
-        };
-        segments: PdfSegmentObject[];
-      }
-    | {
-        type: PdfStampContentType.IMAGE;
-        imageData: ImageData;
-      }
-  >;
+  contents: Array<PdfPathObject | PdfImageObject | PdfFormObject>;
 }
 
 export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {
