@@ -10,7 +10,11 @@ import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfMetadata } from './metadata';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import {
+  PdfTestingAdapterProvider,
+  testingMemoryPdfApplicationConfigurationProvider,
+} from '../../adapters/testing';
+import { PdfApplicationContextProvider } from '../../core';
 
 describe('PdfMetadata', () => {
   test('should render pdf metadata', async () => {
@@ -26,18 +30,22 @@ describe('PdfMetadata', () => {
       }),
     });
     const result = render(
-      <PdfNativeAdapterProvider>
+      <PdfTestingAdapterProvider>
         <PdfEngineContextProvider engine={engine}>
-          <PdfDocument
-            file={createMockPdfFile()}
-            password=""
-            onOpenSuccess={jest.fn()}
-            onOpenFailure={jest.fn()}
+          <PdfApplicationContextProvider
+            provider={testingMemoryPdfApplicationConfigurationProvider}
           >
-            <PdfMetadata />
-          </PdfDocument>
+            <PdfDocument
+              file={createMockPdfFile()}
+              password=""
+              onOpenSuccess={jest.fn()}
+              onOpenFailure={jest.fn()}
+            >
+              <PdfMetadata />
+            </PdfDocument>
+          </PdfApplicationContextProvider>
         </PdfEngineContextProvider>
-      </PdfNativeAdapterProvider>
+      </PdfTestingAdapterProvider>
     );
 
     act(() => {

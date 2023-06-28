@@ -25,39 +25,84 @@ function App() {
   }, [pdfAppElemRef.current]);
 
   return (
-    <div className="App">
-      <div className="pdf__app" ref={pdfAppElemRef}>
-        <ThemeContextProvider
-          theme={{
-            background: 'blue',
-          }}
-        >
-          <PdfEngineContextProvider engine={engine}>
-            <PdfDocument
-              source="https://localhost"
-              onOpenSuccess={() => {}}
-              onOpenFailure={() => {}}
-            >
-              <PdfPages
-                visibleRange={[-1, 1]}
-                viewport={viewport}
-                pageLayers={[
-                  PdfPageCanvasLayer,
-                  PdfPageTextLayer,
-                  PdfPageAnnotationsLayer,
-                  PdfPageEditorLayer,
-                ]}
-              />
-              <PdfThumbnails
-                layout={{ colsCount: 100, rowsCount: 100 }}
-                size={{ width: 100, height: 100 }}
-              />
-              <PdfOutlines />
-            </PdfDocument>
-          </PdfEngineContextProvider>
-        </ThemeContextProvider>
+    <PdfNativeAdapterProvider>
+      <div className="App">
+        <LoggerContextProvider logger={logger}>
+          <ThemeContextProvider
+            theme={{
+              background: 'blue',
+            }}
+          >
+            <PdfApplicationContextProvider provider={provider}>
+              <PdfEditorStampsContextProvider
+                stamps={stamps}
+                onAddStamp={addStamp}
+                onRemoveStamp={removeStamp}
+              >
+                <PdfEngineContextProvider engine={engine}>
+                  <PdfApplication>
+                    <PdfNavigatorContextProvider>
+                      <PdfDocument
+                        file={file}
+                        password={password}
+                        onOpenSuccess={() => {
+                          setIsPasswordOpened(false);
+                        }}
+                        onOpenFailure={(error: PdfEngineError) => {
+                          if (error.code === PdfiumErrorCode.Password) {
+                            setIsPasswordOpened(true);
+                          }
+                        }}
+                      >
+                        <PdfEditorContextProvider>
+                          <PdfToolbar onClose={closeFile} />
+                          <PdfPageAnnotationComponentContextProvider
+                            component={PdfPageDefaultAnnotation}
+                          >
+                            <PdfLinkAnnoContextProvider
+                              onClick={(evt, annotation) => {
+                                console.log(evt, annotation);
+                              }}
+                            >
+                              <PdfPages
+                                prerenderRange={[-1, 1]}
+                                cacheRange={[-1, 1]}
+                                pageLayers={[
+                                  PdfPageCanvasLayer,
+                                  PdfPageTextLayer,
+                                  PdfPageAnnotationsLayer,
+                                  PdfPageEditorLayer,
+                                ]}
+                              />
+                            </PdfLinkAnnoContextProvider>
+                          </PdfPageAnnotationComponentContextProvider>
+                          <PdfMetadata />
+                          <PdfThumbnails
+                            layout={{
+                              direction: 'vertical',
+                              itemsCount: 2,
+                            }}
+                            size={{ width: 100, height: 100 }}
+                            scaleFactor={0.25}
+                          />
+                          <PdfBookmarks />
+                          <PdfSearchPanel />
+                          <PdfAttachments />
+                          <PdfSignatures />
+                          <PdfDownloader />
+                          <PdfPrinter method={PrinterMethod.Iframe} />
+                          <PdfEditor />
+                        </PdfEditorContextProvider>
+                      </PdfDocument>
+                    </PdfNavigatorContextProvider>
+                  </PdfApplication>
+                </PdfEngineContextProvider>
+              </PdfEditorStampsContextProvider>
+            </PdfApplicationContextProvider>
+          </ThemeContextProvider>
+        </LoggerContextProvider>
       </div>
-    </div>
+    </PdfNativeAdapterProvider>
   );
 }
 ```

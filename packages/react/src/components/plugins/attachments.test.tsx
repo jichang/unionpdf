@@ -8,8 +8,15 @@ import {
   createMockPdfFile,
 } from '@unionpdf/engines';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
-import { PdfEngineContextProvider, PdfDocument } from '../../core';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import {
+  PdfEngineContextProvider,
+  PdfDocument,
+  PdfApplicationContextProvider,
+} from '../../core';
+import {
+  PdfTestingAdapterProvider,
+  testingMemoryPdfApplicationConfigurationProvider,
+} from '../../adapters/testing';
 
 describe('PdfAttachments', () => {
   it('Toolbar should render div with children', () => {
@@ -25,18 +32,22 @@ describe('PdfAttachments', () => {
       }),
     });
     const result = render(
-      <PdfNativeAdapterProvider>
+      <PdfTestingAdapterProvider>
         <PdfEngineContextProvider engine={engine}>
-          <PdfDocument
-            file={createMockPdfFile()}
-            password=""
-            onOpenSuccess={jest.fn()}
-            onOpenFailure={jest.fn()}
+          <PdfApplicationContextProvider
+            provider={testingMemoryPdfApplicationConfigurationProvider}
           >
-            <PdfAttachments />
-          </PdfDocument>
+            <PdfDocument
+              file={createMockPdfFile()}
+              password=""
+              onOpenSuccess={jest.fn()}
+              onOpenFailure={jest.fn()}
+            >
+              <PdfAttachments />
+            </PdfDocument>
+          </PdfApplicationContextProvider>
         </PdfEngineContextProvider>
-      </PdfNativeAdapterProvider>
+      </PdfTestingAdapterProvider>
     );
 
     act(() => {

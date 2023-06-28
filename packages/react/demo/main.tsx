@@ -15,17 +15,12 @@ import {
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
-  PdfApplicationMode,
   PdfEngineContextProvider,
   ThemeContextProvider,
   PdfNavigatorContextProvider,
   PdfApplication,
   PdfMetadata,
   PdfToolbar,
-  PdfToolbarPluginItemGroup,
-  PdfToolbarPagesItemGroup,
-  PdfToolbarEditorItemGroup,
-  PdfToolbarFileItemGroup,
   PdfThumbnails,
   PdfDownloader,
   PdfPages,
@@ -50,7 +45,7 @@ import {
   PdfPrinter,
   PrinterMethod,
   PdfMerger,
-  PdfToolbarEditorFileItemGroup,
+  MemoryPdfApplicationConfigurationProvider,
 } from '../src/index';
 import { PdfiumErrorCode, WebWorkerEngine } from '@unionpdf/engines';
 import { PdfiumEngine } from '@unionpdf/engines';
@@ -71,7 +66,9 @@ export interface AppProps {
 
 function App(props: AppProps) {
   const { logger, engine } = props;
-  const [mode, setMode] = useState(PdfApplicationMode.Edit);
+  const [provider] = useState(() => {
+    return new MemoryPdfApplicationConfigurationProvider();
+  });
 
   const pdfAppElemRef = useRef<HTMLDivElement>(null);
 
@@ -82,81 +79,6 @@ function App(props: AppProps) {
       console.log(style.height, style.width);
     }
   }, [pdfAppElemRef.current]);
-
-  const [metadataIsVisible, setMetadataIsVisible] = useState(false);
-  const toggleMetadataIsVisible = useCallback(() => {
-    setMetadataIsVisible((isVisible) => {
-      return !isVisible;
-    });
-  }, [setMetadataIsVisible]);
-
-  const [signaturesIsVisible, setSignaturesIsVisible] = useState(false);
-  const toggleSignaturesIsVisible = useCallback(() => {
-    setSignaturesIsVisible((isVisible) => {
-      return !isVisible;
-    });
-  }, [setSignaturesIsVisible]);
-
-  const [bookmarksIsVisible, setBookmarksIsVisible] = useState(false);
-  const toggleBookmarksIsVisible = useCallback(() => {
-    setBookmarksIsVisible((isVisible) => {
-      return !isVisible;
-    });
-  }, [setBookmarksIsVisible]);
-
-  const [thumbnailsIsVisible, setThumbnailsIsVisible] = useState(false);
-  const toggleThumbnailsIsVisible = useCallback(() => {
-    setThumbnailsIsVisible((isVisible) => {
-      return !isVisible;
-    });
-  }, [setThumbnailsIsVisible]);
-
-  const [rotation, setRotation] = useState<Rotation>(0);
-  const changeRotation = useCallback(
-    (evt: ChangeEvent<HTMLSelectElement>) => {
-      const rotation = parseInt(evt.target.value, 10) as Rotation;
-      setRotation(rotation);
-    },
-    [setRotation]
-  );
-
-  const [scaleFactor, setScaleFactor] = useState(1.0);
-  const changeScaleFactor = useCallback(
-    (evt: ChangeEvent<HTMLInputElement>) => {
-      setScaleFactor(Number(evt.target.value));
-    },
-    [setScaleFactor]
-  );
-
-  const [isSearchPanelOpened, setIsSearchPanelOpened] = useState(false);
-
-  const toggleIsSearchPanelOpened = useCallback(() => {
-    setIsSearchPanelOpened((isSearchPanelOpened) => {
-      return !isSearchPanelOpened;
-    });
-  }, [setIsSearchPanelOpened]);
-
-  const [isAttachmentsOpened, setIsAttachmentsOpened] = useState(false);
-
-  const toggleIsAttachmentsVisible = useCallback(() => {
-    setIsAttachmentsOpened((isAttachmentsOpened) => {
-      return !isAttachmentsOpened;
-    });
-  }, [setIsAttachmentsOpened]);
-
-  const [isDownloaderOpened, setIsDownloaderOpened] = useState(false);
-  const toggleIsSaverVisible = useCallback(() => {
-    setIsDownloaderOpened((isDownloaderOpened) => {
-      return !isDownloaderOpened;
-    });
-  }, [setIsDownloaderOpened]);
-
-  const [isPrinterOpened, setIsPrinterOpened] = useState(false);
-  const toggleIsPrinterVisible = useCallback(() => {
-    setIsPrinterOpened((isPrinterOpened) => {
-      return !isPrinterOpened;
-    });
-  }, [setIsPrinterOpened]);
 
   const [password, setPassword] = useState('');
   const [isPasswordOpened, setIsPasswordOpened] = useState(false);
@@ -174,22 +96,19 @@ function App(props: AppProps) {
           content: arrayBuffer,
         });
         setPassword('');
-        setRotation(0);
-        setScaleFactor(1);
+        provider.setRotation(Rotation.Degree0);
+        provider.setScaleFactor(1);
       }
     },
-    [setFile]
+    [setFile, provider]
   );
 
-  const closeFile = useCallback(
-    (evt: React.MouseEvent<HTMLButtonElement>) => {
-      setFile(null);
-      setPassword('');
-      setRotation(0);
-      setScaleFactor(1);
-    },
-    [setFile]
-  );
+  const closeFile = useCallback(() => {
+    setFile(null);
+    setPassword('');
+    provider.setRotation(Rotation.Degree0);
+    provider.setScaleFactor(1);
+  }, [setFile, setPassword, provider]);
 
   const [stamps, setStamps] = useState<Stamp[]>([]);
 
@@ -273,10 +192,7 @@ function App(props: AppProps) {
               background: 'blue',
             }}
           >
-            <PdfApplicationContextProvider
-              initialMode={mode}
-              onChangeMode={setMode}
-            >
+            <PdfApplicationContextProvider provider={provider}>
               <PdfEditorStampsContextProvider
                 stamps={stamps}
                 onAddStamp={addStamp}
@@ -298,43 +214,7 @@ function App(props: AppProps) {
                         }}
                       >
                         <PdfEditorContextProvider>
-                          <PdfToolbar>
-                            {mode === PdfApplicationMode.View ? (
-                              <PdfToolbarPluginItemGroup
-                                className="pdf__toolbar__item__group--left"
-                                onToggleMetadata={toggleMetadataIsVisible}
-                                onToggleOutlines={toggleBookmarksIsVisible}
-                                onToggleThumbnails={toggleThumbnailsIsVisible}
-                                onToggleAttachments={toggleIsAttachmentsVisible}
-                                onToggleSignatures={toggleSignaturesIsVisible}
-                              />
-                            ) : (
-                              <PdfToolbarEditorItemGroup />
-                            )}
-                            <PdfToolbarPagesItemGroup
-                              className="pdf__toolbar__item__group--center"
-                              scaleFactor={scaleFactor}
-                              changeScaleFactor={changeScaleFactor}
-                              rotation={rotation}
-                              changeRotation={changeRotation}
-                              toggleIsSearchPanelOpened={
-                                toggleIsSearchPanelOpened
-                              }
-                            />
-                            {mode === PdfApplicationMode.View ? (
-                              <PdfToolbarFileItemGroup
-                                className="pdf__toolbar__item__group--right"
-                                onSave={toggleIsSaverVisible}
-                                onPrint={toggleIsPrinterVisible}
-                              >
-                                <button type="button" onClick={closeFile}>
-                                  Close
-                                </button>
-                              </PdfToolbarFileItemGroup>
-                            ) : (
-                              <PdfToolbarEditorFileItemGroup className="pdf__toolbar__item__group--right" />
-                            )}
-                          </PdfToolbar>
+                          <PdfToolbar onClose={closeFile} />
                           <PdfPageAnnotationComponentContextProvider
                             component={PdfPageDefaultAnnotation}
                           >
@@ -346,8 +226,6 @@ function App(props: AppProps) {
                               <PdfPages
                                 prerenderRange={[-1, 1]}
                                 cacheRange={[-1, 1]}
-                                scaleFactor={scaleFactor}
-                                rotation={rotation}
                                 pageLayers={[
                                   PdfPageCanvasLayer,
                                   PdfPageTextLayer,
@@ -357,63 +235,21 @@ function App(props: AppProps) {
                               />
                             </PdfLinkAnnoContextProvider>
                           </PdfPageAnnotationComponentContextProvider>
-                          {metadataIsVisible ? (
-                            <div className="app__dialog">
-                              <PdfMetadata />
-                            </div>
-                          ) : null}
-                          {thumbnailsIsVisible ? (
-                            <div className="app__pdf__thumbnails">
-                              <PdfThumbnails
-                                layout={{
-                                  direction: 'vertical',
-                                  itemsCount: 2,
-                                }}
-                                size={{ width: 100, height: 100 }}
-                                scaleFactor={0.25}
-                              />
-                            </div>
-                          ) : null}
-                          {bookmarksIsVisible ? (
-                            <div className="app__dialog">
-                              <PdfBookmarks />
-                            </div>
-                          ) : null}
-                          {isSearchPanelOpened ? (
-                            <div className="app__dialog">
-                              <PdfSearchPanel />
-                            </div>
-                          ) : null}
-                          {isAttachmentsOpened ? (
-                            <div className="app__dialog">
-                              <PdfAttachments />
-                            </div>
-                          ) : null}
-                          {signaturesIsVisible ? (
-                            <div className="app__dialog">
-                              <PdfSignatures
-                                onSignaturesLoaded={(signatures) => {
-                                  console.log(
-                                    'You can verify the signature here: ',
-                                    signatures
-                                  );
-                                }}
-                              />
-                            </div>
-                          ) : null}
-                          {isDownloaderOpened ? (
-                            <div className="app__dialog">
-                              <PdfDownloader />
-                            </div>
-                          ) : null}
-                          {isPrinterOpened ? (
-                            <div className="app__dialog">
-                              <PdfPrinter
-                                method={PrinterMethod.Iframe}
-                                onCancel={toggleIsPrinterVisible}
-                              />
-                            </div>
-                          ) : null}
+                          <PdfMetadata />
+                          <PdfThumbnails
+                            layout={{
+                              direction: 'vertical',
+                              itemsCount: 2,
+                            }}
+                            size={{ width: 100, height: 100 }}
+                            scaleFactor={0.25}
+                          />
+                          <PdfBookmarks />
+                          <PdfSearchPanel />
+                          <PdfAttachments />
+                          <PdfSignatures />
+                          <PdfDownloader />
+                          <PdfPrinter method={PrinterMethod.Iframe} />
                           <PdfEditor />
                         </PdfEditorContextProvider>
                       </PdfDocument>

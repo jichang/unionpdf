@@ -18,7 +18,7 @@ import {
   calculateScrollOffset,
   findScollableContainer,
 } from '../helpers/scrollable';
-import { ErrorBoundary } from '../../core';
+import { ErrorBoundary, usePdfApplication } from '../../core';
 import { usePdfDocument } from '../../core/document.context';
 import { PdfNavigatorEvent } from '../../core/navigator.context';
 import { usePdfNavigator } from '../../core/navigator.context';
@@ -57,10 +57,9 @@ export function PdfPages(props: PdfPagesProps) {
     pageGap = PDF_PAGE_DEFAULT_GAP,
     prerenderRange = [0, 0],
     cacheRange = [0, 0],
-    scaleFactor = 1,
-    rotation = Rotation.Degree0,
     pageLayers,
   } = props;
+  const { scaleFactor, rotation } = usePdfApplication();
   const { doc } = usePdfDocument();
   const logger = useLogger();
 

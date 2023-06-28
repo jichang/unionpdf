@@ -2,35 +2,22 @@ import { PdfZoomMode, Rotation } from '@unionpdf/models';
 import React, { ChangeEvent, ComponentProps, useCallback } from 'react';
 import { useUIComponents, useUIStrings } from '../../adapters';
 import './pages.toolbar.css';
-import { ErrorBoundary } from '../../core';
+import { ErrorBoundary, usePdfApplication } from '../../core';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfNavigator } from '../../core/navigator.context';
 import classNames from 'classnames';
 
 export const PDF_NAVIGATOR_SOURCE_PAGES_TOOLBAR = 'PdfToolbarPagesItemGroup';
 
-export interface PdfToolbarPagesItemGroupProps extends ComponentProps<'div'> {
-  scaleFactor: number;
-  changeScaleFactor: (evt: ChangeEvent<HTMLInputElement>) => void;
-  rotation: Rotation;
-  changeRotation: (evt: ChangeEvent<HTMLSelectElement>) => void;
-  toggleIsSearchPanelOpened: () => void;
-}
+export interface PdfToolbarPagesItemGroupProps extends ComponentProps<'div'> {}
 
 export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
-  const {
-    className,
-    scaleFactor,
-    changeScaleFactor,
-    rotation,
-    changeRotation,
-    toggleIsSearchPanelOpened,
-    children,
-    ...rest
-  } = props;
+  const { className, children, ...rest } = props;
   const strings = useUIStrings();
   const { Button, ToolbarItemGroup, Input, Select } = useUIComponents();
 
+  const { scaleFactor, rotation, setRotation, setScaleFactor } =
+    usePdfApplication();
   const { doc } = usePdfDocument();
   const { currPageIndex, gotoPage } = usePdfNavigator();
 
@@ -74,6 +61,21 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
     },
   ];
 
+  const changeRotation = useCallback(
+    (evt: ChangeEvent<HTMLSelectElement>) => {
+      const rotation = parseInt(evt.target.value, 10) as Rotation;
+      setRotation(rotation);
+    },
+    [setRotation]
+  );
+
+  const changeScaleFactor = useCallback(
+    (evt: ChangeEvent<HTMLInputElement>) => {
+      setScaleFactor(Number(evt.target.value));
+    },
+    [setScaleFactor]
+  );
+
   return (
     <ErrorBoundary>
       <ToolbarItemGroup
@@ -103,7 +105,6 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
           type="number"
           onChange={navigate}
         />
-        <Button onClick={toggleIsSearchPanelOpened}>{strings.search}</Button>
       </ToolbarItemGroup>
     </ErrorBoundary>
   );

@@ -2,14 +2,14 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfToolbar } from './toolbar';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import { PdfTestingAdapterProvider } from '../../adapters/testing';
 
 describe('Toolbar', () => {
   it('Toolbar should render div with children', () => {
     const result = render(
-      <PdfNativeAdapterProvider>
-        <PdfToolbar />
-      </PdfNativeAdapterProvider>
+      <PdfTestingAdapterProvider>
+        <PdfToolbar onClose={jest.fn()} />
+      </PdfTestingAdapterProvider>
     );
 
     const divElem = document.querySelector('div') as HTMLDivElement;

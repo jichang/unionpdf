@@ -3,60 +3,116 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
+import {
+  DEFAULT_PLUGIN_CONFIGURATIONS,
+  PdfApplicatinPluginKey,
+  PdfApplicationConfiguration,
+  PdfApplicationConfigurationProvider,
+  PdfApplicationMode,
+} from './application.configuration';
+import { Rotation } from '@unionpdf/models';
 
-export enum PdfApplicationMode {
-  View,
-  Edit,
-}
-
-export interface PdfApplicationContextValue {
+export interface PdfApplicationContextValue
+  extends PdfApplicationConfiguration {
   mode: PdfApplicationMode;
-  setMode: (mode: PdfApplicationMode) => void;
-  toggleMode: () => void;
+  setScaleFactor: (scaleFactor: number) => void;
+  setRotation: (rotation: Rotation) => void;
+  showPlugin: (pluginKey: PdfApplicatinPluginKey) => void;
+  hidePlugin: (pluginKey: PdfApplicatinPluginKey) => void;
+  togglePlugin: (pluginKey: PdfApplicatinPluginKey) => void;
 }
 
 export const PdfApplicationContext =
   React.createContext<PdfApplicationContextValue>({
     mode: PdfApplicationMode.View,
-    setMode: () => {},
-    toggleMode: () => {},
+    plugins: DEFAULT_PLUGIN_CONFIGURATIONS,
+    rotation: Rotation.Degree0,
+    scaleFactor: 1.0,
+    setScaleFactor: () => {},
+    setRotation: () => {},
+    showPlugin: () => {},
+    hidePlugin: () => {},
+    togglePlugin: () => {},
   });
 
 export interface PdfApplicationContextProviderProps {
   children: ReactNode;
-  initialMode?: PdfApplicationMode;
-  onChangeMode?: (mode: PdfApplicationMode) => void;
+  provider: PdfApplicationConfigurationProvider;
 }
 
 export function PdfApplicationContextProvider(
   props: PdfApplicationContextProviderProps
 ) {
-  const {
-    children,
-    initialMode = PdfApplicationMode.View,
-    onChangeMode,
-  } = props;
+  const { children, provider } = props;
 
-  const [mode, setMode] = useState(initialMode);
-
-  const toggleMode = useCallback(() => {
-    setMode((mode) => {
-      if (mode === PdfApplicationMode.Edit) {
-        return PdfApplicationMode.View;
-      } else {
-        return PdfApplicationMode.Edit;
-      }
-    });
-  }, [setMode]);
+  const [configuration, setConfiguration] = useState(provider.get());
 
   useEffect(() => {
-    onChangeMode?.(mode);
-  }, [mode, onChangeMode]);
+    provider.subscribe(setConfiguration);
+
+    return () => {
+      provider.unsubscribe(setConfiguration);
+    };
+  }, [provider, setConfiguration]);
+
+  const setScaleFactor = useCallback(
+    (scaleFactor: number) => {
+      provider.setScaleFactor(scaleFactor);
+    },
+    [provider]
+  );
+
+  const setRotation = useCallback(
+    (rotation: Rotation) => {
+      provider.setRotation(rotation);
+    },
+    [provider]
+  );
+
+  const showPlugin = useCallback(
+    (pluginKey: PdfApplicatinPluginKey) => {
+      provider.showPlugin(pluginKey);
+    },
+    [provider]
+  );
+
+  const hidePlugin = useCallback(
+    (pluginKey: PdfApplicatinPluginKey) => {
+      provider.showPlugin(pluginKey);
+    },
+    [provider]
+  );
+
+  const togglePlugin = useCallback(
+    (pluginKey: PdfApplicatinPluginKey) => {
+      provider.togglePlugin(pluginKey);
+    },
+    [provider]
+  );
+
+  const contextValue = useMemo(() => {
+    const mode =
+      configuration.plugins[PdfApplicatinPluginKey.Editor].isEnabled &&
+      configuration.plugins[PdfApplicatinPluginKey.Editor].isVisible
+        ? PdfApplicationMode.Edit
+        : PdfApplicationMode.View;
+
+    return {
+      ...configuration,
+      mode,
+      setScaleFactor,
+      setRotation,
+      showPlugin,
+      hidePlugin,
+      togglePlugin,
+    };
+  }, [configuration, setScaleFactor, setRotation, showPlugin, hidePlugin]);
 
   return (
-    <PdfApplicationContext.Provider value={{ toggleMode, mode, setMode }}>
+    <PdfApplicationContext.Provider value={contextValue}>
       {children}
     </PdfApplicationContext.Provider>
   );

@@ -3,16 +3,21 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfEditorPanel } from './panel';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import {
+  PdfTestingAdapterProvider,
+  testingMemoryPdfApplicationConfigurationProvider,
+} from '../../adapters/testing';
 
 describe('PdfEditorPanel', () => {
   test('should render pdf editor panel', async () => {
     const result = render(
-      <PdfNativeAdapterProvider>
-        <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
+      <PdfTestingAdapterProvider>
+        <PdfApplicationContextProvider
+          provider={testingMemoryPdfApplicationConfigurationProvider}
+        >
           <PdfEditorPanel />
         </PdfApplicationContextProvider>
-      </PdfNativeAdapterProvider>
+      </PdfTestingAdapterProvider>
     );
 
     expect(document.querySelectorAll('.pdf__editor__panel').length).toEqual(1);

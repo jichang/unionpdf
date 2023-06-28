@@ -1,47 +1,55 @@
 import React, { ComponentProps, useCallback } from 'react';
 import { useUIComponents, useUIStrings } from '../../adapters';
 import './toolbar.css';
-import { ErrorBoundary } from '../../core';
-import { PdfApplicationMode, usePdfApplication } from '../../core';
+import {
+  ErrorBoundary,
+  PdfApplicatinPluginKey,
+  PdfPlugin,
+  PdfApplicationMode,
+  usePdfApplication,
+} from '../../core';
 import classNames from 'classnames';
+import {
+  PdfToolbarEditorFileItemGroup,
+  PdfToolbarEditorItemGroup,
+} from '../editor';
+import { PdfToolbarPagesItemGroup } from './pages.toolbar';
 
-export interface PdfToolbarProps extends ComponentProps<'div'> {}
+export interface PdfToolbarProps extends ComponentProps<'div'> {
+  onClose: () => void;
+}
 
 export function PdfToolbar(props: PdfToolbarProps) {
-  const { children, ...rest } = props;
+  const { children, onClose, ...rest } = props;
   const { Toolbar } = useUIComponents();
+  const { mode } = usePdfApplication();
 
   return (
-    <ErrorBoundary>
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.Toolbar}>
       <Toolbar className="pdf__toolbar" {...rest}>
-        {children}
+        {mode === PdfApplicationMode.View ? (
+          <PdfToolbarPluginItemGroup className="pdf__toolbar__item__group--left" />
+        ) : (
+          <PdfToolbarEditorItemGroup />
+        )}
+        <PdfToolbarPagesItemGroup className="pdf__toolbar__item__group--center" />
+        {mode === PdfApplicationMode.View ? (
+          <PdfToolbarFileItemGroup className="pdf__toolbar__item__group--right" />
+        ) : (
+          <PdfToolbarEditorFileItemGroup className="pdf__toolbar__item__group--right" />
+        )}
       </Toolbar>
-    </ErrorBoundary>
+    </PdfPlugin>
   );
 }
 
-export interface PdfToolbarPluginItemGroupProps extends ComponentProps<'div'> {
-  onToggleMetadata: () => void;
-  onToggleThumbnails: () => void;
-  onToggleOutlines: () => void;
-  onToggleAttachments: () => void;
-  onToggleSignatures: () => void;
-}
+export interface PdfToolbarPluginItemGroupProps extends ComponentProps<'div'> {}
 
 export function PdfToolbarPluginItemGroup(
   props: PdfToolbarPluginItemGroupProps
 ) {
-  const {
-    className,
-    children,
-    onToggleMetadata,
-    onToggleOutlines,
-    onToggleThumbnails,
-    onToggleAttachments,
-    onToggleSignatures,
-    ...rest
-  } = props;
-  const { ToolbarItemGroup, Button } = useUIComponents();
+  const { className, children, ...rest } = props;
+  const { ToolbarItemGroup } = useUIComponents();
   const strings = useUIStrings();
 
   return (
@@ -50,39 +58,70 @@ export function PdfToolbarPluginItemGroup(
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <Button onClick={onToggleMetadata}>{strings.metadata}</Button>
-        <Button onClick={onToggleOutlines}>{strings.bookmarks}</Button>
-        <Button onClick={onToggleThumbnails}>{strings.thumbnails}</Button>
-        <Button onClick={onToggleAttachments}>{strings.attchments}</Button>
-        <Button onClick={onToggleSignatures}>{strings.signatures}</Button>
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Metadata}
+          text={strings.metadata}
+        />
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Bookmarks}
+          text={strings.bookmarks}
+        />
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Thumbnails}
+          text={strings.thumbnails}
+        />
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Attachments}
+          text={strings.attchments}
+        />
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Signatures}
+          text={strings.signatures}
+        />
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.SearchPanel}
+          text={strings.search}
+        />
       </ToolbarItemGroup>
     </ErrorBoundary>
   );
 }
 
-export interface PdfToolbarFileItemGroupProps extends ComponentProps<'div'> {
-  enableEdit?: boolean;
-  onSave: () => void;
-  onPrint: () => void;
+export interface PdfToolbarPluginItemProps {
+  text: string;
+  pluginKey: PdfApplicatinPluginKey;
 }
 
+export function PdfToolbarPluginItem(props: PdfToolbarPluginItemProps) {
+  const { text, pluginKey } = props;
+  const { Button } = useUIComponents();
+  const { plugins, togglePlugin } = usePdfApplication();
+
+  const toggle = useCallback(() => {
+    togglePlugin(pluginKey);
+  }, [togglePlugin, pluginKey]);
+
+  if (!plugins[pluginKey].isEnabled) {
+    return null;
+  }
+
+  return <Button onClick={toggle}>{text}</Button>;
+}
+
+export interface PdfToolbarFileItemGroupProps extends ComponentProps<'div'> {}
+
 export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
-  const {
-    className,
-    enableEdit = true,
-    onSave,
-    onPrint,
-    children,
-    ...rest
-  } = props;
+  const { className, children, ...rest } = props;
   const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
   const strings = useUIStrings();
 
-  const { setMode } = usePdfApplication();
+  const { plugins, showPlugin } = usePdfApplication();
 
   const handleEdit = useCallback(() => {
-    setMode(PdfApplicationMode.Edit);
-  }, [setMode]);
+    showPlugin(PdfApplicatinPluginKey.Editor);
+  }, [showPlugin]);
+
+  const enableEdit = plugins[PdfApplicatinPluginKey.Editor].isEnabled;
 
   return (
     <ErrorBoundary>
@@ -93,8 +132,14 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
         {enableEdit ? (
           <Button onClick={handleEdit}>{strings.edit}</Button>
         ) : null}
-        <Button onClick={onSave}>{strings.saveAs}</Button>
-        <Button onClick={onPrint}>{strings.print}</Button>
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Downloader}
+          text={strings.saveAs}
+        />
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Printer}
+          text={strings.print}
+        />
         {children}
       </ToolbarItemGroup>
     </ErrorBoundary>

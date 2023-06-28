@@ -1,12 +1,26 @@
 import { ignore } from '@unionpdf/models';
 import React, { useEffect, useState } from 'react';
-import { usePdfEngine, usePdfDocument } from '../../core';
+import {
+  usePdfEngine,
+  usePdfDocument,
+  PdfApplicatinPluginKey,
+  PdfPlugin,
+} from '../../core';
 import './downloader.css';
 import { Downloader } from '../common';
+import { useUIComponents } from '../../adapters';
 
 export interface PdfDownloaderProps {}
 
 export function PdfDownloader(props: PdfDownloaderProps) {
+  return (
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.Downloader}>
+      <PdfDownloaderContent {...props} />
+    </PdfPlugin>
+  );
+}
+
+export function PdfDownloaderContent(props: PdfDownloaderProps) {
   const engine = usePdfEngine();
   const { doc } = usePdfDocument();
 
@@ -22,7 +36,15 @@ export function PdfDownloader(props: PdfDownloaderProps) {
     }
   }, [engine, doc]);
 
-  return doc && buffer ? (
-    <Downloader name={doc?.name} content={buffer} />
-  ) : null;
+  const { Dialog } = useUIComponents();
+
+  if (!doc || !buffer) {
+    return null;
+  }
+
+  return (
+    <Dialog open>
+      <Downloader name={doc?.name} content={buffer} />
+    </Dialog>
+  );
 }

@@ -10,7 +10,7 @@ import {
   PdfAnnotationObjectStatus,
 } from '@unionpdf/models';
 import { PdfPageWidgetAnnotation } from './widget';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import { PdfTestingAdapterProvider } from '../../adapters/testing';
 
 describe('PdfPageWidget', () => {
   test('should render pdf widget', async () => {
@@ -50,14 +50,14 @@ describe('PdfPageWidget', () => {
       },
     };
     const result = render(
-      <PdfNativeAdapterProvider>
+      <PdfTestingAdapterProvider>
         <PdfPageWidgetAnnotation
           page={page}
           annotation={widget}
           scaleFactor={0}
           rotation={Rotation.Degree0}
         />
-      </PdfNativeAdapterProvider>
+      </PdfTestingAdapterProvider>
     );
 
     const elem = document.querySelector('.pdf__form__field');

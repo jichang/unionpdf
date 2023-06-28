@@ -10,7 +10,11 @@ import { PdfBookmarks } from './bookmarks';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import {
+  PdfTestingAdapterProvider,
+  testingMemoryPdfApplicationConfigurationProvider,
+} from '../../adapters/testing';
+import { PdfApplicationContextProvider } from '../../core';
 
 describe('PdfBookmark', () => {
   test('should render pdf bookmark', async () => {
@@ -26,18 +30,22 @@ describe('PdfBookmark', () => {
       }),
     });
     const result = render(
-      <PdfNativeAdapterProvider>
+      <PdfTestingAdapterProvider>
         <PdfEngineContextProvider engine={engine}>
-          <PdfDocument
-            file={createMockPdfFile()}
-            password=""
-            onOpenSuccess={jest.fn()}
-            onOpenFailure={jest.fn()}
+          <PdfApplicationContextProvider
+            provider={testingMemoryPdfApplicationConfigurationProvider}
           >
-            <PdfBookmarks />
-          </PdfDocument>
+            <PdfDocument
+              file={createMockPdfFile()}
+              password=""
+              onOpenSuccess={jest.fn()}
+              onOpenFailure={jest.fn()}
+            >
+              <PdfBookmarks />
+            </PdfDocument>
+          </PdfApplicationContextProvider>
         </PdfEngineContextProvider>
-      </PdfNativeAdapterProvider>
+      </PdfTestingAdapterProvider>
     );
 
     act(() => {

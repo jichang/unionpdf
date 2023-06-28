@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import './components.css';
 import {
@@ -180,24 +180,35 @@ export function Form(props: FormProps) {
 }
 
 export function Dialog(props: DialogProps) {
-  const { open, className, ...rest } = props;
+  const { open, className, children, ...rest } = props;
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (open) {
-      dialogRef.current?.showModal?.();
+      if (!dialogRef.current?.open) {
+        dialogRef.current?.showModal?.();
+      }
     } else {
       dialogRef.current?.close?.();
     }
   }, [open]);
+
+  const close = useCallback(() => {
+    dialogRef.current?.close?.();
+  }, []);
 
   return (
     <dialog
       ref={dialogRef}
       className={classNames('pdf__ui__dialog', className)}
       {...rest}
-    />
+    >
+      <Button onClick={close}>
+        <Icon name="Close" />
+      </Button>
+      {children}
+    </dialog>
   );
 }
 

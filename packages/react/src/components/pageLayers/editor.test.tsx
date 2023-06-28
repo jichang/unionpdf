@@ -13,6 +13,7 @@ import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
+import { testingMemoryPdfApplicationConfigurationProvider } from '../../adapters/testing';
 
 describe('PdfPageEditorLayer', () => {
   test('should render pdf editor', async () => {
@@ -29,7 +30,9 @@ describe('PdfPageEditorLayer', () => {
       }),
     });
     const result = render(
-      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider
+        provider={testingMemoryPdfApplicationConfigurationProvider}
+      >
         <PdfEngineContextProvider engine={engine}>
           <PdfDocument
             file={createMockPdfFile()}

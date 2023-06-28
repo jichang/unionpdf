@@ -2,15 +2,16 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfApplication } from './application';
-import {
-  PdfApplicationContextProvider,
-  PdfApplicationMode,
-} from './application.context';
+import { PdfApplicationContextProvider } from './application.context';
+import { MemoryPdfApplicationConfigurationProvider } from './application.configuration';
+import { testingMemoryPdfApplicationConfigurationProvider } from '../adapters/testing';
 
 describe('PdfApplication', () => {
   test('should render pdf document element', () => {
     const result = render(
-      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider
+        provider={testingMemoryPdfApplicationConfigurationProvider}
+      >
         <PdfApplication />
       </PdfApplicationContextProvider>
     );

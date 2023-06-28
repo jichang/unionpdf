@@ -14,6 +14,7 @@ import { intersectionObserver } from '@shopify/jest-dom-mocks';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 import { PdfEditorCanvas } from './canvas';
 import { PdfEditorContextProvider } from './editor.context';
+import { testingMemoryPdfApplicationConfigurationProvider } from '../../adapters/testing';
 
 describe('PdfEditorAnnotations', () => {
   test('should render pdf editor annotations', async () => {
@@ -30,7 +31,9 @@ describe('PdfEditorAnnotations', () => {
       }),
     });
     const result = render(
-      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider
+        provider={testingMemoryPdfApplicationConfigurationProvider}
+      >
         <PdfEngineContextProvider engine={engine}>
           <PdfDocument
             file={createMockPdfFile()}

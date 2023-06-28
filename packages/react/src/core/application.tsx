@@ -1,6 +1,7 @@
 import React from 'react';
 import { ComponentProps } from 'react';
-import { PdfApplicationMode, usePdfApplication } from './application.context';
+import { usePdfApplication } from './application.context';
+import { PdfApplicationMode } from './application.configuration';
 
 export interface PdfApplicationProps extends ComponentProps<'div'> {}
 

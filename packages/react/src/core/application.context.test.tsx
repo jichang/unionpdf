@@ -4,9 +4,10 @@ import { render } from '@testing-library/react';
 import {
   PdfApplicationContextValue,
   PdfApplicationContextProvider,
-  PdfApplicationMode,
   usePdfApplication,
 } from './application.context';
+import { PdfApplicationMode } from './application.configuration';
+import { testingMemoryPdfApplicationConfigurationProvider } from '../adapters/testing';
 
 describe('PdfApplicationContextProvider ', () => {
   let appInContext: PdfApplicationContextValue | null;
@@ -21,7 +22,9 @@ describe('PdfApplicationContextProvider ', () => {
       mode: PdfApplicationMode.Edit,
     };
     const result = render(
-      <PdfApplicationContextProvider initialMode={app.mode}>
+      <PdfApplicationContextProvider
+        provider={testingMemoryPdfApplicationConfigurationProvider}
+      >
         <Consumer />
       </PdfApplicationContextProvider>
     );

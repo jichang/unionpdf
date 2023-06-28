@@ -4,6 +4,7 @@ import { useUIComponents, useUIStrings } from '../../adapters';
 import { PdfEditorTool, StackStatus, usePdfEditor } from './editor.context';
 import {
   ErrorBoundary,
+  PdfApplicatinPluginKey,
   PdfApplicationMode,
   usePdfApplication,
 } from '../../core';
@@ -61,20 +62,20 @@ export function PdfToolbarEditorFileItemGroup(
   const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
 
   const { commit, queryStatus } = usePdfEditor();
-  const { setMode } = usePdfApplication();
+  const { hidePlugin } = usePdfApplication();
 
   const handleExit = useCallback(() => {
     if (queryStatus() === StackStatus.Pending) {
       setIsUncommittedWarningVisible(true);
     } else {
-      setMode(PdfApplicationMode.View);
+      hidePlugin(PdfApplicatinPluginKey.Editor);
     }
-  }, [queryStatus, setIsUncommittedWarningVisible, setMode]);
+  }, [queryStatus, setIsUncommittedWarningVisible, hidePlugin]);
 
   const handleDiscard = useCallback(() => {
     setIsUncommittedWarningVisible(false);
-    setMode(PdfApplicationMode.View);
-  }, [setMode]);
+    hidePlugin(PdfApplicatinPluginKey.Editor);
+  }, [hidePlugin]);
 
   const handleCommit = useCallback(() => {
     commit();

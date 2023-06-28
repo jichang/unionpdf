@@ -12,13 +12,21 @@ import { ignore, MatchFlag, PdfZoomMode } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIComponents, useUIStrings } from '../../adapters';
-import { usePdfNavigator } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin, usePdfNavigator } from '../../core';
 
 export interface PdfSearchPanelProps extends ComponentProps<'div'> {}
 
 export const PDF_NAVIGATOR_SOURCE_SEARCH_PANEL = 'PdfSearchPanel';
 
 export function PdfSearchPanel(props: PdfSearchPanelProps) {
+  return (
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.SearchPanel}>
+      <PdfSearchPanelContent {...props} />
+    </PdfPlugin>
+  );
+}
+
+export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
   const { className, children, ...rest } = props;
 
   const engine = usePdfEngine();
@@ -110,47 +118,49 @@ export function PdfSearchPanel(props: PdfSearchPanelProps) {
     [keyword, flags, searchNext, searchPrev]
   );
 
-  const { Input, Checkbox, Label, Form } = useUIComponents();
+  const { Dialog, Input, Checkbox, Label, Form } = useUIComponents();
   const strings = useUIStrings();
 
   return (
-    <div className={classNames('pdf__search__panel', className)} {...rest}>
-      <Form onSubmit={search}>
-        <Input onChange={updateKeyword} />
-        <div>
-          <Checkbox
-            id="pdf__searchpanel__matchcase"
-            value={MatchFlag.MatchCase}
-            checked={flags.includes(MatchFlag.MatchCase)}
-            onChange={toggleFlag}
-          />
-          <Label htmlFor="pdf__searchpanel__matchcase">
-            {strings.matchCase}
-          </Label>
-        </div>
-        <div>
-          <Checkbox
-            id="pdf__searchpanel__matchwholeword"
-            value={MatchFlag.MatchWholeWord}
-            checked={flags.includes(MatchFlag.MatchWholeWord)}
-            onChange={toggleFlag}
-          />
-          <Label htmlFor="pdf__searchpanel__matchwholeword">
-            {strings.matchWholeWord}
-          </Label>
-        </div>
-        <div>
-          <Checkbox
-            id="pdf__searchpanel__matchsecutive"
-            value={MatchFlag.MatchConsecutive}
-            checked={flags.includes(MatchFlag.MatchConsecutive)}
-            onChange={toggleFlag}
-          />
-          <Label htmlFor="pdf__searchpanel__matchconsecutive">
-            {strings.matchConsecutive}
-          </Label>
-        </div>
-      </Form>
-    </div>
+    <Dialog open>
+      <div className={classNames('pdf__search__panel', className)} {...rest}>
+        <Form onSubmit={search}>
+          <Input onChange={updateKeyword} />
+          <div>
+            <Checkbox
+              id="pdf__searchpanel__matchcase"
+              value={MatchFlag.MatchCase}
+              checked={flags.includes(MatchFlag.MatchCase)}
+              onChange={toggleFlag}
+            />
+            <Label htmlFor="pdf__searchpanel__matchcase">
+              {strings.matchCase}
+            </Label>
+          </div>
+          <div>
+            <Checkbox
+              id="pdf__searchpanel__matchwholeword"
+              value={MatchFlag.MatchWholeWord}
+              checked={flags.includes(MatchFlag.MatchWholeWord)}
+              onChange={toggleFlag}
+            />
+            <Label htmlFor="pdf__searchpanel__matchwholeword">
+              {strings.matchWholeWord}
+            </Label>
+          </div>
+          <div>
+            <Checkbox
+              id="pdf__searchpanel__matchsecutive"
+              value={MatchFlag.MatchConsecutive}
+              checked={flags.includes(MatchFlag.MatchConsecutive)}
+              onChange={toggleFlag}
+            />
+            <Label htmlFor="pdf__searchpanel__matchconsecutive">
+              {strings.matchConsecutive}
+            </Label>
+          </div>
+        </Form>
+      </div>
+    </Dialog>
   );
 }

@@ -1,7 +1,13 @@
 import { ignore } from '@unionpdf/models';
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { usePdfEngine, usePdfDocument } from '../../core';
+import {
+  usePdfEngine,
+  usePdfDocument,
+  PdfApplicatinPluginKey,
+  usePdfApplication,
+  PdfPlugin,
+} from '../../core';
 import { useUIComponents, useUIStrings } from '../../adapters';
 import './printer.css';
 
@@ -11,11 +17,18 @@ export enum PrinterMethod {
 
 export interface PdfPrinterProps {
   method: PrinterMethod;
-  onCancel: () => void;
 }
 
 export function PdfPrinter(props: PdfPrinterProps) {
-  const { method, onCancel } = props;
+  return (
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.Printer}>
+      <PdfPrinterContent {...props} />
+    </PdfPlugin>
+  );
+}
+
+export function PdfPrinterContent(props: PdfPrinterProps) {
+  const { method } = props;
   const strings = useUIStrings();
   const { Button } = useUIComponents();
   const engine = usePdfEngine();
@@ -55,14 +68,24 @@ export function PdfPrinter(props: PdfPrinterProps) {
     }
   }, [method, buffer]);
 
+  const { Dialog } = useUIComponents();
+
+  const { hidePlugin } = usePdfApplication();
+
+  const cancelPrint = React.useCallback(() => {
+    hidePlugin(PdfApplicatinPluginKey.Printer);
+  }, [hidePlugin]);
+
   return (
-    <div className="pdf__printer">
-      <p className="pdf__printer__message">
-        {strings.printing}: {doc?.name}
-      </p>
-      <div className="pdf__printer__action">
-        <Button onClick={onCancel}>{strings.cancel}</Button>
+    <Dialog open>
+      <div className="pdf__printer">
+        <p className="pdf__printer__message">
+          {strings.printing}: {doc?.name}
+        </p>
+        <div className="pdf__printer__action">
+          <Button onClick={cancelPrint}>{strings.cancel}</Button>
+        </div>
       </div>
-    </div>
+    </Dialog>
   );
 }

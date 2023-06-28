@@ -11,9 +11,10 @@ import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
 import { useUIComponents } from '../../adapters';
-import { ErrorBoundary } from '../../core/errorboundary';
 import {
   IntersectionObserverContextProvider,
+  PdfApplicatinPluginKey,
+  PdfPlugin,
   useIntersectionObserver,
 } from '../../core';
 import { IntersectionObserverEntry } from '../../core';
@@ -39,6 +40,14 @@ export interface PdfThumbnailsProps {
 export const PDF_NAVIGATOR_SOURCE_THUMBNAILS = 'PdfThumbnails';
 
 export function PdfThumbnails(props: PdfThumbnailsProps) {
+  return (
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.Thumbnails}>
+      <PdfThumbnailsContent {...props} />
+    </PdfPlugin>
+  );
+}
+
+export function PdfThumbnailsContent(props: PdfThumbnailsProps) {
   const {
     layout = { direction: 'vertical', itemsCount: 1 },
     scaleFactor = 1,
@@ -72,9 +81,10 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
   for (let i = 0; i < layout.itemsCount; i++) {
     styleTemplate.push('1fr');
   }
+  const { Dialog } = useUIComponents();
 
   return (
-    <ErrorBoundary>
+    <Dialog open>
       <div className="pdf__thumbnails">
         <IntersectionObserverContextProvider
           className={`pdf__thumbnails__grid pdf__thumbnails__grid--${layout.direction}`}
@@ -84,7 +94,7 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
               : { gridTemplateRows: styleTemplate.join(' ') }
           }
         >
-          <PdfThumbnailsContent
+          <PdfThumbnailsGrid
             doc={doc}
             currPageIndex={currPageIndex}
             scaleFactor={scaleFactor}
@@ -96,11 +106,11 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
           />
         </IntersectionObserverContextProvider>
       </div>
-    </ErrorBoundary>
+    </Dialog>
   );
 }
 
-export interface PdfThumbnailsContentProps extends ComponentProps<'div'> {
+export interface PdfThumbnailsGridProps extends ComponentProps<'div'> {
   doc: PdfDocumentObject | null;
   currPageIndex: number;
   scaleFactor: number;
@@ -111,7 +121,7 @@ export interface PdfThumbnailsContentProps extends ComponentProps<'div'> {
   onClickThumbnail?: (page: PdfPageObject) => void;
 }
 
-export function PdfThumbnailsContent(props: PdfThumbnailsContentProps) {
+export function PdfThumbnailsGrid(props: PdfThumbnailsGridProps) {
   const {
     doc,
     currPageIndex,

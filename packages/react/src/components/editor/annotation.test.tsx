@@ -15,6 +15,7 @@ import { PdfPages } from '../plugins/pages';
 import { PdfPageEditorLayer } from '../pageLayers';
 import { PdfPageEditorAnnotation } from './annotation';
 import { PdfPageAnnotationComponentContextProvider } from '../common';
+import { testingMemoryPdfApplicationConfigurationProvider } from '../../adapters/testing';
 
 describe('PdfEditorAnnotation', () => {
   test('should render pdf editor annotation', async () => {
@@ -31,7 +32,9 @@ describe('PdfEditorAnnotation', () => {
       }),
     });
     const result = render(
-      <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
+      <PdfApplicationContextProvider
+        provider={testingMemoryPdfApplicationConfigurationProvider}
+      >
         <PdfEngineContextProvider engine={engine}>
           <PdfDocument
             file={createMockPdfFile()}

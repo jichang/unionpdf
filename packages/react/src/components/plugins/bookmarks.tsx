@@ -5,7 +5,7 @@ import {
   ignore,
 } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ErrorBoundary } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin } from '../../core';
 import './bookmarks.css';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
@@ -17,6 +17,14 @@ export const PDF_NAVIGATOR_SOURCE_BOOKMARKS = 'PdfBookmarks';
 export interface PdfBookmarksProps {}
 
 export function PdfBookmarks(props: PdfBookmarksProps) {
+  return (
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.Bookmarks}>
+      <PdfBookmarksContent {...props} />
+    </PdfPlugin>
+  );
+}
+
+export function PdfBookmarksContent(props: PdfBookmarksProps) {
   const engine = usePdfEngine();
   const { doc } = usePdfDocument();
   const [bookmarks, setBookmarks] = useState<PdfBookmarksObject>({
@@ -66,9 +74,10 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
     },
     [gotoPage]
   );
+  const { Dialog } = useUIComponents();
 
   return (
-    <ErrorBoundary>
+    <Dialog open>
       <div className="pdf__bookmarks">
         <ol>
           {bookmarks.bookmarks.map((bookmark, index) => {
@@ -83,7 +92,7 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
           })}
         </ol>
       </div>
-    </ErrorBoundary>
+    </Dialog>
   );
 }
 

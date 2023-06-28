@@ -3,16 +3,21 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfEditorStamps } from './stamps';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import {
+  PdfTestingAdapterProvider,
+  testingMemoryPdfApplicationConfigurationProvider,
+} from '../../adapters/testing';
 
 describe('PdfEditorStamps', () => {
   test('should render pdf editor stamps', async () => {
     const result = render(
-      <PdfNativeAdapterProvider>
-        <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
+      <PdfTestingAdapterProvider>
+        <PdfApplicationContextProvider
+          provider={testingMemoryPdfApplicationConfigurationProvider}
+        >
           <PdfEditorStamps />
         </PdfApplicationContextProvider>
-      </PdfNativeAdapterProvider>
+      </PdfTestingAdapterProvider>
     );
 
     expect(document.querySelectorAll('.pdf__editor__stamps').length).toEqual(1);

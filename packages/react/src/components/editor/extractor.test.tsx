@@ -4,17 +4,22 @@ import { render } from '@testing-library/react';
 import { PdfEditorExtractor } from './extractor';
 import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
-import { PdfNativeAdapterProvider } from '../../adapters/native';
+import {
+  PdfTestingAdapterProvider,
+  testingMemoryPdfApplicationConfigurationProvider,
+} from '../../adapters/testing';
 
 describe('PdfEditorExtractor', () => {
   test('should render pdf editor extractor', async () => {
     intersectionObserver.mock();
     const result = render(
-      <PdfNativeAdapterProvider>
-        <PdfApplicationContextProvider initialMode={PdfApplicationMode.Edit}>
+      <PdfTestingAdapterProvider>
+        <PdfApplicationContextProvider
+          provider={testingMemoryPdfApplicationConfigurationProvider}
+        >
           <PdfEditorExtractor />
         </PdfApplicationContextProvider>
-      </PdfNativeAdapterProvider>
+      </PdfTestingAdapterProvider>
     );
 
     expect(document.querySelectorAll('.pdf__editor__extractor').length).toEqual(

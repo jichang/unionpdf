@@ -3,15 +3,26 @@ import './editor.css';
 import { PdfEditorTool, usePdfEditor } from '../editor/editor.context';
 import { PdfEditorPanel } from '../editor/panel';
 import {
-  ErrorBoundary,
+  PdfApplicatinPluginKey,
   PdfApplicationMode,
+  PdfPlugin,
   usePdfApplication,
   usePdfDocument,
   usePdfNavigator,
 } from '../../core';
 import { PdfEditorExtractor, PdfEditorStamps } from '../editor';
 
-export function PdfEditor() {
+export interface PdfEditorProps {}
+
+export function PdfEditor(props: PdfEditorProps) {
+  return (
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.Editor}>
+      <PdfEditorContent {...props} />
+    </PdfPlugin>
+  );
+}
+
+export function PdfEditorContent(props: PdfEditorProps) {
   const { mode } = usePdfApplication();
   const { doc } = usePdfDocument();
   const pdfNavigator = usePdfNavigator();
@@ -61,9 +72,5 @@ export function PdfEditor() {
       break;
   }
 
-  return (
-    <ErrorBoundary>
-      <div className="pdf__editor">{content}</div>
-    </ErrorBoundary>
-  );
+  return <div className="pdf__editor">{content}</div>;
 }
