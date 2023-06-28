@@ -11,11 +11,3 @@ export interface PdfToolbarFileItemGroupProps extends ComponentProps<'div'>
 ```
 
 **Extends:** ComponentProps&lt;'div'&gt;
-
-## Properties
-
-| Property                                                          | Modifiers | Type          | Description  |
-| ----------------------------------------------------------------- | --------- | ------------- | ------------ |
-| [enableEdit?](./react.pdftoolbarfileitemgroupprops.enableedit.md) |           | boolean       | _(Optional)_ |
-| [onPrint](./react.pdftoolbarfileitemgroupprops.onprint.md)        |           | () =&gt; void |              |
-| [onSave](./react.pdftoolbarfileitemgroupprops.onsave.md)          |           | () =&gt; void |              |

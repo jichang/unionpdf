@@ -7,20 +7,5 @@
 **Signature:**
 
 ```typescript
-contents: Array<
-  | {
-      type: PdfPageObjectType.PATH;
-      bounds: {
-        left: number;
-        bottom: number;
-        right: number;
-        top: number;
-      };
-      segments: PdfSegmentObject[];
-    }
-  | {
-      type: PdfPageObjectType.IMAGE;
-      imageData: ImageData;
-    }
->;
+contents: Array<PdfPathObject | PdfImageObject | PdfFormObject>;
 ```

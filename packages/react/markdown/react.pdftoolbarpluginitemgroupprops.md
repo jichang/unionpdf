@@ -11,13 +11,3 @@ export interface PdfToolbarPluginItemGroupProps extends ComponentProps<'div'>
 ```
 
 **Extends:** ComponentProps&lt;'div'&gt;
-
-## Properties
-
-| Property                                                                             | Modifiers | Type          | Description |
-| ------------------------------------------------------------------------------------ | --------- | ------------- | ----------- |
-| [onToggleAttachments](./react.pdftoolbarpluginitemgroupprops.ontoggleattachments.md) |           | () =&gt; void |             |
-| [onToggleMetadata](./react.pdftoolbarpluginitemgroupprops.ontogglemetadata.md)       |           | () =&gt; void |             |
-| [onToggleOutlines](./react.pdftoolbarpluginitemgroupprops.ontoggleoutlines.md)       |           | () =&gt; void |             |
-| [onToggleSignatures](./react.pdftoolbarpluginitemgroupprops.ontogglesignatures.md)   |           | () =&gt; void |             |
-| [onToggleThumbnails](./react.pdftoolbarpluginitemgroupprops.ontogglethumbnails.md)   |           | () =&gt; void |             |

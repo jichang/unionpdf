@@ -14,7 +14,7 @@ export interface Size
 
 ## Properties
 
-| Property                          | Modifiers | Type   | Description |
-| --------------------------------- | --------- | ------ | ----------- |
-| [height](./models.size.height.md) |           | number |             |
-| [width](./models.size.width.md)   |           | number |             |
+| Property                          | Modifiers | Type   | Description          |
+| --------------------------------- | --------- | ------ | -------------------- |
+| [height](./models.size.height.md) |           | number | height of the object |
+| [width](./models.size.width.md)   |           | number | width of the object  |

@@ -12,6 +12,7 @@ export interface PdfImageObject
 
 ## Properties
 
-| Property                                          | Modifiers | Type      | Description |
-| ------------------------------------------------- | --------- | --------- | ----------- |
-| [imageData](./models.pdfimageobject.imagedata.md) |           | ImageData |             |
+| Property                                          | Modifiers | Type                                                     | Description |
+| ------------------------------------------------- | --------- | -------------------------------------------------------- | ----------- |
+| [imageData](./models.pdfimageobject.imagedata.md) |           | ImageData                                                |             |
+| [type](./models.pdfimageobject.type.md)           |           | [PdfPageObjectType.IMAGE](./models.pdfpageobjecttype.md) |             |

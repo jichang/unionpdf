@@ -4,6 +4,8 @@
 
 ## Size.width property
 
+width of the object
+
 **Signature:**
 
 ```typescript

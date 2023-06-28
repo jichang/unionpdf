@@ -4,6 +4,8 @@
 
 ## Position.x property
 
+x coordinate
+
 **Signature:**
 
 ```typescript

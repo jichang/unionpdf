@@ -4,6 +4,8 @@
 
 ## ignore() function
 
+ignore will do nothing when called.
+
 **Signature:**
 
 ```typescript

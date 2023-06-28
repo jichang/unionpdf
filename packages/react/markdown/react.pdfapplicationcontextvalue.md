@@ -7,13 +7,18 @@
 **Signature:**
 
 ```typescript
-export interface PdfApplicationContextValue
+export interface PdfApplicationContextValue extends PdfApplicationConfiguration
 ```
+
+**Extends:** [PdfApplicationConfiguration](./react.pdfapplicationconfiguration.md)
 
 ## Properties
 
-| Property                                                       | Modifiers | Type                                                                           | Description |
-| -------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------ | ----------- |
-| [mode](./react.pdfapplicationcontextvalue.mode.md)             |           | [PdfApplicationMode](./react.pdfapplicationmode.md)                            |             |
-| [setMode](./react.pdfapplicationcontextvalue.setmode.md)       |           | (mode: [PdfApplicationMode](./react.pdfapplicationmode.md)<!-- -->) =&gt; void |             |
-| [toggleMode](./react.pdfapplicationcontextvalue.togglemode.md) |           | () =&gt; void                                                                  |             |
+| Property                                                               | Modifiers | Type                                                                                        | Description |
+| ---------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------- | ----------- |
+| [hidePlugin](./react.pdfapplicationcontextvalue.hideplugin.md)         |           | (pluginKey: [PdfApplicatinPluginKey](./react.pdfapplicatinpluginkey.md)<!-- -->) =&gt; void |             |
+| [mode](./react.pdfapplicationcontextvalue.mode.md)                     |           | [PdfApplicationMode](./react.pdfapplicationmode.md)                                         |             |
+| [setRotation](./react.pdfapplicationcontextvalue.setrotation.md)       |           | (rotation: Rotation) =&gt; void                                                             |             |
+| [setScaleFactor](./react.pdfapplicationcontextvalue.setscalefactor.md) |           | (scaleFactor: number) =&gt; void                                                            |             |
+| [showPlugin](./react.pdfapplicationcontextvalue.showplugin.md)         |           | (pluginKey: [PdfApplicatinPluginKey](./react.pdfapplicatinpluginkey.md)<!-- -->) =&gt; void |             |
+| [togglePlugin](./react.pdfapplicationcontextvalue.toggleplugin.md)     |           | (pluginKey: [PdfApplicatinPluginKey](./react.pdfapplicatinpluginkey.md)<!-- -->) =&gt; void |             |

@@ -17,44 +17,44 @@
 
 ## Enumerations
 
-| Enumeration                                                        | Description |
-| ------------------------------------------------------------------ | ----------- |
-| [AppearanceMode](./models.appearancemode.md)                       |             |
-| [LogLevel](./models.loglevel.md)                                   |             |
-| [MatchFlag](./models.matchflag.md)                                 |             |
-| [PDF_FORM_FIELD_FLAG](./models.pdf_form_field_flag.md)             |             |
-| [PDF_FORM_FIELD_TYPE](./models.pdf_form_field_type.md)             |             |
-| [PdfActionType](./models.pdfactiontype.md)                         |             |
-| [PdfAnnotationObjectStatus](./models.pdfannotationobjectstatus.md) |             |
-| [PdfAnnotationSubtype](./models.pdfannotationsubtype.md)           |             |
-| [PdfEngineFeature](./models.pdfenginefeature.md)                   |             |
-| [PdfEngineOperation](./models.pdfengineoperation.md)               |             |
-| [PdfSegmentObjectType](./models.pdfsegmentobjecttype.md)           |             |
-| [PdfPageObjectType](./models.pdfstampcontenttype.md)               |             |
-| [PdfZoomMode](./models.pdfzoommode.md)                             |             |
-| [Rotation](./models.rotation.md)                                   |             |
-| [TaskStage](./models.taskstage.md)                                 |             |
+| Enumeration                                                        | Description         |
+| ------------------------------------------------------------------ | ------------------- |
+| [AppearanceMode](./models.appearancemode.md)                       |                     |
+| [LogLevel](./models.loglevel.md)                                   |                     |
+| [MatchFlag](./models.matchflag.md)                                 |                     |
+| [PDF_FORM_FIELD_FLAG](./models.pdf_form_field_flag.md)             |                     |
+| [PDF_FORM_FIELD_TYPE](./models.pdf_form_field_type.md)             |                     |
+| [PdfActionType](./models.pdfactiontype.md)                         |                     |
+| [PdfAnnotationObjectStatus](./models.pdfannotationobjectstatus.md) |                     |
+| [PdfAnnotationSubtype](./models.pdfannotationsubtype.md)           |                     |
+| [PdfEngineFeature](./models.pdfenginefeature.md)                   |                     |
+| [PdfEngineOperation](./models.pdfengineoperation.md)               |                     |
+| [PdfPageObjectType](./models.pdfpageobjecttype.md)                 |                     |
+| [PdfSegmentObjectType](./models.pdfsegmentobjecttype.md)           |                     |
+| [PdfZoomMode](./models.pdfzoommode.md)                             |                     |
+| [Rotation](./models.rotation.md)                                   | Clockwise direction |
+| [TaskStage](./models.taskstage.md)                                 |                     |
 
 ## Functions
 
-| Function                                                                                           | Description                                   |
-| -------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| [calculateAngle(rotation)](./models.calculateangle.md)                                             | Calculate angle that match the rotation type  |
-| [calculateDegree(rotation)](./models.calculatedegree.md)                                           | Calculate degree that match the rotation type |
-| [compareSearchTarge(targetA, targetB)](./models.comparesearchtarge.md)                             |                                               |
-| [ignore()](./models.ignore.md)                                                                     |                                               |
-| [restoreOffset(offset, rotation, scaleFactor)](./models.restoreoffset.md)                          |                                               |
-| [restorePosition(containerSize, position, rotation, scaleFactor)](./models.restoreposition.md)     |                                               |
-| [restoreRect(containerSize, rect, rotation, scaleFactor)](./models.restorerect.md)                 |                                               |
-| [rotatePosition(containerSize, position, rotation)](./models.rotateposition.md)                    |                                               |
-| [rotateRect(containerSize, rect, rotation)](./models.rotaterect.md)                                |                                               |
-| [scalePosition(position, scaleFactor)](./models.scaleposition.md)                                  |                                               |
-| [scaleRect(rect, scaleFactor)](./models.scalerect.md)                                              |                                               |
-| [swap(size)](./models.swap.md)                                                                     | Swap the width and height of the size object  |
-| [transformPosition(containerSize, position, rotation, scaleFactor)](./models.transformposition.md) |                                               |
-| [transformRect(containerSize, rect, rotation, scaleFactor)](./models.transformrect.md)             |                                               |
-| [transformSize(size, rotation, scaleFactor)](./models.transformsize.md)                            |                                               |
-| [unionFlags(flags)](./models.unionflags.md)                                                        |                                               |
+| Function                                                                                           | Description                                                   |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [calculateAngle(rotation)](./models.calculateangle.md)                                             | Calculate angle that match the rotation type                  |
+| [calculateDegree(rotation)](./models.calculatedegree.md)                                           | Calculate degree that match the rotation type                 |
+| [compareSearchTarge(targetA, targetB)](./models.comparesearchtarge.md)                             |                                                               |
+| [ignore()](./models.ignore.md)                                                                     | ignore will do nothing when called.                           |
+| [restoreOffset(offset, rotation, scaleFactor)](./models.restoreoffset.md)                          |                                                               |
+| [restorePosition(containerSize, position, rotation, scaleFactor)](./models.restoreposition.md)     |                                                               |
+| [restoreRect(containerSize, rect, rotation, scaleFactor)](./models.restorerect.md)                 |                                                               |
+| [rotatePosition(containerSize, position, rotation)](./models.rotateposition.md)                    |                                                               |
+| [rotateRect(containerSize, rect, rotation)](./models.rotaterect.md)                                |                                                               |
+| [scalePosition(position, scaleFactor)](./models.scaleposition.md)                                  |                                                               |
+| [scaleRect(rect, scaleFactor)](./models.scalerect.md)                                              |                                                               |
+| [swap(size)](./models.swap.md)                                                                     | Swap the width and height of the size object                  |
+| [transformPosition(containerSize, position, rotation, scaleFactor)](./models.transformposition.md) |                                                               |
+| [transformRect(containerSize, rect, rotation, scaleFactor)](./models.transformrect.md)             |                                                               |
+| [transformSize(size, rotation, scaleFactor)](./models.transformsize.md)                            | Transform size with specified rotation angle and scale factor |
+| [unionFlags(flags)](./models.unionflags.md)                                                        |                                                               |
 
 ## Interfaces
 
@@ -73,6 +73,7 @@
 | [PdfEngine](./models.pdfengine.md)                                     |                              |
 | [PdfFile](./models.pdffile.md)                                         |                              |
 | [PdfFileAttachmentAnnoObject](./models.pdffileattachmentannoobject.md) |                              |
+| [PdfFormObject](./models.pdfformobject.md)                             |                              |
 | [PdfFreeTextAnnoObject](./models.pdffreetextannoobject.md)             |                              |
 | [PdfHighlightAnnoObject](./models.pdfhighlightannoobject.md)           |                              |
 | [PdfImageObject](./models.pdfimageobject.md)                           |                              |
@@ -82,6 +83,7 @@
 | [PdfLinkAnnoObject](./models.pdflinkannoobject.md)                     |                              |
 | [PdfMetadataObject](./models.pdfmetadataobject.md)                     |                              |
 | [PdfPageObject](./models.pdfpageobject.md)                             |                              |
+| [PdfPathObject](./models.pdfpathobject.md)                             |                              |
 | [PdfPolygonAnnoObject](./models.pdfpolygonannoobject.md)               |                              |
 | [PdfPolylineAnnoObject](./models.pdfpolylineannoobject.md)             |                              |
 | [PdfPopupAnnoObject](./models.pdfpopupannoobject.md)                   |                              |
@@ -98,7 +100,7 @@
 | [PdfUnsupportedAnnoObject](./models.pdfunsupportedannoobject.md)       |                              |
 | [PdfWidgetAnnoObject](./models.pdfwidgetannoobject.md)                 |                              |
 | [PdfWidgetAnnoOption](./models.pdfwidgetannooption.md)                 |                              |
-| [Position](./models.position.md)                                       |                              |
+| [Position](./models.position.md)                                       | position of point            |
 | [Rect](./models.rect.md)                                               |                              |
 | [SearchResult](./models.searchresult.md)                               |                              |
 | [SearchTarget](./models.searchtarget.md)                               |                              |

@@ -4,6 +4,8 @@
 
 ## Rotation enum
 
+Clockwise direction
+
 **Signature:**
 
 ```typescript

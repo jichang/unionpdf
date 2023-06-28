@@ -4,6 +4,8 @@
 
 ## Position interface
 
+position of point
+
 **Signature:**
 
 ```typescript
@@ -12,7 +14,7 @@ export interface Position
 
 ## Properties
 
-| Property                    | Modifiers | Type   | Description |
-| --------------------------- | --------- | ------ | ----------- |
-| [x](./models.position.x.md) |           | number |             |
-| [y](./models.position.y.md) |           | number |             |
+| Property                    | Modifiers | Type   | Description  |
+| --------------------------- | --------- | ------ | ------------ |
+| [x](./models.position.x.md) |           | number | x coordinate |
+| [y](./models.position.y.md) |           | number | y coordinate |

@@ -4,6 +4,8 @@
 
 ## transformSize() function
 
+Transform size with specified rotation angle and scale factor
+
 **Signature:**
 
 ```typescript
@@ -19,12 +21,14 @@ export function transformSize(
 
 ## Parameters
 
-| Parameter   | Type                             | Description |
-| ----------- | -------------------------------- | ----------- |
-| size        | [Size](./models.size.md)         |             |
-| rotation    | [Rotation](./models.rotation.md) |             |
-| scaleFactor | number                           |             |
+| Parameter   | Type                             | Description          |
+| ----------- | -------------------------------- | -------------------- |
+| size        | [Size](./models.size.md)         | orignal size of rect |
+| rotation    | [Rotation](./models.rotation.md) | rotation angle       |
+| scaleFactor | number                           | scale factor         |
 
 **Returns:**
 
 { width: number; height: number; }
+
+size that has been transformed

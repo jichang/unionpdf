@@ -11,3 +11,9 @@ export interface PdfToolbarProps extends ComponentProps<'div'>
 ```
 
 **Extends:** ComponentProps&lt;'div'&gt;
+
+## Properties
+
+| Property                                      | Modifiers | Type          | Description |
+| --------------------------------------------- | --------- | ------------- | ----------- |
+| [onClose](./react.pdftoolbarprops.onclose.md) |           | () =&gt; void |             |

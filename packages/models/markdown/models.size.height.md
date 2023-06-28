@@ -4,6 +4,8 @@
 
 ## Size.height property
 
+height of the object
+
 **Signature:**
 
 ```typescript

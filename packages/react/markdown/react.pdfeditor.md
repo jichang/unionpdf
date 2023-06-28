@@ -7,9 +7,15 @@
 **Signature:**
 
 ```typescript
-export function PdfEditor(): React.JSX.Element | null;
+export function PdfEditor(props: PdfEditorProps): React.JSX.Element;
 ```
+
+## Parameters
+
+| Parameter | Type                                        | Description |
+| --------- | ------------------------------------------- | ----------- |
+| props     | [PdfEditorProps](./react.pdfeditorprops.md) |             |
 
 **Returns:**
 
-React.JSX.Element \| null
+React.JSX.Element

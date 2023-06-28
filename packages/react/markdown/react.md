@@ -6,43 +6,58 @@
 
 ## Classes
 
-| Class                                     | Description |
-| ----------------------------------------- | ----------- |
-| [ErrorBoundary](./react.errorboundary.md) |             |
+| Class                                                                                             | Description |
+| ------------------------------------------------------------------------------------------------- | ----------- |
+| [ErrorBoundary](./react.errorboundary.md)                                                         |             |
+| [MemoryPdfApplicationConfigurationProvider](./react.memorypdfapplicationconfigurationprovider.md) |             |
 
 ## Enumerations
 
-| Enumeration                                           | Description |
-| ----------------------------------------------------- | ----------- |
-| [MergeStep](./react.mergestep.md)                     |             |
-| [PdfAnnotationMarker](./react.pdfannotationmarker.md) |             |
-| [PdfAnnotationTool](./react.pdfannotationtool.md)     |             |
-| [PdfApplicationMode](./react.pdfapplicationmode.md)   |             |
-| [PdfEditorTool](./react.pdfeditortool.md)             |             |
-| [PrinterMethod](./react.printermethod.md)             |             |
-| [ResizerPosition](./react.resizerposition.md)         |             |
-| [StackStatus](./react.stackstatus.md)                 |             |
+| Enumeration                                                 | Description |
+| ----------------------------------------------------------- | ----------- |
+| [MergeStep](./react.mergestep.md)                           |             |
+| [PdfAnnotationMarker](./react.pdfannotationmarker.md)       |             |
+| [PdfAnnotationTool](./react.pdfannotationtool.md)           |             |
+| [PdfApplicatinPluginKey](./react.pdfapplicatinpluginkey.md) |             |
+| [PdfApplicationMode](./react.pdfapplicationmode.md)         |             |
+| [PdfEditorTool](./react.pdfeditortool.md)                   |             |
+| [PrinterMethod](./react.printermethod.md)                   |             |
+| [ResizerPosition](./react.resizerposition.md)               |             |
+| [StackStatus](./react.stackstatus.md)                       |             |
 
 ## Functions
 
 | Function                                                                                                 | Description |
 | -------------------------------------------------------------------------------------------------------- | ----------- |
+| [Button(props)](./react.button.md)                                                                       |             |
+| [Checkbox(props)](./react.checkbox.md)                                                                   |             |
+| [Dialog(props)](./react.dialog.md)                                                                       |             |
 | [Downloader(props)](./react.downloader.md)                                                               |             |
 | [Drawable(props)](./react.drawable.md)                                                                   |             |
 | [Field(props)](./react.field.md)                                                                         |             |
+| [Form(props)](./react.form.md)                                                                           |             |
+| [Icon(props)](./react.icon.md)                                                                           |             |
+| [IconButton(props)](./react.iconbutton.md)                                                               |             |
+| [Input(props)](./react.input.md)                                                                         |             |
 | [IntersectionObserverContextProvider(props)](./react.intersectionobservercontextprovider.md)             |             |
 | [IntersectionObserverEntry_2(props)](./react.intersectionobserverentry_2.md)                             |             |
+| [Label(props)](./react.label.md)                                                                         |             |
+| [Link(props)](./react.link.md)                                                                           |             |
 | [LoggerContextProvider(props)](./react.loggercontextprovider.md)                                         |             |
 | [PdfApplication(props)](./react.pdfapplication.md)                                                       |             |
 | [PdfApplicationContextProvider(props)](./react.pdfapplicationcontextprovider.md)                         |             |
 | [PdfAttachments(props)](./react.pdfattachments.md)                                                       |             |
+| [PdfAttachmentsContent(props)](./react.pdfattachmentscontent.md)                                         |             |
 | [PdfBookmarkEntry(props)](./react.pdfbookmarkentry.md)                                                   |             |
 | [PdfBookmarks(props)](./react.pdfbookmarks.md)                                                           |             |
+| [PdfBookmarksContent(props)](./react.pdfbookmarkscontent.md)                                             |             |
 | [PdfDocument(props)](./react.pdfdocument.md)                                                             |             |
 | [PdfDocumentContextProvider(props)](./react.pdfdocumentcontextprovider.md)                               |             |
 | [PdfDownloader(props)](./react.pdfdownloader.md)                                                         |             |
-| [PdfEditor()](./react.pdfeditor.md)                                                                      |             |
+| [PdfDownloaderContent(props)](./react.pdfdownloadercontent.md)                                           |             |
+| [PdfEditor(props)](./react.pdfeditor.md)                                                                 |             |
 | [PdfEditorCanvas(props)](./react.pdfeditorcanvas.md)                                                     |             |
+| [PdfEditorContent(props)](./react.pdfeditorcontent.md)                                                   |             |
 | [PdfEditorContextProvider(props)](./react.pdfeditorcontextprovider.md)                                   |             |
 | [PdfEditorExtractor()](./react.pdfeditorextractor.md)                                                    |             |
 | [PdfEditorPanel(props)](./react.pdfeditorpanel.md)                                                       |             |
@@ -54,6 +69,8 @@
 | [PdfMerger(props)](./react.pdfmerger.md)                                                                 |             |
 | [PdfMergeTask(props)](./react.pdfmergetask.md)                                                           |             |
 | [PdfMetadata(props)](./react.pdfmetadata.md)                                                             |             |
+| [PdfMetadataContent(props)](./react.pdfmetadatacontent.md)                                               |             |
+| [PdfNativeAdapterProvider(props)](./react.pdfnativeadapterprovider.md)                                   |             |
 | [PdfNavigatorContextProvider(props)](./react.pdfnavigatorcontextprovider.md)                             |             |
 | [PdfPage(props)](./react.pdfpage.md)                                                                     |             |
 | [PdfPageAnnotation(props)](./react.pdfpageannotation.md)                                                 |             |
@@ -88,19 +105,31 @@
 | [PdfPageTextLayer(props)](./react.pdfpagetextlayer.md)                                                   |             |
 | [PdfPageUnderlineAnnotation(props)](./react.pdfpageunderlineannotation.md)                               |             |
 | [PdfPageWidgetAnnotation(props)](./react.pdfpagewidgetannotation.md)                                     |             |
+| [PdfPlugin(props)](./react.pdfplugin.md)                                                                 |             |
 | [PdfPrinter(props)](./react.pdfprinter.md)                                                               |             |
+| [PdfPrinterContent(props)](./react.pdfprintercontent.md)                                                 |             |
 | [PdfSearchPanel(props)](./react.pdfsearchpanel.md)                                                       |             |
+| [PdfSearchPanelContent(props)](./react.pdfsearchpanelcontent.md)                                         |             |
 | [PdfSignatures(props)](./react.pdfsignatures.md)                                                         |             |
+| [PdfSignaturesContent(props)](./react.pdfsignaturescontent.md)                                           |             |
 | [PdfThumbnail(props)](./react.pdfthumbnail.md)                                                           |             |
 | [PdfThumbnails(props)](./react.pdfthumbnails.md)                                                         |             |
 | [PdfThumbnailsContent(props)](./react.pdfthumbnailscontent.md)                                           |             |
+| [PdfThumbnailsGrid(props)](./react.pdfthumbnailsgrid.md)                                                 |             |
 | [PdfToolbar(props)](./react.pdftoolbar.md)                                                               |             |
 | [PdfToolbarEditorFileItemGroup(props)](./react.pdftoolbareditorfileitemgroup.md)                         |             |
 | [PdfToolbarEditorItemGroup(props)](./react.pdftoolbareditoritemgroup.md)                                 |             |
 | [PdfToolbarFileItemGroup(props)](./react.pdftoolbarfileitemgroup.md)                                     |             |
 | [PdfToolbarPagesItemGroup(props)](./react.pdftoolbarpagesitemgroup.md)                                   |             |
+| [PdfToolbarPluginItem(props)](./react.pdftoolbarpluginitem.md)                                           |             |
 | [PdfToolbarPluginItemGroup(props)](./react.pdftoolbarpluginitemgroup.md)                                 |             |
+| [RadioButton(props)](./react.radiobutton.md)                                                             |             |
+| [renderObject(ctx, object)](./react.renderobject.md)                                                     |             |
+| [Select(props)](./react.select.md)                                                                       |             |
+| [TextArea(props)](./react.textarea.md)                                                                   |             |
 | [ThemeContextProvider(props)](./react.themecontextprovider.md)                                           |             |
+| [Toolbar(props)](./react.toolbar.md)                                                                     |             |
+| [ToolbarItemGroup(props)](./react.toolbaritemgroup.md)                                                   |             |
 | [UIComponentsContextProvider(props)](./react.uicomponentscontextprovider.md)                             |             |
 | [UIStringsContextProvider(props)](./react.uistringscontextprovider.md)                                   |             |
 | [useIntersectionObserver()](./react.useintersectionobserver.md)                                          |             |
@@ -145,6 +174,9 @@
 | [Layout](./react.layout.md)                                                                               |             |
 | [LinkProps](./react.linkprops.md)                                                                         |             |
 | [LoggerContextProviderProps](./react.loggercontextproviderprops.md)                                       |             |
+| [PdfApplicatinPluginConfiguration](./react.pdfapplicatinpluginconfiguration.md)                           |             |
+| [PdfApplicationConfiguration](./react.pdfapplicationconfiguration.md)                                     |             |
+| [PdfApplicationConfigurationProvider](./react.pdfapplicationconfigurationprovider.md)                     |             |
 | [PdfApplicationContextProviderProps](./react.pdfapplicationcontextproviderprops.md)                       |             |
 | [PdfApplicationContextValue](./react.pdfapplicationcontextvalue.md)                                       |             |
 | [PdfApplicationProps](./react.pdfapplicationprops.md)                                                     |             |
@@ -159,6 +191,7 @@
 | [PdfEditorContextProviderProps](./react.pdfeditorcontextproviderprops.md)                                 |             |
 | [PdfEditorContextValue](./react.pdfeditorcontextvalue.md)                                                 |             |
 | [PdfEditorPanelProps](./react.pdfeditorpanelprops.md)                                                     |             |
+| [PdfEditorProps](./react.pdfeditorprops.md)                                                               |             |
 | [PdfEditorStacks](./react.pdfeditorstacks.md)                                                             |             |
 | [PdfEditorStampProps](./react.pdfeditorstampprops.md)                                                     |             |
 | [PdfEditorStampsContextProviderProps](./react.pdfeditorstampscontextproviderprops.md)                     |             |
@@ -167,9 +200,10 @@
 | [PdfEngineContextProviderProps](./react.pdfenginecontextproviderprops.md)                                 |             |
 | [PdfLinkAnnoContextProviderProps](./react.pdflinkannocontextproviderprops.md)                             |             |
 | [PdfLinkAnnoContextValue](./react.pdflinkannocontextvalue.md)                                             |             |
-| [PdfMedataProps](./react.pdfmedataprops.md)                                                               |             |
 | [PdfMergerProps](./react.pdfmergerprops.md)                                                               |             |
 | [PdfMergeTaskProps](./react.pdfmergetaskprops.md)                                                         |             |
+| [PdfMetadataProps](./react.pdfmetadataprops.md)                                                           |             |
+| [PdfNativeAdapterProviderProps](./react.pdfnativeadapterproviderprops.md)                                 |             |
 | [PdfNavigator](./react.pdfnavigator.md)                                                                   |             |
 | [PdfNavigatorContextProviderProps](./react.pdfnavigatorcontextproviderprops.md)                           |             |
 | [PdfNavigatorGotoPageEvent](./react.pdfnavigatorgotopageevent.md)                                         |             |
@@ -207,17 +241,19 @@
 | [PdfPageTextLayerProps](./react.pdfpagetextlayerprops.md)                                                 |             |
 | [PdfPageUnderlineAnnotationProps](./react.pdfpageunderlineannotationprops.md)                             |             |
 | [PdfPageWidgetAnnotationProps](./react.pdfpagewidgetannotationprops.md)                                   |             |
+| [PdfPluginProps](./react.pdfpluginprops.md)                                                               |             |
 | [PdfPrinterProps](./react.pdfprinterprops.md)                                                             |             |
 | [PdfSearchPanelProps](./react.pdfsearchpanelprops.md)                                                     |             |
 | [PdfSignaturesProps](./react.pdfsignaturesprops.md)                                                       |             |
 | [PdfThumbnailProps](./react.pdfthumbnailprops.md)                                                         |             |
-| [PdfThumbnailsContentProps](./react.pdfthumbnailscontentprops.md)                                         |             |
+| [PdfThumbnailsGridProps](./react.pdfthumbnailsgridprops.md)                                               |             |
 | [PdfThumbnailsProps](./react.pdfthumbnailsprops.md)                                                       |             |
 | [PdfToolbarEditorFileItemGroupProps](./react.pdftoolbareditorfileitemgroupprops.md)                       |             |
 | [PdfToolbarEditorItemGroupProps](./react.pdftoolbareditoritemgroupprops.md)                               |             |
 | [PdfToolbarFileItemGroupProps](./react.pdftoolbarfileitemgroupprops.md)                                   |             |
 | [PdfToolbarPagesItemGroupProps](./react.pdftoolbarpagesitemgroupprops.md)                                 |             |
 | [PdfToolbarPluginItemGroupProps](./react.pdftoolbarpluginitemgroupprops.md)                               |             |
+| [PdfToolbarPluginItemProps](./react.pdftoolbarpluginitemprops.md)                                         |             |
 | [PdfToolbarProps](./react.pdftoolbarprops.md)                                                             |             |
 | [RadioButtonProps](./react.radiobuttonprops.md)                                                           |             |
 | [SelectProps](./react.selectprops.md)                                                                     |             |
@@ -236,6 +272,8 @@
 
 | Variable                                                                            | Description |
 | ----------------------------------------------------------------------------------- | ----------- |
+| [components](./react.components.md)                                                 |             |
+| [DEFAULT_PLUGIN_CONFIGURATIONS](./react.default_plugin_configurations.md)           |             |
 | [defaultTheme](./react.defaulttheme.md)                                             |             |
 | [EDITOR_ANNOTATIONS_LOG_SOURCE](./react.editor_annotations_log_source.md)           |             |
 | [EDITOR_CONTEXT_LOG_SOURCE](./react.editor_context_log_source.md)                   |             |
@@ -260,6 +298,7 @@
 | [PdfPageAnnotationComponentContext](./react.pdfpageannotationcomponentcontext.md)   |             |
 | [ResizablePdfAnnotationSubTypes](./react.resizablepdfannotationsubtypes.md)         |             |
 | [ResizerPositionClassName](./react.resizerpositionclassname.md)                     |             |
+| [strings](./react.strings.md)                                                       |             |
 | [ThemeContext](./react.themecontext.md)                                             |             |
 | [UIComponentsContext](./react.uicomponentscontext.md)                               |             |
 | [UIStringsContext](./react.uistringscontext.md)                                     |             |

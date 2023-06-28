@@ -45,6 +45,8 @@ wrappedModuleMethods: {
     FPDFPathSegment_GetType: readonly [readonly ["number"], "number"];
     FPDFPathSegment_GetPoint: readonly [readonly ["number", "number", "number"], "boolean"];
     FPDFPathSegment_GetClose: readonly [readonly ["number"], "boolean"];
+    FPDFFormObj_CountObjects: readonly [readonly ["number"], "number"];
+    FPDFFormObj_GetObject: readonly [readonly ["number", "number"], "number"];
     FPDFBookmark_GetFirstChild: readonly [readonly ["number", "number"], "number"];
     FPDFBookmark_GetNextSibling: readonly [readonly ["number", "number"], "number"];
     FPDFBookmark_Find: readonly [readonly ["number", "string"], "number"];

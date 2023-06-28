@@ -8,15 +8,15 @@
 
 ```typescript
 export function PdfThumbnailsContent(
-  props: PdfThumbnailsContentProps
+  props: PdfThumbnailsProps
 ): React.JSX.Element;
 ```
 
 ## Parameters
 
-| Parameter | Type                                                              | Description |
-| --------- | ----------------------------------------------------------------- | ----------- |
-| props     | [PdfThumbnailsContentProps](./react.pdfthumbnailscontentprops.md) |             |
+| Parameter | Type                                                | Description |
+| --------- | --------------------------------------------------- | ----------- |
+| props     | [PdfThumbnailsProps](./react.pdfthumbnailsprops.md) |             |
 
 **Returns:**
 

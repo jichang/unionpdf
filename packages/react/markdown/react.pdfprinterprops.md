@@ -12,7 +12,6 @@ export interface PdfPrinterProps
 
 ## Properties
 
-| Property                                        | Modifiers | Type                                      | Description |
-| ----------------------------------------------- | --------- | ----------------------------------------- | ----------- |
-| [method](./react.pdfprinterprops.method.md)     |           | [PrinterMethod](./react.printermethod.md) |             |
-| [onCancel](./react.pdfprinterprops.oncancel.md) |           | () =&gt; void                             |             |
+| Property                                    | Modifiers | Type                                      | Description |
+| ------------------------------------------- | --------- | ----------------------------------------- | ----------- |
+| [method](./react.pdfprinterprops.method.md) |           | [PrinterMethod](./react.printermethod.md) |             |

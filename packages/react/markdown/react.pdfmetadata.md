@@ -7,14 +7,14 @@
 **Signature:**
 
 ```typescript
-export function PdfMetadata(props: PdfMedataProps): React.JSX.Element;
+export function PdfMetadata(props: PdfMetadataProps): React.JSX.Element;
 ```
 
 ## Parameters
 
-| Parameter | Type                                        | Description |
-| --------- | ------------------------------------------- | ----------- |
-| props     | [PdfMedataProps](./react.pdfmedataprops.md) |             |
+| Parameter | Type                                            | Description |
+| --------- | ----------------------------------------------- | ----------- |
+| props     | [PdfMetadataProps](./react.pdfmetadataprops.md) |             |
 
 **Returns:**
 

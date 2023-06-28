@@ -12,8 +12,7 @@ export interface PdfApplicationContextProviderProps
 
 ## Properties
 
-| Property                                                                    | Modifiers | Type                                                                           | Description  |
-| --------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------ | ------------ |
-| [children](./react.pdfapplicationcontextproviderprops.children.md)          |           | ReactNode                                                                      |              |
-| [initialMode?](./react.pdfapplicationcontextproviderprops.initialmode.md)   |           | [PdfApplicationMode](./react.pdfapplicationmode.md)                            | _(Optional)_ |
-| [onChangeMode?](./react.pdfapplicationcontextproviderprops.onchangemode.md) |           | (mode: [PdfApplicationMode](./react.pdfapplicationmode.md)<!-- -->) =&gt; void | _(Optional)_ |
+| Property                                                           | Modifiers | Type                                                                                  | Description |
+| ------------------------------------------------------------------ | --------- | ------------------------------------------------------------------------------------- | ----------- |
+| [children](./react.pdfapplicationcontextproviderprops.children.md) |           | ReactNode                                                                             |             |
+| [provider](./react.pdfapplicationcontextproviderprops.provider.md) |           | [PdfApplicationConfigurationProvider](./react.pdfapplicationconfigurationprovider.md) |             |

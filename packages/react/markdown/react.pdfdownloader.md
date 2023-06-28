@@ -7,9 +7,7 @@
 **Signature:**
 
 ```typescript
-export function PdfDownloader(
-  props: PdfDownloaderProps
-): React.JSX.Element | null;
+export function PdfDownloader(props: PdfDownloaderProps): React.JSX.Element;
 ```
 
 ## Parameters
@@ -20,4 +18,4 @@ export function PdfDownloader(
 
 **Returns:**
 
-React.JSX.Element \| null
+React.JSX.Element

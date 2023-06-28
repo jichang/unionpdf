@@ -11,13 +11,3 @@ export interface PdfToolbarPagesItemGroupProps extends ComponentProps<'div'>
 ```
 
 **Extends:** ComponentProps&lt;'div'&gt;
-
-## Properties
-
-| Property                                                                                        | Modifiers | Type                                                   | Description |
-| ----------------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------ | ----------- |
-| [changeRotation](./react.pdftoolbarpagesitemgroupprops.changerotation.md)                       |           | (evt: ChangeEvent&lt;HTMLSelectElement&gt;) =&gt; void |             |
-| [changeScaleFactor](./react.pdftoolbarpagesitemgroupprops.changescalefactor.md)                 |           | (evt: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void  |             |
-| [rotation](./react.pdftoolbarpagesitemgroupprops.rotation.md)                                   |           | Rotation                                               |             |
-| [scaleFactor](./react.pdftoolbarpagesitemgroupprops.scalefactor.md)                             |           | number                                                 |             |
-| [toggleIsSearchPanelOpened](./react.pdftoolbarpagesitemgroupprops.toggleissearchpanelopened.md) |           | () =&gt; void                                          |             |
