@@ -61,7 +61,7 @@ export function PdfToolbarEditorFileItemGroup(
   const strings = useUIStrings();
   const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
 
-  const { commit, queryStatus } = usePdfEditor();
+  const { discard, commit, queryStatus } = usePdfEditor();
   const { hidePlugin } = usePdfApplication();
 
   const handleExit = useCallback(() => {
@@ -73,14 +73,16 @@ export function PdfToolbarEditorFileItemGroup(
   }, [queryStatus, setIsUncommittedWarningVisible, hidePlugin]);
 
   const handleDiscard = useCallback(() => {
+    discard();
     setIsUncommittedWarningVisible(false);
     hidePlugin(PdfApplicatinPluginKey.Editor);
-  }, [hidePlugin]);
+  }, [hidePlugin, discard, setIsUncommittedWarningVisible]);
 
   const handleCommit = useCallback(() => {
     commit();
     setIsUncommittedWarningVisible(false);
-  }, [setIsUncommittedWarningVisible, commit]);
+    hidePlugin(PdfApplicatinPluginKey.Editor);
+  }, [hidePlugin, setIsUncommittedWarningVisible, commit]);
 
   return (
     <ErrorBoundary>
@@ -91,15 +93,17 @@ export function PdfToolbarEditorFileItemGroup(
         <Button onClick={handleCommit}>{strings.commit}</Button>
         <Button onClick={handleExit}>{strings.exit}</Button>
       </ToolbarItemGroup>
-      <Dialog open={isUncommittedWarningVisible}>
-        <div>
-          <p>{strings.uncommittedWarning}</p>
-        </div>
-        <footer>
-          <Button onClick={handleDiscard}>{strings.discard}</Button>
-          <Button onClick={handleCommit}>{strings.commit}</Button>
-        </footer>
-      </Dialog>
+      {isUncommittedWarningVisible ? (
+        <Dialog open>
+          <div>
+            <p>{strings.uncommittedWarning}</p>
+          </div>
+          <footer>
+            <Button onClick={handleDiscard}>{strings.discard}</Button>
+            <Button onClick={handleCommit}>{strings.commit}</Button>
+          </footer>
+        </Dialog>
+      ) : null}
     </ErrorBoundary>
   );
 }

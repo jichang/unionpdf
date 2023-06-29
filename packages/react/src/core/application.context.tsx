@@ -81,7 +81,7 @@ export function PdfApplicationContextProvider(
 
   const hidePlugin = useCallback(
     (pluginKey: PdfApplicatinPluginKey) => {
-      provider.showPlugin(pluginKey);
+      provider.hidePlugin(pluginKey);
     },
     [provider]
   );
