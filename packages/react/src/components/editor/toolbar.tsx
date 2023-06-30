@@ -93,17 +93,18 @@ export function PdfToolbarEditorFileItemGroup(
         <Button onClick={handleCommit}>{strings.commit}</Button>
         <Button onClick={handleExit}>{strings.exit}</Button>
       </ToolbarItemGroup>
-      {isUncommittedWarningVisible ? (
-        <Dialog open>
-          <div>
-            <p>{strings.uncommittedWarning}</p>
-          </div>
-          <footer>
-            <Button onClick={handleDiscard}>{strings.discard}</Button>
-            <Button onClick={handleCommit}>{strings.commit}</Button>
-          </footer>
-        </Dialog>
-      ) : null}
+      <Dialog
+        title={strings.uncommittedWarning}
+        isOpened={isUncommittedWarningVisible}
+        onClose={() => {
+          setIsUncommittedWarningVisible(false);
+        }}
+      >
+        <footer>
+          <Button onClick={handleDiscard}>{strings.discard}</Button>
+          <Button onClick={handleCommit}>{strings.commit}</Button>
+        </footer>
+      </Dialog>
     </ErrorBoundary>
   );
 }

@@ -41,6 +41,7 @@ export const strings: UIStrings = {
   addImage: 'Add Image',
   selection: 'Selection',
   annotation: 'Annotation',
+  stamps: 'Stamps',
   createStamp: 'Create Stamp',
   cancel: 'Cancel',
   exit: 'Exit',

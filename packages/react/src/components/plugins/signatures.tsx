@@ -6,7 +6,7 @@ import { ignore, PdfSignatureObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIComponents, useUIStrings } from '../../adapters';
-import { PdfApplicatinPluginKey, PdfPlugin } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
 
 export interface PdfSignaturesProps extends ComponentProps<'div'> {
   onSignaturesLoaded?: (signatures: PdfSignatureObject[]) => void;
@@ -15,9 +15,16 @@ export interface PdfSignaturesProps extends ComponentProps<'div'> {
 export const PDF_NAVIGATOR_SIGNATURES_PANEL = 'PdfSignatures';
 
 export function PdfSignatures(props: PdfSignaturesProps) {
+  const strings = useUIStrings();
+
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Signatures}>
-      <PdfSignaturesContent {...props} />
+      <PdfPluginDialog
+        pluginKey={PdfApplicatinPluginKey.Signatures}
+        title={strings.signatures}
+      >
+        <PdfSignaturesContent {...props} />
+      </PdfPluginDialog>
     </PdfPlugin>
   );
 }
@@ -44,31 +51,28 @@ export function PdfSignaturesContent(props: PdfSignaturesProps) {
   }, [engine, doc, onSignaturesLoaded]);
 
   const strings = useUIStrings();
-  const { Dialog } = useUIComponents();
 
   return (
-    <Dialog open>
-      <div className={classNames('pdf__signatures', className)} {...rest}>
-        <table>
-          <tbody>
-            {signatures.map((signature, index) => {
-              return (
-                <tr key={index}>
-                  <td>{signature.reason}</td>
-                  <td>{signature.time}</td>
-                  <td>{signature.docMDP}</td>
-                </tr>
-              );
-            })}
-            {signatures.length === 0 ? (
-              <tr key="no-signatures">
-                <td colSpan={3}>{strings.noSignatures}</td>
+    <div className={classNames('pdf__signatures', className)} {...rest}>
+      <table>
+        <tbody>
+          {signatures.map((signature, index) => {
+            return (
+              <tr key={index}>
+                <td>{signature.reason}</td>
+                <td>{signature.time}</td>
+                <td>{signature.docMDP}</td>
               </tr>
-            ) : null}
-          </tbody>
-        </table>
-        {children}
-      </div>
-    </Dialog>
+            );
+          })}
+          {signatures.length === 0 ? (
+            <tr key="no-signatures">
+              <td colSpan={3}>{strings.noSignatures}</td>
+            </tr>
+          ) : null}
+        </tbody>
+      </table>
+      {children}
+    </div>
   );
 }

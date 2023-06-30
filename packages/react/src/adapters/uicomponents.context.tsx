@@ -1,8 +1,11 @@
 import React, { ComponentProps } from 'react';
 import { createContext, useContext } from 'react';
 
-export interface DialogProps extends ComponentProps<'dialog'> {
-  onClose?: () => void;
+export interface DialogProps extends Omit<ComponentProps<'dialog'>, 'open'> {
+  title: string;
+  isOpened: boolean;
+  onClose: () => void;
+  onClosed?: () => void;
 }
 
 export interface ToolbarProps extends ComponentProps<'div'> {}

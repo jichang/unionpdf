@@ -5,17 +5,25 @@ import {
   usePdfDocument,
   PdfApplicatinPluginKey,
   PdfPlugin,
+  PdfPluginDialog,
 } from '../../core';
 import './downloader.css';
 import { Downloader } from '../common';
-import { useUIComponents } from '../../adapters';
+import { useUIComponents, useUIStrings } from '../../adapters';
 
 export interface PdfDownloaderProps {}
 
 export function PdfDownloader(props: PdfDownloaderProps) {
+  const strings = useUIStrings();
+
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Downloader}>
-      <PdfDownloaderContent {...props} />
+      <PdfPluginDialog
+        pluginKey={PdfApplicatinPluginKey.Downloader}
+        title={strings.saveAs}
+      >
+        <PdfDownloaderContent {...props} />
+      </PdfPluginDialog>
     </PdfPlugin>
   );
 }
@@ -36,15 +44,9 @@ export function PdfDownloaderContent(props: PdfDownloaderProps) {
     }
   }, [engine, doc]);
 
-  const { Dialog } = useUIComponents();
-
   if (!doc || !buffer) {
     return null;
   }
 
-  return (
-    <Dialog open>
-      <Downloader name={doc?.name} content={buffer} />
-    </Dialog>
-  );
+  return <Downloader name={doc?.name} content={buffer} />;
 }
