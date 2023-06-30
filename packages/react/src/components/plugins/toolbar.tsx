@@ -15,12 +15,10 @@ import {
 } from '../editor';
 import { PdfToolbarPagesItemGroup } from './pages.toolbar';
 
-export interface PdfToolbarProps extends ComponentProps<'div'> {
-  onClose: () => void;
-}
+export interface PdfToolbarProps extends ComponentProps<'div'> {}
 
 export function PdfToolbar(props: PdfToolbarProps) {
-  const { children, onClose, ...rest } = props;
+  const { children, ...rest } = props;
   const { Toolbar } = useUIComponents();
   const { mode } = usePdfApplication();
 

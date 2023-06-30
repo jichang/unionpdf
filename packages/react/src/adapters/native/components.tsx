@@ -223,7 +223,7 @@ export function Dialog(props: DialogProps) {
               <Icon name="Close" />
             </Button>
           </header>
-          {children}
+          <section className="pdf__ui__dialog__content">{children}</section>
         </>
       ) : null}
     </dialog>

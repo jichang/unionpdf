@@ -214,7 +214,7 @@ function App(props: AppProps) {
                         }}
                       >
                         <PdfEditorContextProvider>
-                          <PdfToolbar onClose={closeFile} />
+                          <PdfToolbar />
                           <PdfPageAnnotationComponentContextProvider
                             component={PdfPageDefaultAnnotation}
                           >

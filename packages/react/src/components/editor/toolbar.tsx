@@ -100,7 +100,7 @@ export function PdfToolbarEditorFileItemGroup(
           setIsUncommittedWarningVisible(false);
         }}
       >
-        <footer>
+        <footer className="pdf__ui__dialog__footer">
           <Button onClick={handleDiscard}>{strings.discard}</Button>
           <Button onClick={handleCommit}>{strings.commit}</Button>
         </footer>

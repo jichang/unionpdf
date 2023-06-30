@@ -9,6 +9,7 @@ export interface UIStrings {
   rotate270Deg: string;
   thumbnails: string;
   bookmarks: string;
+  noBookmarks: string;
   saveAs: string;
   print: string;
   metadata: string;

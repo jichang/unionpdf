@@ -8,6 +8,7 @@ export const strings: UIStrings = {
   rotate270Deg: '270 degree',
   thumbnails: 'Thumbnails',
   bookmarks: 'Bookmarks',
+  noBookmarks: 'No bookmarks',
   saveAs: 'Save As',
   print: 'Print',
   metadata: 'Metadata',

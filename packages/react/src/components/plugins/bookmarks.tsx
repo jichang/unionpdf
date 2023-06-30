@@ -10,7 +10,7 @@ import './bookmarks.css';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
-import { useUIComponents, useUIStrings } from '../../adapters';
+import { strings, useUIComponents, useUIStrings } from '../../adapters';
 
 export const PDF_NAVIGATOR_SOURCE_BOOKMARKS = 'PdfBookmarks';
 
@@ -84,18 +84,22 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
 
   return (
     <div className="pdf__bookmarks">
-      <ol>
-        {bookmarks.bookmarks.map((bookmark, index) => {
-          return (
-            <PdfBookmarkEntry
-              key={index}
-              currPageIndex={currPageIndex}
-              bookmark={bookmark}
-              onClick={handleEntryClicked}
-            />
-          );
-        })}
-      </ol>
+      {bookmarks.bookmarks.length === 0 ? (
+        <p>{strings.noBookmarks}</p>
+      ) : (
+        <ol>
+          {bookmarks.bookmarks.map((bookmark, index) => {
+            return (
+              <PdfBookmarkEntry
+                key={index}
+                currPageIndex={currPageIndex}
+                bookmark={bookmark}
+                onClick={handleEntryClicked}
+              />
+            );
+          })}
+        </ol>
+      )}
     </div>
   );
 }
