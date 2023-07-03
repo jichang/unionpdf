@@ -110,7 +110,7 @@ export class PdfApplicationConfigurationProviderBase {
       PdfApplicatinPluginKey,
       PdfApplicatinPluginConfiguration
     > = DEFAULT_PLUGIN_CONFIGURATIONS
-  ) { }
+  ) {}
 
   broadcast() {
     for (const callback of this.callbacks) {
@@ -141,9 +141,10 @@ export class PdfApplicationConfigurationProviderBase {
   }
 }
 
-export class MemoryPdfApplicationConfigurationProvider extends PdfApplicationConfigurationProviderBase
-  implements PdfApplicationConfigurationProvider {
-
+export class MemoryPdfApplicationConfigurationProvider
+  extends PdfApplicationConfigurationProviderBase
+  implements PdfApplicationConfigurationProvider
+{
   get(): PdfApplicationConfiguration {
     return {
       rotation: this.rotation,
@@ -200,8 +201,10 @@ export class MemoryPdfApplicationConfigurationProvider extends PdfApplicationCon
   }
 }
 
-export class StoragePdfApplicationConfigurationProvider extends PdfApplicationConfigurationProviderBase
-  implements PdfApplicationConfigurationProvider {
+export class StoragePdfApplicationConfigurationProvider
+  extends PdfApplicationConfigurationProviderBase
+  implements PdfApplicationConfigurationProvider
+{
   constructor(
     private storage: Storage,
     private key: string,
@@ -226,14 +229,14 @@ export class StoragePdfApplicationConfigurationProvider extends PdfApplicationCo
         this.scaleFactor = configruation.scaleFactor;
         this.plugins = configruation.plugins;
       }
-    } catch (e) { }
+    } catch (e) {}
   }
 
   save() {
     try {
       const configruation = this.get();
       this.storage.setItem(this.key, JSON.stringify(configruation));
-    } catch (e) { }
+    } catch (e) {}
   }
 
   broadcast(): void {

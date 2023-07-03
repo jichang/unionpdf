@@ -42,6 +42,7 @@ export function PdfToolbarEditorItemGroup(
         <Button onClick={handleAnnotation}>{strings.annotation}</Button>
         <Button onClick={handleExtract}>{strings.extract}</Button>
         <Button onClick={handleSignature}>{strings.addStamp}</Button>
+        {children}
       </ToolbarItemGroup>
     </ErrorBoundary>
   );
@@ -92,6 +93,7 @@ export function PdfToolbarEditorFileItemGroup(
       >
         <Button onClick={handleCommit}>{strings.commit}</Button>
         <Button onClick={handleExit}>{strings.exit}</Button>
+        {children}
       </ToolbarItemGroup>
       <Dialog
         title={strings.uncommittedWarning}

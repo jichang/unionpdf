@@ -15,10 +15,13 @@ import {
 } from '../editor';
 import { PdfToolbarPagesItemGroup } from './pages.toolbar';
 
-export interface PdfToolbarProps extends ComponentProps<'div'> {}
+export interface PdfToolbarProps extends ComponentProps<'div'> {
+  pluginItems?: React.ReactNode;
+  fileItems?: React.ReactNode;
+}
 
 export function PdfToolbar(props: PdfToolbarProps) {
-  const { children, ...rest } = props;
+  const { pluginItems, fileItems, ...rest } = props;
   const { Toolbar } = useUIComponents();
   const { mode } = usePdfApplication();
 
@@ -26,15 +29,21 @@ export function PdfToolbar(props: PdfToolbarProps) {
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Toolbar}>
       <Toolbar className="pdf__toolbar" {...rest}>
         {mode === PdfApplicationMode.View ? (
-          <PdfToolbarPluginItemGroup className="pdf__toolbar__item__group--left" />
+          <PdfToolbarPluginItemGroup className="pdf__toolbar__item__group--left">
+            {pluginItems}
+          </PdfToolbarPluginItemGroup>
         ) : (
-          <PdfToolbarEditorItemGroup />
+          <PdfToolbarEditorItemGroup>{pluginItems}</PdfToolbarEditorItemGroup>
         )}
         <PdfToolbarPagesItemGroup className="pdf__toolbar__item__group--center" />
         {mode === PdfApplicationMode.View ? (
-          <PdfToolbarFileItemGroup className="pdf__toolbar__item__group--right" />
+          <PdfToolbarFileItemGroup className="pdf__toolbar__item__group--right">
+            {fileItems}
+          </PdfToolbarFileItemGroup>
         ) : (
-          <PdfToolbarEditorFileItemGroup className="pdf__toolbar__item__group--right" />
+          <PdfToolbarEditorFileItemGroup className="pdf__toolbar__item__group--right">
+            {fileItems}
+          </PdfToolbarEditorFileItemGroup>
         )}
       </Toolbar>
     </PdfPlugin>
@@ -80,6 +89,7 @@ export function PdfToolbarPluginItemGroup(
           pluginKey={PdfApplicatinPluginKey.SearchPanel}
           text={strings.search}
         />
+        {children}
       </ToolbarItemGroup>
     </ErrorBoundary>
   );
