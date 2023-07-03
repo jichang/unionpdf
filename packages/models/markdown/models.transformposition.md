@@ -4,6 +4,8 @@
 
 ## transformPosition() function
 
+Calculate the position of the point by applying the specified transformation
+
 **Signature:**
 
 ```typescript
@@ -17,13 +19,15 @@ export function transformPosition(
 
 ## Parameters
 
-| Parameter     | Type                             | Description |
-| ------------- | -------------------------------- | ----------- |
-| containerSize | [Size](./models.size.md)         |             |
-| position      | [Position](./models.position.md) |             |
-| rotation      | [Rotation](./models.rotation.md) |             |
-| scaleFactor   | number                           |             |
+| Parameter     | Type                             | Description           |
+| ------------- | -------------------------------- | --------------------- |
+| containerSize | [Size](./models.size.md)         | size of container     |
+| position      | [Position](./models.position.md) | position of the point |
+| rotation      | [Rotation](./models.rotation.md) | rotated angle         |
+| scaleFactor   | number                           | factor of scaling     |
 
 **Returns:**
 
 [Position](./models.position.md)
+
+new position of point

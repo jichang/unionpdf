@@ -4,6 +4,8 @@
 
 ## Logger.warn property
 
+Log warning message
+
 **Signature:**
 
 ```typescript

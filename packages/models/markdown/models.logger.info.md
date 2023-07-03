@@ -4,6 +4,8 @@
 
 ## Logger.info property
 
+Log infor message
+
 **Signature:**
 
 ```typescript

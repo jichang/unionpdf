@@ -4,6 +4,8 @@
 
 ## restorePosition() function
 
+Restore the position in a transformed cotainer
+
 **Signature:**
 
 ```typescript
@@ -17,13 +19,15 @@ export function restorePosition(
 
 ## Parameters
 
-| Parameter     | Type                             | Description |
-| ------------- | -------------------------------- | ----------- |
-| containerSize | [Size](./models.size.md)         |             |
-| position      | [Position](./models.position.md) |             |
-| rotation      | [Rotation](./models.rotation.md) |             |
-| scaleFactor   | number                           |             |
+| Parameter     | Type                             | Description           |
+| ------------- | -------------------------------- | --------------------- |
+| containerSize | [Size](./models.size.md)         | size of the container |
+| position      | [Position](./models.position.md) | position of the point |
+| rotation      | [Rotation](./models.rotation.md) | rotated angle         |
+| scaleFactor   | number                           | factor of scaling     |
 
 **Returns:**
 
 [Position](./models.position.md)
+
+the original position of the point

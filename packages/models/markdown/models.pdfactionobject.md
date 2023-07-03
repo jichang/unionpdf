@@ -4,6 +4,8 @@
 
 ## PdfActionObject type
 
+Representation of pdf action
+
 **Signature:**
 
 ```typescript

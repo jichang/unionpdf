@@ -14,7 +14,7 @@ import {
   SearchTarget,
   Task,
   MatchFlag,
-  compareSearchTarge,
+  compareSearchTarget,
   PdfDestinationObject,
   PdfBookmarkObject,
   PdfDocumentObject,
@@ -1818,7 +1818,7 @@ export class PdfiumEngine implements PdfEngine {
     let searchContext = searchContexts.get(contextId);
     if (
       searchContext &&
-      compareSearchTarge(searchContext.target, { keyword, flags })
+      compareSearchTarget(searchContext.target, { keyword, flags })
     ) {
       return searchContext;
     }

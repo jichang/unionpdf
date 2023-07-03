@@ -4,6 +4,8 @@
 
 ## restoreOffset() function
 
+Calculate the original offset in a transformed container
+
 **Signature:**
 
 ```typescript
@@ -19,12 +21,14 @@ export function restoreOffset(
 
 ## Parameters
 
-| Parameter   | Type                             | Description |
-| ----------- | -------------------------------- | ----------- |
-| offset      | [Position](./models.position.md) |             |
-| rotation    | [Rotation](./models.rotation.md) |             |
-| scaleFactor | number                           |             |
+| Parameter   | Type                             | Description           |
+| ----------- | -------------------------------- | --------------------- |
+| offset      | [Position](./models.position.md) | position of the point |
+| rotation    | [Rotation](./models.rotation.md) | rotated angle         |
+| scaleFactor | number                           | factor of scaling     |
 
 **Returns:**
 
 { x: number; y: number; }
+
+original position of the point

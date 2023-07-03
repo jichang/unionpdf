@@ -4,6 +4,8 @@
 
 ## scaleRect() function
 
+Scale the rectangle
+
 **Signature:**
 
 ```typescript
@@ -24,11 +26,13 @@ export function scaleRect(
 
 ## Parameters
 
-| Parameter   | Type                     | Description |
-| ----------- | ------------------------ | ----------- |
-| rect        | [Rect](./models.rect.md) |             |
-| scaleFactor | number                   |             |
+| Parameter   | Type                     | Description       |
+| ----------- | ------------------------ | ----------------- |
+| rect        | [Rect](./models.rect.md) | rectangle         |
+| scaleFactor | number                   | factor of scaling |
 
 **Returns:**
 
 { origin: { x: number; y: number; }; size: { width: number; height: number; }; }
+
+new rectangle

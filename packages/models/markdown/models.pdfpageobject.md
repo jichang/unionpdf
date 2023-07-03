@@ -4,6 +4,8 @@
 
 ## PdfPageObject interface
 
+Representation of pdf page
+
 **Signature:**
 
 ```typescript
@@ -12,7 +14,7 @@ export interface PdfPageObject
 
 ## Properties
 
-| Property                                 | Modifiers | Type                     | Description |
-| ---------------------------------------- | --------- | ------------------------ | ----------- |
-| [index](./models.pdfpageobject.index.md) |           | number                   |             |
-| [size](./models.pdfpageobject.size.md)   |           | [Size](./models.size.md) |             |
+| Property                                 | Modifiers | Type                     | Description                       |
+| ---------------------------------------- | --------- | ------------------------ | --------------------------------- |
+| [index](./models.pdfpageobject.index.md) |           | number                   | Index of this page, starts from 0 |
+| [size](./models.pdfpageobject.size.md)   |           | [Size](./models.size.md) | Orignal size of this page         |

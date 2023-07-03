@@ -196,34 +196,101 @@ export type PdfLinkTarget =
       destination: PdfDestinationObject;
     };
 
+/**
+ * PDF bookmark
+ */
 export interface PdfBookmarkObject {
+  /**
+   * title of bookmark
+   */
   title: string;
+
+  /**
+   * target of bookmark
+   */
   target?: PdfLinkTarget | undefined;
+
+  /**
+   * bookmarks in the next level
+   */
   children?: PdfBookmarkObject[];
 }
 
+/**
+ * Pdf Signature
+ */
 export interface PdfSignatureObject {
+  /**
+   * contents of signature
+   */
   contents: ArrayBuffer;
+
+  /**
+   * byte range of signature
+   */
   byteRange: ArrayBuffer;
+
+  /**
+   * sub filters of signature
+   */
   subFilter: ArrayBuffer;
+
+  /**
+   * reason of signature
+   */
   reason: string;
+
+  /**
+   * creation time of signature
+   */
   time: string;
+
+  /**
+   * MDP
+   */
   docMDP: number;
 }
 
+/**
+ * Bookmark tree of pdf
+ */
 export interface PdfBookmarksObject {
   bookmarks: PdfBookmarkObject[];
 }
 
+/**
+ * Text rectangle in pdf page
+ */
 export interface PdfTextRectObject {
+  /**
+   * Font of the text
+   */
   font: {
+    /**
+     * font family
+     */
     family: string;
+
+    /**
+     * font size
+     */
     size: number;
   };
+
+  /**
+   * content in this rectangle area
+   */
   content: string;
+
+  /**
+   * rectangle of the text
+   */
   rect: Rect;
 }
 
+/**
+ * Annotation type
+ */
 export enum PdfAnnotationSubtype {
   UNKNOWN = 0,
   TEXT,
@@ -256,6 +323,9 @@ export enum PdfAnnotationSubtype {
   REDACT,
 }
 
+/**
+ * Name of annotation type
+ */
 export const PdfAnnotationSubtypeName: Record<PdfAnnotationSubtype, string> = {
   [PdfAnnotationSubtype.UNKNOWN]: 'unknow',
   [PdfAnnotationSubtype.TEXT]: 'text',
@@ -288,43 +358,100 @@ export const PdfAnnotationSubtypeName: Record<PdfAnnotationSubtype, string> = {
   [PdfAnnotationSubtype.REDACT]: 'redact',
 };
 
-export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.POPUP;
-  rect: Rect;
-  contents: string;
-  open: boolean;
-}
-
 export enum PdfAnnotationObjectStatus {
   Created,
   Committed,
 }
 
+/**
+ * Appearance mode
+ */
 export enum AppearanceMode {
   Normal = 0,
 }
 
+/**
+ * Basic information of pdf annotation
+ */
 export interface PdfAnnotationObjectBase {
-  status: PdfAnnotationObjectStatus;
-  pageIndex: number;
-  id: number;
+  /**
+   * Sub type of annotation
+   */
   type: PdfAnnotationSubtype;
+  status: PdfAnnotationObjectStatus;
+
+  /**
+   * The index of page that this annotation belong to
+   */
+  pageIndex: number;
+
+  /**
+   * id of the annotation
+   */
+  id: number;
+
+  /**
+   * Rectangle of the annotation
+   */
   rect: Rect;
+
+  /**
+   * Related popup annotation
+   */
   popup?: PdfPopupAnnoObject | undefined;
+
+  /**
+   * Appearences of annotation
+   */
   appearances: {
     normal: string;
   };
 }
 
+/**
+ * Popup annotation
+ */
+export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.POPUP;
+  /**
+   * Contents of the popup
+   */
+  contents: string;
+
+  /**
+   * Whether the popup is opened or not
+   */
+  open: boolean;
+}
+
+/**
+ * Pdf Link annotation
+ */
 export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.LINK;
+  /**
+   * Text of the link
+   */
   text: string;
+  /**
+   * target of the link
+   */
   target: PdfLinkTarget | undefined;
 }
 
+/**
+ * Pdf Text annotation
+ */
 export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.TEXT;
+  /**
+   * Text contents of the annotation
+   */
   contents: string;
+
+  /**
+   * Color of the text
+   */
   color: {
     red: number;
     green: number;
@@ -333,25 +460,79 @@ export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
   };
 }
 
+/**
+ * Type of form field
+ */
 export enum PDF_FORM_FIELD_TYPE {
-  UNKNOWN = 0, // Unknown.
-  PUSHBUTTON = 1, // push button type.
-  CHECKBOX = 2, // check box type.
-  RADIOBUTTON = 3, // radio button type.
-  COMBOBOX = 4, // combo box type.
-  LISTBOX = 5, // list box type.
-  TEXTFIELD = 6, // text field type.
-  SIGNATURE = 7, // text field type.
-  XFA = 8, // Generic XFA type.
-  XFA_CHECKBOX = 9, // XFA check box type.
-  XFA_COMBOBOX = 10, // XFA combo box type.
-  XFA_IMAGEFIELD = 11, // XFA image field type.
-  XFA_LISTBOX = 12, // XFA list box type.
-  XFA_PUSHBUTTON = 13, // XFA push button type.
-  XFA_SIGNATURE = 14, // XFA signture field type.
-  XFA_TEXTFIELD = 15, // XFA text field type.
+  /**
+   * Unknow
+   */
+  UNKNOWN = 0,
+  /**
+   * push button type
+   */
+  PUSHBUTTON = 1,
+  /**
+   * check box type.
+   */
+  CHECKBOX = 2,
+  /**
+   * radio button type.
+   */
+  RADIOBUTTON = 3,
+  /**
+   * combo box type.
+   */
+  COMBOBOX = 4,
+  /**
+   * list box type.
+   */
+  LISTBOX = 5,
+  /**
+   *  text field type
+   */
+  TEXTFIELD = 6,
+  /**
+   * signature field type.
+   */
+  SIGNATURE = 7,
+  /**
+   * Generic XFA type.
+   */
+  XFA = 8,
+  /**
+   * XFA check box type.
+   */
+  XFA_CHECKBOX = 9,
+  /**
+   * XFA combo box type.
+   */
+  XFA_COMBOBOX = 10,
+  /**
+   * XFA image field type.
+   */
+  XFA_IMAGEFIELD = 11,
+  /**
+   * XFA list box type.
+   */
+  XFA_LISTBOX = 12,
+  /**
+   * XFA push button type.
+   */
+  XFA_PUSHBUTTON = 13,
+  /**
+   * XFA signture field type.
+   */
+  XFA_SIGNATURE = 14,
+  /**
+   * XFA text field type.
+   */
+  XFA_TEXTFIELD = 15,
 }
 
+/**
+ * Flag of form field
+ */
 export enum PDF_FORM_FIELD_FLAG {
   NONE = 0,
   READONLY = 1 << 0,
@@ -364,6 +545,9 @@ export enum PDF_FORM_FIELD_FLAG {
   CHOICE_MULTL_SELECT = 1 << 21,
 }
 
+/**
+ * Type of pdf object
+ */
 export enum PdfPageObjectType {
   UNKNOWN = 0,
   TEXT = 1,
@@ -373,62 +557,115 @@ export enum PdfPageObjectType {
   FORM = 5,
 }
 
-export enum PdfSegmentObjectType {
-  UNKNOWN = -1,
-  LINETO = 0,
-  BEZIERTO = 1,
-  MOVETO = 2,
-}
-
+/**
+ * Options of pdf widget annotation
+ */
 export interface PdfWidgetAnnoOption {
   label: string;
   isSelected: boolean;
 }
 
-export interface PdfWidgetAnnoObject extends PdfAnnotationObjectBase {
-  type: PdfAnnotationSubtype.WIDGET;
-  field: {
-    flag: PDF_FORM_FIELD_FLAG;
-    name: string;
-    alternateName: string;
-    type: PDF_FORM_FIELD_TYPE;
-    value: string;
-    isChecked: boolean;
-    options: PdfWidgetAnnoOption[];
-  };
+export interface PdfWidgetAnnoField {
+  /**
+   * flag of field
+   */
+  flag: PDF_FORM_FIELD_FLAG;
+  /**
+   * name of field
+   */
+  name: string;
+  /**
+   * alternate name of field
+   */
+  alternateName: string;
+  /**
+   * type of field
+   */
+  type: PDF_FORM_FIELD_TYPE;
+  /**
+   * value of field
+   */
+  value: string;
+  /**
+   * whether field is checked
+   */
+  isChecked: boolean;
+  /**
+   * options of field
+   */
+  options: PdfWidgetAnnoOption[];
 }
 
+/**
+ * PDF widget object
+ */
+export interface PdfWidgetAnnoObject extends PdfAnnotationObjectBase {
+  type: PdfAnnotationSubtype.WIDGET;
+  /**
+   * Field of pdf widget object
+   */
+  field: PdfWidgetAnnoField;
+}
+
+/**
+ * Pdf file attachments annotation
+ */
 export interface PdfFileAttachmentAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.FILEATTACHMENT;
 }
 
+/**
+ * ink list in pdf ink annotation
+ */
 export interface PdfInkListObject {
   points: Position[];
 }
 
+/**
+ * Pdf ink annotation
+ */
 export interface PdfInkAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.INK;
   inkList: PdfInkListObject[];
 }
 
+/**
+ * Pdf polygon annotation
+ */
 export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.POLYGON;
+  /**
+   * vertices of annotation
+   */
   vertices: Position[];
 }
 
 export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.POLYLINE;
+  /**
+   * vertices of annotation
+   */
   vertices: Position[];
 }
 
 export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.LINE;
+  /**
+   * start point of line
+   */
   startPoint: Position;
+  /**
+   * end point of line
+   */
   endPoint: Position;
 }
 
 export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.HIGHLIGHT;
+
+  /**
+   * color of highlight area
+   */
   color?: {
     red: number;
     gree: number;
@@ -436,62 +673,132 @@ export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
   };
 }
 
+/**
+ * type of segment type in pdf path object
+ */
+export enum PdfSegmentObjectType {
+  UNKNOWN = -1,
+  LINETO = 0,
+  BEZIERTO = 1,
+  MOVETO = 2,
+}
+
+/**
+ * segment of path object
+ */
 export interface PdfSegmentObject {
   type: PdfSegmentObjectType;
+  /**
+   * point of the segment
+   */
   point: Position;
+  /**
+   * whether this segment close the path
+   */
   isClosed: boolean;
 }
 
+/**
+ * Pdf path object
+ */
 export interface PdfPathObject {
   type: PdfPageObjectType.PATH;
+  /**
+   * bound that contains the path
+   */
   bounds: { left: number; bottom: number; right: number; top: number };
+  /**
+   * segments of the path
+   */
   segments: PdfSegmentObject[];
 }
 
+/**
+ * Pdf image object
+ */
 export interface PdfImageObject {
   type: PdfPageObjectType.IMAGE;
+  /**
+   * data of the image
+   */
   imageData: ImageData;
 }
 
+/**
+ * Pdf form object
+ */
 export interface PdfFormObject {
   type: PdfPageObjectType.FORM;
+  /**
+   * objects that in this form object
+   */
   objects: (PdfImageObject | PdfPathObject | PdfFormObject)[];
 }
 
+/**
+ * Pdf stamp annotation
+ */
 export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.STAMP;
+  /**
+   * contents in this stamp annotation
+   */
   contents: Array<PdfPathObject | PdfImageObject | PdfFormObject>;
 }
 
+/**
+ * Pdf circle annotation
+ */
 export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.CIRCLE;
 }
 
+/**
+ * Pdf square annotation
+ */
 export interface PdfSquareAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.SQUARE;
 }
 
+/**
+ * Pdf squiggly annotation
+ */
 export interface PdfSquigglyAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.SQUIGGLY;
 }
 
+/**
+ * Pdf underline annotation
+ */
 export interface PdfUnderlineAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.UNDERLINE;
 }
 
+/**
+ * Pdf strike out annotation
+ */
 export interface PdfStrikeOutAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.STRIKEOUT;
 }
 
+/**
+ * Pdf caret annotation
+ */
 export interface PdfCaretAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.CARET;
 }
 
+/**
+ * Pdf free text annotation
+ */
 export interface PdfFreeTextAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.FREETEXT;
   contents: string;
 }
 
+/**
+ * All annotation that support
+ */
 export type PdfSupportedAnnoObject =
   | PdfInkAnnoObject
   | PdfTextAnnoObject
@@ -511,14 +818,23 @@ export type PdfSupportedAnnoObject =
   | PdfCaretAnnoObject
   | PdfFreeTextAnnoObject;
 
+/**
+ * Pdf annotation that does not support
+ */
 export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
   type: Exclude<PdfAnnotationSubtype, PdfSupportedAnnoObject['type']>;
 }
 
+/**
+ * all annotations
+ */
 export type PdfAnnotationObject =
   | PdfSupportedAnnoObject
   | PdfUnsupportedAnnoObject;
 
+/**
+ * Pdf attachment
+ */
 export interface PdfAttachmentObject {
   index: number;
   name: string;
@@ -526,6 +842,9 @@ export interface PdfAttachmentObject {
   checksum: string;
 }
 
+/**
+ * Pdf engine features
+ */
 export enum PdfEngineFeature {
   RenderPage,
   RenderPageRect,
@@ -534,6 +853,9 @@ export enum PdfEngineFeature {
   Annotations,
 }
 
+/**
+ * All operations for this engine
+ */
 export enum PdfEngineOperation {
   Create,
   Read,
@@ -541,6 +863,9 @@ export enum PdfEngineOperation {
   Delete,
 }
 
+/**
+ * flags to match the text during searching
+ */
 export enum MatchFlag {
   None = 0,
   MatchCase = 1,
@@ -548,18 +873,32 @@ export enum MatchFlag {
   MatchConsecutive = 4,
 }
 
+/**
+ * Union all the flags
+ * @param flags all the flags
+ * @returns union of flags
+ */
 export function unionFlags(flags: MatchFlag[]) {
   return flags.reduce((flag, currFlag) => {
     return flag | currFlag;
   }, MatchFlag.None);
 }
 
+/**
+ * Targe for searching
+ */
 export interface SearchTarget {
   keyword: string;
   flags: MatchFlag[];
 }
 
-export function compareSearchTarge(
+/**
+ * compare 2 search target
+ * @param targetA first target for search
+ * @param targetB second target for search
+ * @returns whether 2 search target are the same
+ */
+export function compareSearchTarget(
   targetA: SearchTarget,
   targetB: SearchTarget
 ) {
@@ -569,24 +908,64 @@ export function compareSearchTarge(
   return flagA === flagB && targetA.keyword === targetB.keyword;
 }
 
+/**
+ * search result
+ */
 export interface SearchResult {
+  /**
+   * Index of the pdf page
+   */
   pageIndex: number;
+  /**
+   * index of the first character
+   */
   charIndex: number;
+  /**
+   * count of the characters
+   */
   charCount: number;
 }
 
+/**
+ * Stage of task
+ */
 export enum TaskStage {
+  /**
+   * Task is pending, means it just start executing
+   */
   Pending = 0,
+  /**
+   * Task is succeed
+   */
   Resolved = 1,
+  /**
+   * Task is failed
+   */
   Rejected = 2,
+  /**
+   * Task is aborted
+   */
   Aborted = 3,
 }
 
+/**
+ * callback that will be called when task is resolved
+ */
 export type ResolvedCallback<R> = (r: R) => void;
+
+/**
+ * callback that will be called when task is rejected
+ */
 export type RejectedCallback<E> = (e: E | TaskAbortError) => void;
 
+/**
+ * Error that indicate task is failed
+ */
 export class TaskAbortError extends Error {}
 
+/**
+ * Task state in different stage
+ */
 export type TaskState<R, E> =
   | {
       stage: TaskStage.Pending;
@@ -604,25 +983,66 @@ export type TaskState<R, E> =
       error: TaskAbortError | E;
     };
 
+/**
+ * Task for doing some work, it can be sync or async
+ */
 export interface Task<R, E = Error> {
+  /**
+   * state of task
+   */
   state: TaskState<R, E>;
 
+  /**
+   * Wait for task is finalized
+   * @param resolvedCallback callback when task is succeed
+   * @param rejectedCallback callback when task is failed
+   * @returns
+   */
   wait: (
-    doneCallback: ResolvedCallback<R>,
-    failedCallback: RejectedCallback<E>
+    resolvedCallback: ResolvedCallback<R>,
+    rejectedCallback: RejectedCallback<E>
   ) => void;
+  /**
+   * Resolve the task with value
+   * @param r resolved value
+   * @returns
+   */
   resolve: (r: R) => void;
+  /**
+   * Reject the task with error
+   * @param e rejected error
+   * @returns
+   */
   reject: (e: E) => void;
+  /**
+   * Abort the task with error
+   * @param error aborted error
+   * @returns
+   */
   abort: (error?: E | TaskAbortError) => void;
 }
 
+/**
+ * Base class of task
+ */
 export class TaskBase<R, E = Error> implements Task<R, E> {
   state: TaskState<R, E> = {
     stage: TaskStage.Pending,
   };
+  /**
+   * callbacks that will be executed when task is resolved
+   */
   resolvedCallbacks: ResolvedCallback<R>[] = [];
+  /**
+   * callbacks that will be executed when task is rejected
+   */
   rejectedCallbacks: RejectedCallback<E>[] = [];
 
+  /**
+   * Create a task that has been resolved with value
+   * @param result resolved value
+   * @returns resolved task
+   */
   static resolve<R, E = Error>(result: R): TaskBase<R, E> {
     const task = new TaskBase<R, E>();
     task.resolve(result);
@@ -630,6 +1050,11 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     return task;
   }
 
+  /**
+   * Create a task that has been rejected with error
+   * @param error rejected error
+   * @returns rejected task
+   */
   static reject<R, E = Error>(error: E): TaskBase<R, E> {
     const task = new TaskBase<R, E>();
     task.reject(error);
@@ -707,53 +1132,138 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
   }
 }
 
+/**
+ * Transformation that will be applied to annotation
+ */
 export interface PdfAnnotationTransformation {
+  /**
+   * Translated offset
+   */
   offset: Position;
+  /**
+   * Scaled factors
+   */
   scale: Size;
 }
 
+/**
+ * Render options
+ */
 export interface PdfRenderOptions {
+  /**
+   * Whether needs to render the page with annotations
+   */
   withAnnotations: boolean;
 }
 
+/**
+ * Error that Pdf engine will emit
+ */
 export class PdfEngineError extends Error {
+  /**
+   * Error code
+   */
   code?: number;
 
+  /**
+   *
+   * @param message error message
+   * @param code error code
+   */
   constructor(message: string, code?: number) {
     super(message);
     this.code = code;
   }
 }
 
-// source can be a URL points to a remote pdf file or array contains
-// pdf content
+/**
+ * source can be byte array contains pdf content
+ */
 export type PdfFileContent = ArrayBuffer;
 
+/**
+ * Pdf File
+ */
 export interface PdfFile {
+  /**
+   * id of file
+   */
   id: string;
+  /**
+   * name of file
+   */
   name: string;
+  /**
+   * content of file
+   */
   content: PdfFileContent;
 }
 
+/**
+ * Pdf engine
+ */
 export interface PdfEngine {
+  /**
+   * Check whether pdf engine supports this feature
+   * @param feature which feature want to check
+   * @returns support or not
+   */
   isSupport?: (
     feature: PdfEngineFeature
   ) => Task<PdfEngineOperation[], PdfEngineError>;
+  /**
+   * Initialize the engine
+   * @returns task that indicate whether initialization is successful
+   */
   initialize?: () => Task<boolean, PdfEngineError>;
+  /**
+   * Destroy the engine
+   * @returns task that indicate whether destroy is successful
+   */
   destroy?: () => Task<boolean, PdfEngineError>;
+  /**
+   * Open pdf document
+   * @param file pdf file
+   * @param password protected password for this file
+   * @returns task that contains the file or error
+   */
   openDocument: (
     file: PdfFile,
     password: string
   ) => Task<PdfDocumentObject, PdfEngineError>;
+  /**
+   * Get the metadata of the file
+   * @param doc pdf document
+   * @returns task that contains the metadata or error
+   */
   getMetadata: (
     doc: PdfDocumentObject
   ) => Task<PdfMetadataObject, PdfEngineError>;
+  /**
+   * Get the signatures of the file
+   * @param doc pdf document
+   * @returns task that contains the signatures or error
+   */
   getSignatures: (
     doc: PdfDocumentObject
   ) => Task<PdfSignatureObject[], PdfEngineError>;
+  /**
+   * Get the bookmarks of the file
+   * @param doc pdf document
+   * @returns task that contains the bookmarks or error
+   */
   getBookmarks: (
     doc: PdfDocumentObject
   ) => Task<PdfBookmarksObject, PdfEngineError>;
+  /**
+   * Render the specified pdf page
+   * @param doc pdf document
+   * @param page pdf page
+   * @param scaleFactor factor of scaling
+   * @param rotation rotated angle
+   * @param options render options
+   * @returns task contains the rendered image or error
+   */
   renderPage: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -761,6 +1271,16 @@ export interface PdfEngine {
     rotation: Rotation,
     options: PdfRenderOptions
   ) => Task<ImageData, PdfEngineError>;
+  /**
+   * Render the specified rect of pdf page
+   * @param doc pdf document
+   * @param page pdf page
+   * @param scaleFactor factor of scaling
+   * @param rotation rotated angle
+   * @param rect target rect
+   * @param options render options
+   * @returns task contains the rendered image or error
+   */
   renderPageRect: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -769,71 +1289,182 @@ export interface PdfEngine {
     rect: Rect,
     options: PdfRenderOptions
   ) => Task<ImageData, PdfEngineError>;
+  /**
+   * Get annotations of pdf page
+   * @param doc pdf document
+   * @param page pdf page
+   * @param scaleFactor factor of scaling
+   * @param rotation rotated angle
+   * @returns task contains the annotations or error
+   */
   getPageAnnotations: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation
   ) => Task<PdfAnnotationObject[], PdfEngineError>;
+  /**
+   * Create a annotation on specified page
+   * @param doc pdf document
+   * @param page pdf page
+   * @param annotation new annotations
+   * @returns task whether the annotations is created successfully
+   */
   createPageAnnotation: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject
   ) => Task<boolean, PdfEngineError>;
+  /**
+   * Transform the annotation
+   * @param doc pdf document
+   * @param page pdf page
+   * @param annotation new annotations
+   * @param transformation transformation applied on the annotation
+   * @returns task whether the annotations is transformed successfully
+   */
   transformPageAnnotation: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
     transformation: PdfAnnotationTransformation
   ) => Task<boolean, PdfEngineError>;
+  /**
+   * Remove a annotation on specified page
+   * @param doc pdf document
+   * @param page pdf page
+   * @param annotation new annotations
+   * @returns task whether the annotations is removed successfully
+   */
   removePageAnnotation: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject
   ) => Task<boolean, PdfEngineError>;
+  /**
+   * get all text rects in pdf page
+   * @param doc pdf document
+   * @param page pdf page
+   * @param scaleFactor factor of scaling
+   * @param rotation rotated angle
+   * @returns task contains the text rects or error
+   */
   getPageTextRects: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation
   ) => Task<PdfTextRectObject[], PdfEngineError>;
+  /**
+   * Render the thumbnail of specified pdf page
+   * @param doc pdf document
+   * @param page pdf page
+   * @param scaleFactor factor of scaling
+   * @param rotation rotated angle
+   * @param options render options
+   * @returns task contains the rendered image or error
+   */
   renderThumbnail: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation
   ) => Task<ImageData, PdfEngineError>;
+  /**
+   * Start searching with new context
+   * @param doc pdf document
+   * @param contextId id of context
+   * @returns Task contains whether search has started
+   */
   startSearch: (
     doc: PdfDocumentObject,
     contextId: number
   ) => Task<boolean, PdfEngineError>;
+  /**
+   * Search next target
+   * @param doc pdf document
+   * @param contextId id of context
+   * @param target search target
+   * @returns task contains the search result or error
+   */
   searchNext: (
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
   ) => Task<SearchResult | undefined, PdfEngineError>;
+  /**
+   * Search the previous targets
+   * @param doc pdf document
+   * @param contextId id of context
+   * @param target search target
+   * @returns task contains the search result or error
+   */
   searchPrev: (
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget
   ) => Task<SearchResult | undefined, PdfEngineError>;
+  /**
+   * Stop searching with new context
+   * @param doc pdf document
+   * @param contextId id of context
+   * @returns Task contains whether search has stopped
+   */
   stopSearch: (
     doc: PdfDocumentObject,
     contextId: number
   ) => Task<boolean, PdfEngineError>;
+  /**
+   * Get all attachments in this file
+   * @param doc pdf document
+   * @returns task that contains the attachments or error
+   */
   getAttachments: (
     doc: PdfDocumentObject
   ) => Task<PdfAttachmentObject[], PdfEngineError>;
+  /**
+   * Read content of pdf attachment
+   * @param doc pdf document
+   * @param attachment pdf attachments
+   * @returns task that contains the content of specified attachment or error
+   */
   readAttachmentContent: (
     doc: PdfDocumentObject,
     attachment: PdfAttachmentObject
   ) => Task<ArrayBuffer, PdfEngineError>;
+  /**
+   * Extract pdf pages to a new file
+   * @param doc pdf document
+   * @param pageIndexes indexes of pdf pages
+   * @returns task contains the new pdf file content
+   */
   extractPages: (
     doc: PdfDocumentObject,
     pageIndexes: number[]
   ) => Task<ArrayBuffer>;
+  /**
+   * Extract text on specified pdf pages
+   * @param doc pdf document
+   * @param pageIndexes indexes of pdf pages
+   * @returns task contains the text
+   */
   extractText: (doc: PdfDocumentObject, pageIndexes: number[]) => Task<string>;
+  /**
+   * Merge multiple pdf documents
+   * @param files all the pdf files
+   * @returns task contains the merged pdf file
+   */
   merge: (files: PdfFile[]) => Task<PdfFile>;
+  /**
+   * Save a copy of pdf document
+   * @param doc pdf document
+   * @returns task contains the new pdf file content
+   */
   saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, PdfEngineError>;
+  /**
+   * Close pdf document
+   * @param doc pdf document
+   * @returns task that file is closed or not
+   */
   closeDocument: (doc: PdfDocumentObject) => Task<boolean, PdfEngineError>;
 }

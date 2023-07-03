@@ -4,6 +4,8 @@
 
 ## PdfDocumentObject.pages property
 
+Pages in this document
+
 **Signature:**
 
 ```typescript

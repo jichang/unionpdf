@@ -4,6 +4,8 @@
 
 ## PdfMetadataObject.creationDate property
 
+creation date of the document
+
 **Signature:**
 
 ```typescript

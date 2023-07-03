@@ -4,6 +4,8 @@
 
 ## PdfMetadataObject.subject property
 
+subject of the document
+
 **Signature:**
 
 ```typescript

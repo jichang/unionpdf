@@ -4,6 +4,8 @@
 
 ## Rect.origin property
 
+origin of the rectangle
+
 **Signature:**
 
 ```typescript

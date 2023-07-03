@@ -4,6 +4,8 @@
 
 ## Rect interface
 
+representation of rectangle
+
 **Signature:**
 
 ```typescript
@@ -12,7 +14,7 @@ export interface Rect
 
 ## Properties
 
-| Property                          | Modifiers | Type                             | Description |
-| --------------------------------- | --------- | -------------------------------- | ----------- |
-| [origin](./models.rect.origin.md) |           | [Position](./models.position.md) |             |
-| [size](./models.rect.size.md)     |           | [Size](./models.size.md)         |             |
+| Property                          | Modifiers | Type                             | Description             |
+| --------------------------------- | --------- | -------------------------------- | ----------------------- |
+| [origin](./models.rect.origin.md) |           | [Position](./models.position.md) | origin of the rectangle |
+| [size](./models.rect.size.md)     |           | [Size](./models.size.md)         | size of the rectangle   |

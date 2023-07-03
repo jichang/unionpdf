@@ -4,6 +4,8 @@
 
 ## PdfDocumentObject.pageCount property
 
+Count of pages in this document
+
 **Signature:**
 
 ```typescript

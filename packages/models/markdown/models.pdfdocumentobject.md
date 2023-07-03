@@ -4,6 +4,8 @@
 
 ## PdfDocumentObject interface
 
+Representation of pdf document
+
 **Signature:**
 
 ```typescript
@@ -12,9 +14,9 @@ export interface PdfDocumentObject
 
 ## Properties
 
-| Property                                             | Modifiers | Type                                                   | Description |
-| ---------------------------------------------------- | --------- | ------------------------------------------------------ | ----------- |
-| [id](./models.pdfdocumentobject.id.md)               |           | string                                                 |             |
-| [name](./models.pdfdocumentobject.name.md)           |           | string                                                 |             |
-| [pageCount](./models.pdfdocumentobject.pagecount.md) |           | number                                                 |             |
-| [pages](./models.pdfdocumentobject.pages.md)         |           | [PdfPageObject](./models.pdfpageobject.md)<!-- -->\[\] |             |
+| Property                                             | Modifiers | Type                                                   | Description                     |
+| ---------------------------------------------------- | --------- | ------------------------------------------------------ | ------------------------------- |
+| [id](./models.pdfdocumentobject.id.md)               |           | string                                                 | Identity of document            |
+| [name](./models.pdfdocumentobject.name.md)           |           | string                                                 | name of document                |
+| [pageCount](./models.pdfdocumentobject.pagecount.md) |           | number                                                 | Count of pages in this document |
+| [pages](./models.pdfdocumentobject.pages.md)         |           | [PdfPageObject](./models.pdfpageobject.md)<!-- -->\[\] | Pages in this document          |

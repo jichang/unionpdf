@@ -4,6 +4,8 @@
 
 ## transformRect() function
 
+Calculate new rectangle after transforming the container
+
 **Signature:**
 
 ```typescript
@@ -26,13 +28,15 @@ export function transformRect(
 
 ## Parameters
 
-| Parameter     | Type                             | Description |
-| ------------- | -------------------------------- | ----------- |
-| containerSize | [Size](./models.size.md)         |             |
-| rect          | [Rect](./models.rect.md)         |             |
-| rotation      | [Rotation](./models.rotation.md) |             |
-| scaleFactor   | number                           |             |
+| Parameter     | Type                             | Description           |
+| ------------- | -------------------------------- | --------------------- |
+| containerSize | [Size](./models.size.md)         | size of the container |
+| rect          | [Rect](./models.rect.md)         | the target rectangle  |
+| rotation      | [Rotation](./models.rotation.md) | rotated angle         |
+| scaleFactor   | number                           | factor of scaling     |
 
 **Returns:**
 
 { origin: { x: number; y: number; }; size: { width: number; height: number; }; }
+
+new rectangle after transformation

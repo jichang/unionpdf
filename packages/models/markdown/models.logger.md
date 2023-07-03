@@ -4,6 +4,8 @@
 
 ## Logger interface
 
+logger for logging
+
 **Signature:**
 
 ```typescript
@@ -12,9 +14,9 @@ export interface Logger
 
 ## Properties
 
-| Property                          | Modifiers | Type                                                        | Description |
-| --------------------------------- | --------- | ----------------------------------------------------------- | ----------- |
-| [debug](./models.logger.debug.md) |           | (source: string, category: string, ...args: any) =&gt; void |             |
-| [error](./models.logger.error.md) |           | (source: string, category: string, ...args: any) =&gt; void |             |
-| [info](./models.logger.info.md)   |           | (source: string, category: string, ...args: any) =&gt; void |             |
-| [warn](./models.logger.warn.md)   |           | (source: string, category: string, ...args: any) =&gt; void |             |
+| Property                          | Modifiers | Type                                                        | Description         |
+| --------------------------------- | --------- | ----------------------------------------------------------- | ------------------- |
+| [debug](./models.logger.debug.md) |           | (source: string, category: string, ...args: any) =&gt; void | Log debug message   |
+| [error](./models.logger.error.md) |           | (source: string, category: string, ...args: any) =&gt; void | Log error message   |
+| [info](./models.logger.info.md)   |           | (source: string, category: string, ...args: any) =&gt; void | Log infor message   |
+| [warn](./models.logger.warn.md)   |           | (source: string, category: string, ...args: any) =&gt; void | Log warning message |

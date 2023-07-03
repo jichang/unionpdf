@@ -4,6 +4,8 @@
 
 ## Rect.size property
 
+size of the rectangle
+
 **Signature:**
 
 ```typescript

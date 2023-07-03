@@ -4,6 +4,8 @@
 
 ## PdfLinkTarget type
 
+target of pdf link
+
 **Signature:**
 
 ```typescript

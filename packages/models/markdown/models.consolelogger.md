@@ -4,6 +4,8 @@
 
 ## ConsoleLogger class
 
+Logger that use console as the output
+
 **Signature:**
 
 ```typescript

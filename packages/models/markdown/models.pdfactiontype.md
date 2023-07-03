@@ -4,6 +4,8 @@
 
 ## PdfActionType enum
 
+Type of pdf action
+
 **Signature:**
 
 ```typescript
@@ -12,10 +14,10 @@ export enum PdfActionType
 
 ## Enumeration Members
 
-| Member              | Value          | Description |
-| ------------------- | -------------- | ----------- |
-| Goto                | <code>1</code> |             |
-| LaunchAppOrOpenFile | <code>4</code> |             |
-| RemoteGoto          | <code>2</code> |             |
-| Unsupported         | <code>0</code> |             |
-| URI                 | <code>3</code> |             |
+| Member              | Value          | Description                                 |
+| ------------------- | -------------- | ------------------------------------------- |
+| Goto                | <code>1</code> | Goto specified position in this document    |
+| LaunchAppOrOpenFile | <code>4</code> | Launch specifed application                 |
+| RemoteGoto          | <code>2</code> | Goto specified position in another document |
+| Unsupported         | <code>0</code> |                                             |
+| URI                 | <code>3</code> | Goto specified URI                          |

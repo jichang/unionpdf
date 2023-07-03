@@ -4,17 +4,21 @@
 
 ## LevelLogger class
 
+Logger that support filtering by log level
+
 **Signature:**
 
 ```typescript
-export class LevelLogger
+export class LevelLogger implements Logger
 ```
+
+**Implements:** [Logger](./models.logger.md)
 
 ## Constructors
 
-| Constructor                                                           | Modifiers | Description                                                     |
-| --------------------------------------------------------------------- | --------- | --------------------------------------------------------------- |
-| [(constructor)(logger, level)](./models.levellogger._constructor_.md) |           | Constructs a new instance of the <code>LevelLogger</code> class |
+| Constructor                                                           | Modifiers | Description            |
+| --------------------------------------------------------------------- | --------- | ---------------------- |
+| [(constructor)(logger, level)](./models.levellogger._constructor_.md) |           | create new LevelLogger |
 
 ## Methods
 

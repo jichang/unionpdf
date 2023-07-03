@@ -4,6 +4,8 @@
 
 ## NoopLogger class
 
+Logger that log nothing, it will ignore all the logs
+
 **Signature:**
 
 ```typescript

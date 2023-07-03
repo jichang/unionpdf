@@ -4,6 +4,8 @@
 
 ## PdfPageObject.size property
 
+Orignal size of this page
+
 **Signature:**
 
 ```typescript

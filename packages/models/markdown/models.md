@@ -6,106 +6,106 @@
 
 ## Classes
 
-| Class                                        | Description |
-| -------------------------------------------- | ----------- |
-| [ConsoleLogger](./models.consolelogger.md)   |             |
-| [LevelLogger](./models.levellogger.md)       |             |
-| [NoopLogger](./models.nooplogger.md)         |             |
-| [PdfEngineError](./models.pdfengineerror.md) |             |
-| [TaskAbortError](./models.taskaborterror.md) |             |
-| [TaskBase](./models.taskbase.md)             |             |
+| Class                                        | Description                                          |
+| -------------------------------------------- | ---------------------------------------------------- |
+| [ConsoleLogger](./models.consolelogger.md)   | Logger that use console as the output                |
+| [LevelLogger](./models.levellogger.md)       | Logger that support filtering by log level           |
+| [NoopLogger](./models.nooplogger.md)         | Logger that log nothing, it will ignore all the logs |
+| [PdfEngineError](./models.pdfengineerror.md) |                                                      |
+| [TaskAbortError](./models.taskaborterror.md) |                                                      |
+| [TaskBase](./models.taskbase.md)             |                                                      |
 
 ## Enumerations
 
 | Enumeration                                                        | Description         |
 | ------------------------------------------------------------------ | ------------------- |
 | [AppearanceMode](./models.appearancemode.md)                       |                     |
-| [LogLevel](./models.loglevel.md)                                   |                     |
+| [LogLevel](./models.loglevel.md)                                   | Level of log        |
 | [MatchFlag](./models.matchflag.md)                                 |                     |
 | [PDF_FORM_FIELD_FLAG](./models.pdf_form_field_flag.md)             |                     |
 | [PDF_FORM_FIELD_TYPE](./models.pdf_form_field_type.md)             |                     |
-| [PdfActionType](./models.pdfactiontype.md)                         |                     |
+| [PdfActionType](./models.pdfactiontype.md)                         | Type of pdf action  |
 | [PdfAnnotationObjectStatus](./models.pdfannotationobjectstatus.md) |                     |
 | [PdfAnnotationSubtype](./models.pdfannotationsubtype.md)           |                     |
 | [PdfEngineFeature](./models.pdfenginefeature.md)                   |                     |
 | [PdfEngineOperation](./models.pdfengineoperation.md)               |                     |
 | [PdfPageObjectType](./models.pdfpageobjecttype.md)                 |                     |
 | [PdfSegmentObjectType](./models.pdfsegmentobjecttype.md)           |                     |
-| [PdfZoomMode](./models.pdfzoommode.md)                             |                     |
+| [PdfZoomMode](./models.pdfzoommode.md)                             | zoom mode           |
 | [Rotation](./models.rotation.md)                                   | Clockwise direction |
 | [TaskStage](./models.taskstage.md)                                 |                     |
 
 ## Functions
 
-| Function                                                                                           | Description                                                   |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| [calculateAngle(rotation)](./models.calculateangle.md)                                             | Calculate angle that match the rotation type                  |
-| [calculateDegree(rotation)](./models.calculatedegree.md)                                           | Calculate degree that match the rotation type                 |
-| [compareSearchTarge(targetA, targetB)](./models.comparesearchtarge.md)                             |                                                               |
-| [ignore()](./models.ignore.md)                                                                     | ignore will do nothing when called.                           |
-| [restoreOffset(offset, rotation, scaleFactor)](./models.restoreoffset.md)                          |                                                               |
-| [restorePosition(containerSize, position, rotation, scaleFactor)](./models.restoreposition.md)     |                                                               |
-| [restoreRect(containerSize, rect, rotation, scaleFactor)](./models.restorerect.md)                 |                                                               |
-| [rotatePosition(containerSize, position, rotation)](./models.rotateposition.md)                    |                                                               |
-| [rotateRect(containerSize, rect, rotation)](./models.rotaterect.md)                                |                                                               |
-| [scalePosition(position, scaleFactor)](./models.scaleposition.md)                                  |                                                               |
-| [scaleRect(rect, scaleFactor)](./models.scalerect.md)                                              |                                                               |
-| [swap(size)](./models.swap.md)                                                                     | Swap the width and height of the size object                  |
-| [transformPosition(containerSize, position, rotation, scaleFactor)](./models.transformposition.md) |                                                               |
-| [transformRect(containerSize, rect, rotation, scaleFactor)](./models.transformrect.md)             |                                                               |
-| [transformSize(size, rotation, scaleFactor)](./models.transformsize.md)                            | Transform size with specified rotation angle and scale factor |
-| [unionFlags(flags)](./models.unionflags.md)                                                        |                                                               |
+| Function                                                                                           | Description                                                                           |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [calculateAngle(rotation)](./models.calculateangle.md)                                             | Calculate angle that match the rotation type                                          |
+| [calculateDegree(rotation)](./models.calculatedegree.md)                                           | Calculate degree that match the rotation type                                         |
+| [compareSearchTarge(targetA, targetB)](./models.comparesearchtarge.md)                             |                                                                                       |
+| [ignore()](./models.ignore.md)                                                                     | ignore will do nothing when called.                                                   |
+| [restoreOffset(offset, rotation, scaleFactor)](./models.restoreoffset.md)                          | Calculate the original offset in a transformed container                              |
+| [restorePosition(containerSize, position, rotation, scaleFactor)](./models.restoreposition.md)     | Restore the position in a transformed cotainer                                        |
+| [restoreRect(containerSize, rect, rotation, scaleFactor)](./models.restorerect.md)                 | Calculate new rectangle before transforming the container                             |
+| [rotatePosition(containerSize, position, rotation)](./models.rotateposition.md)                    | Rotate the container and calculate the new position for a point in specified position |
+| [rotateRect(containerSize, rect, rotation)](./models.rotaterect.md)                                |                                                                                       |
+| [scalePosition(position, scaleFactor)](./models.scaleposition.md)                                  | Calculate the position of point by scaling the container                              |
+| [scaleRect(rect, scaleFactor)](./models.scalerect.md)                                              | Scale the rectangle                                                                   |
+| [swap(size)](./models.swap.md)                                                                     | Swap the width and height of the size object                                          |
+| [transformPosition(containerSize, position, rotation, scaleFactor)](./models.transformposition.md) | Calculate the position of the point by applying the specified transformation          |
+| [transformRect(containerSize, rect, rotation, scaleFactor)](./models.transformrect.md)             | Calculate new rectangle after transforming the container                              |
+| [transformSize(size, rotation, scaleFactor)](./models.transformsize.md)                            | Transform size with specified rotation angle and scale factor                         |
+| [unionFlags(flags)](./models.unionflags.md)                                                        |                                                                                       |
 
 ## Interfaces
 
-| Interface                                                              | Description                  |
-| ---------------------------------------------------------------------- | ---------------------------- |
-| [Logger](./models.logger.md)                                           |                              |
-| [PdfAnnotationObjectBase](./models.pdfannotationobjectbase.md)         |                              |
-| [PdfAnnotationTransformation](./models.pdfannotationtransformation.md) |                              |
-| [PdfAttachmentObject](./models.pdfattachmentobject.md)                 |                              |
-| [PdfBookmarkObject](./models.pdfbookmarkobject.md)                     |                              |
-| [PdfBookmarksObject](./models.pdfbookmarksobject.md)                   |                              |
-| [PdfCaretAnnoObject](./models.pdfcaretannoobject.md)                   |                              |
-| [PdfCircleAnnoObject](./models.pdfcircleannoobject.md)                 |                              |
-| [PdfDestinationObject](./models.pdfdestinationobject.md)               |                              |
-| [PdfDocumentObject](./models.pdfdocumentobject.md)                     |                              |
-| [PdfEngine](./models.pdfengine.md)                                     |                              |
-| [PdfFile](./models.pdffile.md)                                         |                              |
-| [PdfFileAttachmentAnnoObject](./models.pdffileattachmentannoobject.md) |                              |
-| [PdfFormObject](./models.pdfformobject.md)                             |                              |
-| [PdfFreeTextAnnoObject](./models.pdffreetextannoobject.md)             |                              |
-| [PdfHighlightAnnoObject](./models.pdfhighlightannoobject.md)           |                              |
-| [PdfImageObject](./models.pdfimageobject.md)                           |                              |
-| [PdfInkAnnoObject](./models.pdfinkannoobject.md)                       |                              |
-| [PdfInkListObject](./models.pdfinklistobject.md)                       |                              |
-| [PdfLineAnnoObject](./models.pdflineannoobject.md)                     |                              |
-| [PdfLinkAnnoObject](./models.pdflinkannoobject.md)                     |                              |
-| [PdfMetadataObject](./models.pdfmetadataobject.md)                     |                              |
-| [PdfPageObject](./models.pdfpageobject.md)                             |                              |
-| [PdfPathObject](./models.pdfpathobject.md)                             |                              |
-| [PdfPolygonAnnoObject](./models.pdfpolygonannoobject.md)               |                              |
-| [PdfPolylineAnnoObject](./models.pdfpolylineannoobject.md)             |                              |
-| [PdfPopupAnnoObject](./models.pdfpopupannoobject.md)                   |                              |
-| [PdfRenderOptions](./models.pdfrenderoptions.md)                       |                              |
-| [PdfSegmentObject](./models.pdfsegmentobject.md)                       |                              |
-| [PdfSignatureObject](./models.pdfsignatureobject.md)                   |                              |
-| [PdfSquareAnnoObject](./models.pdfsquareannoobject.md)                 |                              |
-| [PdfSquigglyAnnoObject](./models.pdfsquigglyannoobject.md)             |                              |
-| [PdfStampAnnoObject](./models.pdfstampannoobject.md)                   |                              |
-| [PdfStrikeOutAnnoObject](./models.pdfstrikeoutannoobject.md)           |                              |
-| [PdfTextAnnoObject](./models.pdftextannoobject.md)                     |                              |
-| [PdfTextRectObject](./models.pdftextrectobject.md)                     |                              |
-| [PdfUnderlineAnnoObject](./models.pdfunderlineannoobject.md)           |                              |
-| [PdfUnsupportedAnnoObject](./models.pdfunsupportedannoobject.md)       |                              |
-| [PdfWidgetAnnoObject](./models.pdfwidgetannoobject.md)                 |                              |
-| [PdfWidgetAnnoOption](./models.pdfwidgetannooption.md)                 |                              |
-| [Position](./models.position.md)                                       | position of point            |
-| [Rect](./models.rect.md)                                               |                              |
-| [SearchResult](./models.searchresult.md)                               |                              |
-| [SearchTarget](./models.searchtarget.md)                               |                              |
-| [Size](./models.size.md)                                               | Represent the size of object |
-| [Task](./models.task.md)                                               |                              |
+| Interface                                                              | Description                              |
+| ---------------------------------------------------------------------- | ---------------------------------------- |
+| [Logger](./models.logger.md)                                           | logger for logging                       |
+| [PdfAnnotationObjectBase](./models.pdfannotationobjectbase.md)         |                                          |
+| [PdfAnnotationTransformation](./models.pdfannotationtransformation.md) |                                          |
+| [PdfAttachmentObject](./models.pdfattachmentobject.md)                 |                                          |
+| [PdfBookmarkObject](./models.pdfbookmarkobject.md)                     |                                          |
+| [PdfBookmarksObject](./models.pdfbookmarksobject.md)                   |                                          |
+| [PdfCaretAnnoObject](./models.pdfcaretannoobject.md)                   |                                          |
+| [PdfCircleAnnoObject](./models.pdfcircleannoobject.md)                 |                                          |
+| [PdfDestinationObject](./models.pdfdestinationobject.md)               | Representation of the linked destination |
+| [PdfDocumentObject](./models.pdfdocumentobject.md)                     | Representation of pdf document           |
+| [PdfEngine](./models.pdfengine.md)                                     |                                          |
+| [PdfFile](./models.pdffile.md)                                         |                                          |
+| [PdfFileAttachmentAnnoObject](./models.pdffileattachmentannoobject.md) |                                          |
+| [PdfFormObject](./models.pdfformobject.md)                             |                                          |
+| [PdfFreeTextAnnoObject](./models.pdffreetextannoobject.md)             |                                          |
+| [PdfHighlightAnnoObject](./models.pdfhighlightannoobject.md)           |                                          |
+| [PdfImageObject](./models.pdfimageobject.md)                           |                                          |
+| [PdfInkAnnoObject](./models.pdfinkannoobject.md)                       |                                          |
+| [PdfInkListObject](./models.pdfinklistobject.md)                       |                                          |
+| [PdfLineAnnoObject](./models.pdflineannoobject.md)                     |                                          |
+| [PdfLinkAnnoObject](./models.pdflinkannoobject.md)                     |                                          |
+| [PdfMetadataObject](./models.pdfmetadataobject.md)                     | metadata of pdf document                 |
+| [PdfPageObject](./models.pdfpageobject.md)                             | Representation of pdf page               |
+| [PdfPathObject](./models.pdfpathobject.md)                             |                                          |
+| [PdfPolygonAnnoObject](./models.pdfpolygonannoobject.md)               |                                          |
+| [PdfPolylineAnnoObject](./models.pdfpolylineannoobject.md)             |                                          |
+| [PdfPopupAnnoObject](./models.pdfpopupannoobject.md)                   |                                          |
+| [PdfRenderOptions](./models.pdfrenderoptions.md)                       |                                          |
+| [PdfSegmentObject](./models.pdfsegmentobject.md)                       |                                          |
+| [PdfSignatureObject](./models.pdfsignatureobject.md)                   |                                          |
+| [PdfSquareAnnoObject](./models.pdfsquareannoobject.md)                 |                                          |
+| [PdfSquigglyAnnoObject](./models.pdfsquigglyannoobject.md)             |                                          |
+| [PdfStampAnnoObject](./models.pdfstampannoobject.md)                   |                                          |
+| [PdfStrikeOutAnnoObject](./models.pdfstrikeoutannoobject.md)           |                                          |
+| [PdfTextAnnoObject](./models.pdftextannoobject.md)                     |                                          |
+| [PdfTextRectObject](./models.pdftextrectobject.md)                     |                                          |
+| [PdfUnderlineAnnoObject](./models.pdfunderlineannoobject.md)           |                                          |
+| [PdfUnsupportedAnnoObject](./models.pdfunsupportedannoobject.md)       |                                          |
+| [PdfWidgetAnnoObject](./models.pdfwidgetannoobject.md)                 |                                          |
+| [PdfWidgetAnnoOption](./models.pdfwidgetannooption.md)                 |                                          |
+| [Position](./models.position.md)                                       | position of point                        |
+| [Rect](./models.rect.md)                                               | representation of rectangle              |
+| [SearchResult](./models.searchresult.md)                               |                                          |
+| [SearchTarget](./models.searchtarget.md)                               |                                          |
+| [Size](./models.size.md)                                               | Represent the size of object             |
+| [Task](./models.task.md)                                               |                                          |
 
 ## Variables
 
@@ -115,13 +115,13 @@
 
 ## Type Aliases
 
-| Type Alias                                                   | Description |
-| ------------------------------------------------------------ | ----------- |
-| [PdfActionObject](./models.pdfactionobject.md)               |             |
-| [PdfAnnotationObject](./models.pdfannotationobject.md)       |             |
-| [PdfFileContent](./models.pdffilecontent.md)                 |             |
-| [PdfLinkTarget](./models.pdflinktarget.md)                   |             |
-| [PdfSupportedAnnoObject](./models.pdfsupportedannoobject.md) |             |
-| [RejectedCallback](./models.rejectedcallback.md)             |             |
-| [ResolvedCallback](./models.resolvedcallback.md)             |             |
-| [TaskState](./models.taskstate.md)                           |             |
+| Type Alias                                                   | Description                  |
+| ------------------------------------------------------------ | ---------------------------- |
+| [PdfActionObject](./models.pdfactionobject.md)               | Representation of pdf action |
+| [PdfAnnotationObject](./models.pdfannotationobject.md)       |                              |
+| [PdfFileContent](./models.pdffilecontent.md)                 |                              |
+| [PdfLinkTarget](./models.pdflinktarget.md)                   | target of pdf link           |
+| [PdfSupportedAnnoObject](./models.pdfsupportedannoobject.md) |                              |
+| [RejectedCallback](./models.rejectedcallback.md)             |                              |
+| [ResolvedCallback](./models.resolvedcallback.md)             |                              |
+| [TaskState](./models.taskstate.md)                           |                              |

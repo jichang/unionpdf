@@ -4,6 +4,8 @@
 
 ## PdfDestinationObject.zoom property
 
+zoom config for target destination
+
 **Signature:**
 
 ```typescript

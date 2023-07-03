@@ -4,6 +4,8 @@
 
 ## PdfZoomMode enum
 
+zoom mode
+
 **Signature:**
 
 ```typescript
@@ -12,11 +14,11 @@ export enum PdfZoomMode
 
 ## Enumeration Members
 
-| Member        | Value          | Description |
-| ------------- | -------------- | ----------- |
-| FitHorizontal | <code>3</code> |             |
-| FitPage       | <code>2</code> |             |
-| FitRectangle  | <code>5</code> |             |
-| FitVertical   | <code>4</code> |             |
-| Unknown       | <code>0</code> |             |
-| XYZ           | <code>1</code> |             |
+| Member        | Value          | Description                                                    |
+| ------------- | -------------- | -------------------------------------------------------------- |
+| FitHorizontal | <code>3</code> | Fit the page width.                                            |
+| FitPage       | <code>2</code> | Fit both the width and height of the page (whichever smaller). |
+| FitRectangle  | <code>5</code> | Fit a specific rectangle area within the window.               |
+| FitVertical   | <code>4</code> | Fit the page height.                                           |
+| Unknown       | <code>0</code> |                                                                |
+| XYZ           | <code>1</code> | Zoom level with specified offset.                              |

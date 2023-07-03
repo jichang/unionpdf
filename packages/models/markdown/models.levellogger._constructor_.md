@@ -4,7 +4,7 @@
 
 ## LevelLogger.(constructor)
 
-Constructs a new instance of the `LevelLogger` class
+create new LevelLogger
 
 **Signature:**
 
@@ -14,7 +14,7 @@ constructor(logger: Logger, level: LogLevel);
 
 ## Parameters
 
-| Parameter | Type                             | Description |
-| --------- | -------------------------------- | ----------- |
-| logger    | [Logger](./models.logger.md)     |             |
-| level     | [LogLevel](./models.loglevel.md) |             |
+| Parameter | Type                             | Description                                                                            |
+| --------- | -------------------------------- | -------------------------------------------------------------------------------------- |
+| logger    | [Logger](./models.logger.md)     | the original logger                                                                    |
+| level     | [LogLevel](./models.loglevel.md) | log level that used for filtering, all logs lower than this level will be filtered out |

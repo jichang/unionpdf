@@ -4,6 +4,8 @@
 
 ## PdfDestinationObject.pageIndex property
 
+Index of target page
+
 **Signature:**
 
 ```typescript

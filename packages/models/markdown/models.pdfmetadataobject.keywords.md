@@ -4,6 +4,8 @@
 
 ## PdfMetadataObject.keywords property
 
+keywords of the document
+
 **Signature:**
 
 ```typescript

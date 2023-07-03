@@ -4,6 +4,8 @@
 
 ## rotatePosition() function
 
+Rotate the container and calculate the new position for a point in specified position
+
 **Signature:**
 
 ```typescript
@@ -16,12 +18,14 @@ export function rotatePosition(
 
 ## Parameters
 
-| Parameter     | Type                             | Description |
-| ------------- | -------------------------------- | ----------- |
-| containerSize | [Size](./models.size.md)         |             |
-| position      | [Position](./models.position.md) |             |
-| rotation      | [Rotation](./models.rotation.md) |             |
+| Parameter     | Type                             | Description           |
+| ------------- | -------------------------------- | --------------------- |
+| containerSize | [Size](./models.size.md)         | size of the container |
+| position      | [Position](./models.position.md) | position of the point |
+| rotation      | [Rotation](./models.rotation.md) | rotated angle         |
 
 **Returns:**
 
 [Position](./models.position.md)
+
+new position of the point

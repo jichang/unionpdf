@@ -4,6 +4,8 @@
 
 ## PdfPageObject.index property
 
+Index of this page, starts from 0
+
 **Signature:**
 
 ```typescript

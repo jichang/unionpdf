@@ -4,6 +4,8 @@
 
 ## PdfMetadataObject.modificationDate property
 
+modification date of the document
+
 **Signature:**
 
 ```typescript

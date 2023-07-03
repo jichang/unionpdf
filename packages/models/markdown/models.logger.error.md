@@ -4,6 +4,8 @@
 
 ## Logger.error property
 
+Log error message
+
 **Signature:**
 
 ```typescript

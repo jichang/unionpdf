@@ -4,6 +4,8 @@
 
 ## scalePosition() function
 
+Calculate the position of point by scaling the container
+
 **Signature:**
 
 ```typescript
@@ -15,11 +17,13 @@ export function scalePosition(
 
 ## Parameters
 
-| Parameter   | Type                             | Description |
-| ----------- | -------------------------------- | ----------- |
-| position    | [Position](./models.position.md) |             |
-| scaleFactor | number                           |             |
+| Parameter   | Type                             | Description           |
+| ----------- | -------------------------------- | --------------------- |
+| position    | [Position](./models.position.md) | position of the point |
+| scaleFactor | number                           | factor of scaling     |
 
 **Returns:**
 
 [Position](./models.position.md)
+
+new position of point

@@ -4,6 +4,8 @@
 
 ## Logger.debug property
 
+Log debug message
+
 **Signature:**
 
 ```typescript

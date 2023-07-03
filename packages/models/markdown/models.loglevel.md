@@ -4,6 +4,8 @@
 
 ## LogLevel enum
 
+Level of log
+
 **Signature:**
 
 ```typescript

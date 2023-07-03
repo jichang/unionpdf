@@ -4,6 +4,8 @@
 
 ## PdfDocumentObject.name property
 
+name of document
+
 **Signature:**
 
 ```typescript
