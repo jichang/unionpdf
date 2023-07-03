@@ -6,10 +6,12 @@
 
 ## Classes
 
-| Class                                                                                             | Description |
-| ------------------------------------------------------------------------------------------------- | ----------- |
-| [ErrorBoundary](./react.errorboundary.md)                                                         |             |
-| [MemoryPdfApplicationConfigurationProvider](./react.memorypdfapplicationconfigurationprovider.md) |             |
+| Class                                                                                               | Description |
+| --------------------------------------------------------------------------------------------------- | ----------- |
+| [ErrorBoundary](./react.errorboundary.md)                                                           |             |
+| [MemoryPdfApplicationConfigurationProvider](./react.memorypdfapplicationconfigurationprovider.md)   |             |
+| [PdfApplicationConfigurationProviderBase](./react.pdfapplicationconfigurationproviderbase.md)       |             |
+| [StoragePdfApplicationConfigurationProvider](./react.storagepdfapplicationconfigurationprovider.md) |             |
 
 ## Enumerations
 
@@ -106,6 +108,7 @@
 | [PdfPageUnderlineAnnotation(props)](./react.pdfpageunderlineannotation.md)                               |             |
 | [PdfPageWidgetAnnotation(props)](./react.pdfpagewidgetannotation.md)                                     |             |
 | [PdfPlugin(props)](./react.pdfplugin.md)                                                                 |             |
+| [PdfPluginDialog(props)](./react.pdfplugindialog.md)                                                     |             |
 | [PdfPrinter(props)](./react.pdfprinter.md)                                                               |             |
 | [PdfPrinterContent(props)](./react.pdfprintercontent.md)                                                 |             |
 | [PdfSearchPanel(props)](./react.pdfsearchpanel.md)                                                       |             |
@@ -241,6 +244,7 @@
 | [PdfPageTextLayerProps](./react.pdfpagetextlayerprops.md)                                                 |             |
 | [PdfPageUnderlineAnnotationProps](./react.pdfpageunderlineannotationprops.md)                             |             |
 | [PdfPageWidgetAnnotationProps](./react.pdfpagewidgetannotationprops.md)                                   |             |
+| [PdfPluginDialogProps](./react.pdfplugindialogprops.md)                                                   |             |
 | [PdfPluginProps](./react.pdfpluginprops.md)                                                               |             |
 | [PdfPrinterProps](./react.pdfprinterprops.md)                                                             |             |
 | [PdfSearchPanelProps](./react.pdfsearchpanelprops.md)                                                     |             |

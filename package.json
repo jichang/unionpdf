@@ -18,7 +18,7 @@
   "scripts": {
     "lerna": "lerna",
     "bootstrap": "lerna bootstrap",
-    "doc": "lerna run doc",
+    "doc": "lerna run doc && npm run format",
     "build": "lerna run build",
     "typecheck": "lerna run typecheck",
     "test": "lerna run test",

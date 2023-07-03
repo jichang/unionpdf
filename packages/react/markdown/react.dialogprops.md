@@ -7,7 +7,16 @@
 **Signature:**
 
 ```typescript
-export interface DialogProps extends ComponentProps<'dialog'>
+export interface DialogProps extends Omit<ComponentProps<'dialog'>, 'open'>
 ```
 
-**Extends:** ComponentProps&lt;'dialog'&gt;
+**Extends:** Omit&lt;ComponentProps&lt;'dialog'&gt;, 'open'&gt;
+
+## Properties
+
+| Property                                     | Modifiers | Type          | Description  |
+| -------------------------------------------- | --------- | ------------- | ------------ |
+| [isOpened](./react.dialogprops.isopened.md)  |           | boolean       |              |
+| [onClose](./react.dialogprops.onclose.md)    |           | () =&gt; void |              |
+| [onClosed?](./react.dialogprops.onclosed.md) |           | () =&gt; void | _(Optional)_ |
+| [title](./react.dialogprops.title.md)        |           | string        |              |

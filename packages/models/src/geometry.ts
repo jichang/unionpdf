@@ -112,6 +112,14 @@ export interface Position {
   y: number;
 }
 
+/**
+ * Rotate the container and calculate the new position for a point
+ * in specified position
+ * @param containerSize size of the container
+ * @param position position of the point
+ * @param rotation rotated angle
+ * @returns new position of the point
+ */
 export function rotatePosition(
   containerSize: Size,
   position: Position,
@@ -141,6 +149,12 @@ export function rotatePosition(
   }
 }
 
+/**
+ * Calculate the position of point by scaling the container
+ * @param position position of the point
+ * @param scaleFactor factor of scaling
+ * @returns new position of point
+ */
 export function scalePosition(
   position: Position,
   scaleFactor: number
@@ -151,6 +165,14 @@ export function scalePosition(
   };
 }
 
+/**
+ * Calculate the position of the point by applying the specified transformation
+ * @param containerSize size of container
+ * @param position position of the point
+ * @param rotation rotated angle
+ * @param scaleFactor factor of scaling
+ * @returns new position of point
+ */
 export function transformPosition(
   containerSize: Size,
   position: Position,
@@ -163,6 +185,14 @@ export function transformPosition(
   );
 }
 
+/**
+ * Restore the position in a transformed cotainer
+ * @param containerSize size of the container
+ * @param position position of the point
+ * @param rotation rotated angle
+ * @param scaleFactor factor of scaling
+ * @returns the original position of the point
+ */
 export function restorePosition(
   containerSize: Size,
   position: Position,
@@ -175,8 +205,18 @@ export function restorePosition(
   );
 }
 
+/**
+ * representation of rectangle
+ */
 export interface Rect {
+  /**
+   * origin of the rectangle
+   */
   origin: Position;
+
+  /**
+   * size of the rectangle
+   */
   size: Size;
 }
 
@@ -215,6 +255,12 @@ export function rotateRect(
   }
 }
 
+/**
+ * Scale the rectangle
+ * @param rect rectangle
+ * @param scaleFactor factor of scaling
+ * @returns new rectangle
+ */
 export function scaleRect(rect: Rect, scaleFactor: number) {
   return {
     origin: {
@@ -228,6 +274,14 @@ export function scaleRect(rect: Rect, scaleFactor: number) {
   };
 }
 
+/**
+ * Calculate new rectangle after transforming the container
+ * @param containerSize size of the container
+ * @param rect the target rectangle
+ * @param rotation rotated angle
+ * @param scaleFactor factor of scaling
+ * @returns new rectangle after transformation
+ */
 export function transformRect(
   containerSize: Size,
   rect: Rect,
@@ -237,6 +291,14 @@ export function transformRect(
   return scaleRect(rotateRect(containerSize, rect, rotation), scaleFactor);
 }
 
+/**
+ * Calculate new rectangle before transforming the container
+ * @param containerSize size of the container
+ * @param rect the target rectangle
+ * @param rotation rotated angle
+ * @param scaleFactor factor of scaling
+ * @returns original rectangle before transformation
+ */
 export function restoreRect(
   containerSize: Size,
   rect: Rect,
@@ -249,6 +311,13 @@ export function restoreRect(
   );
 }
 
+/**
+ * Calculate the original offset in a transformed container
+ * @param offset position of the point
+ * @param rotation rotated angle
+ * @param scaleFactor factor of scaling
+ * @returns original position of the point
+ */
 export function restoreOffset(
   offset: Position,
   rotation: Rotation,

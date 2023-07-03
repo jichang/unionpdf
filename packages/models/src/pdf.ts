@@ -1,39 +1,121 @@
 import { Size, Rect, Position, Rotation } from './geometry';
 
+/**
+ * Representation of pdf page
+ */
 export interface PdfPageObject {
+  /**
+   * Index of this page, starts from 0
+   */
   index: number;
+
+  /**
+   * Orignal size of this page
+   */
   size: Size;
 }
 
+/**
+ * Representation of pdf document
+ */
 export interface PdfDocumentObject {
+  /**
+   * Identity of document
+   */
   id: string;
+
+  /**
+   * name of document
+   */
   name: string;
+
+  /**
+   * Count of pages in this document
+   */
   pageCount: number;
+
+  /**
+   * Pages in this document
+   */
   pages: PdfPageObject[];
 }
 
+/**
+ * metadata of pdf document
+ */
 export interface PdfMetadataObject {
+  /**
+   * title of the document
+   */
   title: string;
+  /**
+   * author of the document
+   */
   author: string;
+  /**
+   * subject of the document
+   */
   subject: string;
+  /**
+   * keywords of the document
+   */
   keywords: string;
+  /**
+   * producer of the document
+   */
   producer: string;
+  /**
+   * creator of the document
+   */
   creator: string;
+  /**
+   * creation date of the document
+   */
   creationDate: string;
+  /**
+   * modification date of the document
+   */
   modificationDate: string;
 }
 
+/**
+ * zoom mode
+ */
 export enum PdfZoomMode {
   Unknown = 0,
-  XYZ = 1, // Zoom level with specified offset.
-  FitPage = 2, // Fit both the width and height of the page (whichever smaller).
-  FitHorizontal = 3, // Fit the page width.
-  FitVertical = 4, // Fit the page height.
-  FitRectangle = 5, // Fit a specific rectangle area within the window.
+  /**
+   * Zoom level with specified offset.
+   */
+  XYZ = 1,
+  /**
+   * Fit both the width and height of the page (whichever smaller).
+   */
+  FitPage = 2,
+  /**
+   * Fit the page width.
+   */
+  FitHorizontal = 3,
+  /**
+   * Fit the page height.
+   */
+  FitVertical = 4,
+  /**
+   * Fit a specific rectangle area within the window.
+   */
+  FitRectangle = 5,
 }
 
+/**
+ * Representation of the linked destination
+ */
 export interface PdfDestinationObject {
+  /**
+   * Index of target page
+   */
   pageIndex: number;
+  /**
+   * zoom config for target destination
+   */
   zoom:
     | {
         mode: PdfZoomMode.Unknown;
@@ -54,14 +136,32 @@ export interface PdfDestinationObject {
   view: number[];
 }
 
+/**
+ * Type of pdf action
+ */
 export enum PdfActionType {
   Unsupported = 0,
+  /**
+   * Goto specified position in this document
+   */
   Goto = 1,
+  /**
+   * Goto specified position in another document
+   */
   RemoteGoto = 2,
+  /**
+   * Goto specified URI
+   */
   URI = 3,
+  /**
+   * Launch specifed application
+   */
   LaunchAppOrOpenFile = 4,
 }
 
+/**
+ * Representation of pdf action
+ */
 export type PdfActionObject =
   | {
       type: PdfActionType.Unsupported;
@@ -83,6 +183,9 @@ export type PdfActionObject =
       path: string;
     };
 
+/**
+ * target of pdf link
+ */
 export type PdfLinkTarget =
   | {
       type: 'action';

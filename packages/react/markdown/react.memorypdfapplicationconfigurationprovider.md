@@ -7,33 +7,20 @@
 **Signature:**
 
 ```typescript
-export class MemoryPdfApplicationConfigurationProvider implements PdfApplicationConfigurationProvider
+export class MemoryPdfApplicationConfigurationProvider extends PdfApplicationConfigurationProviderBase implements PdfApplicationConfigurationProvider
 ```
 
+**Extends:** [PdfApplicationConfigurationProviderBase](./react.pdfapplicationconfigurationproviderbase.md)
+
 **Implements:** [PdfApplicationConfigurationProvider](./react.pdfapplicationconfigurationprovider.md)
-
-## Constructors
-
-| Constructor                                                                                                         | Modifiers | Description                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------- | --------- | --------------------------------------------------------------------------------------------- |
-| [(constructor)(rotation, scaleFactor, plugins)](./react.memorypdfapplicationconfigurationprovider._constructor_.md) |           | Constructs a new instance of the <code>MemoryPdfApplicationConfigurationProvider</code> class |
-
-## Properties
-
-| Property                                                                    | Modifiers | Type                                                                                                                  | Description |
-| --------------------------------------------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [callbacks](./react.memorypdfapplicationconfigurationprovider.callbacks.md) |           | Array&lt;(configuratin: [PdfApplicationConfiguration](./react.pdfapplicationconfiguration.md)<!-- -->) =&gt; void&gt; |             |
 
 ## Methods
 
 | Method                                                                                             | Modifiers | Description |
 | -------------------------------------------------------------------------------------------------- | --------- | ----------- |
-| [broadcast()](./react.memorypdfapplicationconfigurationprovider.broadcast.md)                      |           |             |
 | [get()](./react.memorypdfapplicationconfigurationprovider.get.md)                                  |           |             |
 | [hidePlugin(pluginKey)](./react.memorypdfapplicationconfigurationprovider.hideplugin.md)           |           |             |
 | [setRotation(rotation)](./react.memorypdfapplicationconfigurationprovider.setrotation.md)          |           |             |
 | [setScaleFactor(scaleFactor)](./react.memorypdfapplicationconfigurationprovider.setscalefactor.md) |           |             |
 | [showPlugin(pluginKey)](./react.memorypdfapplicationconfigurationprovider.showplugin.md)           |           |             |
-| [subscribe(callback)](./react.memorypdfapplicationconfigurationprovider.subscribe.md)              |           |             |
 | [togglePlugin(pluginKey)](./react.memorypdfapplicationconfigurationprovider.toggleplugin.md)       |           |             |
-| [unsubscribe(callback)](./react.memorypdfapplicationconfigurationprovider.unsubscribe.md)          |           |             |
