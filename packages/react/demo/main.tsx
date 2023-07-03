@@ -45,7 +45,7 @@ import {
   PdfPrinter,
   PrinterMethod,
   PdfMerger,
-  MemoryPdfApplicationConfigurationProvider,
+  StoragePdfApplicationConfigurationProvider,
 } from '../src/index';
 import { PdfiumErrorCode, WebWorkerEngine } from '@unionpdf/engines';
 import { PdfiumEngine } from '@unionpdf/engines';
@@ -67,7 +67,10 @@ export interface AppProps {
 function App(props: AppProps) {
   const { logger, engine } = props;
   const [provider] = useState(() => {
-    return new MemoryPdfApplicationConfigurationProvider();
+    return new StoragePdfApplicationConfigurationProvider(
+      localStorage,
+      'pdfviewer.configurtion'
+    );
   });
 
   const pdfAppElemRef = useRef<HTMLDivElement>(null);
@@ -96,8 +99,6 @@ function App(props: AppProps) {
           content: arrayBuffer,
         });
         setPassword('');
-        provider.setRotation(Rotation.Degree0);
-        provider.setScaleFactor(1);
       }
     },
     [setFile, provider]
@@ -106,8 +107,6 @@ function App(props: AppProps) {
   const closeFile = useCallback(() => {
     setFile(null);
     setPassword('');
-    provider.setRotation(Rotation.Degree0);
-    provider.setScaleFactor(1);
   }, [setFile, setPassword, provider]);
 
   const [stamps, setStamps] = useState<Stamp[]>([]);

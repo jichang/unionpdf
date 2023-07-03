@@ -100,19 +100,49 @@ export interface PdfApplicationConfigurationProvider {
   ) => void;
 }
 
-export class MemoryPdfApplicationConfigurationProvider
-  implements PdfApplicationConfigurationProvider
-{
+export class PdfApplicationConfigurationProviderBase {
   callbacks: Array<(configuratin: PdfApplicationConfiguration) => void> = [];
 
   constructor(
-    private rotation = Rotation.Degree0,
-    private scaleFactor: number = 1.0,
-    private plugins: Record<
+    protected rotation = Rotation.Degree0,
+    protected scaleFactor: number = 1.0,
+    protected plugins: Record<
       PdfApplicatinPluginKey,
       PdfApplicatinPluginConfiguration
     > = DEFAULT_PLUGIN_CONFIGURATIONS
-  ) {}
+  ) { }
+
+  broadcast() {
+    for (const callback of this.callbacks) {
+      callback({
+        scaleFactor: this.scaleFactor,
+        rotation: this.rotation,
+        plugins: this.plugins,
+      });
+    }
+  }
+
+  subscribe(callback: (configuration: PdfApplicationConfiguration) => void) {
+    const index = this.callbacks.findIndex((_callback) => {
+      return _callback === callback;
+    });
+    if (index === -1) {
+      this.callbacks.push(callback);
+    }
+  }
+
+  unsubscribe(callback: (configuration: PdfApplicationConfiguration) => void) {
+    const index = this.callbacks.findIndex((_callback) => {
+      return _callback === callback;
+    });
+    if (index !== -1) {
+      this.callbacks.splice(index, 1);
+    }
+  }
+}
+
+export class MemoryPdfApplicationConfigurationProvider extends PdfApplicationConfigurationProviderBase
+  implements PdfApplicationConfigurationProvider {
 
   get(): PdfApplicationConfiguration {
     return {
@@ -168,32 +198,104 @@ export class MemoryPdfApplicationConfigurationProvider
       this.showPlugin(pluginKey);
     }
   }
+}
 
-  broadcast() {
-    for (const callback of this.callbacks) {
-      callback({
-        scaleFactor: this.scaleFactor,
-        rotation: this.rotation,
-        plugins: this.plugins,
-      });
+export class StoragePdfApplicationConfigurationProvider extends PdfApplicationConfigurationProviderBase
+  implements PdfApplicationConfigurationProvider {
+  constructor(
+    private storage: Storage,
+    private key: string,
+    protected rotation = Rotation.Degree0,
+    protected scaleFactor: number = 1.0,
+    protected plugins: Record<
+      PdfApplicatinPluginKey,
+      PdfApplicatinPluginConfiguration
+    > = DEFAULT_PLUGIN_CONFIGURATIONS
+  ) {
+    super(rotation, scaleFactor, plugins);
+
+    this.init();
+  }
+
+  init() {
+    try {
+      const value = this.storage.getItem(this.key);
+      if (value) {
+        const configruation = JSON.parse(value) as PdfApplicationConfiguration;
+        this.rotation = configruation.rotation;
+        this.scaleFactor = configruation.scaleFactor;
+        this.plugins = configruation.plugins;
+      }
+    } catch (e) { }
+  }
+
+  save() {
+    try {
+      const configruation = this.get();
+      this.storage.setItem(this.key, JSON.stringify(configruation));
+    } catch (e) { }
+  }
+
+  broadcast(): void {
+    try {
+      super.broadcast();
+    } finally {
+      this.save();
     }
   }
 
-  subscribe(callback: (configuration: PdfApplicationConfiguration) => void) {
-    const index = this.callbacks.findIndex((_callback) => {
-      return _callback === callback;
-    });
-    if (index === -1) {
-      this.callbacks.push(callback);
-    }
+  get(): PdfApplicationConfiguration {
+    return {
+      rotation: this.rotation,
+      scaleFactor: this.scaleFactor,
+      plugins: this.plugins,
+    };
   }
 
-  unsubscribe(callback: (configuration: PdfApplicationConfiguration) => void) {
-    const index = this.callbacks.findIndex((_callback) => {
-      return _callback === callback;
-    });
-    if (index !== -1) {
-      this.callbacks.splice(index, 1);
+  setRotation(rotation: Rotation) {
+    this.rotation = rotation;
+    this.broadcast();
+  }
+
+  setScaleFactor(scaleFactor: number) {
+    this.scaleFactor = scaleFactor;
+    this.broadcast();
+  }
+
+  showPlugin(pluginKey: PdfApplicatinPluginKey) {
+    const pluginConfiguration = this.plugins[pluginKey];
+
+    this.plugins = {
+      ...this.plugins,
+      [pluginKey]: {
+        ...pluginConfiguration,
+        isVisible: true,
+      },
+    };
+
+    this.broadcast();
+  }
+
+  hidePlugin(pluginKey: PdfApplicatinPluginKey) {
+    const pluginConfiguration = this.plugins[pluginKey];
+
+    this.plugins = {
+      ...this.plugins,
+      [pluginKey]: {
+        ...pluginConfiguration,
+        isVisible: false,
+      },
+    };
+
+    this.broadcast();
+  }
+
+  togglePlugin(pluginKey: PdfApplicatinPluginKey) {
+    const pluginConfiguration = this.plugins[pluginKey];
+    if (pluginConfiguration.isVisible) {
+      this.hidePlugin(pluginKey);
+    } else {
+      this.showPlugin(pluginKey);
     }
   }
 }
