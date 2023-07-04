@@ -565,6 +565,9 @@ export interface PdfWidgetAnnoOption {
   isSelected: boolean;
 }
 
+/**
+ * Field of PDF widget annotation
+ */
 export interface PdfWidgetAnnoField {
   /**
    * flag of field
@@ -640,6 +643,9 @@ export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
   vertices: Position[];
 }
 
+/**
+ * PDF polyline annotation
+ */
 export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.POLYLINE;
   /**
@@ -648,6 +654,9 @@ export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
   vertices: Position[];
 }
 
+/**
+ * PDF line annotation
+ */
 export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.LINE;
   /**
@@ -660,6 +669,9 @@ export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
   endPoint: Position;
 }
 
+/**
+ * PDF highlight annotation
+ */
 export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
   type: PdfAnnotationSubtype.HIGHLIGHT;
 

@@ -220,6 +220,13 @@ export interface Rect {
   size: Size;
 }
 
+/**
+ * Calculate the rect after rotated the container
+ * @param containerSize size of container
+ * @param rect target rect
+ * @param rotation rotation angle
+ * @returns rotated rect
+ */
 export function rotateRect(
   containerSize: Size,
   rect: Rect,
