@@ -4,6 +4,8 @@
 
 ## Response_2 type
 
+Response type
+
 **Signature:**
 
 ```typescript

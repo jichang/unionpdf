@@ -4,6 +4,8 @@
 
 ## readString() function
 
+Read string from WASM heap
+
 **Signature:**
 
 ```typescript
@@ -17,13 +19,15 @@ export function readString(
 
 ## Parameters
 
-| Parameter     | Type                                                | Description  |
-| ------------- | --------------------------------------------------- | ------------ |
-| wasmModule    | PdfiumModule                                        |              |
-| readChars     | (buffer: number, bufferLength: number) =&gt; number |              |
-| parseChars    | (buffer: number) =&gt; string                       |              |
-| defaultLength | number                                              | _(Optional)_ |
+| Parameter     | Type                                                | Description                                             |
+| ------------- | --------------------------------------------------- | ------------------------------------------------------- |
+| wasmModule    | PdfiumModule                                        | pdfium wasm module instance                             |
+| readChars     | (buffer: number, bufferLength: number) =&gt; number | function to read chars                                  |
+| parseChars    | (buffer: number) =&gt; string                       | function to parse chars                                 |
+| defaultLength | number                                              | _(Optional)_ default length of chars that needs to read |
 
 **Returns:**
 
 string
+
+string from the heap

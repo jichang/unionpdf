@@ -4,6 +4,8 @@
 
 ## AbortRequest interface
 
+Request that abort the specified task
+
 **Signature:**
 
 ```typescript
@@ -12,7 +14,7 @@ export interface AbortRequest
 
 ## Properties
 
-| Property                               | Modifiers | Type           | Description |
-| -------------------------------------- | --------- | -------------- | ----------- |
-| [id](./engines.abortrequest.id.md)     |           | string         |             |
-| [type](./engines.abortrequest.type.md) |           | 'AbortRequest' |             |
+| Property                               | Modifiers | Type           | Description  |
+| -------------------------------------- | --------- | -------------- | ------------ |
+| [id](./engines.abortrequest.id.md)     |           | string         | message id   |
+| [type](./engines.abortrequest.type.md) |           | 'AbortRequest' | request type |

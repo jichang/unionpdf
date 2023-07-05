@@ -4,6 +4,8 @@
 
 ## WebWorkerEngine.tasks property
 
+All the tasks that is executing
+
 **Signature:**
 
 ```typescript

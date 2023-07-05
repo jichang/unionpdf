@@ -4,6 +4,8 @@
 
 ## PdfiumEngineRunner.initialize() method
 
+Initialize runner
+
 **Signature:**
 
 ```typescript

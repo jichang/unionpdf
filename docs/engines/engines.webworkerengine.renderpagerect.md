@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 renderPageRect(doc: PdfDocumentObject, page: PdfPageObject, scaleFactor: number, rotation: Rotation, rect: Rect, options: PdfRenderOptions): WorkerTask<ImageData, Error>;
 ```
 

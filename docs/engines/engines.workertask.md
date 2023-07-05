@@ -4,6 +4,8 @@
 
 ## WorkerTask class
 
+Task that executed by webworker
+
 **Signature:**
 
 ```typescript
@@ -14,9 +16,9 @@ export class WorkerTask<R, E = Error> extends TaskBase<R, E>
 
 ## Constructors
 
-| Constructor                                                               | Modifiers | Description                                                    |
-| ------------------------------------------------------------------------- | --------- | -------------------------------------------------------------- |
-| [(constructor)(worker, messageId)](./engines.workertask._constructor_.md) |           | Constructs a new instance of the <code>WorkerTask</code> class |
+| Constructor                                                               | Modifiers | Description                                                     |
+| ------------------------------------------------------------------------- | --------- | --------------------------------------------------------------- |
+| [(constructor)(worker, messageId)](./engines.workertask._constructor_.md) |           | Create a task that bind to web worker with specified message id |
 
 ## Properties
 

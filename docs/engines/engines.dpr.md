@@ -4,6 +4,8 @@
 
 ## DPR variable
 
+device pixel ratio
+
 **Signature:**
 
 ```typescript

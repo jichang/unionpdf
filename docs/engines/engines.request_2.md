@@ -4,6 +4,8 @@
 
 ## Request_2 type
 
+Request type
+
 **Signature:**
 
 ```typescript

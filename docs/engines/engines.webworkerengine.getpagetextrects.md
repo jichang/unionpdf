@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 getPageTextRects(doc: PdfDocumentObject, page: PdfPageObject, scaleFactor: number, rotation: Rotation): WorkerTask<PdfTextRectObject[], Error>;
 ```
 

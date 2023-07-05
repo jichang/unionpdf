@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 getPageAnnotations(doc: PdfDocumentObject, page: PdfPageObject, scaleFactor: number, rotation: Rotation): Task<PdfAnnotationObject[], PdfEngineError>;
 ```
 

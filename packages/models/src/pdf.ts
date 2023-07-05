@@ -2,6 +2,8 @@ import { Size, Rect, Position, Rotation } from './geometry';
 
 /**
  * Representation of pdf page
+ *
+ * @public
  */
 export interface PdfPageObject {
   /**
@@ -17,6 +19,8 @@ export interface PdfPageObject {
 
 /**
  * Representation of pdf document
+ *
+ * @public
  */
 export interface PdfDocumentObject {
   /**
@@ -42,6 +46,8 @@ export interface PdfDocumentObject {
 
 /**
  * metadata of pdf document
+ *
+ * @public
  */
 export interface PdfMetadataObject {
   /**
@@ -80,6 +86,8 @@ export interface PdfMetadataObject {
 
 /**
  * zoom mode
+ *
+ * @public
  */
 export enum PdfZoomMode {
   Unknown = 0,
@@ -107,6 +115,8 @@ export enum PdfZoomMode {
 
 /**
  * Representation of the linked destination
+ *
+ * @public
  */
 export interface PdfDestinationObject {
   /**
@@ -138,6 +148,8 @@ export interface PdfDestinationObject {
 
 /**
  * Type of pdf action
+ *
+ * @public
  */
 export enum PdfActionType {
   Unsupported = 0,
@@ -161,6 +173,8 @@ export enum PdfActionType {
 
 /**
  * Representation of pdf action
+ *
+ * @public
  */
 export type PdfActionObject =
   | {
@@ -185,6 +199,8 @@ export type PdfActionObject =
 
 /**
  * target of pdf link
+ *
+ * @public
  */
 export type PdfLinkTarget =
   | {
@@ -198,6 +214,8 @@ export type PdfLinkTarget =
 
 /**
  * PDF bookmark
+ *
+ * @public
  */
 export interface PdfBookmarkObject {
   /**
@@ -218,6 +236,8 @@ export interface PdfBookmarkObject {
 
 /**
  * Pdf Signature
+ *
+ * @public
  */
 export interface PdfSignatureObject {
   /**
@@ -253,6 +273,8 @@ export interface PdfSignatureObject {
 
 /**
  * Bookmark tree of pdf
+ *
+ * @public
  */
 export interface PdfBookmarksObject {
   bookmarks: PdfBookmarkObject[];
@@ -260,6 +282,8 @@ export interface PdfBookmarksObject {
 
 /**
  * Text rectangle in pdf page
+ *
+ * @public
  */
 export interface PdfTextRectObject {
   /**
@@ -290,6 +314,8 @@ export interface PdfTextRectObject {
 
 /**
  * Annotation type
+ *
+ * @public
  */
 export enum PdfAnnotationSubtype {
   UNKNOWN = 0,
@@ -325,6 +351,8 @@ export enum PdfAnnotationSubtype {
 
 /**
  * Name of annotation type
+ *
+ * @public
  */
 export const PdfAnnotationSubtypeName: Record<PdfAnnotationSubtype, string> = {
   [PdfAnnotationSubtype.UNKNOWN]: 'unknow',
@@ -358,13 +386,26 @@ export const PdfAnnotationSubtypeName: Record<PdfAnnotationSubtype, string> = {
   [PdfAnnotationSubtype.REDACT]: 'redact',
 };
 
+/**
+ * Status of pdf annotation
+ *
+ * @public
+ */
 export enum PdfAnnotationObjectStatus {
+  /**
+   * Annotation is created
+   */
   Created,
+  /**
+   * Annotation is committed to PDF file
+   */
   Committed,
 }
 
 /**
  * Appearance mode
+ *
+ * @public
  */
 export enum AppearanceMode {
   Normal = 0,
@@ -372,12 +413,18 @@ export enum AppearanceMode {
 
 /**
  * Basic information of pdf annotation
+ *
+ * @public
  */
 export interface PdfAnnotationObjectBase {
   /**
    * Sub type of annotation
    */
   type: PdfAnnotationSubtype;
+
+  /**
+   * Status of pdf annotation
+   */
   status: PdfAnnotationObjectStatus;
 
   /**
@@ -410,8 +457,11 @@ export interface PdfAnnotationObjectBase {
 
 /**
  * Popup annotation
+ *
+ * @public
  */
 export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.POPUP;
   /**
    * Contents of the popup
@@ -426,8 +476,11 @@ export interface PdfPopupAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * Pdf Link annotation
+ *
+ * @public
  */
 export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.LINK;
   /**
    * Text of the link
@@ -441,8 +494,11 @@ export interface PdfLinkAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * Pdf Text annotation
+ *
+ * @public
  */
 export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.TEXT;
   /**
    * Text contents of the annotation
@@ -462,6 +518,8 @@ export interface PdfTextAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * Type of form field
+ *
+ * @public
  */
 export enum PDF_FORM_FIELD_TYPE {
   /**
@@ -532,6 +590,8 @@ export enum PDF_FORM_FIELD_TYPE {
 
 /**
  * Flag of form field
+ *
+ * @public
  */
 export enum PDF_FORM_FIELD_FLAG {
   NONE = 0,
@@ -547,6 +607,8 @@ export enum PDF_FORM_FIELD_FLAG {
 
 /**
  * Type of pdf object
+ *
+ * @public
  */
 export enum PdfPageObjectType {
   UNKNOWN = 0,
@@ -559,6 +621,8 @@ export enum PdfPageObjectType {
 
 /**
  * Options of pdf widget annotation
+ *
+ * @public
  */
 export interface PdfWidgetAnnoOption {
   label: string;
@@ -567,6 +631,8 @@ export interface PdfWidgetAnnoOption {
 
 /**
  * Field of PDF widget annotation
+ *
+ * @public
  */
 export interface PdfWidgetAnnoField {
   /**
@@ -601,8 +667,11 @@ export interface PdfWidgetAnnoField {
 
 /**
  * PDF widget object
+ *
+ * @public
  */
 export interface PdfWidgetAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.WIDGET;
   /**
    * Field of pdf widget object
@@ -612,13 +681,18 @@ export interface PdfWidgetAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * Pdf file attachments annotation
+ *
+ * @public
  */
 export interface PdfFileAttachmentAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.FILEATTACHMENT;
 }
 
 /**
  * ink list in pdf ink annotation
+ *
+ * @public
  */
 export interface PdfInkListObject {
   points: Position[];
@@ -626,16 +700,22 @@ export interface PdfInkListObject {
 
 /**
  * Pdf ink annotation
+ *
+ * @public
  */
 export interface PdfInkAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.INK;
   inkList: PdfInkListObject[];
 }
 
 /**
  * Pdf polygon annotation
+ *
+ * @public
  */
 export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.POLYGON;
   /**
    * vertices of annotation
@@ -645,8 +725,11 @@ export interface PdfPolygonAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * PDF polyline annotation
+ *
+ * @public
  */
 export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.POLYLINE;
   /**
    * vertices of annotation
@@ -656,8 +739,11 @@ export interface PdfPolylineAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * PDF line annotation
+ *
+ * @public
  */
 export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.LINE;
   /**
    * start point of line
@@ -671,8 +757,11 @@ export interface PdfLineAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * PDF highlight annotation
+ *
+ * @public
  */
 export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.HIGHLIGHT;
 
   /**
@@ -687,6 +776,8 @@ export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * type of segment type in pdf path object
+ *
+ * @public
  */
 export enum PdfSegmentObjectType {
   UNKNOWN = -1,
@@ -697,6 +788,8 @@ export enum PdfSegmentObjectType {
 
 /**
  * segment of path object
+ *
+ * @public
  */
 export interface PdfSegmentObject {
   type: PdfSegmentObjectType;
@@ -712,6 +805,8 @@ export interface PdfSegmentObject {
 
 /**
  * Pdf path object
+ *
+ * @public
  */
 export interface PdfPathObject {
   type: PdfPageObjectType.PATH;
@@ -727,6 +822,8 @@ export interface PdfPathObject {
 
 /**
  * Pdf image object
+ *
+ * @public
  */
 export interface PdfImageObject {
   type: PdfPageObjectType.IMAGE;
@@ -738,6 +835,8 @@ export interface PdfImageObject {
 
 /**
  * Pdf form object
+ *
+ * @public
  */
 export interface PdfFormObject {
   type: PdfPageObjectType.FORM;
@@ -749,8 +848,11 @@ export interface PdfFormObject {
 
 /**
  * Pdf stamp annotation
+ *
+ * @public
  */
 export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.STAMP;
   /**
    * contents in this stamp annotation
@@ -760,56 +862,79 @@ export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * Pdf circle annotation
+ *
+ * @public
  */
 export interface PdfCircleAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.CIRCLE;
 }
 
 /**
  * Pdf square annotation
+ *
+ * @public
  */
 export interface PdfSquareAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.SQUARE;
 }
 
 /**
  * Pdf squiggly annotation
+ *
+ * @public
  */
 export interface PdfSquigglyAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.SQUIGGLY;
 }
 
 /**
  * Pdf underline annotation
+ *
+ * @public
  */
 export interface PdfUnderlineAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.UNDERLINE;
 }
 
 /**
  * Pdf strike out annotation
+ *
+ * @public
  */
 export interface PdfStrikeOutAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.STRIKEOUT;
 }
 
 /**
  * Pdf caret annotation
+ *
+ * @public
  */
 export interface PdfCaretAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.CARET;
 }
 
 /**
  * Pdf free text annotation
+ *
+ * @public
  */
 export interface PdfFreeTextAnnoObject extends PdfAnnotationObjectBase {
+  /** {@inheritDoc PdfAnnotationObjectBase.type} */
   type: PdfAnnotationSubtype.FREETEXT;
   contents: string;
 }
 
 /**
  * All annotation that support
+ *
+ * @public
  */
 export type PdfSupportedAnnoObject =
   | PdfInkAnnoObject
@@ -832,6 +957,8 @@ export type PdfSupportedAnnoObject =
 
 /**
  * Pdf annotation that does not support
+ *
+ * @public
  */
 export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
   type: Exclude<PdfAnnotationSubtype, PdfSupportedAnnoObject['type']>;
@@ -839,6 +966,8 @@ export interface PdfUnsupportedAnnoObject extends PdfAnnotationObjectBase {
 
 /**
  * all annotations
+ *
+ * @public
  */
 export type PdfAnnotationObject =
   | PdfSupportedAnnoObject
@@ -846,6 +975,8 @@ export type PdfAnnotationObject =
 
 /**
  * Pdf attachment
+ *
+ * @public
  */
 export interface PdfAttachmentObject {
   index: number;
@@ -856,6 +987,8 @@ export interface PdfAttachmentObject {
 
 /**
  * Pdf engine features
+ *
+ * @public
  */
 export enum PdfEngineFeature {
   RenderPage,
@@ -867,6 +1000,8 @@ export enum PdfEngineFeature {
 
 /**
  * All operations for this engine
+ *
+ * @public
  */
 export enum PdfEngineOperation {
   Create,
@@ -877,6 +1012,8 @@ export enum PdfEngineOperation {
 
 /**
  * flags to match the text during searching
+ *
+ * @public
  */
 export enum MatchFlag {
   None = 0,
@@ -887,8 +1024,10 @@ export enum MatchFlag {
 
 /**
  * Union all the flags
- * @param flags all the flags
+ * @param flags - all the flags
  * @returns union of flags
+ *
+ * @public
  */
 export function unionFlags(flags: MatchFlag[]) {
   return flags.reduce((flag, currFlag) => {
@@ -898,6 +1037,8 @@ export function unionFlags(flags: MatchFlag[]) {
 
 /**
  * Targe for searching
+ *
+ * @public
  */
 export interface SearchTarget {
   keyword: string;
@@ -906,9 +1047,11 @@ export interface SearchTarget {
 
 /**
  * compare 2 search target
- * @param targetA first target for search
- * @param targetB second target for search
+ * @param targetA - first target for search
+ * @param targetB - second target for search
  * @returns whether 2 search target are the same
+ *
+ * @public
  */
 export function compareSearchTarget(
   targetA: SearchTarget,
@@ -922,6 +1065,8 @@ export function compareSearchTarget(
 
 /**
  * search result
+ *
+ * @public
  */
 export interface SearchResult {
   /**
@@ -940,6 +1085,8 @@ export interface SearchResult {
 
 /**
  * Stage of task
+ *
+ * @public
  */
 export enum TaskStage {
   /**
@@ -962,21 +1109,29 @@ export enum TaskStage {
 
 /**
  * callback that will be called when task is resolved
+ *
+ * @public
  */
 export type ResolvedCallback<R> = (r: R) => void;
 
 /**
  * callback that will be called when task is rejected
+ *
+ * @public
  */
 export type RejectedCallback<E> = (e: E | TaskAbortError) => void;
 
 /**
  * Error that indicate task is failed
+ *
+ * @public
  */
 export class TaskAbortError extends Error {}
 
 /**
  * Task state in different stage
+ *
+ * @public
  */
 export type TaskState<R, E> =
   | {
@@ -997,6 +1152,8 @@ export type TaskState<R, E> =
 
 /**
  * Task for doing some work, it can be sync or async
+ *
+ * @public
  */
 export interface Task<R, E = Error> {
   /**
@@ -1006,8 +1163,8 @@ export interface Task<R, E = Error> {
 
   /**
    * Wait for task is finalized
-   * @param resolvedCallback callback when task is succeed
-   * @param rejectedCallback callback when task is failed
+   * @param resolvedCallback - callback when task is succeed
+   * @param rejectedCallback - callback when task is failed
    * @returns
    */
   wait: (
@@ -1016,19 +1173,19 @@ export interface Task<R, E = Error> {
   ) => void;
   /**
    * Resolve the task with value
-   * @param r resolved value
+   * @param r - resolved value
    * @returns
    */
   resolve: (r: R) => void;
   /**
    * Reject the task with error
-   * @param e rejected error
+   * @param e - rejected error
    * @returns
    */
   reject: (e: E) => void;
   /**
    * Abort the task with error
-   * @param error aborted error
+   * @param error - aborted error
    * @returns
    */
   abort: (error?: E | TaskAbortError) => void;
@@ -1036,6 +1193,8 @@ export interface Task<R, E = Error> {
 
 /**
  * Base class of task
+ *
+ * @public
  */
 export class TaskBase<R, E = Error> implements Task<R, E> {
   state: TaskState<R, E> = {
@@ -1052,7 +1211,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
 
   /**
    * Create a task that has been resolved with value
-   * @param result resolved value
+   * @param result - resolved value
    * @returns resolved task
    */
   static resolve<R, E = Error>(result: R): TaskBase<R, E> {
@@ -1064,7 +1223,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
 
   /**
    * Create a task that has been rejected with error
-   * @param error rejected error
+   * @param error - rejected error
    * @returns rejected task
    */
   static reject<R, E = Error>(error: E): TaskBase<R, E> {
@@ -1074,6 +1233,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     return task;
   }
 
+  /** {@inheritDoc Task.wait} */
   wait(
     resolvedCallback: ResolvedCallback<R>,
     rejectedCallback: RejectedCallback<E>
@@ -1095,6 +1255,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     }
   }
 
+  /** {@inheritDoc Task.resolve} */
   resolve(result: R) {
     if (this.state.stage === TaskStage.Pending) {
       this.state = {
@@ -1111,6 +1272,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     }
   }
 
+  /** {@inheritDoc Task.reject} */
   reject(error: E) {
     if (this.state.stage === TaskStage.Pending) {
       this.state = {
@@ -1146,6 +1308,8 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
 
 /**
  * Transformation that will be applied to annotation
+ *
+ * @public
  */
 export interface PdfAnnotationTransformation {
   /**
@@ -1160,6 +1324,8 @@ export interface PdfAnnotationTransformation {
 
 /**
  * Render options
+ *
+ * @public
  */
 export interface PdfRenderOptions {
   /**
@@ -1170,6 +1336,8 @@ export interface PdfRenderOptions {
 
 /**
  * Error that Pdf engine will emit
+ *
+ * @public
  */
 export class PdfEngineError extends Error {
   /**
@@ -1179,8 +1347,8 @@ export class PdfEngineError extends Error {
 
   /**
    *
-   * @param message error message
-   * @param code error code
+   * @param message - error message
+   * @param code - error code
    */
   constructor(message: string, code?: number) {
     super(message);
@@ -1190,11 +1358,15 @@ export class PdfEngineError extends Error {
 
 /**
  * source can be byte array contains pdf content
+ *
+ * @public
  */
 export type PdfFileContent = ArrayBuffer;
 
 /**
  * Pdf File
+ *
+ * @public
  */
 export interface PdfFile {
   /**
@@ -1213,11 +1385,13 @@ export interface PdfFile {
 
 /**
  * Pdf engine
+ *
+ * @public
  */
 export interface PdfEngine {
   /**
    * Check whether pdf engine supports this feature
-   * @param feature which feature want to check
+   * @param feature - which feature want to check
    * @returns support or not
    */
   isSupport?: (
@@ -1235,8 +1409,8 @@ export interface PdfEngine {
   destroy?: () => Task<boolean, PdfEngineError>;
   /**
    * Open pdf document
-   * @param file pdf file
-   * @param password protected password for this file
+   * @param file - pdf file
+   * @param password - protected password for this file
    * @returns task that contains the file or error
    */
   openDocument: (
@@ -1245,7 +1419,7 @@ export interface PdfEngine {
   ) => Task<PdfDocumentObject, PdfEngineError>;
   /**
    * Get the metadata of the file
-   * @param doc pdf document
+   * @param doc - pdf document
    * @returns task that contains the metadata or error
    */
   getMetadata: (
@@ -1253,7 +1427,7 @@ export interface PdfEngine {
   ) => Task<PdfMetadataObject, PdfEngineError>;
   /**
    * Get the signatures of the file
-   * @param doc pdf document
+   * @param doc - pdf document
    * @returns task that contains the signatures or error
    */
   getSignatures: (
@@ -1261,7 +1435,7 @@ export interface PdfEngine {
   ) => Task<PdfSignatureObject[], PdfEngineError>;
   /**
    * Get the bookmarks of the file
-   * @param doc pdf document
+   * @param doc - pdf document
    * @returns task that contains the bookmarks or error
    */
   getBookmarks: (
@@ -1269,11 +1443,11 @@ export interface PdfEngine {
   ) => Task<PdfBookmarksObject, PdfEngineError>;
   /**
    * Render the specified pdf page
-   * @param doc pdf document
-   * @param page pdf page
-   * @param scaleFactor factor of scaling
-   * @param rotation rotated angle
-   * @param options render options
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param scaleFactor - factor of scaling
+   * @param rotation - rotated angle
+   * @param options - render options
    * @returns task contains the rendered image or error
    */
   renderPage: (
@@ -1285,12 +1459,12 @@ export interface PdfEngine {
   ) => Task<ImageData, PdfEngineError>;
   /**
    * Render the specified rect of pdf page
-   * @param doc pdf document
-   * @param page pdf page
-   * @param scaleFactor factor of scaling
-   * @param rotation rotated angle
-   * @param rect target rect
-   * @param options render options
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param scaleFactor - factor of scaling
+   * @param rotation - rotated angle
+   * @param rect - target rect
+   * @param options - render options
    * @returns task contains the rendered image or error
    */
   renderPageRect: (
@@ -1303,10 +1477,10 @@ export interface PdfEngine {
   ) => Task<ImageData, PdfEngineError>;
   /**
    * Get annotations of pdf page
-   * @param doc pdf document
-   * @param page pdf page
-   * @param scaleFactor factor of scaling
-   * @param rotation rotated angle
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param scaleFactor - factor of scaling
+   * @param rotation - rotated angle
    * @returns task contains the annotations or error
    */
   getPageAnnotations: (
@@ -1317,9 +1491,9 @@ export interface PdfEngine {
   ) => Task<PdfAnnotationObject[], PdfEngineError>;
   /**
    * Create a annotation on specified page
-   * @param doc pdf document
-   * @param page pdf page
-   * @param annotation new annotations
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param annotation - new annotations
    * @returns task whether the annotations is created successfully
    */
   createPageAnnotation: (
@@ -1329,10 +1503,10 @@ export interface PdfEngine {
   ) => Task<boolean, PdfEngineError>;
   /**
    * Transform the annotation
-   * @param doc pdf document
-   * @param page pdf page
-   * @param annotation new annotations
-   * @param transformation transformation applied on the annotation
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param annotation - new annotations
+   * @param transformation - transformation applied on the annotation
    * @returns task whether the annotations is transformed successfully
    */
   transformPageAnnotation: (
@@ -1343,9 +1517,9 @@ export interface PdfEngine {
   ) => Task<boolean, PdfEngineError>;
   /**
    * Remove a annotation on specified page
-   * @param doc pdf document
-   * @param page pdf page
-   * @param annotation new annotations
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param annotation - new annotations
    * @returns task whether the annotations is removed successfully
    */
   removePageAnnotation: (
@@ -1355,10 +1529,10 @@ export interface PdfEngine {
   ) => Task<boolean, PdfEngineError>;
   /**
    * get all text rects in pdf page
-   * @param doc pdf document
-   * @param page pdf page
-   * @param scaleFactor factor of scaling
-   * @param rotation rotated angle
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param scaleFactor - factor of scaling
+   * @param rotation - rotated angle
    * @returns task contains the text rects or error
    */
   getPageTextRects: (
@@ -1369,11 +1543,11 @@ export interface PdfEngine {
   ) => Task<PdfTextRectObject[], PdfEngineError>;
   /**
    * Render the thumbnail of specified pdf page
-   * @param doc pdf document
-   * @param page pdf page
-   * @param scaleFactor factor of scaling
-   * @param rotation rotated angle
-   * @param options render options
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param scaleFactor - factor of scaling
+   * @param rotation - rotated angle
+   * @param options - render options
    * @returns task contains the rendered image or error
    */
   renderThumbnail: (
@@ -1384,8 +1558,8 @@ export interface PdfEngine {
   ) => Task<ImageData, PdfEngineError>;
   /**
    * Start searching with new context
-   * @param doc pdf document
-   * @param contextId id of context
+   * @param doc - pdf document
+   * @param contextId - id of context
    * @returns Task contains whether search has started
    */
   startSearch: (
@@ -1394,9 +1568,9 @@ export interface PdfEngine {
   ) => Task<boolean, PdfEngineError>;
   /**
    * Search next target
-   * @param doc pdf document
-   * @param contextId id of context
-   * @param target search target
+   * @param doc - pdf document
+   * @param contextId - id of context
+   * @param target - search target
    * @returns task contains the search result or error
    */
   searchNext: (
@@ -1406,9 +1580,9 @@ export interface PdfEngine {
   ) => Task<SearchResult | undefined, PdfEngineError>;
   /**
    * Search the previous targets
-   * @param doc pdf document
-   * @param contextId id of context
-   * @param target search target
+   * @param doc - pdf document
+   * @param contextId - id of context
+   * @param target - search target
    * @returns task contains the search result or error
    */
   searchPrev: (
@@ -1418,8 +1592,8 @@ export interface PdfEngine {
   ) => Task<SearchResult | undefined, PdfEngineError>;
   /**
    * Stop searching with new context
-   * @param doc pdf document
-   * @param contextId id of context
+   * @param doc - pdf document
+   * @param contextId - id of context
    * @returns Task contains whether search has stopped
    */
   stopSearch: (
@@ -1428,7 +1602,7 @@ export interface PdfEngine {
   ) => Task<boolean, PdfEngineError>;
   /**
    * Get all attachments in this file
-   * @param doc pdf document
+   * @param doc - pdf document
    * @returns task that contains the attachments or error
    */
   getAttachments: (
@@ -1436,8 +1610,8 @@ export interface PdfEngine {
   ) => Task<PdfAttachmentObject[], PdfEngineError>;
   /**
    * Read content of pdf attachment
-   * @param doc pdf document
-   * @param attachment pdf attachments
+   * @param doc - pdf document
+   * @param attachment - pdf attachments
    * @returns task that contains the content of specified attachment or error
    */
   readAttachmentContent: (
@@ -1446,8 +1620,8 @@ export interface PdfEngine {
   ) => Task<ArrayBuffer, PdfEngineError>;
   /**
    * Extract pdf pages to a new file
-   * @param doc pdf document
-   * @param pageIndexes indexes of pdf pages
+   * @param doc - pdf document
+   * @param pageIndexes - indexes of pdf pages
    * @returns task contains the new pdf file content
    */
   extractPages: (
@@ -1456,26 +1630,26 @@ export interface PdfEngine {
   ) => Task<ArrayBuffer>;
   /**
    * Extract text on specified pdf pages
-   * @param doc pdf document
-   * @param pageIndexes indexes of pdf pages
+   * @param doc - pdf document
+   * @param pageIndexes - indexes of pdf pages
    * @returns task contains the text
    */
   extractText: (doc: PdfDocumentObject, pageIndexes: number[]) => Task<string>;
   /**
    * Merge multiple pdf documents
-   * @param files all the pdf files
+   * @param files - all the pdf files
    * @returns task contains the merged pdf file
    */
   merge: (files: PdfFile[]) => Task<PdfFile>;
   /**
    * Save a copy of pdf document
-   * @param doc pdf document
+   * @param doc - pdf document
    * @returns task contains the new pdf file content
    */
   saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, PdfEngineError>;
   /**
    * Close pdf document
-   * @param doc pdf document
+   * @param doc - pdf document
    * @returns task that file is closed or not
    */
   closeDocument: (doc: PdfDocumentObject) => Task<boolean, PdfEngineError>;

@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 getAttachments(doc: PdfDocumentObject): Task<PdfAttachmentObject[], PdfEngineError>;
 ```
 

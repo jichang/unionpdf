@@ -6,20 +6,49 @@ import {
   Task,
 } from '@unionpdf/models';
 
+/**
+ * Method name of PdfEngine interface
+ *
+ * @public
+ */
 export type PdfEngineMethodName = keyof Required<PdfEngine>;
+/**
+ * Arguments of PdfEngine method
+ *
+ * @public
+ */
 export type PdfEngineMethodArgs<P extends PdfEngineMethodName> = Readonly<
   Parameters<Required<PdfEngine>[P]>
 >;
+/**
+ * Return type of PdfEngine method
+ *
+ * @public
+ */
 export type PdfEngineMethodReturnType<P extends PdfEngineMethodName> = Readonly<
   ReturnType<Required<PdfEngine>[P]>
 >;
+/**
+ * Type of task resolved value
+ *
+ * @public
+ */
 export type TaskResolveValueType<T> = T extends Task<infer R, infer U>
   ? R
   : never;
+/**
+ * Type of task rejected error
+ *
+ * @public
+ */
 export type TaskRejectErrorType<T> = T extends Task<infer R, infer U>
   ? U
   : never;
 
+/**
+ * Request body that represent method calls of PdfEngine, it contains the
+ * method name and arguments
+ */
 export type PdfEngineMethodRequestBody = {
   [P in PdfEngineMethodName]: {
     name: P;
@@ -27,48 +56,108 @@ export type PdfEngineMethodRequestBody = {
   };
 }[PdfEngineMethodName];
 
-export type TaskResultType<T> = T extends Task<infer R, infer E>
+/**
+ * Type that represent the result of executing task
+ */
+export type TaskResultType<T extends Task<any, any>> = T extends Task<
+  infer R,
+  infer E
+>
   ? { type: 'resolve'; result: R } | { type: 'reject'; error: E }
   : never;
-
+/**
+ * Response body that represent return value of PdfEngine
+ */
 export type PdfEngineMethodResponseBody = {
   [P in PdfEngineMethodName]: TaskResultType<PdfEngineMethodReturnType<P>>;
 }[PdfEngineMethodName];
 
+/**
+ * Request that abort the specified task
+ */
 export interface AbortRequest {
+  /**
+   * message id
+   */
   id: string;
+  /**
+   * request type
+   */
   type: 'AbortRequest';
 }
 
 export interface ExecuteRequest {
+  /**
+   * message id
+   */
   id: string;
+  /**
+   * request type
+   */
   type: 'ExecuteRequest';
+  /**
+   * request body
+   */
   data: PdfEngineMethodRequestBody;
 }
 
 export interface ExecuteResponse {
+  /**
+   * message id
+   */
   id: string;
+  /**
+   * response type
+   */
   type: 'ExecuteResponse';
+  /**
+   * response body
+   */
   data: PdfEngineMethodResponseBody;
 }
 
 export interface ReadyResponse {
+  /**
+   * message id
+   */
   id: string;
+  /**
+   * response type
+   */
   type: 'ReadyResponse';
 }
 
+/**
+ * Request type
+ */
 export type Request = ExecuteRequest | AbortRequest;
-
+/**
+ * Response type
+ */
 export type Response = ExecuteResponse | ReadyResponse;
 
 const LOG_SOURCE = 'WebWorkerEngineRunner';
 const LOG_CATEGORY = 'Engine';
 
+/**
+ * Pdf engine runner, it will execute pdf engine based on the request it received and
+ * send back the response with post message
+ */
 export class EngineRunner {
   engine: PdfEngine | undefined;
 
+  /**
+   * Create instance of EngineRunnder
+   * @param logger - logger instance
+   */
   constructor(public logger: Logger = new NoopLogger()) {}
 
+  /**
+   * Send the ready response when pdf engine is ready
+   * @returns
+   *
+   * @protected
+   */
   ready() {
     this.respond({
       id: '0',
@@ -77,6 +166,13 @@ export class EngineRunner {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner is ready');
   }
 
+  /**
+   * Execute the request
+   * @param request - request that represent the pdf engine call
+   * @returns
+   *
+   * @protected
+   */
   execute = (request: ExecuteRequest) => {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner start exeucte request');
     if (!this.engine) {
@@ -215,12 +311,26 @@ export class EngineRunner {
     );
   };
 
+  /**
+   * Send back the response
+   * @param response - response that needs sent back
+   *
+   * @protected
+   */
   respond(response: Response) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner respond: ', response);
     self.postMessage(response);
   }
 }
 
+/**
+ * Create a handler of webworker post message
+ * @param runner - engine runner that will handle the message by calling pdf engine
+ * @param logger - logger instance
+ * @returns
+ *
+ * @public
+ */
 export function handler(
   runner: EngineRunner,
   logger: Logger = new NoopLogger()

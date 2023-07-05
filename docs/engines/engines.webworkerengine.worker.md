@@ -4,6 +4,8 @@
 
 ## WebWorkerEngine.worker property
 
+Web worker instance that execute the pdf engine
+
 **Signature:**
 
 ```typescript

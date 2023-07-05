@@ -25,7 +25,7 @@
 | [PDF_FORM_FIELD_FLAG](./models.pdf_form_field_flag.md)             | Flag of form field                       |
 | [PDF_FORM_FIELD_TYPE](./models.pdf_form_field_type.md)             | Type of form field                       |
 | [PdfActionType](./models.pdfactiontype.md)                         | Type of pdf action                       |
-| [PdfAnnotationObjectStatus](./models.pdfannotationobjectstatus.md) |                                          |
+| [PdfAnnotationObjectStatus](./models.pdfannotationobjectstatus.md) | Status of pdf annotation                 |
 | [PdfAnnotationSubtype](./models.pdfannotationsubtype.md)           | Annotation type                          |
 | [PdfEngineFeature](./models.pdfenginefeature.md)                   | Pdf engine features                      |
 | [PdfEngineOperation](./models.pdfengineoperation.md)               | All operations for this engine           |

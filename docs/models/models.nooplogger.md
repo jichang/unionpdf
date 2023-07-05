@@ -16,9 +16,9 @@ export class NoopLogger implements Logger
 
 ## Methods
 
-| Method                                  | Modifiers | Description |
-| --------------------------------------- | --------- | ----------- |
-| [debug()](./models.nooplogger.debug.md) |           |             |
-| [error()](./models.nooplogger.error.md) |           |             |
-| [info()](./models.nooplogger.info.md)   |           |             |
-| [warn()](./models.nooplogger.warn.md)   |           |             |
+| Method                                  | Modifiers | Description         |
+| --------------------------------------- | --------- | ------------------- |
+| [debug()](./models.nooplogger.debug.md) |           | Log debug message   |
+| [error()](./models.nooplogger.error.md) |           | Log error message   |
+| [info()](./models.nooplogger.info.md)   |           | Log infor message   |
+| [warn()](./models.nooplogger.warn.md)   |           | Log warning message |

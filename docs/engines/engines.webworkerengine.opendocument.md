@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 openDocument(file: PdfFile, password: string): WorkerTask<PdfDocumentObject, Error>;
 ```
 

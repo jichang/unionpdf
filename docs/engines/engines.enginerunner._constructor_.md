@@ -4,7 +4,7 @@
 
 ## EngineRunner.(constructor)
 
-Constructs a new instance of the `EngineRunner` class
+Create instance of EngineRunnder
 
 **Signature:**
 
@@ -14,6 +14,6 @@ constructor(logger?: Logger);
 
 ## Parameters
 
-| Parameter | Type   | Description  |
-| --------- | ------ | ------------ |
-| logger    | Logger | _(Optional)_ |
+| Parameter | Type   | Description                  |
+| --------- | ------ | ---------------------------- |
+| logger    | Logger | _(Optional)_ logger instance |

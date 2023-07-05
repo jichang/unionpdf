@@ -4,6 +4,8 @@
 
 ## NoopLogger.info() method
 
+Log infor message
+
 **Signature:**
 
 ```typescript

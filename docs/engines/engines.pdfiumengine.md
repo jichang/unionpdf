@@ -4,6 +4,8 @@
 
 ## PdfiumEngine class
 
+Pdf engine that based on pdfium wasm
+
 **Signature:**
 
 ```typescript
@@ -14,16 +16,16 @@ export class PdfiumEngine implements PdfEngine
 
 ## Constructors
 
-| Constructor                                                                  | Modifiers | Description                                                      |
-| ---------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------- |
-| [(constructor)(wasmModule, logger)](./engines.pdfiumengine._constructor_.md) |           | Constructs a new instance of the <code>PdfiumEngine</code> class |
+| Constructor                                                                  | Modifiers | Description                        |
+| ---------------------------------------------------------------------------- | --------- | ---------------------------------- |
+| [(constructor)(wasmModule, logger)](./engines.pdfiumengine._constructor_.md) |           | Create an instance of PdfiumEngine |
 
 ## Properties
 
-| Property                                                         | Modifiers | Type                                                                                                                                               | Description |
-| ---------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| [docs](./engines.pdfiumengine.docs.md)                           |           | Record&lt;string, { filePtr: number; docPtr: number; searchContexts: Map&lt;number, [SearchContext](./engines.searchcontext.md)<!-- -->&gt;; }&gt; |             |
-| [wasmModuleWrapper](./engines.pdfiumengine.wasmmodulewrapper.md) |           | [WrappedModule](./engines.wrappedmodule.md)<!-- -->&lt;typeof [wrappedModuleMethods](./engines.wrappedmodulemethods.md)<!-- -->&gt;                |             |
+| Property                                                         | Modifiers | Type                                                                                                                                               | Description               |
+| ---------------------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| [docs](./engines.pdfiumengine.docs.md)                           |           | Record&lt;string, { filePtr: number; docPtr: number; searchContexts: Map&lt;number, [SearchContext](./engines.searchcontext.md)<!-- -->&gt;; }&gt; | pdf documents that opened |
+| [wasmModuleWrapper](./engines.pdfiumengine.wasmmodulewrapper.md) |           | [WrappedModule](./engines.wrappedmodule.md)<!-- -->&lt;typeof [wrappedModuleMethods](./engines.wrappedmodulemethods.md)<!-- -->&gt;                | wrapped pdfium module     |
 
 ## Methods
 

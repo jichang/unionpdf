@@ -1,5 +1,15 @@
 import { PdfiumModule } from './pdfium';
 
+/**
+ * Read string from WASM heap
+ * @param wasmModule - pdfium wasm module instance
+ * @param readChars - function to read chars
+ * @param parseChars - function to parse chars
+ * @param defaultLength - default length of chars that needs to read
+ * @returns string from the heap
+ *
+ * @public
+ */
 export function readString(
   wasmModule: PdfiumModule,
   readChars: (buffer: number, bufferLength: number) => number,
@@ -27,7 +37,14 @@ export function readString(
 
   return str;
 }
-
+/**
+ * Read arraybyffer from WASM heap
+ * @param wasmModule - pdfium wasm module instance
+ * @param readChars - function to read chars
+ * @returns arraybuffer from the heap
+ *
+ * @public
+ */
 export function readArrayBuffer(
   wasmModule: PdfiumModule,
   readChars: (buffer: number, bufferLength: number) => number

@@ -4,6 +4,8 @@
 
 ## PdfAnnotationObjectStatus enum
 
+Status of pdf annotation
+
 **Signature:**
 
 ```typescript
@@ -12,7 +14,7 @@ export enum PdfAnnotationObjectStatus
 
 ## Enumeration Members
 
-| Member    | Value          | Description |
-| --------- | -------------- | ----------- |
-| Committed | <code>1</code> |             |
-| Created   | <code>0</code> |             |
+| Member    | Value          | Description                         |
+| --------- | -------------- | ----------------------------------- |
+| Committed | <code>1</code> | Annotation is committed to PDF file |
+| Created   | <code>0</code> | Annotation is created               |

@@ -4,6 +4,8 @@
 
 ## WebWorkerEngine.handle property
 
+Handle event from web worker. There are 2 kinds of event 1. ReadyResponse: web worker is ready 2. ExecuteResponse: result of execution
+
 **Signature:**
 
 ```typescript

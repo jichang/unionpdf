@@ -4,6 +4,8 @@
 
 ## createPdfiumModule() function
 
+Create an instance of pdfium wasm module
+
 **Signature:**
 
 ```typescript
@@ -14,9 +16,9 @@ export default function createPdfiumModule(
 
 ## Parameters
 
-| Parameter | Type                        | Description |
-| --------- | --------------------------- | ----------- |
-| init      | Partial&lt;PdfiumModule&gt; |             |
+| Parameter | Type                        | Description             |
+| --------- | --------------------------- | ----------------------- |
+| init      | Partial&lt;PdfiumModule&gt; | override pdfium methods |
 
 **Returns:**
 

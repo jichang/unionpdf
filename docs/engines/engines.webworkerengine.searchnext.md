@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 searchNext(doc: PdfDocumentObject, contextId: number, target: SearchTarget): Task<SearchResult | undefined, PdfEngineError>;
 ```
 

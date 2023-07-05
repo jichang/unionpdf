@@ -27,7 +27,7 @@ export type NamesToType<T extends readonly JSTypeName[]> = T extends []
       ...infer Rest extends readonly JSTypeName[]
     ]
   ? [NameToType<U>, ...NamesToType<Rest>]
-  : never;
+  : [];
 
 export type CIntTypeName = 'i8' | 'i16' | 'i32' | 'i64';
 export type CFloatTypeName = 'float' | 'double';

@@ -4,7 +4,7 @@
 
 ## PdfiumEngine.(constructor)
 
-Constructs a new instance of the `PdfiumEngine` class
+Create an instance of PdfiumEngine
 
 **Signature:**
 
@@ -14,7 +14,7 @@ constructor(wasmModule: PdfiumModule, logger?: Logger);
 
 ## Parameters
 
-| Parameter  | Type         | Description  |
-| ---------- | ------------ | ------------ |
-| wasmModule | PdfiumModule |              |
-| logger     | Logger       | _(Optional)_ |
+| Parameter  | Type         | Description                  |
+| ---------- | ------------ | ---------------------------- |
+| wasmModule | PdfiumModule | pdfium wasm module           |
+| logger     | Logger       | _(Optional)_ logger instance |

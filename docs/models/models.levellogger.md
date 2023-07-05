@@ -22,9 +22,9 @@ export class LevelLogger implements Logger
 
 ## Methods
 
-| Method                                                         | Modifiers | Description |
-| -------------------------------------------------------------- | --------- | ----------- |
-| [debug(source, category, args)](./models.levellogger.debug.md) |           |             |
-| [error(source, category, args)](./models.levellogger.error.md) |           |             |
-| [info(source, category, args)](./models.levellogger.info.md)   |           |             |
-| [warn(source, category, args)](./models.levellogger.warn.md)   |           |             |
+| Method                                                         | Modifiers | Description         |
+| -------------------------------------------------------------- | --------- | ------------------- |
+| [debug(source, category, args)](./models.levellogger.debug.md) |           | Log debug message   |
+| [error(source, category, args)](./models.levellogger.error.md) |           | Log error message   |
+| [info(source, category, args)](./models.levellogger.info.md)   |           | Log infor message   |
+| [warn(source, category, args)](./models.levellogger.warn.md)   |           | Log warning message |

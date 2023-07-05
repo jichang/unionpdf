@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 createPageAnnotation(doc: PdfDocumentObject, page: PdfPageObject, annotation: PdfAnnotationObject): Task<boolean, PdfEngineError>;
 ```
 

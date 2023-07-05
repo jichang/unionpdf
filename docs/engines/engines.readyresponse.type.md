@@ -4,6 +4,8 @@
 
 ## ReadyResponse.type property
 
+response type
+
 **Signature:**
 
 ```typescript

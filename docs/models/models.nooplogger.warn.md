@@ -4,6 +4,8 @@
 
 ## NoopLogger.warn() method
 
+Log warning message
+
 **Signature:**
 
 ```typescript

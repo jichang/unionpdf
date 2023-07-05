@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 extractPages(doc: PdfDocumentObject, pageIndexes: number[]): Task<ArrayBuffer, Error>;
 ```
 

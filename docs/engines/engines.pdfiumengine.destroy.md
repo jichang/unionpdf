@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 destroy(): TaskBase<boolean, Error>;
 ```
 

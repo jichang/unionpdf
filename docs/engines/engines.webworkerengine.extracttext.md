@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 extractText(pdf: PdfDocumentObject, pageIndexes: number[]): WorkerTask<string, Error>;
 ```
 

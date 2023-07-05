@@ -4,6 +4,8 @@
 
 ## wrap() function
 
+Wrap wasm module
+
 **Signature:**
 
 ```typescript
@@ -14,11 +16,13 @@ export function wrap<
 
 ## Parameters
 
-| Parameter | Type  | Description |
-| --------- | ----- | ----------- |
-| cwrap     | CWrap |             |
-| dict      | T     |             |
+| Parameter | Type  | Description             |
+| --------- | ----- | ----------------------- |
+| cwrap     | CWrap | function to wrap method |
+| dict      | T     | method dictionary       |
 
 **Returns:**
 
 [WrappedModule](./engines.wrappedmodule.md)<!-- -->&lt;T&gt;
+
+wrapped module

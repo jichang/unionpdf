@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 closeDocument(doc: PdfDocumentObject): Task<boolean, PdfEngineError>;
 ```
 

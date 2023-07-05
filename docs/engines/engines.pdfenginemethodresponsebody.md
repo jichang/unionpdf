@@ -4,6 +4,8 @@
 
 ## PdfEngineMethodResponseBody type
 
+Response body that represent return value of PdfEngine
+
 **Signature:**
 
 ```typescript

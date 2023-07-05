@@ -15,7 +15,6 @@
     "require": "./dist/cjs/index.js"
   },
   "scripts": {
-    "api-extractor": "api-extractor",
     "doc": "api-extractor run --local --verbose && api-documenter markdown --input-folder ./temp --output-folder ../../docs/engines",
     "typecheck": "tsc --noEmit",
     "start": "parcel --no-cache ./demo/index.html",

@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 renderThumbnail(doc: PdfDocumentObject, page: PdfPageObject, scaleFactor: number, rotation: Rotation): Task<ImageData, PdfEngineError>;
 ```
 

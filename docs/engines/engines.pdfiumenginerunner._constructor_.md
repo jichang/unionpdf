@@ -4,7 +4,7 @@
 
 ## PdfiumEngineRunner.(constructor)
 
-Constructs a new instance of the `PdfiumEngineRunner` class
+Create an instance of PdfiumEngineRunner
 
 **Signature:**
 
@@ -14,6 +14,6 @@ constructor(wasmBinary: ArrayBuffer);
 
 ## Parameters
 
-| Parameter  | Type        | Description |
-| ---------- | ----------- | ----------- |
-| wasmBinary | ArrayBuffer |             |
+| Parameter  | Type        | Description                                    |
+| ---------- | ----------- | ---------------------------------------------- |
+| wasmBinary | ArrayBuffer | wasm binary that contains the pdfium wasm file |

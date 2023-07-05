@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 removePageAnnotation(doc: PdfDocumentObject, page: PdfPageObject, annotation: PdfAnnotationObject): Task<boolean, PdfEngineError>;
 ```
 

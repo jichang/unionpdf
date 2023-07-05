@@ -4,6 +4,8 @@
 
 ## BitmapFormat enum
 
+Format of bitmap
+
 **Signature:**
 
 ```typescript

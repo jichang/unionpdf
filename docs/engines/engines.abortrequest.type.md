@@ -4,6 +4,8 @@
 
 ## AbortRequest.type property
 
+request type
+
 **Signature:**
 
 ```typescript

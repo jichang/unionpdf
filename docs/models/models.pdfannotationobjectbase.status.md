@@ -4,6 +4,8 @@
 
 ## PdfAnnotationObjectBase.status property
 
+Status of pdf annotation
+
 **Signature:**
 
 ```typescript

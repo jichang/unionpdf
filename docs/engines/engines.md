@@ -6,64 +6,64 @@
 
 ## Classes
 
-| Class                                                 | Description |
-| ----------------------------------------------------- | ----------- |
-| [EngineRunner](./engines.enginerunner.md)             |             |
-| [PdfiumEngine](./engines.pdfiumengine.md)             |             |
-| [PdfiumEngineRunner](./engines.pdfiumenginerunner.md) |             |
-| [WebWorkerEngine](./engines.webworkerengine.md)       |             |
-| [WorkerTask](./engines.workertask.md)                 |             |
+| Class                                                 | Description                                                                                                                 |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [EngineRunner](./engines.enginerunner.md)             | Pdf engine runner, it will execute pdf engine based on the request it received and send back the response with post message |
+| [PdfiumEngine](./engines.pdfiumengine.md)             | Pdf engine that based on pdfium wasm                                                                                        |
+| [PdfiumEngineRunner](./engines.pdfiumenginerunner.md) | EngineRunner for pdfium-based wasm engine                                                                                   |
+| [WebWorkerEngine](./engines.webworkerengine.md)       | PDF engine that runs within webworker                                                                                       |
+| [WorkerTask](./engines.workertask.md)                 | Task that executed by webworker                                                                                             |
 
 ## Enumerations
 
-| Enumeration                                     | Description |
-| ----------------------------------------------- | ----------- |
-| [BitmapFormat](./engines.bitmapformat.md)       |             |
-| [PdfiumErrorCode](./engines.pdfiumerrorcode.md) |             |
-| [RenderFlag](./engines.renderflag.md)           |             |
+| Enumeration                                     | Description                  |
+| ----------------------------------------------- | ---------------------------- |
+| [BitmapFormat](./engines.bitmapformat.md)       | Format of bitmap             |
+| [PdfiumErrorCode](./engines.pdfiumerrorcode.md) | Error code of pdfium library |
+| [RenderFlag](./engines.renderflag.md)           | Pdf rendering flag           |
 
 ## Functions
 
-| Function                                                                                | Description |
-| --------------------------------------------------------------------------------------- | ----------- |
-| [createMockPdfDocument(pdf)](./engines.createmockpdfdocument.md)                        |             |
-| [createMockPdfEngine(partialEngine)](./engines.createmockpdfengine.md)                  |             |
-| [createMockPdfFile(pdf)](./engines.createmockpdffile.md)                                |             |
-| [createPdfiumModule(init)](./engines.createpdfiummodule.md)                             |             |
-| [handler(runner, logger)](./engines.handler.md)                                         |             |
-| [readArrayBuffer(wasmModule, readChars)](./engines.readarraybuffer.md)                  |             |
-| [readString(wasmModule, readChars, parseChars, defaultLength)](./engines.readstring.md) |             |
-| [wrap(cwrap, dict)](./engines.wrap.md)                                                  |             |
+| Function                                                                                | Description                                |
+| --------------------------------------------------------------------------------------- | ------------------------------------------ |
+| [createMockPdfDocument(doc)](./engines.createmockpdfdocument.md)                        | Create mock of pdf document                |
+| [createMockPdfEngine(partialEngine)](./engines.createmockpdfengine.md)                  | Create mock of pdf engine                  |
+| [createMockPdfFile(file)](./engines.createmockpdffile.md)                               | Create mock of pdf file                    |
+| [createPdfiumModule(init)](./engines.createpdfiummodule.md)                             | Create an instance of pdfium wasm module   |
+| [handler(runner, logger)](./engines.handler.md)                                         | Create a handler of webworker post message |
+| [readArrayBuffer(wasmModule, readChars)](./engines.readarraybuffer.md)                  | Read arraybyffer from WASM heap            |
+| [readString(wasmModule, readChars, parseChars, defaultLength)](./engines.readstring.md) | Read string from WASM heap                 |
+| [wrap(cwrap, dict)](./engines.wrap.md)                                                  | Wrap wasm module                           |
 
 ## Interfaces
 
-| Interface                                       | Description |
-| ----------------------------------------------- | ----------- |
-| [AbortRequest](./engines.abortrequest.md)       |             |
-| [ExecuteRequest](./engines.executerequest.md)   |             |
-| [ExecuteResponse](./engines.executeresponse.md) |             |
-| [ReadyResponse](./engines.readyresponse.md)     |             |
-| [SearchContext](./engines.searchcontext.md)     |             |
+| Interface                                       | Description                           |
+| ----------------------------------------------- | ------------------------------------- |
+| [AbortRequest](./engines.abortrequest.md)       | Request that abort the specified task |
+| [ExecuteRequest](./engines.executerequest.md)   |                                       |
+| [ExecuteResponse](./engines.executeresponse.md) |                                       |
+| [ReadyResponse](./engines.readyresponse.md)     |                                       |
+| [SearchContext](./engines.searchcontext.md)     | Context used for searching            |
 
 ## Variables
 
-| Variable                                                  | Description |
-| --------------------------------------------------------- | ----------- |
-| [DPR](./engines.dpr.md)                                   |             |
-| [wrappedModuleMethods](./engines.wrappedmodulemethods.md) |             |
+| Variable                                                  | Description                   |
+| --------------------------------------------------------- | ----------------------------- |
+| [DPR](./engines.dpr.md)                                   | device pixel ratio            |
+| [wrappedModuleMethods](./engines.wrappedmodulemethods.md) | Wrapped Pdfium module methods |
 
 ## Type Aliases
 
-| Type Alias                                                              | Description |
-| ----------------------------------------------------------------------- | ----------- |
-| [PdfEngineMethodArgs](./engines.pdfenginemethodargs.md)                 |             |
-| [PdfEngineMethodName](./engines.pdfenginemethodname.md)                 |             |
-| [PdfEngineMethodRequestBody](./engines.pdfenginemethodrequestbody.md)   |             |
-| [PdfEngineMethodResponseBody](./engines.pdfenginemethodresponsebody.md) |             |
-| [PdfEngineMethodReturnType](./engines.pdfenginemethodreturntype.md)     |             |
-| [Request_2](./engines.request_2.md)                                     |             |
-| [Response_2](./engines.response_2.md)                                   |             |
-| [TaskRejectErrorType](./engines.taskrejecterrortype.md)                 |             |
-| [TaskResolveValueType](./engines.taskresolvevaluetype.md)               |             |
-| [TaskResultType](./engines.taskresulttype.md)                           |             |
-| [WrappedModule](./engines.wrappedmodule.md)                             |             |
+| Type Alias                                                              | Description                                                                                      |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [PdfEngineMethodArgs](./engines.pdfenginemethodargs.md)                 | Arguments of PdfEngine method                                                                    |
+| [PdfEngineMethodName](./engines.pdfenginemethodname.md)                 | Method name of PdfEngine interface                                                               |
+| [PdfEngineMethodRequestBody](./engines.pdfenginemethodrequestbody.md)   | Request body that represent method calls of PdfEngine, it contains the method name and arguments |
+| [PdfEngineMethodResponseBody](./engines.pdfenginemethodresponsebody.md) | Response body that represent return value of PdfEngine                                           |
+| [PdfEngineMethodReturnType](./engines.pdfenginemethodreturntype.md)     | Return type of PdfEngine method                                                                  |
+| [Request_2](./engines.request_2.md)                                     | Request type                                                                                     |
+| [Response_2](./engines.response_2.md)                                   | Response type                                                                                    |
+| [TaskRejectErrorType](./engines.taskrejecterrortype.md)                 | Type of task rejected error                                                                      |
+| [TaskResolveValueType](./engines.taskresolvevaluetype.md)               | Type of task resolved value                                                                      |
+| [TaskResultType](./engines.taskresulttype.md)                           | Type that represent the result of executing task                                                 |
+| [WrappedModule](./engines.wrappedmodule.md)                             | Wrapped WASM module                                                                              |

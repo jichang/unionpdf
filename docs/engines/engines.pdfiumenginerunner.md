@@ -4,6 +4,8 @@
 
 ## PdfiumEngineRunner class
 
+EngineRunner for pdfium-based wasm engine
+
 **Signature:**
 
 ```typescript
@@ -14,12 +16,12 @@ export class PdfiumEngineRunner extends EngineRunner
 
 ## Constructors
 
-| Constructor                                                                | Modifiers | Description                                                            |
-| -------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------- |
-| [(constructor)(wasmBinary)](./engines.pdfiumenginerunner._constructor_.md) |           | Constructs a new instance of the <code>PdfiumEngineRunner</code> class |
+| Constructor                                                                | Modifiers | Description                              |
+| -------------------------------------------------------------------------- | --------- | ---------------------------------------- |
+| [(constructor)(wasmBinary)](./engines.pdfiumenginerunner._constructor_.md) |           | Create an instance of PdfiumEngineRunner |
 
 ## Methods
 
-| Method                                                     | Modifiers | Description |
-| ---------------------------------------------------------- | --------- | ----------- |
-| [initialize()](./engines.pdfiumenginerunner.initialize.md) |           |             |
+| Method                                                     | Modifiers | Description       |
+| ---------------------------------------------------------- | --------- | ----------------- |
+| [initialize()](./engines.pdfiumenginerunner.initialize.md) |           | Initialize runner |

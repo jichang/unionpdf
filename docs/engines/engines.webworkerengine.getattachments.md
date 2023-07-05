@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 getAttachments(pdf: PdfDocumentObject): WorkerTask<PdfAttachmentObject[], Error>;
 ```
 

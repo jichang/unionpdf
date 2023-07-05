@@ -4,6 +4,8 @@
 
 ## WebWorkerEngine.prepareTask property
 
+Task that represent the state of preparation
+
 **Signature:**
 
 ```typescript

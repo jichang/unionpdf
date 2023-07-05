@@ -4,6 +4,8 @@
 
 ## TaskRejectErrorType type
 
+Type of task rejected error
+
 **Signature:**
 
 ```typescript

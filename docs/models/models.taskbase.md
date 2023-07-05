@@ -27,8 +27,8 @@ export class TaskBase<R, E = Error> implements Task<R, E>
 | Method                                                                | Modifiers           | Description                                     |
 | --------------------------------------------------------------------- | ------------------- | ----------------------------------------------- |
 | [abort(error)](./models.taskbase.abort.md)                            |                     |                                                 |
-| [reject(error)](./models.taskbase.reject.md)                          |                     |                                                 |
+| [reject(error)](./models.taskbase.reject.md)                          |                     | Reject the task with error                      |
 | [reject(error)](./models.taskbase.reject.md)                          | <code>static</code> | Create a task that has been rejected with error |
-| [resolve(result)](./models.taskbase.resolve.md)                       |                     |                                                 |
+| [resolve(result)](./models.taskbase.resolve.md)                       |                     | Resolve the task with value                     |
 | [resolve(result)](./models.taskbase.resolve.md)                       | <code>static</code> | Create a task that has been resolved with value |
-| [wait(resolvedCallback, rejectedCallback)](./models.taskbase.wait.md) |                     |                                                 |
+| [wait(resolvedCallback, rejectedCallback)](./models.taskbase.wait.md) |                     | Wait for task is finalized                      |

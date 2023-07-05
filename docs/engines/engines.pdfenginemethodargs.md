@@ -4,6 +4,8 @@
 
 ## PdfEngineMethodArgs type
 
+Arguments of PdfEngine method
+
 **Signature:**
 
 ```typescript

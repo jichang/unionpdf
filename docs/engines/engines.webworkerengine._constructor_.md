@@ -4,7 +4,7 @@
 
 ## WebWorkerEngine.(constructor)
 
-Constructs a new instance of the `WebWorkerEngine` class
+Create an instance of WebWorkerEngine, it will create a worker with specified url.
 
 **Signature:**
 
@@ -14,7 +14,7 @@ constructor(url: URL, logger?: Logger);
 
 ## Parameters
 
-| Parameter | Type   | Description  |
-| --------- | ------ | ------------ |
-| url       | URL    |              |
-| logger    | Logger | _(Optional)_ |
+| Parameter | Type   | Description                                                                                      |
+| --------- | ------ | ------------------------------------------------------------------------------------------------ |
+| url       | URL    | webworker script url, this script contains the implementation of pdf engine and message handling |
+| logger    | Logger | _(Optional)_ logger instance                                                                     |

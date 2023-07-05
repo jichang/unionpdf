@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 getMetadata(doc: PdfDocumentObject): Task<PdfMetadataObject, PdfEngineError>;
 ```
 

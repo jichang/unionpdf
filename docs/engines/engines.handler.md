@@ -4,6 +4,8 @@
 
 ## handler() function
 
+Create a handler of webworker post message
+
 **Signature:**
 
 ```typescript
@@ -15,10 +17,10 @@ export function handler(
 
 ## Parameters
 
-| Parameter | Type                                      | Description  |
-| --------- | ----------------------------------------- | ------------ |
-| runner    | [EngineRunner](./engines.enginerunner.md) |              |
-| logger    | Logger                                    | _(Optional)_ |
+| Parameter | Type                                      | Description                                                      |
+| --------- | ----------------------------------------- | ---------------------------------------------------------------- |
+| runner    | [EngineRunner](./engines.enginerunner.md) | engine runner that will handle the message by calling pdf engine |
+| logger    | Logger                                    | _(Optional)_ logger instance                                     |
 
 **Returns:**
 

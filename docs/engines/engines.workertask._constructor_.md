@@ -4,7 +4,7 @@
 
 ## WorkerTask.(constructor)
 
-Constructs a new instance of the `WorkerTask` class
+Create a task that bind to web worker with specified message id
 
 **Signature:**
 
@@ -14,7 +14,7 @@ constructor(worker: Worker, messageId: string);
 
 ## Parameters
 
-| Parameter | Type   | Description |
-| --------- | ------ | ----------- |
-| worker    | Worker |             |
-| messageId | string |             |
+| Parameter | Type   | Description         |
+| --------- | ------ | ------------------- |
+| worker    | Worker | web worker instance |
+| messageId | string | id of message       |

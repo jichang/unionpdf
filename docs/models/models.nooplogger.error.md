@@ -4,6 +4,8 @@
 
 ## NoopLogger.error() method
 
+Log error message
+
 **Signature:**
 
 ```typescript

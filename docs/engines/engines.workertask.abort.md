@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 abort(e?: TaskAbortError | Error): void;
 ```
 

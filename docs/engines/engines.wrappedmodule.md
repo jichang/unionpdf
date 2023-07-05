@@ -4,6 +4,8 @@
 
 ## WrappedModule type
 
+Wrapped WASM module
+
 **Signature:**
 
 ```typescript

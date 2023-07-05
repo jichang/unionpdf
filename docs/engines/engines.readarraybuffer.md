@@ -4,6 +4,8 @@
 
 ## readArrayBuffer() function
 
+Read arraybyffer from WASM heap
+
 **Signature:**
 
 ```typescript
@@ -15,11 +17,13 @@ export function readArrayBuffer(
 
 ## Parameters
 
-| Parameter  | Type                                                | Description |
-| ---------- | --------------------------------------------------- | ----------- |
-| wasmModule | PdfiumModule                                        |             |
-| readChars  | (buffer: number, bufferLength: number) =&gt; number |             |
+| Parameter  | Type                                                | Description                 |
+| ---------- | --------------------------------------------------- | --------------------------- |
+| wasmModule | PdfiumModule                                        | pdfium wasm module instance |
+| readChars  | (buffer: number, bufferLength: number) =&gt; number | function to read chars      |
 
 **Returns:**
 
 ArrayBuffer
+
+arraybuffer from the heap

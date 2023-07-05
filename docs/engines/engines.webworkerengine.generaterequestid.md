@@ -4,6 +4,8 @@
 
 ## WebWorkerEngine.generateRequestId() method
 
+Generate a unique message id
+
 **Signature:**
 
 ```typescript
@@ -13,3 +15,5 @@ generateRequestId(): string;
 **Returns:**
 
 string
+
+message id

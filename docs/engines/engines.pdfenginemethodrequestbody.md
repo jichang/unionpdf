@@ -4,6 +4,8 @@
 
 ## PdfEngineMethodRequestBody type
 
+Request body that represent method calls of PdfEngine, it contains the method name and arguments
+
 **Signature:**
 
 ```typescript

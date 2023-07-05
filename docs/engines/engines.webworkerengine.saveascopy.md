@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 saveAsCopy(pdf: PdfDocumentObject): WorkerTask<ArrayBuffer, Error>;
 ```
 

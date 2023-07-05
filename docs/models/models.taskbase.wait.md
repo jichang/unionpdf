@@ -4,6 +4,8 @@
 
 ## TaskBase.wait() method
 
+Wait for task is finalized
+
 **Signature:**
 
 ```typescript
@@ -12,10 +14,10 @@ wait(resolvedCallback: ResolvedCallback<R>, rejectedCallback: RejectedCallback<E
 
 ## Parameters
 
-| Parameter        | Type                                                              | Description |
-| ---------------- | ----------------------------------------------------------------- | ----------- |
-| resolvedCallback | [ResolvedCallback](./models.resolvedcallback.md)<!-- -->&lt;R&gt; |             |
-| rejectedCallback | [RejectedCallback](./models.rejectedcallback.md)<!-- -->&lt;E&gt; |             |
+| Parameter        | Type                                                              | Description                   |
+| ---------------- | ----------------------------------------------------------------- | ----------------------------- |
+| resolvedCallback | [ResolvedCallback](./models.resolvedcallback.md)<!-- -->&lt;R&gt; | callback when task is succeed |
+| rejectedCallback | [RejectedCallback](./models.rejectedcallback.md)<!-- -->&lt;E&gt; | callback when task is failed  |
 
 **Returns:**
 

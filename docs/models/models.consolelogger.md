@@ -16,9 +16,9 @@ export class ConsoleLogger implements Logger
 
 ## Methods
 
-| Method                                                           | Modifiers | Description |
-| ---------------------------------------------------------------- | --------- | ----------- |
-| [debug(source, category, args)](./models.consolelogger.debug.md) |           |             |
-| [error(source, category, args)](./models.consolelogger.error.md) |           |             |
-| [info(source, category, args)](./models.consolelogger.info.md)   |           |             |
-| [warn(source, category, args)](./models.consolelogger.warn.md)   |           |             |
+| Method                                                           | Modifiers | Description         |
+| ---------------------------------------------------------------- | --------- | ------------------- |
+| [debug(source, category, args)](./models.consolelogger.debug.md) |           | Log debug message   |
+| [error(source, category, args)](./models.consolelogger.error.md) |           | Log error message   |
+| [info(source, category, args)](./models.consolelogger.info.md)   |           | Log infor message   |
+| [warn(source, category, args)](./models.consolelogger.warn.md)   |           | Log warning message |

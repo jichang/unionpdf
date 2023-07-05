@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 initialize(): TaskBase<boolean, Error>;
 ```
 

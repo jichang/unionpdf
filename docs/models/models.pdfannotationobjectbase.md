@@ -21,5 +21,5 @@ export interface PdfAnnotationObjectBase
 | [pageIndex](./models.pdfannotationobjectbase.pageindex.md)     |           | number                                                             | The index of page that this annotation belong to |
 | [popup?](./models.pdfannotationobjectbase.popup.md)            |           | [PdfPopupAnnoObject](./models.pdfpopupannoobject.md) \| undefined  | _(Optional)_ Related popup annotation            |
 | [rect](./models.pdfannotationobjectbase.rect.md)               |           | [Rect](./models.rect.md)                                           | Rectangle of the annotation                      |
-| [status](./models.pdfannotationobjectbase.status.md)           |           | [PdfAnnotationObjectStatus](./models.pdfannotationobjectstatus.md) |                                                  |
+| [status](./models.pdfannotationobjectbase.status.md)           |           | [PdfAnnotationObjectStatus](./models.pdfannotationobjectstatus.md) | Status of pdf annotation                         |
 | [type](./models.pdfannotationobjectbase.type.md)               |           | [PdfAnnotationSubtype](./models.pdfannotationsubtype.md)           | Sub type of annotation                           |

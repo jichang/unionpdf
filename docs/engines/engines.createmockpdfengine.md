@@ -4,6 +4,8 @@
 
 ## createMockPdfEngine() function
 
+Create mock of pdf engine
+
 **Signature:**
 
 ```typescript
@@ -14,10 +16,12 @@ export function createMockPdfEngine(
 
 ## Parameters
 
-| Parameter     | Type                     | Description  |
-| ------------- | ------------------------ | ------------ |
-| partialEngine | Partial&lt;PdfEngine&gt; | _(Optional)_ |
+| Parameter     | Type                     | Description                                  |
+| ------------- | ------------------------ | -------------------------------------------- |
+| partialEngine | Partial&lt;PdfEngine&gt; | _(Optional)_ partial configuration of engine |
 
 **Returns:**
 
 PdfEngine
+
+- mock of pdf engine

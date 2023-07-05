@@ -4,6 +4,8 @@
 
 ## ExecuteRequest.type property
 
+request type
+
 **Signature:**
 
 ```typescript

@@ -4,6 +4,8 @@
 
 ## wrappedModuleMethods variable
 
+Wrapped Pdfium module methods
+
 **Signature:**
 
 ```typescript

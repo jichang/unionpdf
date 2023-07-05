@@ -4,10 +4,15 @@
 
 ## TaskResultType type
 
+Type that represent the result of executing task
+
 **Signature:**
 
 ```typescript
-export type TaskResultType<T> = T extends Task<infer R, infer E>
+export type TaskResultType<T extends Task<any, any>> = T extends Task<
+  infer R,
+  infer E
+>
   ?
       | {
           type: 'resolve';

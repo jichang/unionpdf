@@ -4,6 +4,8 @@
 
 ## RenderFlag enum
 
+Pdf rendering flag
+
 **Signature:**
 
 ```typescript

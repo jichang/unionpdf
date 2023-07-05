@@ -4,6 +4,8 @@
 
 ## PdfiumEngine.docs property
 
+pdf documents that opened
+
 **Signature:**
 
 ```typescript

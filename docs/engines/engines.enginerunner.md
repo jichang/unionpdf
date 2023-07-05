@@ -4,6 +4,8 @@
 
 ## EngineRunner class
 
+Pdf engine runner, it will execute pdf engine based on the request it received and send back the response with post message
+
 **Signature:**
 
 ```typescript
@@ -12,21 +14,21 @@ export class EngineRunner
 
 ## Constructors
 
-| Constructor                                                      | Modifiers | Description                                                      |
-| ---------------------------------------------------------------- | --------- | ---------------------------------------------------------------- |
-| [(constructor)(logger)](./engines.enginerunner._constructor_.md) |           | Constructs a new instance of the <code>EngineRunner</code> class |
+| Constructor                                                      | Modifiers | Description                      |
+| ---------------------------------------------------------------- | --------- | -------------------------------- |
+| [(constructor)(logger)](./engines.enginerunner._constructor_.md) |           | Create instance of EngineRunnder |
 
 ## Properties
 
-| Property                                     | Modifiers | Type                                                                        | Description |
-| -------------------------------------------- | --------- | --------------------------------------------------------------------------- | ----------- |
-| [engine](./engines.enginerunner.engine.md)   |           | PdfEngine \| undefined                                                      |             |
-| [execute](./engines.enginerunner.execute.md) |           | (request: [ExecuteRequest](./engines.executerequest.md)<!-- -->) =&gt; void |             |
-| [logger](./engines.enginerunner.logger.md)   |           | Logger                                                                      |             |
+| Property                                     | Modifiers | Type                                                                        | Description         |
+| -------------------------------------------- | --------- | --------------------------------------------------------------------------- | ------------------- |
+| [engine](./engines.enginerunner.engine.md)   |           | PdfEngine \| undefined                                                      |                     |
+| [execute](./engines.enginerunner.execute.md) |           | (request: [ExecuteRequest](./engines.executerequest.md)<!-- -->) =&gt; void | Execute the request |
+| [logger](./engines.enginerunner.logger.md)   |           | Logger                                                                      |                     |
 
 ## Methods
 
-| Method                                                 | Modifiers | Description |
-| ------------------------------------------------------ | --------- | ----------- |
-| [ready()](./engines.enginerunner.ready.md)             |           |             |
-| [respond(response)](./engines.enginerunner.respond.md) |           |             |
+| Method                                                 | Modifiers | Description                                      |
+| ------------------------------------------------------ | --------- | ------------------------------------------------ |
+| [ready()](./engines.enginerunner.ready.md)             |           | Send the ready response when pdf engine is ready |
+| [respond(response)](./engines.enginerunner.respond.md) |           | Send back the response                           |

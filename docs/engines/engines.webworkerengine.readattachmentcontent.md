@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 readAttachmentContent(pdf: PdfDocumentObject, attachment: PdfAttachmentObject): WorkerTask<ArrayBuffer, Error>;
 ```
 

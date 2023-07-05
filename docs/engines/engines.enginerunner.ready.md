@@ -4,6 +4,8 @@
 
 ## EngineRunner.ready() method
 
+Send the ready response when pdf engine is ready
+
 **Signature:**
 
 ```typescript

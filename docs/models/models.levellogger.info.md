@@ -4,6 +4,8 @@
 
 ## LevelLogger.info() method
 
+Log infor message
+
 **Signature:**
 
 ```typescript
@@ -12,11 +14,11 @@ info(source: string, category: string, ...args: any): void;
 
 ## Parameters
 
-| Parameter | Type   | Description |
-| --------- | ------ | ----------- |
-| source    | string |             |
-| category  | string |             |
-| args      | any    |             |
+| Parameter | Type   | Description       |
+| --------- | ------ | ----------------- |
+| source    | string | source of log     |
+| category  | string | category of log   |
+| args      | any    | parameters of log |
 
 **Returns:**
 

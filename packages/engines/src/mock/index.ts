@@ -22,6 +22,13 @@ import {
   PdfAnnotationObjectStatus,
 } from '@unionpdf/models';
 
+/**
+ * Create mock of pdf engine
+ * @param partialEngine - partial configuration of engine
+ * @returns - mock of pdf engine
+ *
+ * @public
+ */
 export function createMockPdfEngine(
   partialEngine?: Partial<PdfEngine>
 ): PdfEngine {
@@ -312,9 +319,15 @@ export function createMockPdfEngine(
 
   return engine;
 }
-
+/**
+ * Create mock of pdf document
+ * @param doc - partial configuration of document
+ * @returns mock of pdf document
+ *
+ * @public
+ */
 export function createMockPdfDocument(
-  pdf?: Partial<PdfDocumentObject>
+  doc?: Partial<PdfDocumentObject>
 ): PdfDocumentObject {
   const pageCount = 10;
   const pageWidth = 100;
@@ -335,11 +348,18 @@ export function createMockPdfDocument(
     name: 'name',
     pageCount: pageCount,
     pages: pages,
-    ...pdf,
+    ...doc,
   };
 }
 
-export function createMockPdfFile(pdf?: Partial<PdfFile>): PdfFile {
+/**
+ * Create mock of pdf file
+ * @param file - partial configuration of file
+ * @returns mock of pdf file
+ *
+ * @public
+ */
+export function createMockPdfFile(file?: Partial<PdfFile>): PdfFile {
   return {
     id: 'id',
     name: 'name',

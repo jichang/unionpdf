@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 getSignatures(doc: PdfDocumentObject): Task<PdfSignatureObject[], PdfEngineError>;
 ```
 

@@ -4,6 +4,8 @@
 
 ## TaskResolveValueType type
 
+Type of task resolved value
+
 **Signature:**
 
 ```typescript

@@ -66,6 +66,9 @@ import { PdfPolylineAnnoObject } from '@unionpdf/models';
 import { PdfLineAnnoObject } from '@unionpdf/models';
 import { PdfHighlightAnnoObject } from '@unionpdf/models';
 
+/**
+ * Format of bitmap
+ */
 export enum BitmapFormat {
   Bitmap_Gray = 1,
   Bitmap_BGR = 2,
@@ -73,6 +76,9 @@ export enum BitmapFormat {
   Bitmap_BGRA = 4,
 }
 
+/**
+ * Pdf rendering flag
+ */
 export enum RenderFlag {
   ANNOT = 0x01, // Set if annotations are to be rendered.
   LCD_TEXT = 0x02, // Set if using text rendering optimized for LCD display.
@@ -86,8 +92,14 @@ export enum RenderFlag {
   REVERSE_BYTE_ORDER = 0x10, // Set whether render in a reverse Byte order, this flag only.
 }
 
+/**
+ * device pixel ratio
+ */
 export const DPR = self.devicePixelRatio || 1;
 
+/**
+ * Wrapped Pdfium module methods
+ */
 export const wrappedModuleMethods = {
   PDFium_Init: [[] as const, ''] as const,
   PDFium_OpenFileWriter: [[] as const, 'number'] as const,
@@ -428,12 +440,18 @@ export const wrappedModuleMethods = {
 const LOG_SOURCE = 'PDFiumEngine';
 const LOG_CATEGORY = 'Engine';
 
+/**
+ * Context used for searching
+ */
 export interface SearchContext {
   target: SearchTarget;
   currPageIndex: number;
   startIndex: number; // -1 means reach the end
 }
 
+/**
+ * Error code of pdfium library
+ */
 export enum PdfiumErrorCode {
   Success = 0,
   Unknown = 1,
@@ -446,8 +464,17 @@ export enum PdfiumErrorCode {
   XFALayout = 8,
 }
 
+/**
+ * Pdf engine that based on pdfium wasm
+ */
 export class PdfiumEngine implements PdfEngine {
+  /**
+   * wrapped pdfium module
+   */
   wasmModuleWrapper: WrappedModule<typeof wrappedModuleMethods>;
+  /**
+   * pdf documents that opened
+   */
   docs: Record<
     string,
     {
@@ -457,6 +484,11 @@ export class PdfiumEngine implements PdfEngine {
     }
   > = {};
 
+  /**
+   * Create an instance of PdfiumEngine
+   * @param wasmModule - pdfium wasm module
+   * @param logger - logger instance
+   */
   constructor(
     private wasmModule: PdfiumModule,
     private logger: Logger = new NoopLogger()
@@ -464,18 +496,36 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper = wrap(wasmModule.cwrap, wrappedModuleMethods);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.initialize}
+   *
+   * @override
+   * @public
+   */
   initialize() {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'initialize');
     this.wasmModuleWrapper.PDFium_Init();
     return TaskBase.resolve(true);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.destroy}
+   *
+   * @override
+   * @public
+   */
   destroy() {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'destroy');
     this.wasmModuleWrapper.FPDF_DestroyLibrary();
     return TaskBase.resolve(true);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.openDocument}
+   *
+   * @override
+   * @public
+   */
   openDocument(file: PdfFile, password: string) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', file, password);
     const array = new Uint8Array(file.content);
@@ -567,6 +617,12 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(pdfDoc);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.getMetadata}
+   *
+   * @override
+   * @public
+   */
   getMetadata(doc: PdfDocumentObject): Task<PdfMetadataObject, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getMetadata', doc);
 
@@ -588,6 +644,12 @@ export class PdfiumEngine implements PdfEngine {
     });
   }
 
+  /**
+   * {@inheritDoc PdfEngine.getSignatures}
+   *
+   * @override
+   * @public
+   */
   getSignatures(
     doc: PdfDocumentObject
   ): Task<PdfSignatureObject[], PdfEngineError> {
@@ -684,6 +746,12 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(signatures);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.getBookmarks}
+   *
+   * @override
+   * @public
+   */
   getBookmarks(
     doc: PdfDocumentObject
   ): Task<PdfBookmarksObject, PdfEngineError> {
@@ -700,6 +768,12 @@ export class PdfiumEngine implements PdfEngine {
     });
   }
 
+  /**
+   * {@inheritDoc PdfEngine.renderPage}
+   *
+   * @override
+   * @public
+   */
   renderPage(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -737,6 +811,12 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(imageData);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.renderPageRect}
+   *
+   * @override
+   * @public
+   */
   renderPageRect(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -774,6 +854,12 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(imageData);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.getPageAnnotations}
+   *
+   * @override
+   * @public
+   */
   getPageAnnotations(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -813,6 +899,12 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(annotations);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.createPageAnnotation}
+   *
+   * @override
+   * @public
+   */
   createPageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -891,6 +983,12 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(true);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.transformPageAnnotation}
+   *
+   * @override
+   * @public
+   */
   transformPageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -983,6 +1081,12 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(true);
   }
 
+  /**
+   * {@inheritDoc PdfEngine.removePageAnnotation}
+   *
+   * @override
+   * @public
+   */
   removePageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -1011,6 +1115,617 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
 
     return TaskBase.resolve(result);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.getPageTextRects}
+   *
+   * @override
+   * @public
+   */
+  getPageTextRects(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation
+  ): Task<PdfTextRectObject[], PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'getPageTextRects',
+      doc,
+      page,
+      scaleFactor,
+      rotation
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
+    const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
+
+    const textRects = this.readPageTextRects(
+      page,
+      docPtr,
+      pagePtr,
+      textPagePtr
+    );
+
+    this.wasmModuleWrapper.FPDFText_ClosePage(textPagePtr);
+    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
+
+    return TaskBase.resolve(textRects);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.renderThumbnail}
+   *
+   * @override
+   * @public
+   */
+  renderThumbnail(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    scaleFactor: number,
+    rotation: Rotation
+  ): Task<ImageData, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'renderThumbnail',
+      doc,
+      page,
+      scaleFactor,
+      rotation
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    scaleFactor = Math.max(scaleFactor, 0.5);
+    return this.renderPage(doc, page, scaleFactor, rotation, {
+      withAnnotations: true,
+    });
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.startSearch}
+   *
+   * @override
+   * @public
+   */
+  startSearch(
+    doc: PdfDocumentObject,
+    contextId: number
+  ): Task<boolean, PdfEngineError> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', doc, contextId);
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    return TaskBase.resolve(true);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.searchNext}
+   *
+   * @override
+   * @public
+   */
+  searchNext(
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ): Task<SearchResult | undefined, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'searchNext',
+      doc,
+      contextId,
+      target
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { keyword, flags } = target;
+    const searchContext = this.setupSearchContext(
+      doc,
+      contextId,
+      keyword,
+      flags
+    );
+
+    if (searchContext.currPageIndex === doc.pageCount) {
+      return TaskBase.resolve<SearchResult | undefined>(undefined);
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    let pageIndex = searchContext.currPageIndex;
+    let startIndex = searchContext.startIndex;
+
+    const length = 2 * (keyword.length + 1);
+    const keywordPtr = this.malloc(length);
+    this.wasmModule.stringToUTF16(keyword, keywordPtr, length);
+
+    const flag = flags.reduce((flag: MatchFlag, currFlag: MatchFlag) => {
+      return flag | currFlag;
+    }, MatchFlag.None);
+
+    while (pageIndex < doc.pageCount) {
+      const result = this.searchTextInPage(
+        docPtr,
+        pageIndex,
+        startIndex,
+        keywordPtr,
+        flag
+      );
+      if (result) {
+        searchContext.currPageIndex = result.pageIndex;
+        searchContext.startIndex = result.charIndex + result.charCount;
+        this.free(keywordPtr);
+
+        return TaskBase.resolve<SearchResult | undefined>(result);
+      }
+
+      pageIndex++;
+      startIndex = 0;
+      searchContext.currPageIndex = pageIndex;
+      searchContext.startIndex = startIndex;
+    }
+    this.free(keywordPtr);
+
+    return TaskBase.resolve<SearchResult | undefined>(undefined);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.searchPrev}
+   *
+   * @override
+   * @public
+   */
+  searchPrev(
+    doc: PdfDocumentObject,
+    contextId: number,
+    target: SearchTarget
+  ): Task<SearchResult | undefined, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'searchPrev',
+      doc,
+      contextId,
+      target
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { keyword, flags } = target;
+    const searchContext = this.setupSearchContext(
+      doc,
+      contextId,
+      keyword,
+      flags
+    );
+
+    if (searchContext.currPageIndex === -1) {
+      return TaskBase.resolve<SearchResult | undefined>(undefined);
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    let pageIndex = searchContext.currPageIndex;
+    let startIndex = searchContext.startIndex;
+
+    const length = 2 * (keyword.length + 1);
+    const keywordPtr = this.malloc(length);
+    this.wasmModule.stringToUTF16(keyword, keywordPtr, length);
+
+    const flag = target.flags.reduce((flag: MatchFlag, currFlag: MatchFlag) => {
+      return flag | currFlag;
+    }, MatchFlag.None);
+
+    while (pageIndex < doc.pageCount) {
+      const result = this.searchTextInPage(
+        docPtr,
+        pageIndex,
+        startIndex,
+        keywordPtr,
+        flag
+      );
+      if (result) {
+        searchContext.currPageIndex = pageIndex;
+        searchContext.startIndex = result.charIndex + result.charCount;
+        this.free(keywordPtr);
+
+        return TaskBase.resolve<SearchResult | undefined>(result);
+      }
+
+      pageIndex--;
+      startIndex = 0;
+      searchContext.currPageIndex = pageIndex;
+      searchContext.startIndex = startIndex;
+    }
+
+    this.free(keywordPtr);
+
+    return TaskBase.resolve<SearchResult | undefined>(undefined);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.stopSearch}
+   *
+   * @override
+   * @public
+   */
+  stopSearch(
+    doc: PdfDocumentObject,
+    contextId: number
+  ): Task<boolean, PdfEngineError> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', doc, contextId);
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { searchContexts } = this.docs[doc.id];
+    if (searchContexts) {
+      searchContexts.delete(contextId);
+    }
+
+    return TaskBase.resolve(true);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.getAttachments}
+   *
+   * @override
+   * @public
+   */
+  getAttachments(
+    doc: PdfDocumentObject
+  ): Task<PdfAttachmentObject[], PdfEngineError> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getAttachments', doc);
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const attachments: PdfAttachmentObject[] = [];
+
+    const { docPtr } = this.docs[doc.id];
+    const count = this.wasmModuleWrapper.FPDFDoc_GetAttachmentCount(docPtr);
+    for (let i = 0; i < count; i++) {
+      const attachment = this.readPdfAttachment(docPtr, i);
+      attachments.push(attachment);
+    }
+
+    return TaskBase.resolve(attachments);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.readAttachmentContent}
+   *
+   * @override
+   * @public
+   */
+  readAttachmentContent(
+    doc: PdfDocumentObject,
+    attachment: PdfAttachmentObject
+  ): Task<ArrayBuffer, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'readAttachmentContent',
+      doc,
+      attachment
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const attachmentPtr = this.wasmModuleWrapper.FPDFDoc_GetAttachment(
+      docPtr,
+      attachment.index
+    );
+    const sizePtr = this.malloc(8);
+    if (
+      !this.wasmModuleWrapper.FPDFAttachment_GetFile(
+        attachmentPtr,
+        0,
+        0,
+        sizePtr
+      )
+    ) {
+      this.free(sizePtr);
+      return TaskBase.reject(
+        new PdfEngineError('can not read attachment size')
+      );
+    }
+    const size = this.wasmModule.getValue(sizePtr, 'i64');
+
+    const contentPtr = this.malloc(size);
+    if (
+      !this.wasmModuleWrapper.FPDFAttachment_GetFile(
+        attachmentPtr,
+        contentPtr,
+        size,
+        sizePtr
+      )
+    ) {
+      this.free(sizePtr);
+      this.free(contentPtr);
+
+      return TaskBase.reject(
+        new PdfEngineError('can not read attachment content')
+      );
+    }
+
+    const buffer = new ArrayBuffer(size);
+    const view = new DataView(buffer);
+    for (let i = 0; i < size; i++) {
+      view.setInt8(i, this.wasmModule.getValue(contentPtr + i, 'i8'));
+    }
+
+    this.free(sizePtr);
+    this.free(contentPtr);
+
+    return TaskBase.resolve(buffer);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.extractPages}
+   *
+   * @override
+   * @public
+   */
+  extractPages(
+    doc: PdfDocumentObject,
+    pageIndexes: number[]
+  ): Task<ArrayBuffer, Error> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'extractPages',
+      doc,
+      pageIndexes
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+
+    const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
+    if (!newDocPtr) {
+      return TaskBase.reject(new PdfEngineError('can not create new document'));
+    }
+
+    const pageIndexesPtr = this.malloc(pageIndexes.length * 4);
+    for (let i = 0; i < pageIndexes.length; i++) {
+      this.wasmModule.setValue(pageIndexesPtr + i * 4, pageIndexes[i], 'i32');
+    }
+
+    if (
+      !this.wasmModuleWrapper.FPDF_ImportPagesByIndex(
+        newDocPtr,
+        docPtr,
+        pageIndexesPtr,
+        pageIndexes.length,
+        0
+      )
+    ) {
+      this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+      return TaskBase.reject(
+        new PdfEngineError('can not import pages to new document')
+      );
+    }
+
+    const buffer = this.saveDocument(newDocPtr);
+
+    this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+
+    return TaskBase.resolve(buffer);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.extractText}
+   *
+   * @override
+   * @public
+   */
+  extractText(
+    doc: PdfDocumentObject,
+    pageIndexes: number[]
+  ): Task<string, Error> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'extractText',
+      doc,
+      pageIndexes
+    );
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const strings: string[] = [];
+    for (let i = 0; i < pageIndexes.length; i++) {
+      const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(
+        docPtr,
+        pageIndexes[i]
+      );
+      const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
+      const charCount = this.wasmModuleWrapper.FPDFText_CountChars(textPagePtr);
+      const bufferPtr = this.malloc((charCount + 1) * 2);
+      this.wasmModuleWrapper.FPDFText_GetText(
+        textPagePtr,
+        0,
+        charCount,
+        bufferPtr
+      );
+      const text = this.wasmModule.UTF16ToString(bufferPtr);
+      this.free(bufferPtr);
+      strings.push(text);
+    }
+
+    return TaskBase.resolve(strings.join('\n\n'));
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.merge}
+   *
+   * @override
+   * @public
+   */
+  merge(files: PdfFile[]): Task<PdfFile, Error> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'merge', files);
+
+    const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
+    if (!newDocPtr) {
+      return TaskBase.reject(new PdfEngineError('can not create new document'));
+    }
+
+    const ptrs: { docPtr: number; filePtr: number }[] = [];
+    for (const file of files.reverse()) {
+      const array = new Uint8Array(file.content);
+      const length = array.length;
+      const filePtr = this.malloc(length);
+      this.wasmModule.HEAPU8.set(array, filePtr);
+
+      const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(
+        filePtr,
+        length,
+        0
+      );
+      if (!docPtr) {
+        const lastError = this.wasmModuleWrapper.FPDF_GetLastError();
+        this.logger.error(
+          LOG_SOURCE,
+          LOG_CATEGORY,
+          `FPDF_LoadMemDocument failed with ${lastError}`
+        );
+        this.free(filePtr);
+
+        for (const ptr of ptrs) {
+          this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
+          this.free(ptr.filePtr);
+        }
+
+        return TaskBase.reject<PdfFile>(
+          new PdfEngineError(
+            `FPDF_LoadMemDocument failed with ${lastError}`,
+            lastError
+          )
+        );
+      }
+      ptrs.push({ filePtr, docPtr });
+
+      if (!this.wasmModuleWrapper.FPDF_ImportPages(newDocPtr, docPtr, 0, 0)) {
+        this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+
+        for (const ptr of ptrs) {
+          this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
+          this.free(ptr.filePtr);
+        }
+
+        return TaskBase.reject(
+          new PdfEngineError('can not import pages to new document')
+        );
+      }
+    }
+    const buffer = this.saveDocument(newDocPtr);
+
+    this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
+
+    for (const ptr of ptrs) {
+      this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
+      this.free(ptr.filePtr);
+    }
+
+    const file: PdfFile = {
+      id: `${Math.random()}`,
+      name: `merged.${Math.random()}.pdf`,
+      content: buffer,
+    };
+    return TaskBase.resolve(file);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.saveAsCopy}
+   *
+   * @override
+   * @public
+   */
+  saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', doc);
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const buffer = this.saveDocument(docPtr);
+
+    return TaskBase.resolve(buffer);
+  }
+
+  /**
+   * {@inheritDoc PdfEngine.closeDocument}
+   *
+   * @override
+   * @public
+   */
+  closeDocument(doc: PdfDocumentObject): Task<boolean, PdfEngineError> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', doc);
+
+    if (!this.docs[doc.id]) {
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const docData = this.docs[doc.id];
+    if (!docData) {
+      this.logger.error(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `can not close document ${doc.id}`
+      );
+      return TaskBase.reject<boolean>(
+        new PdfEngineError(`can not close document ${doc.id}`)
+      );
+    }
+
+    const { docPtr, filePtr } = this.docs[doc.id];
+    this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
+    this.free(filePtr);
+    delete this.docs[doc.id];
+    return TaskBase.resolve(true);
+  }
+
+  malloc(size: number) {
+    const ptr = this.wasmModule._malloc(size);
+    for (let i = 0; i < size; i++) {
+      this.wasmModule.HEAP8[ptr + i] = 0;
+    }
+
+    return ptr;
+  }
+
+  free(ptr: number) {
+    this.wasmModule._free(ptr);
   }
 
   setAnnotationRect(
@@ -1241,539 +1956,6 @@ export class PdfiumEngine implements PdfEngine {
     this.free(bitmapBufferPtr);
 
     return true;
-  }
-
-  getPageTextRects(
-    doc: PdfDocumentObject,
-    page: PdfPageObject,
-    scaleFactor: number,
-    rotation: Rotation
-  ): Task<PdfTextRectObject[], PdfEngineError> {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'getPageTextRects',
-      doc,
-      page,
-      scaleFactor,
-      rotation
-    );
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { docPtr } = this.docs[doc.id];
-    const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, page.index);
-    const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
-
-    const textRects = this.readPageTextRects(
-      page,
-      docPtr,
-      pagePtr,
-      textPagePtr
-    );
-
-    this.wasmModuleWrapper.FPDFText_ClosePage(textPagePtr);
-    this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
-
-    return TaskBase.resolve(textRects);
-  }
-
-  renderThumbnail(
-    doc: PdfDocumentObject,
-    page: PdfPageObject,
-    scaleFactor: number,
-    rotation: Rotation
-  ): Task<ImageData, PdfEngineError> {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'renderThumbnail',
-      doc,
-      page,
-      scaleFactor,
-      rotation
-    );
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    scaleFactor = Math.max(scaleFactor, 0.5);
-    return this.renderPage(doc, page, scaleFactor, rotation, {
-      withAnnotations: true,
-    });
-  }
-
-  startSearch(
-    doc: PdfDocumentObject,
-    contextId: number
-  ): Task<boolean, PdfEngineError> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', doc, contextId);
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    return TaskBase.resolve(true);
-  }
-
-  searchNext(
-    doc: PdfDocumentObject,
-    contextId: number,
-    target: SearchTarget
-  ): Task<SearchResult | undefined, PdfEngineError> {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'searchNext',
-      doc,
-      contextId,
-      target
-    );
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { keyword, flags } = target;
-    const searchContext = this.setupSearchContext(
-      doc,
-      contextId,
-      keyword,
-      flags
-    );
-
-    if (searchContext.currPageIndex === doc.pageCount) {
-      return TaskBase.resolve<SearchResult | undefined>(undefined);
-    }
-
-    const { docPtr } = this.docs[doc.id];
-    let pageIndex = searchContext.currPageIndex;
-    let startIndex = searchContext.startIndex;
-
-    const length = 2 * (keyword.length + 1);
-    const keywordPtr = this.malloc(length);
-    this.wasmModule.stringToUTF16(keyword, keywordPtr, length);
-
-    const flag = flags.reduce((flag: MatchFlag, currFlag: MatchFlag) => {
-      return flag | currFlag;
-    }, MatchFlag.None);
-
-    while (pageIndex < doc.pageCount) {
-      const result = this.searchTextInPage(
-        docPtr,
-        pageIndex,
-        startIndex,
-        keywordPtr,
-        flag
-      );
-      if (result) {
-        searchContext.currPageIndex = result.pageIndex;
-        searchContext.startIndex = result.charIndex + result.charCount;
-        this.free(keywordPtr);
-
-        return TaskBase.resolve<SearchResult | undefined>(result);
-      }
-
-      pageIndex++;
-      startIndex = 0;
-      searchContext.currPageIndex = pageIndex;
-      searchContext.startIndex = startIndex;
-    }
-    this.free(keywordPtr);
-
-    return TaskBase.resolve<SearchResult | undefined>(undefined);
-  }
-
-  searchPrev(
-    doc: PdfDocumentObject,
-    contextId: number,
-    target: SearchTarget
-  ): Task<SearchResult | undefined, PdfEngineError> {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'searchPrev',
-      doc,
-      contextId,
-      target
-    );
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { keyword, flags } = target;
-    const searchContext = this.setupSearchContext(
-      doc,
-      contextId,
-      keyword,
-      flags
-    );
-
-    if (searchContext.currPageIndex === -1) {
-      return TaskBase.resolve<SearchResult | undefined>(undefined);
-    }
-
-    const { docPtr } = this.docs[doc.id];
-    let pageIndex = searchContext.currPageIndex;
-    let startIndex = searchContext.startIndex;
-
-    const length = 2 * (keyword.length + 1);
-    const keywordPtr = this.malloc(length);
-    this.wasmModule.stringToUTF16(keyword, keywordPtr, length);
-
-    const flag = target.flags.reduce((flag: MatchFlag, currFlag: MatchFlag) => {
-      return flag | currFlag;
-    }, MatchFlag.None);
-
-    while (pageIndex < doc.pageCount) {
-      const result = this.searchTextInPage(
-        docPtr,
-        pageIndex,
-        startIndex,
-        keywordPtr,
-        flag
-      );
-      if (result) {
-        searchContext.currPageIndex = pageIndex;
-        searchContext.startIndex = result.charIndex + result.charCount;
-        this.free(keywordPtr);
-
-        return TaskBase.resolve<SearchResult | undefined>(result);
-      }
-
-      pageIndex--;
-      startIndex = 0;
-      searchContext.currPageIndex = pageIndex;
-      searchContext.startIndex = startIndex;
-    }
-
-    this.free(keywordPtr);
-
-    return TaskBase.resolve<SearchResult | undefined>(undefined);
-  }
-
-  stopSearch(
-    doc: PdfDocumentObject,
-    contextId: number
-  ): Task<boolean, PdfEngineError> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', doc, contextId);
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { searchContexts } = this.docs[doc.id];
-    if (searchContexts) {
-      searchContexts.delete(contextId);
-    }
-
-    return TaskBase.resolve(true);
-  }
-
-  getAttachments(
-    doc: PdfDocumentObject
-  ): Task<PdfAttachmentObject[], PdfEngineError> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getAttachments', doc);
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const attachments: PdfAttachmentObject[] = [];
-
-    const { docPtr } = this.docs[doc.id];
-    const count = this.wasmModuleWrapper.FPDFDoc_GetAttachmentCount(docPtr);
-    for (let i = 0; i < count; i++) {
-      const attachment = this.readPdfAttachment(docPtr, i);
-      attachments.push(attachment);
-    }
-
-    return TaskBase.resolve(attachments);
-  }
-
-  readAttachmentContent(
-    doc: PdfDocumentObject,
-    attachment: PdfAttachmentObject
-  ): Task<ArrayBuffer, PdfEngineError> {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'readAttachmentContent',
-      doc,
-      attachment
-    );
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { docPtr } = this.docs[doc.id];
-    const attachmentPtr = this.wasmModuleWrapper.FPDFDoc_GetAttachment(
-      docPtr,
-      attachment.index
-    );
-    const sizePtr = this.malloc(8);
-    if (
-      !this.wasmModuleWrapper.FPDFAttachment_GetFile(
-        attachmentPtr,
-        0,
-        0,
-        sizePtr
-      )
-    ) {
-      this.free(sizePtr);
-      return TaskBase.reject(
-        new PdfEngineError('can not read attachment size')
-      );
-    }
-    const size = this.wasmModule.getValue(sizePtr, 'i64');
-
-    const contentPtr = this.malloc(size);
-    if (
-      !this.wasmModuleWrapper.FPDFAttachment_GetFile(
-        attachmentPtr,
-        contentPtr,
-        size,
-        sizePtr
-      )
-    ) {
-      this.free(sizePtr);
-      this.free(contentPtr);
-
-      return TaskBase.reject(
-        new PdfEngineError('can not read attachment content')
-      );
-    }
-
-    const buffer = new ArrayBuffer(size);
-    const view = new DataView(buffer);
-    for (let i = 0; i < size; i++) {
-      view.setInt8(i, this.wasmModule.getValue(contentPtr + i, 'i8'));
-    }
-
-    this.free(sizePtr);
-    this.free(contentPtr);
-
-    return TaskBase.resolve(buffer);
-  }
-
-  extractPages(
-    doc: PdfDocumentObject,
-    pageIndexes: number[]
-  ): Task<ArrayBuffer, Error> {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'extractPages',
-      doc,
-      pageIndexes
-    );
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { docPtr } = this.docs[doc.id];
-
-    const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
-    if (!newDocPtr) {
-      return TaskBase.reject(new PdfEngineError('can not create new document'));
-    }
-
-    const pageIndexesPtr = this.malloc(pageIndexes.length * 4);
-    for (let i = 0; i < pageIndexes.length; i++) {
-      this.wasmModule.setValue(pageIndexesPtr + i * 4, pageIndexes[i], 'i32');
-    }
-
-    if (
-      !this.wasmModuleWrapper.FPDF_ImportPagesByIndex(
-        newDocPtr,
-        docPtr,
-        pageIndexesPtr,
-        pageIndexes.length,
-        0
-      )
-    ) {
-      this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
-      return TaskBase.reject(
-        new PdfEngineError('can not import pages to new document')
-      );
-    }
-
-    const buffer = this.saveDocument(newDocPtr);
-
-    this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
-
-    return TaskBase.resolve(buffer);
-  }
-
-  extractText(
-    doc: PdfDocumentObject,
-    pageIndexes: number[]
-  ): Task<string, Error> {
-    this.logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'extractText',
-      doc,
-      pageIndexes
-    );
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { docPtr } = this.docs[doc.id];
-    const strings: string[] = [];
-    for (let i = 0; i < pageIndexes.length; i++) {
-      const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(
-        docPtr,
-        pageIndexes[i]
-      );
-      const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
-      const charCount = this.wasmModuleWrapper.FPDFText_CountChars(textPagePtr);
-      const bufferPtr = this.malloc((charCount + 1) * 2);
-      this.wasmModuleWrapper.FPDFText_GetText(
-        textPagePtr,
-        0,
-        charCount,
-        bufferPtr
-      );
-      const text = this.wasmModule.UTF16ToString(bufferPtr);
-      this.free(bufferPtr);
-      strings.push(text);
-    }
-
-    return TaskBase.resolve(strings.join('\n\n'));
-  }
-
-  merge(files: PdfFile[]): Task<PdfFile, Error> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'merge', files);
-
-    const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
-    if (!newDocPtr) {
-      return TaskBase.reject(new PdfEngineError('can not create new document'));
-    }
-
-    const ptrs: { docPtr: number; filePtr: number }[] = [];
-    for (const file of files.reverse()) {
-      const array = new Uint8Array(file.content);
-      const length = array.length;
-      const filePtr = this.malloc(length);
-      this.wasmModule.HEAPU8.set(array, filePtr);
-
-      const docPtr = this.wasmModuleWrapper.FPDF_LoadMemDocument(
-        filePtr,
-        length,
-        0
-      );
-      if (!docPtr) {
-        const lastError = this.wasmModuleWrapper.FPDF_GetLastError();
-        this.logger.error(
-          LOG_SOURCE,
-          LOG_CATEGORY,
-          `FPDF_LoadMemDocument failed with ${lastError}`
-        );
-        this.free(filePtr);
-
-        for (const ptr of ptrs) {
-          this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
-          this.free(ptr.filePtr);
-        }
-
-        return TaskBase.reject<PdfFile>(
-          new PdfEngineError(
-            `FPDF_LoadMemDocument failed with ${lastError}`,
-            lastError
-          )
-        );
-      }
-      ptrs.push({ filePtr, docPtr });
-
-      if (!this.wasmModuleWrapper.FPDF_ImportPages(newDocPtr, docPtr, 0, 0)) {
-        this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
-
-        for (const ptr of ptrs) {
-          this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
-          this.free(ptr.filePtr);
-        }
-
-        return TaskBase.reject(
-          new PdfEngineError('can not import pages to new document')
-        );
-      }
-    }
-    const buffer = this.saveDocument(newDocPtr);
-
-    this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
-
-    for (const ptr of ptrs) {
-      this.wasmModuleWrapper.FPDF_CloseDocument(ptr.docPtr);
-      this.free(ptr.filePtr);
-    }
-
-    const file: PdfFile = {
-      id: `${Math.random()}`,
-      name: `merged.${Math.random()}.pdf`,
-      content: buffer,
-    };
-    return TaskBase.resolve(file);
-  }
-
-  saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', doc);
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const { docPtr } = this.docs[doc.id];
-    const buffer = this.saveDocument(docPtr);
-
-    return TaskBase.resolve(buffer);
-  }
-
-  closeDocument(doc: PdfDocumentObject): Task<boolean, PdfEngineError> {
-    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', doc);
-
-    if (!this.docs[doc.id]) {
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
-    }
-
-    const docData = this.docs[doc.id];
-    if (!docData) {
-      this.logger.error(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `can not close document ${doc.id}`
-      );
-      return TaskBase.reject<boolean>(
-        new PdfEngineError(`can not close document ${doc.id}`)
-      );
-    }
-
-    const { docPtr, filePtr } = this.docs[doc.id];
-    this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
-    this.free(filePtr);
-    delete this.docs[doc.id];
-    return TaskBase.resolve(true);
-  }
-
-  malloc(size: number) {
-    const ptr = this.wasmModule._malloc(size);
-    for (let i = 0; i < size; i++) {
-      this.wasmModule.HEAP8[ptr + i] = 0;
-    }
-
-    return ptr;
-  }
-
-  free(ptr: number) {
-    this.wasmModule._free(ptr);
   }
 
   saveDocument(docPtr: number) {

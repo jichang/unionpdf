@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 startSearch(doc: PdfDocumentObject, contextId: number): Task<boolean, PdfEngineError>;
 ```
 

@@ -4,6 +4,8 @@
 
 ## PdfEngineMethodName type
 
+Method name of PdfEngine interface
+
 **Signature:**
 
 ```typescript

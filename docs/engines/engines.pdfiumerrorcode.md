@@ -4,6 +4,8 @@
 
 ## PdfiumErrorCode enum
 
+Error code of pdfium library
+
 **Signature:**
 
 ```typescript

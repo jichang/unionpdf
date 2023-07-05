@@ -4,6 +4,8 @@
 
 ## SearchContext interface
 
+Context used for searching
+
 **Signature:**
 
 ```typescript

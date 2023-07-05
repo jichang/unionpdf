@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 getBookmarks(doc: PdfDocumentObject): WorkerTask<PdfBookmarksObject, Error>;
 ```
 

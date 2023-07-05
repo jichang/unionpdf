@@ -7,6 +7,7 @@
 **Signature:**
 
 ```typescript
+/** @override */
 merge(files: PdfFile[]): WorkerTask<PdfFile, Error>;
 ```
 

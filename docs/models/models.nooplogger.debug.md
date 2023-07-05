@@ -4,6 +4,8 @@
 
 ## NoopLogger.debug() method
 
+Log debug message
+
 **Signature:**
 
 ```typescript

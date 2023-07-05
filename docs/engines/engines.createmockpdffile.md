@@ -4,18 +4,22 @@
 
 ## createMockPdfFile() function
 
+Create mock of pdf file
+
 **Signature:**
 
 ```typescript
-export function createMockPdfFile(pdf?: Partial<PdfFile>): PdfFile;
+export function createMockPdfFile(file?: Partial<PdfFile>): PdfFile;
 ```
 
 ## Parameters
 
-| Parameter | Type                   | Description  |
-| --------- | ---------------------- | ------------ |
-| pdf       | Partial&lt;PdfFile&gt; | _(Optional)_ |
+| Parameter | Type                   | Description                                |
+| --------- | ---------------------- | ------------------------------------------ |
+| file      | Partial&lt;PdfFile&gt; | _(Optional)_ partial configuration of file |
 
 **Returns:**
 
 PdfFile
+
+mock of pdf file

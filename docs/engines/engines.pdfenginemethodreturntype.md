@@ -4,6 +4,8 @@
 
 ## PdfEngineMethodReturnType type
 
+Return type of PdfEngine method
+
 **Signature:**
 
 ```typescript

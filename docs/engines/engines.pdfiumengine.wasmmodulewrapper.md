@@ -4,6 +4,8 @@
 
 ## PdfiumEngine.wasmModuleWrapper property
 
+wrapped pdfium module
+
 **Signature:**
 
 ```typescript

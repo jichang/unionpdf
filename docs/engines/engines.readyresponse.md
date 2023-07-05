@@ -12,7 +12,7 @@ export interface ReadyResponse
 
 ## Properties
 
-| Property                                | Modifiers | Type            | Description |
-| --------------------------------------- | --------- | --------------- | ----------- |
-| [id](./engines.readyresponse.id.md)     |           | string          |             |
-| [type](./engines.readyresponse.type.md) |           | 'ReadyResponse' |             |
+| Property                                | Modifiers | Type            | Description   |
+| --------------------------------------- | --------- | --------------- | ------------- |
+| [id](./engines.readyresponse.id.md)     |           | string          | message id    |
+| [type](./engines.readyresponse.type.md) |           | 'ReadyResponse' | response type |

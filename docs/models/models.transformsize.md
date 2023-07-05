@@ -25,7 +25,7 @@ export function transformSize(
 | ----------- | -------------------------------- | -------------------- |
 | size        | [Size](./models.size.md)         | orignal size of rect |
 | rotation    | [Rotation](./models.rotation.md) | rotation angle       |
-| scaleFactor | number                           | scale factor         |
+| scaleFactor | number                           | - scale factor       |
 
 **Returns:**
 
