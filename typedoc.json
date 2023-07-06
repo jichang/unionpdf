@@ -1,0 +1,9 @@
+{
+  "entryPoints": ["packages/*"],
+  "name": "UnionPDF",
+  "entryPointStrategy": "packages",
+  "includeVersion": true
+
+  // Potentially useful for debugging
+  // "logLevel": "Verbose"
+}
