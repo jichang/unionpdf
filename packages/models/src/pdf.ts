@@ -847,6 +847,15 @@ export interface PdfFormObject {
 }
 
 /**
+ * Contents type of pdf stamp annotation
+ *
+ * @public
+ */
+export type PdfStampAnnoObjectContents = Array<
+  PdfPathObject | PdfImageObject | PdfFormObject
+>;
+
+/**
  * Pdf stamp annotation
  *
  * @public
@@ -857,7 +866,7 @@ export interface PdfStampAnnoObject extends PdfAnnotationObjectBase {
   /**
    * contents in this stamp annotation
    */
-  contents: Array<PdfPathObject | PdfImageObject | PdfFormObject>;
+  contents: PdfStampAnnoObjectContents;
 }
 
 /**
@@ -1289,6 +1298,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     }
   }
 
+  /** {@inheritDoc Task.abort} */
   abort(error?: E | TaskAbortError) {
     if (this.state.stage === TaskStage.Pending) {
       this.state = {

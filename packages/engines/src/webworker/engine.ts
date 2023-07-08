@@ -45,7 +45,7 @@ export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
   }
 
   /**
-   * {@inheritDoc TaskBase.abort}
+   * {@inheritDoc @unionpdf/models!TaskBase.abort}
    *
    * @override
    */
@@ -159,9 +159,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.initialize}
+   * {@inheritDoc @unionpdf/models!PdfEngine.initialize}
    *
-   * @override
    * @public
    */
   initialize() {
@@ -183,9 +182,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.destory}
+   * {@inheritDoc @unionpdf/models!PdfEngine.destory}
    *
-   * @override
    * @public
    */
   destroy() {
@@ -216,9 +214,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.openDocument}
+   * {@inheritDoc @unionpdf/models!PdfEngine.openDocument}
    *
-   * @override
    * @public
    */
   openDocument(file: PdfFile, password: string) {
@@ -240,9 +237,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getMetadata}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getMetadata}
    *
-   * @override
    * @public
    */
   getMetadata(doc: PdfDocumentObject) {
@@ -264,9 +260,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getBookmarks}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getBookmarks}
    *
-   * @override
    * @public
    */
   getBookmarks(doc: PdfDocumentObject) {
@@ -288,9 +283,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getSignatures}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getSignatures}
    *
-   * @override
    * @public
    */
   getSignatures(doc: PdfDocumentObject) {
@@ -312,9 +306,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.renderPage}
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderPage}
    *
-   * @override
    * @public
    */
   renderPage(
@@ -351,9 +344,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.renderPageRect}
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderPageRect}
    *
-   * @override
    * @public
    */
   renderPageRect(
@@ -392,9 +384,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getPageAnnotations}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getPageAnnotations}
    *
-   * @override
    * @public
    */
   getPageAnnotations(
@@ -429,9 +420,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.createPageAnnotation}
+   * {@inheritDoc @unionpdf/models!PdfEngine.createPageAnnotation}
    *
-   * @override
    * @public
    */
   createPageAnnotation(
@@ -464,9 +454,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.transformPageAnnotation}
+   * {@inheritDoc @unionpdf/models!PdfEngine.transformPageAnnotation}
    *
-   * @override
    * @public
    */
   transformPageAnnotation(
@@ -501,9 +490,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.removePageAnnotation}
+   * {@inheritDoc @unionpdf/models!PdfEngine.removePageAnnotation}
    *
-   * @override
    * @public
    */
   removePageAnnotation(
@@ -536,9 +524,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getPageTextRects}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getPageTextRects}
    *
-   * @override
    * @public
    */
   getPageTextRects(
@@ -573,9 +560,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.renderThumbnail}
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderThumbnail}
    *
-   * @override
    * @public
    */
   renderThumbnail(
@@ -610,9 +596,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.startSearch}
+   * {@inheritDoc @unionpdf/models!PdfEngine.startSearch}
    *
-   * @override
    * @public
    */
   startSearch(
@@ -637,9 +622,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.searchNext}
+   * {@inheritDoc @unionpdf/models!PdfEngine.searchNext}
    *
-   * @override
    * @public
    */
   searchNext(
@@ -675,9 +659,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.searchPrev}
+   * {@inheritDoc @unionpdf/models!PdfEngine.searchPrev}
    *
-   * @override
    * @public
    */
   searchPrev(
@@ -713,9 +696,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.stopSearch}
+   * {@inheritDoc @unionpdf/models!PdfEngine.stopSearch}
    *
-   * @override
    * @public
    */
   stopSearch(
@@ -740,9 +722,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.saveAsCopy}
+   * {@inheritDoc @unionpdf/models!PdfEngine.saveAsCopy}
    *
-   * @override
    * @public
    */
   saveAsCopy(pdf: PdfDocumentObject) {
@@ -764,9 +745,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getAttachments}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getAttachments}
    *
-   * @override
    * @public
    */
   getAttachments(pdf: PdfDocumentObject) {
@@ -788,9 +768,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.readAttachmentContent}
+   * {@inheritDoc @unionpdf/models!PdfEngine.readAttachmentContent}
    *
-   * @override
    * @public
    */
   readAttachmentContent(
@@ -821,9 +800,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.extractPages}
+   * {@inheritDoc @unionpdf/models!PdfEngine.extractPages}
    *
-   * @override
    * @public
    */
   extractPages(pdf: PdfDocumentObject, pageIndexes: number[]) {
@@ -845,9 +823,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.extractText}
+   * {@inheritDoc @unionpdf/models!PdfEngine.extractText}
    *
-   * @override
    * @public
    */
   extractText(pdf: PdfDocumentObject, pageIndexes: number[]) {
@@ -869,9 +846,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.merge}
+   * {@inheritDoc @unionpdf/models!PdfEngine.merge}
    *
-   * @override
    * @public
    */
   merge(files: PdfFile[]) {
@@ -893,9 +869,8 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.closeDocument}
+   * {@inheritDoc @unionpdf/models!PdfEngine.closeDocument}
    *
-   * @override
    * @public
    */
   closeDocument(pdf: PdfDocumentObject) {
@@ -921,6 +896,7 @@ export class WebWorkerEngine implements PdfEngine {
    * @param task - task that waiting for the response
    * @param request - request that needs send to web worker
    * @param transferables - transferables that need to transfer to webworker
+   * @returns
    *
    * @internal
    */

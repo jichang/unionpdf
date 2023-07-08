@@ -85,7 +85,9 @@ export interface AbortRequest {
    */
   type: 'AbortRequest';
 }
-
+/**
+ * Request that execute pdf engine method
+ */
 export interface ExecuteRequest {
   /**
    * message id
@@ -100,7 +102,9 @@ export interface ExecuteRequest {
    */
   data: PdfEngineMethodRequestBody;
 }
-
+/**
+ * Response that execute pdf engine method
+ */
 export interface ExecuteResponse {
   /**
    * message id
@@ -116,6 +120,9 @@ export interface ExecuteResponse {
   data: PdfEngineMethodResponseBody;
 }
 
+/**
+ * Response that indicate engine is ready
+ */
 export interface ReadyResponse {
   /**
    * message id

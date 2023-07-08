@@ -1,4 +1,4 @@
-import { PdfAnnotationObject, Position } from '@unionpdf/models';
+import { PdfAnnotationObject } from '@unionpdf/models';
 import React, { useContext } from 'react';
 
 export interface PdfDraggableMoverOption {

@@ -57,14 +57,15 @@ import {
   PdfPageObjectType,
   PdfPathObject,
   PdfFormObject,
+  PdfPolygonAnnoObject,
+  PdfPolylineAnnoObject,
+  PdfLineAnnoObject,
+  PdfHighlightAnnoObject,
+  PdfStampAnnoObjectContents,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
 import { PdfiumModule } from './pdfium';
-import { PdfPolygonAnnoObject } from '@unionpdf/models';
-import { PdfPolylineAnnoObject } from '@unionpdf/models';
-import { PdfLineAnnoObject } from '@unionpdf/models';
-import { PdfHighlightAnnoObject } from '@unionpdf/models';
 
 /**
  * Format of bitmap
@@ -444,9 +445,18 @@ const LOG_CATEGORY = 'Engine';
  * Context used for searching
  */
 export interface SearchContext {
+  /**
+   * search target
+   */
   target: SearchTarget;
+  /**
+   * current page index
+   */
   currPageIndex: number;
-  startIndex: number; // -1 means reach the end
+  /**
+   * index of text in the current pdf page,  -1 means reach the end
+   */
+  startIndex: number;
 }
 
 /**
@@ -497,9 +507,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.initialize}
+   * {@inheritDoc @unionpdf/models!PdfEngine.initialize}
    *
-   * @override
    * @public
    */
   initialize() {
@@ -509,9 +518,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.destroy}
+   * {@inheritDoc @unionpdf/models!PdfEngine.destroy}
    *
-   * @override
    * @public
    */
   destroy() {
@@ -521,9 +529,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.openDocument}
+   * {@inheritDoc @unionpdf/models!PdfEngine.openDocument}
    *
-   * @override
    * @public
    */
   openDocument(file: PdfFile, password: string) {
@@ -618,9 +625,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getMetadata}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getMetadata}
    *
-   * @override
    * @public
    */
   getMetadata(doc: PdfDocumentObject): Task<PdfMetadataObject, PdfEngineError> {
@@ -645,9 +651,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getSignatures}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getSignatures}
    *
-   * @override
    * @public
    */
   getSignatures(
@@ -747,9 +752,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getBookmarks}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getBookmarks}
    *
-   * @override
    * @public
    */
   getBookmarks(
@@ -769,9 +773,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.renderPage}
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderPage}
    *
-   * @override
    * @public
    */
   renderPage(
@@ -812,9 +815,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.renderPageRect}
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderPageRect}
    *
-   * @override
    * @public
    */
   renderPageRect(
@@ -855,9 +857,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getPageAnnotations}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getPageAnnotations}
    *
-   * @override
    * @public
    */
   getPageAnnotations(
@@ -900,9 +901,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.createPageAnnotation}
+   * {@inheritDoc @unionpdf/models!PdfEngine.createPageAnnotation}
    *
-   * @override
    * @public
    */
   createPageAnnotation(
@@ -935,9 +935,7 @@ export class PdfiumEngine implements PdfEngine {
       );
     }
 
-    if (
-      !this.setAnnotationRect(page, pagePtr, annotationPtr, annotation.rect)
-    ) {
+    if (!this.setPageAnnoRect(page, pagePtr, annotationPtr, annotation.rect)) {
       this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
       this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
       return TaskBase.reject(
@@ -956,12 +954,13 @@ export class PdfiumEngine implements PdfEngine {
         );
         break;
       case PdfAnnotationSubtype.STAMP:
-        isSucceed = this.addStamp(
+        isSucceed = this.addStampContent(
           docPtr,
           page,
           pagePtr,
           annotationPtr,
-          annotation
+          annotation.rect,
+          annotation.contents
         );
         break;
     }
@@ -984,9 +983,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.transformPageAnnotation}
+   * {@inheritDoc @unionpdf/models!PdfEngine.transformPageAnnotation}
    *
-   * @override
    * @public
    */
   transformPageAnnotation(
@@ -1026,7 +1024,7 @@ export class PdfiumEngine implements PdfEngine {
         height: annotation.rect.size.height * transformation.scale.height,
       },
     };
-    if (!this.setAnnotationRect(page, pagePtr, annotationPtr, rect)) {
+    if (!this.setPageAnnoRect(page, pagePtr, annotationPtr, rect)) {
       this.wasmModuleWrapper.FPDFPage_CloseAnnot(annotationPtr);
       this.wasmModuleWrapper.FPDF_ClosePage(pagePtr);
       return TaskBase.reject(
@@ -1082,9 +1080,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.removePageAnnotation}
+   * {@inheritDoc @unionpdf/models!PdfEngine.removePageAnnotation}
    *
-   * @override
    * @public
    */
   removePageAnnotation(
@@ -1118,9 +1115,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getPageTextRects}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getPageTextRects}
    *
-   * @override
    * @public
    */
   getPageTextRects(
@@ -1161,9 +1157,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.renderThumbnail}
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderThumbnail}
    *
-   * @override
    * @public
    */
   renderThumbnail(
@@ -1193,9 +1188,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.startSearch}
+   * {@inheritDoc @unionpdf/models!PdfEngine.startSearch}
    *
-   * @override
    * @public
    */
   startSearch(
@@ -1212,9 +1206,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.searchNext}
+   * {@inheritDoc @unionpdf/models!PdfEngine.searchNext}
    *
-   * @override
    * @public
    */
   searchNext(
@@ -1286,9 +1279,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.searchPrev}
+   * {@inheritDoc @unionpdf/models!PdfEngine.searchPrev}
    *
-   * @override
    * @public
    */
   searchPrev(
@@ -1361,9 +1353,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.stopSearch}
+   * {@inheritDoc @unionpdf/models!PdfEngine.stopSearch}
    *
-   * @override
    * @public
    */
   stopSearch(
@@ -1385,9 +1376,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.getAttachments}
+   * {@inheritDoc @unionpdf/models!PdfEngine.getAttachments}
    *
-   * @override
    * @public
    */
   getAttachments(
@@ -1412,9 +1402,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.readAttachmentContent}
+   * {@inheritDoc @unionpdf/models!PdfEngine.readAttachmentContent}
    *
-   * @override
    * @public
    */
   readAttachmentContent(
@@ -1484,9 +1473,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.extractPages}
+   * {@inheritDoc @unionpdf/models!PdfEngine.extractPages}
    *
-   * @override
    * @public
    */
   extractPages(
@@ -1540,9 +1528,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.extractText}
+   * {@inheritDoc @unionpdf/models!PdfEngine.extractText}
    *
-   * @override
    * @public
    */
   extractText(
@@ -1586,9 +1573,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.merge}
+   * {@inheritDoc @unionpdf/models!PdfEngine.merge}
    *
-   * @override
    * @public
    */
   merge(files: PdfFile[]): Task<PdfFile, Error> {
@@ -1665,9 +1651,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.saveAsCopy}
+   * {@inheritDoc @unionpdf/models!PdfEngine.saveAsCopy}
    *
-   * @override
    * @public
    */
   saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {
@@ -1684,9 +1669,8 @@ export class PdfiumEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc PdfEngine.closeDocument}
+   * {@inheritDoc @unionpdf/models!PdfEngine.closeDocument}
    *
-   * @override
    * @public
    */
   closeDocument(doc: PdfDocumentObject): Task<boolean, PdfEngineError> {
@@ -1715,6 +1699,13 @@ export class PdfiumEngine implements PdfEngine {
     return TaskBase.resolve(true);
   }
 
+  /**
+   * Memory allocation
+   * @param size - size of memory space
+   * @returns pointer to memory space
+   *
+   * @public
+   */
   malloc(size: number) {
     const ptr = this.wasmModule._malloc(size);
     for (let i = 0; i < size; i++) {
@@ -1724,60 +1715,26 @@ export class PdfiumEngine implements PdfEngine {
     return ptr;
   }
 
+  /**
+   * Free memory space
+   * @param ptr pointer to memory space
+   *
+   * @public
+   */
   free(ptr: number) {
     this.wasmModule._free(ptr);
   }
 
-  setAnnotationRect(
-    page: PdfPageObject,
-    pagePtr: number,
-    annotationPtr: number,
-    rect: Rect
-  ) {
-    const pageXPtr = this.malloc(8);
-    const pageYPtr = this.malloc(8);
-    if (
-      !this.wasmModuleWrapper.FPDF_DeviceToPage(
-        pagePtr,
-        0,
-        0,
-        page.size.width,
-        page.size.height,
-        0,
-        rect.origin.x,
-        rect.origin.y,
-        pageXPtr,
-        pageYPtr
-      )
-    ) {
-      this.free(pageXPtr);
-      this.free(pageYPtr);
-      return false;
-    }
-    const pageX = this.wasmModule.getValue(pageXPtr, 'double');
-    const pageY = this.wasmModule.getValue(pageYPtr, 'double');
-    this.free(pageXPtr);
-    this.free(pageYPtr);
-
-    const pageRectPtr = this.malloc(4 * 4);
-    this.wasmModule.setValue(pageRectPtr, pageX, 'float');
-    this.wasmModule.setValue(pageRectPtr + 4, pageY, 'float');
-    this.wasmModule.setValue(pageRectPtr + 8, pageX + rect.size.width, 'float');
-    this.wasmModule.setValue(
-      pageRectPtr + 12,
-      pageY - rect.size.height,
-      'float'
-    );
-
-    if (!this.wasmModuleWrapper.FPDFAnnot_SetRect(annotationPtr, pageRectPtr)) {
-      this.free(pageRectPtr);
-      return false;
-    }
-    this.free(pageRectPtr);
-
-    return true;
-  }
-
+  /**
+   * Set the rect of specified annotation
+   * @param page - page info that the annotation is belonged to
+   * @param pagePtr - pointer of page object
+   * @param annotationPtr - pointer to annotation object
+   * @param inkList - ink lists that added to the annotation
+   * @returns whether the ink lists is setted
+   *
+   * @private
+   */
   addInkStroke(
     page: PdfPageObject,
     pagePtr: number,
@@ -1812,14 +1769,27 @@ export class PdfiumEngine implements PdfEngine {
     return true;
   }
 
-  addStamp(
+  /**
+   * Add contents to stamp annotation
+   * @param docPtr - pointer to pdf document object
+   * @param page - page info
+   * @param pagePtr - pointer to page object
+   * @param annotationPtr - pointer to stamp annotation
+   * @param rect - rect of stamp annotation
+   * @param contents - contents of stamp annotation
+   * @returns whether contents is added to annotation
+   *
+   * @private
+   */
+  addStampContent(
     docPtr: number,
     page: PdfPageObject,
     pagePtr: number,
     annotationPtr: number,
-    annotation: PdfStampAnnoObject
+    rect: Rect,
+    contents: PdfStampAnnoObjectContents
   ) {
-    for (const content of annotation.contents) {
+    for (const content of contents) {
       switch (content.type) {
         case PdfPageObjectType.IMAGE:
           return this.addImageObject(
@@ -1827,7 +1797,7 @@ export class PdfiumEngine implements PdfEngine {
             page,
             pagePtr,
             annotationPtr,
-            annotation.rect.origin,
+            rect.origin,
             content.imageData
           );
       }
@@ -1836,6 +1806,18 @@ export class PdfiumEngine implements PdfEngine {
     return false;
   }
 
+  /**
+   * Add image object to annotation
+   * @param docPtr - pointer to pdf document object
+   * @param page - page info
+   * @param pagePtr - pointer to page object
+   * @param annotationPtr - pointer to stamp annotation
+   * @param position - position of image
+   * @param imageData - data of image
+   * @returns whether image is added to annotation
+   *
+   * @private
+   */
   addImageObject(
     docPtr: number,
     page: PdfPageObject,
@@ -1958,6 +1940,13 @@ export class PdfiumEngine implements PdfEngine {
     return true;
   }
 
+  /**
+   * Save document to array buffer
+   * @param docPtr - pointer to pdf document
+   * @returns array buffer contains the pdf content
+   *
+   * @private
+   */
   saveDocument(docPtr: number) {
     const writerPtr = this.wasmModuleWrapper.PDFium_OpenFileWriter();
     this.wasmModuleWrapper.PDFium_SaveAsCopy(docPtr, writerPtr);
@@ -1975,6 +1964,14 @@ export class PdfiumEngine implements PdfEngine {
     return buffer;
   }
 
+  /**
+   * Read metadata from pdf document
+   * @param docPtr - pointer to pdf document
+   * @param key - key of metadata field
+   * @returns metadata value
+   *
+   * @private
+   */
   readMetaText(docPtr: number, key: string) {
     return readString(
       this.wasmModule,
@@ -1990,6 +1987,16 @@ export class PdfiumEngine implements PdfEngine {
     );
   }
 
+  /**
+   * Setup search context
+   * @param doc - pdf document info
+   * @param contextId - id of context
+   * @param keyword - keyword for searching
+   * @param flags - flags for matching keywords
+   * @returns new search context
+   *
+   * @private
+   */
   setupSearchContext(
     doc: PdfDocumentObject,
     contextId: number,
@@ -2020,13 +2027,24 @@ export class PdfiumEngine implements PdfEngine {
     return searchContext;
   }
 
+  /**
+   * Search text in pdf page
+   * @param docPtr - pointer to pdf document
+   * @param pageIndex - index of pdf page
+   * @param startIndex - start index of text
+   * @param keywordPtr - pointer to keyword
+   * @param flag - matching flags
+   * @returns search result
+   *
+   * @private
+   */
   searchTextInPage(
     docPtr: number,
     pageIndex: number,
     startIndex: number,
     keywordPtr: number,
     flag: number
-  ) {
+  ): SearchResult | undefined {
     const pagePtr = this.wasmModuleWrapper.FPDF_LoadPage(docPtr, pageIndex);
     const textPagePtr = this.wasmModuleWrapper.FPDFText_LoadPage(pagePtr);
 
@@ -2058,6 +2076,14 @@ export class PdfiumEngine implements PdfEngine {
     return result;
   }
 
+  /**
+   * Read bookmarks in the pdf document
+   * @param docPtr - pointer to pdf document
+   * @param rootBookmarkPtr - pointer to root bookmark
+   * @returns bookmarks in the pdf document
+   *
+   * @private
+   */
   readPdfBookmarks(docPtr: number, rootBookmarkPtr = 0) {
     let bookmarkPtr = this.wasmModuleWrapper.FPDFBookmark_GetFirstChild(
       docPtr,
@@ -2078,6 +2104,14 @@ export class PdfiumEngine implements PdfEngine {
     return bookmarks;
   }
 
+  /**
+   * Read bookmark in the pdf document
+   * @param docPtr - pointer to pdf document
+   * @param bookmarkPtr - pointer to bookmark object
+   * @returns pdf bookmark object
+   *
+   * @private
+   */
   private readPdfBookmark(
     docPtr: number,
     bookmarkPtr: number
@@ -2113,6 +2147,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read text rects in pdf page
+   * @param page - pdf page info
+   * @param docPtr - pointer to pdf document
+   * @param pagePtr - pointer to pdf page
+   * @param textPagePtr - pointer to pdf text page
+   * @returns text rects in the pdf page
+   *
+   * @public
+   */
   private readPageTextRects(
     page: PdfPageObject,
     docPtr: number,
@@ -2263,6 +2307,18 @@ export class PdfiumEngine implements PdfEngine {
     return textRects;
   }
 
+  /**
+   * Read page annotations
+   * @param page - page info
+   * @param docPtr - pointer to pdf document
+   * @param pagePtr - pointer to pdf page
+   * @param textPagePtr - pointe to pdf text page
+   * @param scaleFactor - scale factor
+   * @param rotation - rotation angle
+   * @returns annotations on the pdf page
+   *
+   * @private
+   */
   private readPageAnnotations(
     page: PdfPageObject,
     docPtr: number,
@@ -2303,6 +2359,20 @@ export class PdfiumEngine implements PdfEngine {
     return annotations;
   }
 
+  /**
+   * Read pdf annotation from pdf document
+   * @param page  - pdf page infor
+   * @param docPtr - pointer to pdf document object
+   * @param pagePtr - pointer to pdf page object
+   * @param  textPagePtr - pointer to pdf text page object
+   * @param formHandle - form handle
+   * @param index - index of annotation in the pdf page
+   * @param scaleFactor  - factor of scalling
+   * @param rotation  - rotation angle
+   * @returns pdf annotation
+   *
+   * @private
+   */
   private readPageAnnotation(
     page: PdfPageObject,
     docPtr: number,
@@ -2508,6 +2578,16 @@ export class PdfiumEngine implements PdfEngine {
     return annotation;
   }
 
+  /**
+   * Read pdf text annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf text annotation
+   *
+   * @private
+   */
   private readPdfTextAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2585,6 +2665,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf freetext annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf freetext annotation
+   *
+   * @private
+   */
   private readPdfFreeTextAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2633,6 +2723,18 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf link annotation from pdf document
+   * @param page  - pdf page infor
+   * @param docPtr - pointer to pdf document object
+   * @param pagePtr - pointer to pdf page object
+   * @param  textPagePtr - pointer to pdf text page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf link annotation
+   *
+   * @private
+   */
   private readPdfLinkAnno(
     page: PdfPageObject,
     docPtr: number,
@@ -2705,6 +2807,17 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf widget annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param formHandle - form handle
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf widget annotation
+   *
+   * @private
+   */
   private readPdfWidgetAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2738,6 +2851,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf file attachment annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf file attachment annotation
+   *
+   * @private
+   */
   private readPdfFileAttachmentAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2767,6 +2890,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf ink annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf ink annotation
+   *
+   * @private
+   */
   private readPdfInkAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2838,6 +2971,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf polygon annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf polygon annotation
+   *
+   * @private
+   */
   private readPdfPolygonAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2869,6 +3012,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf polyline annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf polyline annotation
+   *
+   * @private
+   */
   private readPdfPolylineAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2900,6 +3053,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf line annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf line annotation
+   *
+   * @private
+   */
   private readPdfLineAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2956,6 +3119,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf highlight annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf highlight annotation
+   *
+   * @private
+   */
   private readPdfHighlightAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -2985,6 +3158,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf underline annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf underline annotation
+   *
+   * @private
+   */
   private readPdfUnderlineAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -3014,6 +3197,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read strikeout annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf strikeout annotation
+   *
+   * @private
+   */
   private readPdfStrikeOutAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -3043,6 +3236,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf squiggly annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf squiggly annotation
+   *
+   * @private
+   */
   private readPdfSquigglyAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -3072,6 +3275,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf caret annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf caret annotation
+   *
+   * @private
+   */
   private readPdfCaretAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -3101,6 +3314,17 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf stamp annotation
+   * @param docPtr - pointer to pdf document object
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf stamp annotation
+   *
+   * @private
+   */
   private readPdfStampAnno(
     docPtr: number,
     page: PdfPageObject,
@@ -3147,6 +3371,13 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf object in pdf page
+   * @param pageObjectPtr  - pointer to pdf object in page
+   * @returns pdf object in page
+   *
+   * @private
+   */
   private readPdfPageObject(pageObjectPtr: number) {
     const type = this.wasmModuleWrapper.FPDFPageObj_GetType(
       pageObjectPtr
@@ -3161,6 +3392,13 @@ export class PdfiumEngine implements PdfEngine {
     }
   }
 
+  /**
+   * Read pdf path object
+   * @param pageObjectPtr  - pointer to pdf path object in page
+   * @returns pdf path object
+   *
+   * @private
+   */
   private readPathObject(pageObjectPtr: number): PdfPathObject {
     const segmentCount =
       this.wasmModuleWrapper.FPDFPath_CountSegments(pageObjectPtr);
@@ -3198,6 +3436,14 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read segment of pdf path object
+   * @param annotationObjectPtr - pointer to pdf path object
+   * @param segmentIndex - index of segment
+   * @returns pdf segment in pdf path
+   *
+   * @private
+   */
   private readPdfSegment(
     annotationObjectPtr: number,
     segmentIndex: number
@@ -3229,6 +3475,13 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read pdf image object from pdf document
+   * @param pageObjectPtr  - pointer to pdf image object in page
+   * @returns pdf image object
+   *
+   * @private
+   */
   private readImageObject(imageObjectPtr: number): PdfImageObject {
     const bitmapPtr =
       this.wasmModuleWrapper.FPDFImageObj_GetBitmap(imageObjectPtr);
@@ -3276,6 +3529,13 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read form object from pdf document
+   * @param formObjectPtr  - pointer to pdf form object in page
+   * @returns pdf form object
+   *
+   * @private
+   */
   private readFormObject(formObjectPtr: number): PdfFormObject {
     const objectCount =
       this.wasmModuleWrapper.FPDFFormObj_CountObjects(formObjectPtr);
@@ -3297,6 +3557,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read circle annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf circle annotation
+   *
+   * @private
+   */
   private readPdfCircleAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -3326,6 +3596,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read square annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf square annotation
+   *
+   * @private
+   */
   private readPdfSquareAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -3355,6 +3635,17 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read basic info of unsupported pdf annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param type - type of annotation
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf annotation
+   *
+   * @private
+   */
   private readPdfAnno(
     page: PdfPageObject,
     pagePtr: number,
@@ -3385,6 +3676,16 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read linked popup of pdf annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @param index  - index of annotation in the pdf page
+   * @returns pdf popup linked to annotation
+   *
+   * @private
+   */
   private readPdfAnnoLinkedPopup(
     page: PdfPageObject,
     pagePtr: number,
@@ -3453,11 +3754,20 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read vertices of pdf annotation
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param annotationPtr - pointer to pdf annotation
+   * @returns vertices of pdf annotation
+   *
+   * @private
+   */
   private readPdfAnnoVertices(
     page: PdfPageObject,
     pagePtr: number,
     annotationPtr: number
-  ) {
+  ): Position[] {
     const vertices: Position[] = [];
     const count = this.wasmModuleWrapper.FPDFAnnot_GetVertices(
       annotationPtr,
@@ -3495,6 +3805,15 @@ export class PdfiumEngine implements PdfEngine {
     return vertices;
   }
 
+  /**
+   * Read the target of pdf bookmark
+   * @param docPtr - pointer to pdf document object
+   * @param getActionPtr - callback function to retrive the pointer of action
+   * @param getDestinationPtr - callback function to retrive the pointer of destination
+   * @returns target of pdf bookmark
+   *
+   * @private
+   */
   private readPdfBookmarkTarget(
     docPtr: number,
     getActionPtr: () => number,
@@ -3521,6 +3840,14 @@ export class PdfiumEngine implements PdfEngine {
     }
   }
 
+  /**
+   * Read field of pdf widget annotation
+   * @param formHandle - form handle
+   * @param annotationPtr - pointer to pdf annotation
+   * @returns field of pdf widget annotation
+   *
+   * @private
+   */
   private readPdfWidgetAnnoField(
     formHandle: number,
     annotationPtr: number
@@ -3628,6 +3955,18 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * render rectangle of pdf page to image
+   * @param docPtr - pointer to pdf document object
+   * @param page  - pdf page infor
+   * @param rect - rectangle info
+   * @param scaleFactor  - factor of scalling
+   * @param rotation  - rotation angle
+   * @param options - render options
+   * @returns image data
+   *
+   * @private
+   */
   private renderPageRectToImageData(
     docPtr: number,
     page: PdfPageObject,
@@ -3687,6 +4026,15 @@ export class PdfiumEngine implements PdfEngine {
     return imageData;
   }
 
+  /**
+   * Read the target of pdf link annotation
+   * @param docPtr - pointer to pdf document object
+   * @param getActionPtr - callback function to retrive the pointer of action
+   * @param getDestinationPtr - callback function to retrive the pointer of destination
+   * @returns target of link
+   *
+   * @private
+   */
   private readPdfLinkAnnoTarget(
     docPtr: number,
     getActionPtr: () => number,
@@ -3713,6 +4061,14 @@ export class PdfiumEngine implements PdfEngine {
     }
   }
 
+  /**
+   * Read pdf action from pdf document
+   * @param docPtr - pointer to pdf document object
+   * @param actionPtr - pointer to pdf action object
+   * @returns pdf action object
+   *
+   * @private
+   */
   private readPdfAction(docPtr: number, actionPtr: number): PdfActionObject {
     const actionType = this.wasmModuleWrapper.FPDFAction_GetType(
       actionPtr
@@ -3800,6 +4156,14 @@ export class PdfiumEngine implements PdfEngine {
     return action;
   }
 
+  /**
+   * Read pdf destination object
+   * @param docPtr - pointer to pdf document object
+   * @param destinationPtr - pointer to pdf destination
+   * @returns pdf destination object
+   *
+   * @private
+   */
   private readPdfDestination(
     docPtr: number,
     destinationPtr: number
@@ -3903,6 +4267,14 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Read attachmet from pdf document
+   * @param docPtr - pointer to pdf document object
+   * @param index - index of attachment
+   * @returns attachment content
+   *
+   * @private
+   */
   private readPdfAttachment(
     docPtr: number,
     index: number
@@ -3955,26 +4327,51 @@ export class PdfiumEngine implements PdfEngine {
     };
   }
 
+  /**
+   * Convert coordinate of point from device coordinate to page coordinate
+   * @param page  - pdf page infor
+   * @param position - position of point
+   * @returns converted position
+   *
+   * @private
+   */
   private convertDevicePointToPagePoint(
     page: PdfPageObject,
     position: Position
-  ) {
+  ): Position {
     const x = position.x;
     const y = page.size.height - position.y;
 
     return { x, y };
   }
 
+  /**
+   * Convert coordinate of point from page coordinate to device coordinate
+   * @param page  - pdf page infor
+   * @param position - position of point
+   * @returns converted position
+   *
+   * @private
+   */
   private convertPagePointToDevicePoint(
     page: PdfPageObject,
     position: Position
-  ) {
+  ): Position {
     const x = position.x;
     const y = page.size.height - position.y;
 
     return { x, y };
   }
 
+  /**
+   * Convert coordinate of rectangle from page coordinate to device coordinate
+   * @param page  - pdf page infor
+   * @param pagePtr - pointer to pdf page object
+   * @param pageRect - rectangle that needs to be converted
+   * @returns converted rectangle
+   *
+   * @private
+   */
   private convertPageRectToDeviceRect(
     page: PdfPageObject,
     pagePtr: number,
@@ -4003,6 +4400,14 @@ export class PdfiumEngine implements PdfEngine {
     return rect;
   }
 
+  /**
+   * Read the appearance stream of annotation
+   * @param annotationPtr - pointer to pdf annotation
+   * @param mode - appearance mode
+   * @returns appearance stream
+   *
+   * @private
+   */
   private readPageAnnoAppearanceStream(
     annotationPtr: number,
     mode = AppearanceMode.Normal
@@ -4027,6 +4432,73 @@ export class PdfiumEngine implements PdfEngine {
     return ap;
   }
 
+  /**
+   * Set the rect of specified annotation
+   * @param page - page info that the annotation is belonged to
+   * @param pagePtr - pointer of page object
+   * @param annotationPtr - pointer to annotation object
+   * @param rect - target rectangle
+   * @returns whether the rect is setted
+   *
+   * @private
+   */
+  setPageAnnoRect(
+    page: PdfPageObject,
+    pagePtr: number,
+    annotationPtr: number,
+    rect: Rect
+  ) {
+    const pageXPtr = this.malloc(8);
+    const pageYPtr = this.malloc(8);
+    if (
+      !this.wasmModuleWrapper.FPDF_DeviceToPage(
+        pagePtr,
+        0,
+        0,
+        page.size.width,
+        page.size.height,
+        0,
+        rect.origin.x,
+        rect.origin.y,
+        pageXPtr,
+        pageYPtr
+      )
+    ) {
+      this.free(pageXPtr);
+      this.free(pageYPtr);
+      return false;
+    }
+    const pageX = this.wasmModule.getValue(pageXPtr, 'double');
+    const pageY = this.wasmModule.getValue(pageYPtr, 'double');
+    this.free(pageXPtr);
+    this.free(pageYPtr);
+
+    const pageRectPtr = this.malloc(4 * 4);
+    this.wasmModule.setValue(pageRectPtr, pageX, 'float');
+    this.wasmModule.setValue(pageRectPtr + 4, pageY, 'float');
+    this.wasmModule.setValue(pageRectPtr + 8, pageX + rect.size.width, 'float');
+    this.wasmModule.setValue(
+      pageRectPtr + 12,
+      pageY - rect.size.height,
+      'float'
+    );
+
+    if (!this.wasmModuleWrapper.FPDFAnnot_SetRect(annotationPtr, pageRectPtr)) {
+      this.free(pageRectPtr);
+      return false;
+    }
+    this.free(pageRectPtr);
+
+    return true;
+  }
+
+  /**
+   * Read the rectangle of annotation
+   * @param annotationPtr - pointer to pdf annotation
+   * @returns rectangle of annotation
+   *
+   * @private
+   */
   private readPageAnnoRect(annotationPtr: number) {
     const pageRectPtr = this.malloc(4 * 4);
     const pageRect = {

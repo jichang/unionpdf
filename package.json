@@ -12,7 +12,7 @@
     "typedoc": "^0.24.8"
   },
   "scripts": {
-    "doc": "typedoc && npm run format",
+    "doc": "typedoc",
     "clean": "npm run clean --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",

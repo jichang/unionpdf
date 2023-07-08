@@ -13,12 +13,12 @@ npm install @unionpdf/engines
 ```typescript
 import { createPdfiumModule, PdfiumEngine } from '@unionpdf/engines';
 
-// implement loadWasm to load pdifum wasm file
-const pdfiumWasm = loadWasm();
-const response = await fetch(pdfiumWasm);
-const wasmBinary = await response.arrayBuffer();
+// implement loadWasmBinary to load pdifum wasm file
+const wasmBinary = await loadWasmBinary();
 const wasmModule = await createPdfiumModule({ wasmBinary });
-const engine = new PdfiumEngine(wasmModule);
+const engine = new PdfiumEngine(wasmModule, new ConsoleLogger());
+
+engine.initialize();
 
 // implement fetchFile to load pdf file
 const file = await loadFile();
@@ -26,6 +26,8 @@ const task = engine.openDocument(file);
 task.wait(
   (doc) => {
     console.log('opened: ', doc);
+
+    engine.closeDocument(doc);
   },
   (err) => {
     console.log('failed: ', err);
