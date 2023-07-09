@@ -1,15 +1,42 @@
 import { Rotation } from '@unionpdf/models';
 
+/**
+ * Application mode
+ *
+ * @public
+ */
 export enum PdfApplicationMode {
+  /**
+   * Used for viewing pdf files
+   */
   View,
+  /**
+   * Used for editing pdf files
+   */
   Edit,
 }
 
+/**
+ * Plugin configuration
+ *
+ * @public
+ */
 export interface PdfApplicatinPluginConfiguration {
+  /**
+   * Whether plugin is enabled
+   */
   isEnabled: boolean;
+  /**
+   * Whether plugin is visible
+   */
   isVisible: boolean;
 }
 
+/**
+ * Key for application plugin
+ *
+ * @public
+ */
 export enum PdfApplicatinPluginKey {
   Attachments,
   Bookmarks,
@@ -25,6 +52,11 @@ export enum PdfApplicatinPluginKey {
   Uploader,
 }
 
+/**
+ * Default configuration for plugins
+ *
+ * @public
+ */
 export const DEFAULT_PLUGIN_CONFIGURATIONS = {
   [PdfApplicatinPluginKey.Attachments]: {
     isEnabled: true,
@@ -76,33 +108,107 @@ export const DEFAULT_PLUGIN_CONFIGURATIONS = {
   },
 };
 
+/**
+ * Configuration of pdf application
+ *
+ * @public
+ */
 export interface PdfApplicationConfiguration {
+  /**
+   * Rotation angle of pdf pages
+   */
   rotation: Rotation;
+  /**
+   * Scaling factor of pdf pages
+   */
   scaleFactor: number;
+  /**
+   * Configuration of plugins
+   */
   plugins: Record<PdfApplicatinPluginKey, PdfApplicatinPluginConfiguration>;
 }
 
+/**
+ * Configuration provider is used to read/save application configuration
+ *
+ * @public
+ */
 export interface PdfApplicationConfigurationProvider {
+  /**
+   * Get application configuration
+   * @returns applicaton configuration
+   */
   get: () => PdfApplicationConfiguration;
 
+  /**
+   * Set rotation angle
+   * @param rotation - rotation angle
+   * @returns
+   */
   setRotation: (rotation: Rotation) => void;
+  /**
+   * Set scaling factor
+   * @param scaleFactor
+   * @returns
+   */
   setScaleFactor: (scaleFactor: number) => void;
 
+  /**
+   * show plugin specificed by pluginKey
+   * @param pluginKey
+   * @returns
+   */
   showPlugin: (pluginKey: PdfApplicatinPluginKey) => void;
+  /**
+   * hide plugin specificed by pluginKey
+   * @param pluginKey
+   * @returns
+   */
   hidePlugin: (pluginKey: PdfApplicatinPluginKey) => void;
+  /**
+   * toggle plugin specificed by pluginKey
+   * @param pluginKey
+   * @returns
+   */
   togglePlugin: (pluginKey: PdfApplicatinPluginKey) => void;
 
+  /**
+   * Subscribe to the configuration changes
+   * @param callback
+   * @returns
+   */
   subscribe: (
     callback: (configuration: PdfApplicationConfiguration) => void
   ) => void;
+  /**
+   * Unsubscribe from the configuration changes
+   * @param callback
+   * @returns
+   */
   unsubscribe: (
     callback: (configuration: PdfApplicationConfiguration) => void
   ) => void;
 }
 
+/**
+ * Base class for configuration provider
+ *
+ * @public
+ */
 export class PdfApplicationConfigurationProviderBase {
+  /**
+   * Callbacks that subscribed to the configuration change event
+   *
+   * @private
+   */
   callbacks: Array<(configuratin: PdfApplicationConfiguration) => void> = [];
 
+  /**
+   * Create an instance of PdfApplicationConfigurationProviderBase
+   * @param rotation - rotation angle
+   * @param scaleFactor - scale factor
+   * @param plugins - plugins configurations
+   */
   constructor(
     protected rotation = Rotation.Degree0,
     protected scaleFactor: number = 1.0,
@@ -112,6 +218,11 @@ export class PdfApplicationConfigurationProviderBase {
     > = DEFAULT_PLUGIN_CONFIGURATIONS
   ) {}
 
+  /**
+   * broadcast configuration changes event to subscribers
+   *
+   * @protected
+   */
   broadcast() {
     for (const callback of this.callbacks) {
       callback({
@@ -122,6 +233,7 @@ export class PdfApplicationConfigurationProviderBase {
     }
   }
 
+  /** @inheritDoc PdfApplicationConfigurationProvider.subscribe  */
   subscribe(callback: (configuration: PdfApplicationConfiguration) => void) {
     const index = this.callbacks.findIndex((_callback) => {
       return _callback === callback;
@@ -131,6 +243,7 @@ export class PdfApplicationConfigurationProviderBase {
     }
   }
 
+  /** @inheritDoc PdfApplicationConfigurationProvider.unsubscribe  */
   unsubscribe(callback: (configuration: PdfApplicationConfiguration) => void) {
     const index = this.callbacks.findIndex((_callback) => {
       return _callback === callback;
@@ -141,10 +254,14 @@ export class PdfApplicationConfigurationProviderBase {
   }
 }
 
+/**
+ * Configuration provider that maintains configuration with variables in memory
+ */
 export class MemoryPdfApplicationConfigurationProvider
   extends PdfApplicationConfigurationProviderBase
   implements PdfApplicationConfigurationProvider
 {
+  /** @inheritDoc PdfApplicationConfigurationProvider.get  */
   get(): PdfApplicationConfiguration {
     return {
       rotation: this.rotation,
@@ -153,16 +270,19 @@ export class MemoryPdfApplicationConfigurationProvider
     };
   }
 
+  /** @inheritDoc PdfApplicationConfigurationProvider.setRotation  */
   setRotation(rotation: Rotation) {
     this.rotation = rotation;
     this.broadcast();
   }
 
+  /** @inheritDoc PdfApplicationConfigurationProvider.setScaleFactor  */
   setScaleFactor(scaleFactor: number) {
     this.scaleFactor = scaleFactor;
     this.broadcast();
   }
 
+  /** @inheritDoc PdfApplicationConfigurationProvider.showPlugin */
   showPlugin(pluginKey: PdfApplicatinPluginKey) {
     const pluginConfiguration = this.plugins[pluginKey];
 
@@ -177,6 +297,7 @@ export class MemoryPdfApplicationConfigurationProvider
     this.broadcast();
   }
 
+  /** @inheritDoc PdfApplicationConfigurationProvider.hidePlugin  */
   hidePlugin(pluginKey: PdfApplicatinPluginKey) {
     const pluginConfiguration = this.plugins[pluginKey];
 
@@ -191,6 +312,7 @@ export class MemoryPdfApplicationConfigurationProvider
     this.broadcast();
   }
 
+  /** @inheritDoc PdfApplicationConfigurationProvider.togglePlugin  */
   togglePlugin(pluginKey: PdfApplicatinPluginKey) {
     const pluginConfiguration = this.plugins[pluginKey];
     if (pluginConfiguration.isVisible) {
@@ -201,10 +323,21 @@ export class MemoryPdfApplicationConfigurationProvider
   }
 }
 
+/**
+ * Configuration provider that maintains configuration with variables in storage
+ */
 export class StoragePdfApplicationConfigurationProvider
   extends PdfApplicationConfigurationProviderBase
   implements PdfApplicationConfigurationProvider
 {
+  /**
+   * Create an instance of StoragePdfApplicationConfigurationProvider
+   * @param storage - storaged used for saving configuration
+   * @param key - key for searching configuration in storage
+   * @param rotation - rotation angle
+   * @param scaleFactor - scaling factor
+   * @param plugins - plugins configurations
+   */
   constructor(
     private storage: Storage,
     private key: string,
@@ -220,6 +353,11 @@ export class StoragePdfApplicationConfigurationProvider
     this.init();
   }
 
+  /**
+   * init provider
+   *
+   * @private
+   */
   init() {
     try {
       const value = this.storage.getItem(this.key);
@@ -232,6 +370,11 @@ export class StoragePdfApplicationConfigurationProvider
     } catch (e) {}
   }
 
+  /**
+   * save configuration
+   *
+   * @private
+   */
   save() {
     try {
       const configruation = this.get();
@@ -239,6 +382,9 @@ export class StoragePdfApplicationConfigurationProvider
     } catch (e) {}
   }
 
+  /**
+   * @inheritdoc PdfApplicationConfigurationProviderBase.broadcast
+   */
   broadcast(): void {
     try {
       super.broadcast();
@@ -247,6 +393,9 @@ export class StoragePdfApplicationConfigurationProvider
     }
   }
 
+  /**
+   * @inheritdoc PdfApplicationConfigurationProvider.get
+   */
   get(): PdfApplicationConfiguration {
     return {
       rotation: this.rotation,
@@ -255,16 +404,25 @@ export class StoragePdfApplicationConfigurationProvider
     };
   }
 
+  /**
+   * @inheritdoc PdfApplicationConfigurationProvider.setRotation
+   */
   setRotation(rotation: Rotation) {
     this.rotation = rotation;
     this.broadcast();
   }
 
+  /**
+   * @inheritdoc PdfApplicationConfigurationProvider.setScaleFactor
+   */
   setScaleFactor(scaleFactor: number) {
     this.scaleFactor = scaleFactor;
     this.broadcast();
   }
 
+  /**
+   * @inheritdoc PdfApplicationConfigurationProvider.showPlugin
+   */
   showPlugin(pluginKey: PdfApplicatinPluginKey) {
     const pluginConfiguration = this.plugins[pluginKey];
 
@@ -279,6 +437,9 @@ export class StoragePdfApplicationConfigurationProvider
     this.broadcast();
   }
 
+  /**
+   * @inheritdoc PdfApplicationConfigurationProvider.hidePlugin
+   */
   hidePlugin(pluginKey: PdfApplicatinPluginKey) {
     const pluginConfiguration = this.plugins[pluginKey];
 
@@ -293,6 +454,9 @@ export class StoragePdfApplicationConfigurationProvider
     this.broadcast();
   }
 
+  /**
+   * @inheritdoc PdfApplicationConfigurationProvider.togglePlugin
+   */
   togglePlugin(pluginKey: PdfApplicatinPluginKey) {
     const pluginConfiguration = this.plugins[pluginKey];
     if (pluginConfiguration.isVisible) {

@@ -1,5 +1,5 @@
 /// <reference path="url.d.ts"/>
-export * from "./emscripten.d";
+export * from './emscripten.d';
 export * from './wrapper';
 export * from './engine';
 export * from './helper';

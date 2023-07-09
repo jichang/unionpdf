@@ -15,16 +15,50 @@ import {
 } from './application.configuration';
 import { Rotation } from '@unionpdf/models';
 
+/**
+ * Type of value in pdf application context
+ */
 export interface PdfApplicationContextValue
   extends PdfApplicationConfiguration {
+  /**
+   * Application mode
+   */
   mode: PdfApplicationMode;
+  /**
+   * Set scaling factor
+   * @param scaleFactor - scaling factor
+   * @returns
+   */
   setScaleFactor: (scaleFactor: number) => void;
+  /**
+   * Set rotation
+   * @param rotation - rotation angle
+   * @returns
+   */
   setRotation: (rotation: Rotation) => void;
+  /**
+   * Show application plugin
+   * @param pluginKey - key of plugin
+   * @returns
+   */
   showPlugin: (pluginKey: PdfApplicatinPluginKey) => void;
+  /**
+   * Hide application plugin
+   * @param pluginKey - key of plugin
+   * @returns
+   */
   hidePlugin: (pluginKey: PdfApplicatinPluginKey) => void;
+  /**
+   * Toggle application plugin
+   * @param pluginKey - key of plugin
+   * @returns
+   */
   togglePlugin: (pluginKey: PdfApplicatinPluginKey) => void;
 }
 
+/**
+ * Pdf application context
+ */
 export const PdfApplicationContext =
   React.createContext<PdfApplicationContextValue>({
     mode: PdfApplicationMode.View,
@@ -38,11 +72,22 @@ export const PdfApplicationContext =
     togglePlugin: () => {},
   });
 
+/**
+ * Property of application context provider
+ */
 export interface PdfApplicationContextProviderProps {
   children: ReactNode;
+  /**
+   *  application configuration provider
+   */
   provider: PdfApplicationConfigurationProvider;
 }
 
+/**
+ * Application context provider
+ * @param props - properties
+ * @returns new application context provider component
+ */
 export function PdfApplicationContextProvider(
   props: PdfApplicationContextProviderProps
 ) {
@@ -118,6 +163,12 @@ export function PdfApplicationContextProvider(
   );
 }
 
+/**
+ * Retrieve application configuration
+ * @returns application configuration in context
+ *
+ * @public
+ */
 export function usePdfApplication() {
   return useContext(PdfApplicationContext);
 }

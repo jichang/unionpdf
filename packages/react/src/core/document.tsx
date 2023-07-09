@@ -13,13 +13,35 @@ import { useTheme } from './theme.context';
 import { PdfDocumentContextProvider } from './document.context';
 import './document.css';
 
+/**
+ * Properties of component PdfDocument
+ */
 export interface PdfDocumentProps extends ComponentProps<'div'> {
+  /**
+   * Pdf file
+   */
   file: PdfFile | null;
+  /**
+   * password for pdf file
+   */
   password: string;
+  /**
+   * callback when file is opened successfully
+   * @param pdf - opened pdf document
+   * @returns
+   */
   onOpenSuccess?: (pdf: PdfDocumentObject) => void;
+  /**
+   * callback when file can not be opened
+   * @param pdf - opened pdf document
+   * @returns
+   */
   onOpenFailure?: (error: PdfEngineError) => void;
 }
 
+/**
+ * Function component PdfDocument
+ */
 export function PdfDocument(props: PdfDocumentProps) {
   const { file, password, onOpenSuccess, onOpenFailure, children, ...rest } =
     props;
