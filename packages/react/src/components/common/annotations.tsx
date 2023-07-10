@@ -3,9 +3,21 @@ import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import { usePdfPageAnnotationComponent } from './annotations.context';
 
 export interface PdfPageAnnotationsProps {
-  annotations: PdfAnnotationObject[];
+  /**
+   * page object that annotation is belonged to
+   */
   page: PdfPageObject;
+  /**
+   * pdf annotations on the pdf page
+   */
+  annotations: PdfAnnotationObject[];
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * Rotation angle
+   */
   rotation: Rotation;
 }
 

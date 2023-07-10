@@ -7,10 +7,23 @@ import {
 import './polyline.css';
 import { PdfPageAnnotationProps } from '../common';
 
+/**
+ * Properties of PdfPagePolylineAnnotation
+ */
 export interface PdfPagePolylineAnnotationProps extends PdfPageAnnotationProps {
+  /**
+   * Pdf polyline annotation object
+   */
   annotation: PdfPolylineAnnoObject;
 }
 
+/**
+ * Pdf polyline annotation component
+ * @param props - properties of PdfPagePolylineAnnotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPagePolylineAnnotation(
   props: PdfPagePolylineAnnotationProps
 ) {

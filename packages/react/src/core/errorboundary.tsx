@@ -1,14 +1,38 @@
 import React from 'react';
 import { UIStringsContext } from '../adapters';
+import { Logger } from '@unionpdf/models';
 
+/**
+ * Properties of common error boundary component
+ */
 export interface ErrorBoundaryProps {
+  /**
+   * Log source
+   */
+  source: string;
+  /**
+   * Logger instance
+   */
+  logger: Logger;
+  /**
+   * children nodes
+   */
   children: React.ReactNode;
 }
 
+/**
+ * State of common error boundary component
+ */
 export interface ErrorBoundaryState {
+  /**
+   * catched error
+   */
   error?: Error | undefined;
 }
 
+/**
+ * Error boundary component
+ */
 export class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
@@ -24,7 +48,12 @@ export class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: any) {
-    console.log(error, errorInfo);
+    this.props.logger.error(
+      this.props.source,
+      'UncaughtError',
+      error,
+      errorInfo
+    );
   }
 
   render() {

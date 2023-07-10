@@ -5,6 +5,9 @@ export interface PdfDraggableMoverOption {
   type: 'mover';
 }
 
+/**
+ * position of annotation resizer
+ */
 export enum ResizerPosition {
   TopLeft = 0,
   TopRight = 1,

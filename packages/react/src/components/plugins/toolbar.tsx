@@ -7,6 +7,7 @@ import {
   PdfPlugin,
   PdfApplicationMode,
   usePdfApplication,
+  useLogger,
 } from '../../core';
 import classNames from 'classnames';
 import {
@@ -58,9 +59,10 @@ export function PdfToolbarPluginItemGroup(
   const { className, children, ...rest } = props;
   const { ToolbarItemGroup } = useUIComponents();
   const strings = useUIStrings();
+  const logger = useLogger();
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source="PdfToolbarPluginItemGroup" logger={logger}>
       <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
@@ -122,6 +124,7 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
   const { className, children, ...rest } = props;
   const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
   const strings = useUIStrings();
+  const logger = useLogger();
 
   const { plugins, showPlugin } = usePdfApplication();
 
@@ -132,7 +135,7 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
   const enableEdit = plugins[PdfApplicatinPluginKey.Editor].isEnabled;
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source="PdfToolbarFileItemGroup" logger={logger}>
       <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}

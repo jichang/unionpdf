@@ -5,7 +5,7 @@ import { PdfEditorTool, StackStatus, usePdfEditor } from './editor.context';
 import {
   ErrorBoundary,
   PdfApplicatinPluginKey,
-  PdfApplicationMode,
+  useLogger,
   usePdfApplication,
 } from '../../core';
 
@@ -17,6 +17,7 @@ export function PdfToolbarEditorItemGroup(
   const { className, children, ...rest } = props;
   const { ToolbarItemGroup, Button } = useUIComponents();
 
+  const logger = useLogger();
   const strings = useUIStrings();
 
   const { setTool, toggleTool } = usePdfEditor();
@@ -34,7 +35,7 @@ export function PdfToolbarEditorItemGroup(
   }, [toggleTool]);
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source="PdfToolbarEditorItemGroup" logger={logger}>
       <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
@@ -59,6 +60,7 @@ export function PdfToolbarEditorFileItemGroup(
   const [isUncommittedWarningVisible, setIsUncommittedWarningVisible] =
     useState(false);
 
+  const logger = useLogger();
   const strings = useUIStrings();
   const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
 
@@ -86,7 +88,7 @@ export function PdfToolbarEditorFileItemGroup(
   }, [hidePlugin, setIsUncommittedWarningVisible, commit]);
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source="PdfToolbarEditorFileItemGroup" logger={logger}>
       <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}

@@ -7,10 +7,23 @@ import {
 import './ink.css';
 import { PdfPageAnnotationProps } from '../common';
 
+/**
+ * Properties of PdfPageInkAnnotation
+ */
 export interface PdfPageInkAnnotationProps extends PdfPageAnnotationProps {
+  /**
+   * Pdf ink annotation object
+   */
   annotation: PdfInkAnnoObject;
 }
 
+/**
+ * Pdf ink annotation component
+ * @param props - properties of PdfPageInkAnnotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);

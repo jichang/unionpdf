@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 
-export function userUrl(buffer: ArrayBuffer | null) {
+/**
+ * Hooks for using generated URL from arraybuffer
+ * @param buffer - data buffer
+ * @returns - url
+ *
+ * @public
+ */
+export function userUrl(buffer: ArrayBuffer | null): string {
   const [url, setUrl] = useState<string>('about:blank');
 
   useEffect(() => {

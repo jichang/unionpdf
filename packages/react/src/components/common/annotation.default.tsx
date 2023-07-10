@@ -9,6 +9,19 @@ import { PdfAnnotationSubtype } from '@unionpdf/models';
 import { PdfPageAnnotationComponentProps } from './annotations.context';
 import { PdfPageAnnotation } from './annotation';
 
+/**
+ * Default annotation component, it's used in view mode. It will render content
+ * of 3 kinds of annotation
+ *
+ * Text - to support text selection
+ * Link - to support navigation
+ * Widgt - to support form filling
+ *
+ * @param props - properties for default annotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPageDefaultAnnotation(
   props: PdfPageAnnotationComponentProps
 ) {

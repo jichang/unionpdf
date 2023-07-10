@@ -1,3 +1,8 @@
+/**
+ * Deep clone objects
+ * @param t - original object
+ * @returns cloned object
+ */
 export function clone<T extends {}>(t: T): T {
   const result = {};
   const keys = Object.keys(t);

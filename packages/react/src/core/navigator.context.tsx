@@ -9,33 +9,87 @@ import React, {
 import { usePdfDocument } from './document.context';
 import { useLogger } from './logger.context';
 
+/**
+ * Event for goto specific pdf page
+ */
 export interface PdfNavigatorGotoPageEvent {
+  /**
+   * event kind
+   */
   kind: 'GotoPage';
+  /**
+   * event data
+   */
   data: {
+    /**
+     * destination of navigation
+     */
     destination: PdfDestinationObject;
   };
 }
 
+/**
+ * Navigation event
+ */
 export type PdfNavigatorEvent = PdfNavigatorGotoPageEvent;
 
+/**
+ * Listerer of navigation event, source needs to be unique
+ */
 export type PdfNavigatorListener = {
+  /**
+   * event source of the listner
+   */
   source: string;
+  /**
+   * handler of navigation event
+   * @param event - navigation event
+   * @param source - event source
+   * @returns
+   */
   handler: (event: PdfNavigatorEvent, source: string) => void;
 };
 
+/**
+ * Pdf navigator, can used to navigation inside of pdf document
+ */
 export interface PdfNavigator {
+  /**
+   * current page index
+   */
   currPageIndex: number;
+  /**
+   * Goto specific page by sending navigation event
+   * @param evt - navigation event
+   * @param source - event source
+   */
   gotoPage(evt: PdfNavigatorGotoPageEvent['data'], source: string): void;
-  addEventListener(source: string, evt: PdfNavigatorListener['handler']): void;
+  /**
+   * add event listener
+   * @param source - event source
+   * @param handler - event handler
+   */
+  addEventListener(
+    source: string,
+    handler: PdfNavigatorListener['handler']
+  ): void;
+  /**
+   * remove event listener
+   * @param source - event source
+   * @param handler - event handler
+   */
   removeEventListener(
     source: string,
-    evt: PdfNavigatorListener['handler']
+    handler: PdfNavigatorListener['handler']
   ): void;
 }
 
 const LOG_SOURCE = 'PdfNavigator';
 const LOG_CATEGORY = 'Navigate';
 
+/**
+ * context for maintaing pdf navigator
+ */
 export const PdfNavigatorContext = React.createContext<PdfNavigator>({
   currPageIndex: 0,
   gotoPage: (evt: PdfNavigatorGotoPageEvent['data'], source: string) => {},
@@ -43,10 +97,18 @@ export const PdfNavigatorContext = React.createContext<PdfNavigator>({
   removeEventListener: () => {},
 });
 
+/**
+ * Properties of PdfNavigatorContextProvider
+ */
 export interface PdfNavigatorContextProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Provider component to provide pdf navigator
+ * @param props - properties of PdfNavigatorContextProvider
+ * @returns
+ */
 export function PdfNavigatorContextProvider(
   props: PdfNavigatorContextProviderProps
 ) {
@@ -166,6 +228,12 @@ export function PdfNavigatorContextProvider(
   );
 }
 
+/**
+ * Retrieve pdf navigator in context
+ * @returns pdf navigator
+ *
+ * @public
+ */
 export function usePdfNavigator() {
   return useContext(PdfNavigatorContext);
 }

@@ -1,5 +1,6 @@
 /**
- * Docs for `@unionpdf/react` module
+ * Docs for `@unionpdf/react` module, it contains the documentation
+ * for React components for rendering and editing pdf files in browser
  * @packageDocumentation
  */
 

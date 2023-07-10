@@ -40,7 +40,8 @@ export interface PdfDocumentProps extends ComponentProps<'div'> {
 }
 
 /**
- * Function component PdfDocument
+ * Function component PdfDocument, this component is responsible for
+ * opening pdf file and providing the opend document with PdfDocumentContext
  */
 export function PdfDocument(props: PdfDocumentProps) {
   const { file, password, onOpenSuccess, onOpenFailure, children, ...rest } =

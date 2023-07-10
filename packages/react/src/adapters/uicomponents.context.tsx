@@ -37,6 +37,9 @@ export type UIComponent<P> =
   | React.ComponentClass<P>
   | React.FunctionComponent<P>;
 
+/**
+ * components used in the application
+ */
 export interface UIComponents {
   Dialog: UIComponent<DialogProps>;
   Toolbar: UIComponent<ToolbarProps>;
@@ -54,13 +57,29 @@ export interface UIComponents {
   RadioButton: UIComponent<RadioButtonProps>;
 }
 
+/**
+ * Context contains all the components
+ */
 export const UIComponentsContext = createContext<UIComponents | null>(null);
 
+/**
+ * Properties of UIComponentsContextProvider
+ */
 export interface UIComponentsContextProviderProps {
+  /**
+   * customized ui components
+   */
   components: UIComponents;
   children: React.ReactNode;
 }
 
+/**
+ * Provider of ui components, use this to customize the text in this application
+ * @param props - properties of UIComponentsContextProvider
+ * @returns
+ *
+ * @beta
+ */
 export function UIComponentsContextProvider(
   props: UIComponentsContextProviderProps
 ) {
@@ -73,6 +92,12 @@ export function UIComponentsContextProvider(
   );
 }
 
+/**
+ * Hooks for retrieve components
+ * @returns ui components
+ *
+ * @public
+ */
 export function useUIComponents() {
   const components = useContext(UIComponentsContext);
   if (!components) {
