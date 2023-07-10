@@ -9,13 +9,33 @@ import {
 import './annotation.css';
 import classNames from 'classnames';
 
+/**
+ * Properties of PdfPageAnnotation
+ */
 export interface PdfPageAnnotationProps extends ComponentProps<'div'> {
+  /**
+   * page object that annotation is belonged to
+   */
   page: PdfPageObject;
+  /**
+   * pdf annotation object
+   */
   annotation: PdfAnnotationObject;
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * Rotation angle
+   */
   rotation: Rotation;
 }
 
+/**
+ * Base component for annotation, it will handle the positioning
+ * @param props - properties of PdfPageAnnotation
+ * @returns
+ */
 export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
   const {
     page,

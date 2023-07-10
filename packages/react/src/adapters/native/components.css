@@ -42,3 +42,28 @@
 .pdf__ui__toolbar__item__group {
   flex: 1;
 }
+
+.pdf__ui__dialog {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pdf__ui__dialog__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem;
+}
+
+.pdf__ui__dialog__header__title {
+  flex: 1;
+}
+
+.pdf__ui__dialog__content {
+  padding: 1rem 0;
+}
+
+.pdf__ui__dialog__footer {
+  padding: 1rem;
+}

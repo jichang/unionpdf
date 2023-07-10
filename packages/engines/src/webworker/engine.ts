@@ -2,8 +2,6 @@ import {
   PdfAnnotationTransformation,
   PdfAttachmentObject,
   PdfEngineError,
-  PdfEngineFeature,
-  PdfEngineOperation,
   PdfFile,
   PdfMetadataObject,
   PdfSignatureObject,
@@ -21,7 +19,6 @@ import {
   PdfDocumentObject,
   PdfEngine,
   PdfPageObject,
-  PdfFileContent,
   Rect,
   Rotation,
   TaskAbortError,
@@ -32,11 +29,26 @@ import { ExecuteRequest, Request, Response } from './runner';
 const LOG_SOURCE = 'WebWorkerEngine';
 const LOG_CATEGORY = 'Engine';
 
+/**
+ * Task that executed by webworker
+ */
 export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
+  /**
+   * Create a task that bind to web worker with specified message id
+   * @param worker - web worker instance
+   * @param messageId - id of message
+   *
+   * @public
+   */
   constructor(public worker: Worker, private messageId: string) {
     super();
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!TaskBase.abort}
+   *
+   * @override
+   */
   abort(e?: TaskAbortError | Error) {
     super.abort(e);
 
@@ -49,11 +61,31 @@ export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
   }
 }
 
+/**
+ * PDF engine that runs within webworker
+ */
 export class WebWorkerEngine implements PdfEngine {
+  /**
+   * Web worker instance that execute the pdf engine
+   */
   worker: Worker;
+  /**
+   * Task that represent the state of preparation
+   */
   prepareTask: WorkerTask<boolean, PdfEngineError>;
+  /**
+   * All the tasks that is executing
+   */
   tasks: Map<string, WorkerTask<any, PdfEngineError>> = new Map();
 
+  /**
+   * Create an instance of WebWorkerEngine, it will create a worker with
+   * specified url.
+   * @param url - webworker script url, this script contains the implementation of pdf engine and message handling
+   * @param logger - logger instance
+   *
+   * @public
+   */
   constructor(url: URL, private logger: Logger = new NoopLogger()) {
     this.worker = new Worker(url);
     this.worker.addEventListener('message', this.handle);
@@ -64,12 +96,16 @@ export class WebWorkerEngine implements PdfEngine {
     );
     this.tasks.set('0', this.prepareTask);
   }
-  isSupport?:
-    | ((
-        feature: PdfEngineFeature
-      ) => Task<PdfEngineOperation[], PdfEngineError>)
-    | undefined;
 
+  /**
+   * Handle event from web worker. There are 2 kinds of event
+   * 1. ReadyResponse: web worker is ready
+   * 2. ExecuteResponse: result of execution
+   * @param evt - message event from web worker
+   * @returns
+   *
+   * @private
+   */
   handle = (evt: MessageEvent<any>) => {
     this.logger.debug(
       LOG_SOURCE,
@@ -112,10 +148,21 @@ export class WebWorkerEngine implements PdfEngine {
     }
   };
 
+  /**
+   * Generate a unique message id
+   * @returns message id
+   *
+   * @private
+   */
   generateRequestId() {
     return `${Date.now()}.${Math.random()}`;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.initialize}
+   *
+   * @public
+   */
   initialize() {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'initialize');
     const requestId = this.generateRequestId();
@@ -134,6 +181,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.destory}
+   *
+   * @public
+   */
   destroy() {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'destroy');
     const requestId = this.generateRequestId();
@@ -161,6 +213,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.openDocument}
+   *
+   * @public
+   */
   openDocument(file: PdfFile, password: string) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'openDocument', file, password);
     const requestId = this.generateRequestId();
@@ -179,6 +236,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getMetadata}
+   *
+   * @public
+   */
   getMetadata(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getMetadata', doc);
     const requestId = this.generateRequestId();
@@ -197,6 +259,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getBookmarks}
+   *
+   * @public
+   */
   getBookmarks(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getBookmarks', doc);
     const requestId = this.generateRequestId();
@@ -215,6 +282,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getSignatures}
+   *
+   * @public
+   */
   getSignatures(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getSignatures', doc);
     const requestId = this.generateRequestId();
@@ -233,6 +305,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderPage}
+   *
+   * @public
+   */
   renderPage(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -266,6 +343,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderPageRect}
+   *
+   * @public
+   */
   renderPageRect(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -301,6 +383,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getPageAnnotations}
+   *
+   * @public
+   */
   getPageAnnotations(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -332,6 +419,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.createPageAnnotation}
+   *
+   * @public
+   */
   createPageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -361,6 +453,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.transformPageAnnotation}
+   *
+   * @public
+   */
   transformPageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -392,6 +489,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.removePageAnnotation}
+   *
+   * @public
+   */
   removePageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -421,6 +523,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getPageTextRects}
+   *
+   * @public
+   */
   getPageTextRects(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -452,6 +559,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.renderThumbnail}
+   *
+   * @public
+   */
   renderThumbnail(
     doc: PdfDocumentObject,
     page: PdfPageObject,
@@ -483,6 +595,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.startSearch}
+   *
+   * @public
+   */
   startSearch(
     doc: PdfDocumentObject,
     contextId: number
@@ -504,6 +621,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.searchNext}
+   *
+   * @public
+   */
   searchNext(
     doc: PdfDocumentObject,
     contextId: number,
@@ -536,6 +658,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.searchPrev}
+   *
+   * @public
+   */
   searchPrev(
     doc: PdfDocumentObject,
     contextId: number,
@@ -568,6 +695,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.stopSearch}
+   *
+   * @public
+   */
   stopSearch(
     doc: PdfDocumentObject,
     contextId: number
@@ -589,6 +721,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.saveAsCopy}
+   *
+   * @public
+   */
   saveAsCopy(pdf: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', pdf);
     const requestId = this.generateRequestId();
@@ -607,6 +744,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getAttachments}
+   *
+   * @public
+   */
   getAttachments(pdf: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getAttachments', pdf);
     const requestId = this.generateRequestId();
@@ -625,6 +767,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.readAttachmentContent}
+   *
+   * @public
+   */
   readAttachmentContent(
     pdf: PdfDocumentObject,
     attachment: PdfAttachmentObject
@@ -652,6 +799,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.extractPages}
+   *
+   * @public
+   */
   extractPages(pdf: PdfDocumentObject, pageIndexes: number[]) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extractPages', pdf);
     const requestId = this.generateRequestId();
@@ -670,6 +822,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.extractText}
+   *
+   * @public
+   */
   extractText(pdf: PdfDocumentObject, pageIndexes: number[]) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'extractText', pdf);
     const requestId = this.generateRequestId();
@@ -688,6 +845,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.merge}
+   *
+   * @public
+   */
   merge(files: PdfFile[]) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'merge', files);
     const requestId = this.generateRequestId();
@@ -706,6 +868,11 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.closeDocument}
+   *
+   * @public
+   */
   closeDocument(pdf: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', pdf);
     const requestId = this.generateRequestId();
@@ -724,6 +891,15 @@ export class WebWorkerEngine implements PdfEngine {
     return task;
   }
 
+  /**
+   * Send the request to webworker inside and register the task
+   * @param task - task that waiting for the response
+   * @param request - request that needs send to web worker
+   * @param transferables - transferables that need to transfer to webworker
+   * @returns
+   *
+   * @internal
+   */
   proxy<R>(task: WorkerTask<R>, request: Request, transferables: any[] = []) {
     this.logger.debug(
       LOG_SOURCE,

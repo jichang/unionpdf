@@ -5,21 +5,28 @@ import {
   ignore,
 } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
-import { PdfApplicatinPluginKey, PdfPlugin } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
 import './bookmarks.css';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
-import { useUIComponents } from '../../adapters';
+import { strings, useUIComponents, useUIStrings } from '../../adapters';
 
 export const PDF_NAVIGATOR_SOURCE_BOOKMARKS = 'PdfBookmarks';
 
 export interface PdfBookmarksProps {}
 
 export function PdfBookmarks(props: PdfBookmarksProps) {
+  const strings = useUIStrings();
+
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Bookmarks}>
-      <PdfBookmarksContent {...props} />
+      <PdfPluginDialog
+        pluginKey={PdfApplicatinPluginKey.Bookmarks}
+        title={strings.bookmarks}
+      >
+        <PdfBookmarksContent {...props} />
+      </PdfPluginDialog>
     </PdfPlugin>
   );
 }
@@ -74,11 +81,12 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
     },
     [gotoPage]
   );
-  const { Dialog } = useUIComponents();
 
   return (
-    <Dialog open>
-      <div className="pdf__bookmarks">
+    <div className="pdf__bookmarks">
+      {bookmarks.bookmarks.length === 0 ? (
+        <p>{strings.noBookmarks}</p>
+      ) : (
         <ol>
           {bookmarks.bookmarks.map((bookmark, index) => {
             return (
@@ -91,8 +99,8 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
             );
           })}
         </ol>
-      </div>
-    </Dialog>
+      )}
+    </div>
   );
 }
 

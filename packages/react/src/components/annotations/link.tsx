@@ -5,10 +5,23 @@ import { usePdfNavigator } from '../../core/navigator.context';
 import { usePdfLinkAnnoContext } from './link.context';
 import { PdfPageAnnotationProps } from '../common';
 
+/**
+ * Properties of PdfPageLinkAnnotation
+ */
 export interface PdfPageLinkAnnotationProps extends PdfPageAnnotationProps {
+  /**
+   * Pdf link annotation object
+   */
   annotation: PdfLinkAnnoObject;
 }
 
+/**
+ * Pdf link annotation component
+ * @param props - properties of PdfPageLinkAnnotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
   const { page, annotation } = props;
   const { gotoPage } = usePdfNavigator();

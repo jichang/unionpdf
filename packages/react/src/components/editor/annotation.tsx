@@ -1,6 +1,6 @@
 import { PdfAnnotationObject, PdfAnnotationSubtype } from '@unionpdf/models';
 import { PdfPageObject, Rotation } from '@unionpdf/models';
-import React, { ComponentProps, useCallback, useEffect, useRef } from 'react';
+import React, { ComponentProps, useCallback } from 'react';
 import './annotation.css';
 import {
   PdfPageInkAnnotation,
@@ -23,6 +23,9 @@ import { PdfPageAnnotation } from '../common';
 import { ResizerPosition, useAnnotationsContext } from './annotations.context';
 import { useUIComponents } from '../../adapters';
 
+/**
+ * Annotations that supports moving
+ */
 export const ResizablePdfAnnotationSubTypes = [
   PdfAnnotationSubtype.INK,
   PdfAnnotationSubtype.LINE,
@@ -30,13 +33,33 @@ export const ResizablePdfAnnotationSubTypes = [
   PdfAnnotationSubtype.POLYLINE,
 ];
 
+/**
+ * Properties of PdfPageEditorAnnotation
+ */
 export interface PdfPageEditorAnnotationProps {
+  /**
+   * page object that annotation is belonged to
+   */
   page: PdfPageObject;
+  /**
+   * pdf annotation object
+   */
   annotation: PdfAnnotationObject;
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * Rotation angle
+   */
   rotation: Rotation;
 }
 
+/**
+ * Component for editable annotation
+ * @param props - properties of PdfPageAnnotation
+ * @returns
+ */
 export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
 
@@ -272,13 +295,33 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   );
 }
 
+/**
+ * Properties of PdfPageEditorAnnotationMover
+ */
 export interface PdfPageAnnotationMoverProps extends ComponentProps<'div'> {
+  /**
+   * page object that annotation is belonged to
+   */
   page: PdfPageObject;
+  /**
+   * pdf annotation object
+   */
   annotation: PdfAnnotationObject;
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * Rotation angle
+   */
   rotation: Rotation;
 }
 
+/**
+ * Component for moving annotation
+ * @param props - properties of PdfPageAnnotationMover
+ * @returns
+ */
 export function PdfPageAnnotationMover(props: PdfPageAnnotationMoverProps) {
   const {
     page,
@@ -327,12 +370,30 @@ export function PdfPageAnnotationMover(props: PdfPageAnnotationMoverProps) {
   );
 }
 
+/**
+ * Properties of PdfPageEditorAnnotationResizer
+ */
 export interface PdfPageAnnotationResizerProps
   extends ComponentProps<'button'> {
+  /**
+   * page object that annotation is belonged to
+   */
   page: PdfPageObject;
+  /**
+   * pdf annotation object
+   */
   annotation: PdfAnnotationObject;
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * Rotation angle
+   */
   rotation: Rotation;
+  /**
+   * position of resizer
+   */
   position: ResizerPosition;
 }
 
@@ -343,6 +404,11 @@ export const ResizerPositionClassName = {
   [ResizerPosition.BottomLeft]: 'bottomleft',
 };
 
+/**
+ * Component for resizing annotation
+ * @param props - properties of PdfPageAnnotationResizer
+ * @returns
+ */
 export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
   const {
     page,

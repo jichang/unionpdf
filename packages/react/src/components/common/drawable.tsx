@@ -2,7 +2,6 @@ import { Position } from '@unionpdf/models';
 import classNames from 'classnames';
 import React, {
   ComponentProps,
-  RefObject,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -11,21 +10,59 @@ import React, {
 import { calculateBoundingRect } from '../helpers/editor';
 import './drawable.css';
 
+/**
+ * path in drawable component
+ */
 export interface DrawablePath {
+  /**
+   * points in path
+   */
   points: Position[];
 }
 
+/**
+ * Handle of drawable component
+ */
 export interface DrawableHandle {
+  /**
+   * clear canvas
+   */
   clearCanvas: () => void;
+  /**
+   * get all paths in drawable component
+   * @returns
+   */
   queryPaths: () => DrawablePath[];
+  /**
+   * get all images in drawable component
+   * @returns
+   */
   queryImage: () => ImageData | undefined;
 }
 
+/**
+ * Properties of drawable component
+ */
 export interface DrawableProps extends ComponentProps<'canvas'> {
+  /**
+   * Reference of handle
+   */
   componentRef?: React.MutableRefObject<DrawableHandle | null>;
+  /**
+   * callback that will be called when adding new patch
+   * @param path - added path
+   * @returns
+   */
   onAddPath: (path: DrawablePath) => void;
 }
 
+/**
+ * Drawable component for drawaing paths
+ * @param props - properties of drawable component
+ * @returns
+ *
+ * @public
+ */
 export function Drawable(props: DrawableProps) {
   const { componentRef, className, onAddPath, ...rest } = props;
   const { width = 320, height = 480 } = rest;

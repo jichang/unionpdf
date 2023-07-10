@@ -10,11 +10,12 @@ import React, { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { usePdfNavigator } from '../../core/navigator.context';
-import { useUIComponents } from '../../adapters';
+import { useUIComponents, useUIStrings } from '../../adapters';
 import {
   IntersectionObserverContextProvider,
   PdfApplicatinPluginKey,
   PdfPlugin,
+  PdfPluginDialog,
   useIntersectionObserver,
 } from '../../core';
 import { IntersectionObserverEntry } from '../../core';
@@ -40,9 +41,16 @@ export interface PdfThumbnailsProps {
 export const PDF_NAVIGATOR_SOURCE_THUMBNAILS = 'PdfThumbnails';
 
 export function PdfThumbnails(props: PdfThumbnailsProps) {
+  const strings = useUIStrings();
+
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Thumbnails}>
-      <PdfThumbnailsContent {...props} />
+      <PdfPluginDialog
+        pluginKey={PdfApplicatinPluginKey.Thumbnails}
+        title={strings.thumbnails}
+      >
+        <PdfThumbnailsContent {...props} />
+      </PdfPluginDialog>
     </PdfPlugin>
   );
 }
@@ -81,32 +89,29 @@ export function PdfThumbnailsContent(props: PdfThumbnailsProps) {
   for (let i = 0; i < layout.itemsCount; i++) {
     styleTemplate.push('1fr');
   }
-  const { Dialog } = useUIComponents();
 
   return (
-    <Dialog open>
-      <div className="pdf__thumbnails">
-        <IntersectionObserverContextProvider
-          className={`pdf__thumbnails__grid pdf__thumbnails__grid--${layout.direction}`}
-          style={
-            layout.direction === 'vertical'
-              ? { gridTemplateColumns: styleTemplate.join(' ') }
-              : { gridTemplateRows: styleTemplate.join(' ') }
-          }
-        >
-          <PdfThumbnailsGrid
-            doc={doc}
-            currPageIndex={currPageIndex}
-            scaleFactor={scaleFactor}
-            rotation={rotation}
-            gotoPage={jumpToPage}
-            enableCheckbox={enableCheckbox}
-            selectedIndexes={selectedIndexes}
-            onClickThumbnail={onClickThumbnail}
-          />
-        </IntersectionObserverContextProvider>
-      </div>
-    </Dialog>
+    <div className="pdf__thumbnails">
+      <IntersectionObserverContextProvider
+        className={`pdf__thumbnails__grid pdf__thumbnails__grid--${layout.direction}`}
+        style={
+          layout.direction === 'vertical'
+            ? { gridTemplateColumns: styleTemplate.join(' ') }
+            : { gridTemplateRows: styleTemplate.join(' ') }
+        }
+      >
+        <PdfThumbnailsGrid
+          doc={doc}
+          currPageIndex={currPageIndex}
+          scaleFactor={scaleFactor}
+          rotation={rotation}
+          gotoPage={jumpToPage}
+          enableCheckbox={enableCheckbox}
+          selectedIndexes={selectedIndexes}
+          onClickThumbnail={onClickThumbnail}
+        />
+      </IntersectionObserverContextProvider>
+    </div>
   );
 }
 

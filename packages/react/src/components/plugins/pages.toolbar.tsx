@@ -2,7 +2,7 @@ import { PdfZoomMode, Rotation } from '@unionpdf/models';
 import React, { ChangeEvent, ComponentProps, useCallback } from 'react';
 import { useUIComponents, useUIStrings } from '../../adapters';
 import './pages.toolbar.css';
-import { ErrorBoundary, usePdfApplication } from '../../core';
+import { ErrorBoundary, useLogger, usePdfApplication } from '../../core';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfNavigator } from '../../core/navigator.context';
 import classNames from 'classnames';
@@ -14,7 +14,8 @@ export interface PdfToolbarPagesItemGroupProps extends ComponentProps<'div'> {}
 export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
   const { className, children, ...rest } = props;
   const strings = useUIStrings();
-  const { Button, ToolbarItemGroup, Input, Select } = useUIComponents();
+  const logger = useLogger();
+  const { ToolbarItemGroup, Input, Select } = useUIComponents();
 
   const { scaleFactor, rotation, setRotation, setScaleFactor } =
     usePdfApplication();
@@ -77,7 +78,7 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
   );
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source={PDF_NAVIGATOR_SOURCE_PAGES_TOOLBAR} logger={logger}>
       <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}

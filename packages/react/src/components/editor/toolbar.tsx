@@ -5,7 +5,7 @@ import { PdfEditorTool, StackStatus, usePdfEditor } from './editor.context';
 import {
   ErrorBoundary,
   PdfApplicatinPluginKey,
-  PdfApplicationMode,
+  useLogger,
   usePdfApplication,
 } from '../../core';
 
@@ -17,6 +17,7 @@ export function PdfToolbarEditorItemGroup(
   const { className, children, ...rest } = props;
   const { ToolbarItemGroup, Button } = useUIComponents();
 
+  const logger = useLogger();
   const strings = useUIStrings();
 
   const { setTool, toggleTool } = usePdfEditor();
@@ -34,7 +35,7 @@ export function PdfToolbarEditorItemGroup(
   }, [toggleTool]);
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source="PdfToolbarEditorItemGroup" logger={logger}>
       <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
@@ -42,6 +43,7 @@ export function PdfToolbarEditorItemGroup(
         <Button onClick={handleAnnotation}>{strings.annotation}</Button>
         <Button onClick={handleExtract}>{strings.extract}</Button>
         <Button onClick={handleSignature}>{strings.addStamp}</Button>
+        {children}
       </ToolbarItemGroup>
     </ErrorBoundary>
   );
@@ -58,10 +60,11 @@ export function PdfToolbarEditorFileItemGroup(
   const [isUncommittedWarningVisible, setIsUncommittedWarningVisible] =
     useState(false);
 
+  const logger = useLogger();
   const strings = useUIStrings();
   const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
 
-  const { commit, queryStatus } = usePdfEditor();
+  const { discard, commit, queryStatus } = usePdfEditor();
   const { hidePlugin } = usePdfApplication();
 
   const handleExit = useCallback(() => {
@@ -73,29 +76,35 @@ export function PdfToolbarEditorFileItemGroup(
   }, [queryStatus, setIsUncommittedWarningVisible, hidePlugin]);
 
   const handleDiscard = useCallback(() => {
+    discard();
     setIsUncommittedWarningVisible(false);
     hidePlugin(PdfApplicatinPluginKey.Editor);
-  }, [hidePlugin]);
+  }, [hidePlugin, discard, setIsUncommittedWarningVisible]);
 
   const handleCommit = useCallback(() => {
     commit();
     setIsUncommittedWarningVisible(false);
-  }, [setIsUncommittedWarningVisible, commit]);
+    hidePlugin(PdfApplicatinPluginKey.Editor);
+  }, [hidePlugin, setIsUncommittedWarningVisible, commit]);
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source="PdfToolbarEditorFileItemGroup" logger={logger}>
       <ToolbarItemGroup
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
         <Button onClick={handleCommit}>{strings.commit}</Button>
         <Button onClick={handleExit}>{strings.exit}</Button>
+        {children}
       </ToolbarItemGroup>
-      <Dialog open={isUncommittedWarningVisible}>
-        <div>
-          <p>{strings.uncommittedWarning}</p>
-        </div>
-        <footer>
+      <Dialog
+        title={strings.uncommittedWarning}
+        isOpened={isUncommittedWarningVisible}
+        onClose={() => {
+          setIsUncommittedWarningVisible(false);
+        }}
+      >
+        <footer className="pdf__ui__dialog__footer">
           <Button onClick={handleDiscard}>{strings.discard}</Button>
           <Button onClick={handleCommit}>{strings.commit}</Button>
         </footer>

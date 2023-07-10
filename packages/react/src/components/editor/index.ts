@@ -1,6 +1,7 @@
 export * from './toolbar';
 export * from './annotation';
 export * from './annotations';
+export * from './annotations.context';
 export * from './canvas';
 export * from './panel';
 export * from './extractor';

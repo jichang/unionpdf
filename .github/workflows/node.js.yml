@@ -26,7 +26,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm install
-      - run: npm run lerna -- bootstrap
-      - run: npm run lerna -- run build
-      - run: npm run lerna -- run typecheck
-      - run: npm run lerna -- run test
+      - run: npm run build
+      - run: npm run typecheck
+      - run: npm run test

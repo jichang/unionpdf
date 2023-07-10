@@ -10,10 +10,23 @@ import {
 import { PdfPageAnnotationProps } from '../common';
 import './stamp.css';
 
+/**
+ * Properties of PdfPageStampAnnotation
+ */
 export interface PdfPageStampAnnotationProps extends PdfPageAnnotationProps {
+  /**
+   * Pdf stamp annotation object
+   */
   annotation: PdfStampAnnoObject;
 }
 
+/**
+ * Pdf stamp annotation component
+ * @param props - properties of PdfPageStampAnnotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPageStampAnnotation(props: PdfPageStampAnnotationProps) {
   const { annotation } = props;
 

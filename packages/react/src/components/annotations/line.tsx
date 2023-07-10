@@ -7,10 +7,23 @@ import {
 import './line.css';
 import { PdfPageAnnotationProps } from '../common';
 
+/**
+ * Properties of PdfPageLineAnnotation
+ */
 export interface PdfPageLineAnnotationProps extends PdfPageAnnotationProps {
+  /**
+   * Pdf line annotation object
+   */
   annotation: PdfLineAnnoObject;
 }
 
+/**
+ * Pdf line annotation component
+ * @param props - properties of PdfPageLineAnnotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPageLineAnnotation(props: PdfPageLineAnnotationProps) {
   const { page, annotation, rotation, scaleFactor } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);

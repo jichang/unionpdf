@@ -7,6 +7,9 @@ import React, {
   useState,
 } from 'react';
 
+/**
+ * Value of IntersectionObserverContext
+ */
 export interface IntersectionObserverContextValue {
   observer: IntersectionObserver | null;
   visibleEntryIds: Set<number>;
@@ -18,6 +21,9 @@ export const IntersectionObserverContext =
     visibleEntryIds: new Set(),
   });
 
+/**
+ * Properties of IntersectionObserverContextProvider
+ */
 export interface IntersectionObserverContextProviderProps
   extends IntersectionObserverInit,
     ComponentProps<'div'> {
@@ -25,6 +31,15 @@ export interface IntersectionObserverContextProviderProps
   children: ReactNode;
 }
 
+/**
+ * Provider component for IntersectionObserverContext
+ * this component will use IntersectionObserver to track visiblities
+ * of entries in this component
+ * @param props - properties of IntersectionObserverContextProvider
+ * @returns
+ *
+ * @public
+ */
 export function IntersectionObserverContextProvider(
   props: IntersectionObserverContextProviderProps
 ) {
@@ -91,6 +106,12 @@ export function IntersectionObserverContextProvider(
   );
 }
 
+/**
+ * Retrieve observer and visible entry ids
+ * @returns IntersectionObserver and visible entry ids
+ *
+ * @public
+ */
 export function useIntersectionObserver() {
   return useContext(IntersectionObserverContext);
 }

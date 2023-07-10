@@ -7,6 +7,7 @@ import {
   PdfApplicatinPluginKey,
   usePdfApplication,
   PdfPlugin,
+  PdfPluginDialog,
 } from '../../core';
 import { useUIComponents, useUIStrings } from '../../adapters';
 import './printer.css';
@@ -20,9 +21,16 @@ export interface PdfPrinterProps {
 }
 
 export function PdfPrinter(props: PdfPrinterProps) {
+  const strings = useUIStrings();
+
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Printer}>
-      <PdfPrinterContent {...props} />
+      <PdfPluginDialog
+        pluginKey={PdfApplicatinPluginKey.Printer}
+        title={strings.print}
+      >
+        <PdfPrinterContent {...props} />
+      </PdfPluginDialog>
     </PdfPlugin>
   );
 }
@@ -77,15 +85,13 @@ export function PdfPrinterContent(props: PdfPrinterProps) {
   }, [hidePlugin]);
 
   return (
-    <Dialog open>
-      <div className="pdf__printer">
-        <p className="pdf__printer__message">
-          {strings.printing}: {doc?.name}
-        </p>
-        <div className="pdf__printer__action">
-          <Button onClick={cancelPrint}>{strings.cancel}</Button>
-        </div>
+    <div className="pdf__printer">
+      <p className="pdf__printer__message">
+        {strings.printing}: {doc?.name}
+      </p>
+      <div className="pdf__printer__action">
+        <Button onClick={cancelPrint}>{strings.cancel}</Button>
       </div>
-    </Dialog>
+    </div>
   );
 }

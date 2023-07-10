@@ -8,7 +8,7 @@ describe('Toolbar', () => {
   it('Toolbar should render div with children', () => {
     const result = render(
       <PdfTestingAdapterProvider>
-        <PdfToolbar onClose={jest.fn()} />
+        <PdfToolbar />
       </PdfTestingAdapterProvider>
     );
 

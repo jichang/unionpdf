@@ -1,9 +1,18 @@
 export interface FileSystemType {}
 
+/**
+ * Running environment for WASM
+ */
 export type EnvironmentType = 'WEB' | 'NODE' | 'SHELL' | 'WORKER';
 
+/**
+ * Name of JavaScript type
+ */
 export type JSTypeName = null | 'number' | 'string' | 'array' | 'boolean' | '';
 
+/**
+ * Convert name to JavaScript type
+ */
 export type NameToType<R extends JSTypeName> = R extends 'number'
   ? number
   : R extends 'string'
@@ -18,6 +27,9 @@ export type NameToType<R extends JSTypeName> = R extends 'number'
   ? null
   : never;
 
+/**
+ * Convert array of names to JavaScript types
+ */
 export type NamesToType<T extends readonly JSTypeName[]> = T extends []
   ? []
   : T extends readonly [infer U extends JSTypeName]
@@ -27,27 +39,48 @@ export type NamesToType<T extends readonly JSTypeName[]> = T extends []
       ...infer Rest extends readonly JSTypeName[]
     ]
   ? [NameToType<U>, ...NamesToType<Rest>]
-  : never;
+  : [];
 
+/**
+ * Type name of integer in C
+ */
 export type CIntTypeName = 'i8' | 'i16' | 'i32' | 'i64';
+/**
+ * Type name of floating number in C
+ */
 export type CFloatTypeName = 'float' | 'double';
+/**
+ * Type name of C types
+ */
 export type CTypeName = CIntTypeName | CFloatTypeName;
 
+/**
+ * Imports type for WebAssembly
+ */
 export type WebAssemblyImports = Array<{
   name: string;
   kind: string;
 }>;
 
+/**
+ * Exports type for WebAssembly
+ */
 export type WebAssemblyExports = Array<{
   module: string;
   name: string;
   kind: string;
 }>;
 
+/**
+ * Options for calling into C functions
+ */
 export interface CCallOpts {
   async?: boolean | undefined;
 }
 
+/**
+ * WebAssembly module
+ */
 export interface Module {
   print(str: string): void;
   printErr(str: string): void;
@@ -103,6 +136,9 @@ export interface Module {
   _free(ptr: number): void;
 }
 
+/**
+ * Function for creating WebAssembly module
+ */
 export type ModuleFactory<T extends Module = Module> = (
   moduleOverrides?: Partial<T>
 ) => Promise<T>;
@@ -116,6 +152,9 @@ export interface FSStream {}
 export interface FSNode {}
 export interface ErrnoError {}
 
+/**
+ * File system
+ */
 export interface FS {
   ignorePermissions: boolean;
   trackingDelegate: any;
@@ -254,6 +293,9 @@ export interface ModuleFS {
   IDBFS: FileSystemType;
 }
 
+/**
+ * Runtime methods exported by WebAssembly module
+ */
 export interface ModuleRuntimeMethods {
   cwrap: <I extends readonly JSTypeName[], R extends JSTypeName>(
     ident: string,
@@ -321,6 +363,9 @@ export interface ModuleRuntimeMethods {
   ALLOC_NONE: number;
 }
 
+/**
+ * Type of cwrap function, whic will be used to wrap function calling
+ */
 export type CWrap = <I extends readonly JSTypeName[], R extends JSTypeName>(
   ident: string,
   returnType: R,
@@ -328,11 +373,17 @@ export type CWrap = <I extends readonly JSTypeName[], R extends JSTypeName>(
   opts?: CCallOpts
 ) => CWrappedFunc<I, R>;
 
+/**
+ * Type of wrapped function
+ */
 export type CWrappedFunc<
   I extends readonly JSTypeName[],
   R extends JSTypeName
 > = (...args: NamesToType<I>) => NameToType<R>;
 
+/**
+ * Type of C function calling
+ */
 export type CCall = <I extends readonly JSTypeName[], R extends JSTypeName>(
   ident: string,
   returnType: R,

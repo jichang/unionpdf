@@ -60,10 +60,11 @@ export function PdfEditorStamps() {
         })}
       </div>
       <Dialog
-        open={drawableDialogIsShown}
+        isOpened={drawableDialogIsShown}
         onClose={() => {
           setDrawableDialogIsShown(false);
         }}
+        title={strings.stamps}
       >
         <Drawable
           componentRef={drawableHandleRef}

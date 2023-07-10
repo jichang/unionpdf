@@ -7,11 +7,24 @@ import {
 import './popup.css';
 import { PdfPageAnnotationProps } from '../common';
 
+/**
+ * Properties of PdfPagePopupAnnotation
+ */
 export interface PdfPagePopupAnnotationProps extends PdfPageAnnotationProps {
   parent: PdfAnnotationObject;
+  /**
+   * Pdf popup annotation object
+   */
   annotation: PdfPopupAnnoObject;
 }
 
+/**
+ * Pdf popup annotation component
+ * @param props - properties of PdfPagePopupAnnotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPagePopupAnnotation(props: PdfPagePopupAnnotationProps) {
   const { page, parent, annotation, scaleFactor, rotation } = props;
 

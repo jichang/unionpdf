@@ -150,7 +150,7 @@ export function PdfPages(props: PdfPagesProps) {
   ]);
 
   return (
-    <ErrorBoundary>
+    <ErrorBoundary source={PAGES_LOG_SOURCE} logger={logger}>
       <div className="pdf__pages" ref={containerElemRef}>
         <IntersectionObserverContextProvider
           className="pdf__pages__container"

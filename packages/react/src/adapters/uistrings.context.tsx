@@ -1,6 +1,9 @@
 import React from 'react';
 import { createContext, useContext } from 'react';
 
+/**
+ * Strings used in the application
+ */
 export interface UIStrings {
   unknownError: string;
   rotate0Deg: string;
@@ -9,6 +12,7 @@ export interface UIStrings {
   rotate270Deg: string;
   thumbnails: string;
   bookmarks: string;
+  noBookmarks: string;
   saveAs: string;
   print: string;
   metadata: string;
@@ -37,6 +41,7 @@ export interface UIStrings {
   noSignatures: string;
   extract: string;
   pencil: string;
+  stamps: string;
   addTextBox: string;
   addStamp: string;
   addImage: string;
@@ -60,13 +65,29 @@ export interface UIStrings {
   extractText: string;
 }
 
+/**
+ * Context contains all the strings
+ */
 export const UIStringsContext = createContext<UIStrings | null>(null);
 
+/**
+ * Properties of UIStringsContextProvider
+ */
 export interface UIStringsContextProviderProps {
+  /**
+   * customized ui strings
+   */
   strings: UIStrings;
   children: React.ReactNode;
 }
 
+/**
+ * Provider of ui strings, use this to customize the text in this application
+ * @param props - properties of UIStringsContextProvider
+ * @returns
+ *
+ * @public
+ */
 export function UIStringsContextProvider(props: UIStringsContextProviderProps) {
   const { children, strings } = props;
 
@@ -77,6 +98,12 @@ export function UIStringsContextProvider(props: UIStringsContextProviderProps) {
   );
 }
 
+/**
+ * Hooks for retrieve strings
+ * @returns ui strings
+ *
+ * @public
+ */
 export function useUIStrings() {
   const strings = useContext(UIStringsContext);
   if (!strings) {

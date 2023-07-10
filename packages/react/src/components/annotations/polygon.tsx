@@ -7,10 +7,23 @@ import {
 import './polygon.css';
 import { PdfPageAnnotationProps } from '../common';
 
+/**
+ * Properties of PdfPagePolygoneAnnotation
+ */
 export interface PdfPagePolygonAnnotationProps extends PdfPageAnnotationProps {
+  /**
+   * Pdf caret annotation object
+   */
   annotation: PdfPolygonAnnoObject;
 }
 
+/**
+ * Pdf caret annotation component
+ * @param props - properties of PdfPagePolygoneAnnotation
+ * @returns
+ *
+ * @public
+ */
 export function PdfPagePolygonAnnotation(props: PdfPagePolygonAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);

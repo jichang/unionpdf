@@ -15,8 +15,7 @@
     "require": "./dist/cjs/index.js"
   },
   "scripts": {
-    "api-extractor": "api-extractor",
-    "doc": "api-extractor run --local --verbose && api-documenter markdown --input-folder ./temp",
+    "doc": "typedoc ./src/index.ts",
     "typecheck": "tsc --noEmit",
     "start": "parcel --no-cache ./demo/index.html",
     "build": "parcel build",
@@ -46,8 +45,6 @@
   },
   "homepage": "https://github.com/jichang/unionpdf#readme",
   "devDependencies": {
-    "@microsoft/api-documenter": "^7.22.6",
-    "@microsoft/api-extractor": "^7.35.0",
     "@parcel/packager-ts": "^2.9.1",
     "@parcel/transformer-typescript-types": "^2.9.1",
     "@shopify/jest-dom-mocks": "^5.0.0",

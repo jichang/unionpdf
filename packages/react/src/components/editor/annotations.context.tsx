@@ -1,10 +1,13 @@
-import { PdfAnnotationObject, Position } from '@unionpdf/models';
+import { PdfAnnotationObject } from '@unionpdf/models';
 import React, { useContext } from 'react';
 
 export interface PdfDraggableMoverOption {
   type: 'mover';
 }
 
+/**
+ * position of annotation resizer
+ */
 export enum ResizerPosition {
   TopLeft = 0,
   TopRight = 1,
