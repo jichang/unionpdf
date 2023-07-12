@@ -182,7 +182,7 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
-   * {@inheritDoc @unionpdf/models!PdfEngine.destory}
+   * {@inheritDoc @unionpdf/models!PdfEngine.destroy}
    *
    * @public
    */

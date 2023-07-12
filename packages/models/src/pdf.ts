@@ -1242,7 +1242,11 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     return task;
   }
 
-  /** {@inheritDoc Task.wait} */
+  /**
+   * {@inheritDoc Task.wait}
+   *
+   * @virtual
+   */
   wait(
     resolvedCallback: ResolvedCallback<R>,
     rejectedCallback: RejectedCallback<E>
@@ -1264,7 +1268,11 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     }
   }
 
-  /** {@inheritDoc Task.resolve} */
+  /**
+   * {@inheritDoc Task.resolve}
+   *
+   * @virtual
+   */
   resolve(result: R) {
     if (this.state.stage === TaskStage.Pending) {
       this.state = {
@@ -1281,7 +1289,11 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
     }
   }
 
-  /** {@inheritDoc Task.reject} */
+  /**
+   * {@inheritDoc Task.reject}
+   *
+   * @virtual
+   */
   reject(error: E) {
     if (this.state.stage === TaskStage.Pending) {
       this.state = {
