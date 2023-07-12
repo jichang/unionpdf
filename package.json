@@ -1,6 +1,7 @@
 {
   "name": "unionpdf",
   "private": false,
+  "version": "0.18.0",
   "workspaces": [
     "packages/models",
     "packages/engines",
@@ -17,6 +18,7 @@
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
+    "publish": "npm run publish --workspaces --if-present",
     "format": "prettier --write .",
     "prepare": "husky install"
   }
