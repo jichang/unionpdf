@@ -1,4 +1,4 @@
-import { PdfWidgetAnnoObject, PDF_FORM_FIELD_TYPE } from '@unionpdf/models';
+import { PDF_FORM_FIELD_TYPE, PdfWidgetAnnoField } from '@unionpdf/models';
 import React from 'react';
 import './field.css';
 import { CheckboxField } from './checkbox';
@@ -8,9 +8,17 @@ import { RadioButtonField } from './radiobutton';
 import { TextField } from './textfield';
 
 export interface FieldProps {
-  field: PdfWidgetAnnoObject['field'];
+  /**
+   * Field info
+   */
+  field: PdfWidgetAnnoField;
 }
 
+/**
+ *
+ * @param props - properties of Field
+ * @returns Field component
+ */
 export function Field(props: FieldProps) {
   const { field } = props;
 

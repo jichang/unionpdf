@@ -35,6 +35,8 @@ export interface PdfPageAnnotationProps extends ComponentProps<'div'> {
  * Base component for annotation, it will handle the positioning
  * @param props - properties of PdfPageAnnotation
  * @returns
+ *
+ * @public
  */
 export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
   const {

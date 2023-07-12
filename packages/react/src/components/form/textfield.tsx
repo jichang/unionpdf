@@ -3,15 +3,24 @@ import {
   PdfWidgetAnnoOption,
   PDF_FORM_FIELD_FLAG,
   PDF_FORM_FIELD_TYPE,
+  PdfWidgetAnnoField,
 } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents } from '../../adapters';
 
 export interface TextFieldProps {
-  field: PdfWidgetAnnoObject['field'];
+  /**
+   * Field info
+   */
+  field: PdfWidgetAnnoField;
 }
 
+/**
+ *
+ * @param props - properties of Text field
+ * @returns TextField component
+ */
 export function TextField(props: TextFieldProps) {
   const { field } = props;
   const { mode } = usePdfApplication();

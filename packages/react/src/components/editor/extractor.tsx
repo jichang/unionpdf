@@ -5,6 +5,10 @@ import { useUIComponents, useUIStrings } from '../../adapters';
 import { PdfThumbnails } from '../plugins/thumbnails';
 import './extractor.css';
 
+/**
+ * Pdf extractor component, used to extract pages and text from pdf document
+ * @returns
+ */
 export function PdfEditorExtractor() {
   const [selectedIndexes, setSelectedIndexes] = useState<number[]>([]);
 

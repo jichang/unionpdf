@@ -9,8 +9,16 @@ import {
 import './canvas.css';
 import { PdfPageLayerComponentProps } from './layer';
 
+/**
+ * Properties of PdfPageCanvasLayer
+ */
 export interface PdfPageCanvasLayerProps extends PdfPageLayerComponentProps {}
 
+/**
+ * Page layer used to render page content
+ * @param props - properties of PdfPageCanvasLayer
+ * @returns
+ */
 export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
   const { mode } = usePdfApplication();
   const { doc } = usePdfDocument();

@@ -2,12 +2,20 @@ import React, { ComponentProps, useEffect, useState } from 'react';
 import { ignore, PdfMetadataObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
-import { useUIComponents, useUIStrings } from '../../adapters';
+import { useUIStrings } from '../../adapters';
 import './metadata.css';
 import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
 
+/**
+ * Properties of PdfMetadata
+ */
 export interface PdfMetadataProps extends ComponentProps<'div'> {}
 
+/**
+ * Plugin used to view pdf metadata
+ * @param props - properties of PdfMetadata
+ * @returns
+ */
 export function PdfMetadata(props: PdfMetadataProps) {
   const strings = useUIStrings();
 
@@ -23,6 +31,13 @@ export function PdfMetadata(props: PdfMetadataProps) {
   );
 }
 
+/**
+ * Content of PdfMetadata
+ * @param props - properties of PdfMetadataContent
+ * @returns
+ *
+ * @public
+ */
 export function PdfMetadataContent(props: PdfMetadataProps) {
   const engine = usePdfEngine();
   const { doc } = usePdfDocument();
@@ -39,7 +54,6 @@ export function PdfMetadataContent(props: PdfMetadataProps) {
       };
     }
   }, [engine, doc]);
-  const { Dialog } = useUIComponents();
 
   return (
     <div className="pdf__metadata">

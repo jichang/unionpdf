@@ -8,6 +8,10 @@ import './stamps.css';
 
 export interface PdfEidtorStampsProps {}
 
+/**
+ * Pdf editor stamps, used to render all stamps
+ * @returns
+ */
 export function PdfEditorStamps() {
   const { stamps } = usePdfEditorStamps();
 
@@ -81,21 +85,35 @@ export function PdfEditorStamps() {
   );
 }
 
+/**
+ * Data when dragging stamp
+ */
 export interface DraggableStampData {
   type: 'stamp';
   index: number;
   cursorPosition: Position;
 }
 
+/**
+ * Stamp data
+ */
 export interface Stamp {
   source: ImageData;
 }
 
+/**
+ * Properties of pdf editor stamp
+ */
 export interface PdfEditorStampProps {
   index: number;
   stamp: Stamp;
 }
 
+/**
+ * Stamp component
+ * @param props - properties of PdfEditorStamp
+ * @returns
+ */
 export function PdfEditorStamp(props: PdfEditorStampProps) {
   const { index, stamp } = props;
 

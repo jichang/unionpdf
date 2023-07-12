@@ -30,12 +30,12 @@ export interface DrawableHandle {
   clearCanvas: () => void;
   /**
    * get all paths in drawable component
-   * @returns
+   * @returns all path
    */
   queryPaths: () => DrawablePath[];
   /**
    * get all images in drawable component
-   * @returns
+   * @returns image data
    */
   queryImage: () => ImageData | undefined;
 }

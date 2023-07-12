@@ -1,14 +1,7 @@
-import React, {
-  useRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  ComponentProps,
-} from 'react';
+import React, { useRef, useEffect, useMemo, ComponentProps } from 'react';
 import {
   PdfPageObject,
   Rotation,
-  Size,
   PdfZoomMode,
   transformSize,
   transformPosition,
@@ -31,27 +24,46 @@ import { useLogger } from '../../core';
 import classNames from 'classnames';
 import { PdfPageLayerComponent } from '../pageLayers';
 
-export type PdfPageContentComponentProps = Omit<PdfPageProps, 'children'>;
-
-export type PdfPageContentComponent = (
-  props: PdfPageContentComponentProps
-) => JSX.Element;
-
-export interface PdfPagesProps {
-  pageGap?: number;
-  prerenderRange?: [number, number];
-  cacheRange?: [number, number];
-  scaleFactor?: number;
-  rotation?: Rotation;
-  pageLayers: PdfPageLayerComponent[];
-  children?: any;
-}
-
 export const PDF_NAVIGATOR_SOURCE_PAGES = 'PdfPages';
 export const PAGES_LOG_SOURCE = 'PdfPages';
 
 export const PDF_PAGE_DEFAULT_GAP = 8;
 
+/**
+ * Properties of PdfPages
+ */
+export interface PdfPagesProps {
+  /**
+   * Gap between pages
+   */
+  pageGap?: number;
+  /**
+   * Prerender range, pages in the range will be rendered though it's not in viewport yet
+   */
+  prerenderRange?: [number, number];
+  /**
+   * Cache range, content in the range will be cached when it's out of viewport
+   */
+  cacheRange?: [number, number];
+  /**
+   * scaling factor
+   */
+  scaleFactor?: number;
+  /**
+   * rotation angle
+   */
+  rotation?: Rotation;
+  /**
+   * Layer components on every page
+   */
+  pageLayers: PdfPageLayerComponent[];
+}
+
+/**
+ * Plugin for viewing pdf pages
+ * @param props - properties of PdfPages
+ * @returns
+ */
 export function PdfPages(props: PdfPagesProps) {
   const {
     pageGap = PDF_PAGE_DEFAULT_GAP,
@@ -163,7 +175,7 @@ export function PdfPages(props: PdfPagesProps) {
             rotation={rotation}
             prerenderRange={prerenderRange}
             cacheRange={cacheRange}
-            layers={pageLayers}
+            pageLayers={pageLayers}
           />
         </IntersectionObserverContextProvider>
       </div>
@@ -171,20 +183,31 @@ export function PdfPages(props: PdfPagesProps) {
   );
 }
 
+/**
+ * Pdf page for rendering
+ */
 export interface PdfPage extends PdfPageObject {
+  /**
+   * offset in the parent container
+   */
   offset: number;
 }
 
-export interface PdfPagesContentProps {
-  pageGap: number;
+/**
+ * Properties of PdfPagesContent
+ */
+export interface PdfPagesContentProps extends Required<PdfPagesProps> {
+  /**
+   * Pdf pages
+   */
   pages: PdfPage[];
-  prerenderRange: [number, number];
-  cacheRange: [number, number];
-  scaleFactor: number;
-  rotation: Rotation;
-  layers: PdfPageLayerComponent[];
 }
 
+/**
+ * Component for viewing pdf page content
+ * @param props - properties of PdfPagesContent
+ * @returns
+ */
 export function PdfPagesContent(props: PdfPagesContentProps) {
   const {
     pages,
@@ -193,7 +216,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
     scaleFactor,
     prerenderRange,
     cacheRange,
-    layers,
+    pageLayers,
   } = props;
 
   const { visibleEntryIds } = useIntersectionObserver();
@@ -256,7 +279,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
             scaleFactor={scaleFactor}
             rotation={rotation}
           >
-            {layers.map((Layer, index) => {
+            {pageLayers.map((Layer, index) => {
               return (
                 <Layer
                   key={index}
@@ -279,14 +302,38 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
 }
 
 export interface PdfPageProps extends ComponentProps<'div'> {
-  page: PdfPageObject;
-  isCurrent: boolean;
-  isVisible: boolean;
-  inVisibleRange: boolean;
-  inCacheRange: boolean;
+  /**
+   * Gap between pages
+   */
   pageGap: number;
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * rotation angle
+   */
   rotation: Rotation;
+  /**
+   * Pdf page object
+   */
+  page: PdfPageObject;
+  /**
+   * Whether is current page
+   */
+  isCurrent: boolean;
+  /**
+   * Whether page is visible
+   */
+  isVisible: boolean;
+  /**
+   * Whether page is in visible range
+   */
+  inVisibleRange: boolean;
+  /**
+   * Whether page is in cache range
+   */
+  inCacheRange: boolean;
 }
 
 export function PdfPage(props: PdfPageProps) {

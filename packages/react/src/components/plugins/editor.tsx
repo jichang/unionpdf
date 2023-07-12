@@ -12,8 +12,16 @@ import {
 } from '../../core';
 import { PdfEditorExtractor, PdfEditorStamps } from '../editor';
 
+/**
+ * Properties of PdfEditor
+ */
 export interface PdfEditorProps {}
 
+/**
+ * Plugin used to edit pdf file
+ * @param props - properties of PdfEditor
+ * @returns
+ */
 export function PdfEditor(props: PdfEditorProps) {
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Editor}>
@@ -22,6 +30,13 @@ export function PdfEditor(props: PdfEditorProps) {
   );
 }
 
+/**
+ * Content of PdfEditor
+ * @param props - properties of PdfEditorContent
+ * @returns
+ *
+ * @public
+ */
 export function PdfEditorContent(props: PdfEditorProps) {
   const { mode } = usePdfApplication();
   const { doc } = usePdfDocument();

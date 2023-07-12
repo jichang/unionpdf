@@ -1,12 +1,24 @@
-import { PdfWidgetAnnoObject, PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
+import {
+  PdfWidgetAnnoObject,
+  PDF_FORM_FIELD_FLAG,
+  PdfWidgetAnnoField,
+} from '@unionpdf/models';
 import React from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents } from '../../adapters';
 
 export interface PushButtonFieldProps {
-  field: PdfWidgetAnnoObject['field'];
+  /**
+   * Field info
+   */
+  field: PdfWidgetAnnoField;
 }
 
+/**
+ *
+ * @param props - properties of PushButton field
+ * @returns PushButtonField component
+ */
 export function PushButtonField(props: PushButtonFieldProps) {
   const { field } = props;
   const { mode } = usePdfApplication();

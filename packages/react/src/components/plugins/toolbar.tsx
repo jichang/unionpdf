@@ -12,15 +12,29 @@ import {
 import classNames from 'classnames';
 import {
   PdfToolbarEditorFileItemGroup,
-  PdfToolbarEditorItemGroup,
+  PdfToolbarEditorOperationItemGroup,
 } from '../editor';
 import { PdfToolbarPagesItemGroup } from './pages.toolbar';
 
+/**
+ * Properties of PdfToolbar
+ */
 export interface PdfToolbarProps extends ComponentProps<'div'> {
+  /**
+   * Toolbar items for plugins
+   */
   pluginItems?: React.ReactNode;
+  /**
+   * Toolbar items for pdf files
+   */
   fileItems?: React.ReactNode;
 }
 
+/**
+ * Plugin to display toolbar
+ * @param props - properties of PdfToolbar
+ * @returns
+ */
 export function PdfToolbar(props: PdfToolbarProps) {
   const { pluginItems, fileItems, ...rest } = props;
   const { Toolbar } = useUIComponents();
@@ -34,7 +48,9 @@ export function PdfToolbar(props: PdfToolbarProps) {
             {pluginItems}
           </PdfToolbarPluginItemGroup>
         ) : (
-          <PdfToolbarEditorItemGroup>{pluginItems}</PdfToolbarEditorItemGroup>
+          <PdfToolbarEditorOperationItemGroup>
+            {pluginItems}
+          </PdfToolbarEditorOperationItemGroup>
         )}
         <PdfToolbarPagesItemGroup className="pdf__toolbar__item__group--center" />
         {mode === PdfApplicationMode.View ? (
@@ -50,9 +66,16 @@ export function PdfToolbar(props: PdfToolbarProps) {
     </PdfPlugin>
   );
 }
-
+/**
+ * Properties of PdfToolbarPluginItemGroup
+ */
 export interface PdfToolbarPluginItemGroupProps extends ComponentProps<'div'> {}
 
+/**
+ * Component for showing toolbar item for plugins
+ * @param props - properties of PdfToolbarPluginItemGroup
+ * @returns
+ */
 export function PdfToolbarPluginItemGroup(
   props: PdfToolbarPluginItemGroupProps
 ) {
@@ -97,11 +120,25 @@ export function PdfToolbarPluginItemGroup(
   );
 }
 
+/**
+ * Properties of PdfToolbarPluginItem
+ */
 export interface PdfToolbarPluginItemProps {
+  /**
+   * Text of toolbar item
+   */
   text: string;
+  /**
+   * Key for relevant plugin
+   */
   pluginKey: PdfApplicatinPluginKey;
 }
 
+/**
+ * Component for showing toolbar item for plugin
+ * @param props - properties of PdfToolbarFileItem
+ * @returns
+ */
 export function PdfToolbarPluginItem(props: PdfToolbarPluginItemProps) {
   const { text, pluginKey } = props;
   const { Button } = useUIComponents();
@@ -118,8 +155,16 @@ export function PdfToolbarPluginItem(props: PdfToolbarPluginItemProps) {
   return <Button onClick={toggle}>{text}</Button>;
 }
 
+/**
+ * Properties of PdfToolbarFileItemGroup
+ */
 export interface PdfToolbarFileItemGroupProps extends ComponentProps<'div'> {}
 
+/**
+ * Component for showing toolbar item for plugins
+ * @param props - properties of PdfToolbarFileItemGroup
+ * @returns
+ */
 export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
   const { className, children, ...rest } = props;
   const { ToolbarItemGroup, Button, Dialog } = useUIComponents();

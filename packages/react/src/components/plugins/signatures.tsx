@@ -5,15 +5,23 @@ import classNames from 'classnames';
 import { ignore, PdfSignatureObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
-import { useUIComponents, useUIStrings } from '../../adapters';
+import { useUIStrings } from '../../adapters';
 import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
 
+/**
+ * Properties of PdfSignature
+ */
 export interface PdfSignaturesProps extends ComponentProps<'div'> {
   onSignaturesLoaded?: (signatures: PdfSignatureObject[]) => void;
 }
 
 export const PDF_NAVIGATOR_SIGNATURES_PANEL = 'PdfSignatures';
 
+/**
+ * Plugin used to viewing signature
+ * @param props - properties of PdfSignature
+ * @returns
+ */
 export function PdfSignatures(props: PdfSignaturesProps) {
   const strings = useUIStrings();
 
@@ -29,6 +37,13 @@ export function PdfSignatures(props: PdfSignaturesProps) {
   );
 }
 
+/**
+ * Content of PdfSignature
+ * @param props - properties of PdfSignatureContent
+ * @returns
+ *
+ * @public
+ */
 export function PdfSignaturesContent(props: PdfSignaturesProps) {
   const { onSignaturesLoaded, className, children, ...rest } = props;
 

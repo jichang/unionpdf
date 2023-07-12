@@ -19,10 +19,18 @@ import {
   usePdfNavigator,
 } from '../../core';
 
+/**
+ * Properties of PdfSearchPanel
+ */
 export interface PdfSearchPanelProps extends ComponentProps<'div'> {}
 
 export const PDF_NAVIGATOR_SOURCE_SEARCH_PANEL = 'PdfSearchPanel';
 
+/**
+ * Plugin used to searching in pdf
+ * @param props - properties of PdfSearchPanel
+ * @returns
+ */
 export function PdfSearchPanel(props: PdfSearchPanelProps) {
   const strings = useUIStrings();
 
@@ -38,6 +46,13 @@ export function PdfSearchPanel(props: PdfSearchPanelProps) {
   );
 }
 
+/**
+ * Content of PdfSearchPanel
+ * @param props - properties of PdfSearchPanelContent
+ * @returns
+ *
+ * @public
+ */
 export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
   const { className, children, ...rest } = props;
 
@@ -130,7 +145,7 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
     [keyword, flags, searchNext, searchPrev]
   );
 
-  const { Dialog, Input, Checkbox, Label, Form } = useUIComponents();
+  const { Input, Checkbox, Label, Form } = useUIComponents();
   const strings = useUIStrings();
 
   return (

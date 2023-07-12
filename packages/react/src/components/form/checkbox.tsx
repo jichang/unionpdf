@@ -1,12 +1,23 @@
-import { PdfWidgetAnnoObject, PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
+import { PDF_FORM_FIELD_FLAG, PdfWidgetAnnoField } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents } from '../../adapters';
 
+/**
+ * Properties of form checkbox field
+ */
 export interface CheckboxFieldProps {
-  field: PdfWidgetAnnoObject['field'];
+  /**
+   * Field info
+   */
+  field: PdfWidgetAnnoField;
 }
 
+/**
+ *
+ * @param props - properties of Checkbox field
+ * @returns CheckboxField component
+ */
 export function CheckboxField(props: CheckboxFieldProps) {
   const { field } = props;
   const { mode } = usePdfApplication();

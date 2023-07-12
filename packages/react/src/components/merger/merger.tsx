@@ -5,19 +5,44 @@ import { useUIComponents, useUIStrings } from '../../adapters';
 import { Downloader } from '../common';
 import './merger.css';
 
+/**
+ * Step for pdf merging
+ */
 export enum MergeStep {
+  /**
+   * Used for file selection
+   */
   Prepare,
+  /**
+   * Merging files
+   */
   Merging,
+  /**
+   * Merging is succeed
+   */
   Succeed,
+  /**
+   * Merging is failed
+   */
   Failed,
 }
 
+/**
+ * Properties of PdfMerger
+ */
 export interface PdfMergerProps {
   files: PdfFile[];
   onRemoveFile: (file: PdfFile) => void;
   onMerged: (file: PdfFile) => void;
 }
 
+/**
+ * Pdf merger, used to merge multiple files
+ * @param props - Properties of PdfMerger
+ * @returns
+ *
+ * @public
+ */
 export function PdfMerger(props: PdfMergerProps) {
   const { files, onRemoveFile } = props;
   const strings = useUIStrings();
@@ -98,12 +123,33 @@ export function PdfMerger(props: PdfMergerProps) {
   return <div className="pdf__merger">{content}</div>;
 }
 
+/**
+ * Properties of PdfMergeTask
+ */
 export interface PdfMergeTaskProps {
+  /**
+   * Pdf files
+   */
   files: PdfFile[];
+  /**
+   * Callback when files are merged
+   * @param file - merged file
+   * @returns
+   */
   onMerged: (file: PdfFile) => void;
+  /**
+   * Callback when files can't be merged
+   * @param error - error instance
+   * @returns
+   */
   onFailed: (error: Error) => void;
 }
 
+/**
+ * Component for performing file merge
+ * @param props - properties of PdfMergeTask
+ * @returns
+ */
 export function PdfMergeTask(props: PdfMergeTaskProps) {
   const { files, onMerged, onFailed } = props;
   const engine = usePdfEngine();

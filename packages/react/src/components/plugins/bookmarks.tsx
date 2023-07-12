@@ -14,8 +14,16 @@ import { strings, useUIComponents, useUIStrings } from '../../adapters';
 
 export const PDF_NAVIGATOR_SOURCE_BOOKMARKS = 'PdfBookmarks';
 
+/**
+ * Properties of PdfBookmarks
+ */
 export interface PdfBookmarksProps {}
 
+/**
+ * pdf bookmarks content
+ * @param props - properties of PdfBookmarksContent
+ * @returns
+ */
 export function PdfBookmarks(props: PdfBookmarksProps) {
   const strings = useUIStrings();
 
@@ -31,6 +39,11 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
   );
 }
 
+/**
+ * pdf bookmarks content
+ * @param props - properties of PdfBookmarksContent
+ * @returns
+ */
 export function PdfBookmarksContent(props: PdfBookmarksProps) {
   const engine = usePdfEngine();
   const { doc } = usePdfDocument();
@@ -104,12 +117,33 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
   );
 }
 
+/**
+ * Properties of PdfBookmarkEntry
+ */
 export interface PdfBookmarkEntryProps {
+  /**
+   * Current page index, used to highlight bookmark
+   */
   currPageIndex: number;
+  /**
+   * bookmark entry
+   */
   bookmark: PdfBookmarkObject;
+  /**
+   * Callback when clicking bookmark
+   * @param entry - clicked bookmark entry
+   * @returns
+   */
   onClick: (entry: PdfBookmarkObject) => void;
 }
 
+/**
+ * Component to render pdf bookmark
+ * @param props - properties of PdfBookmarkEntry
+ * @returns
+ *
+ * @public
+ */
 export function PdfBookmarkEntry(props: PdfBookmarkEntryProps) {
   const { currPageIndex, bookmark, onClick } = props;
   const { Icon } = useUIComponents();

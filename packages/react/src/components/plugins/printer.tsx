@@ -12,14 +12,28 @@ import {
 import { useUIComponents, useUIStrings } from '../../adapters';
 import './printer.css';
 
+/**
+ * Method used for printing
+ */
 export enum PrinterMethod {
   Iframe,
 }
 
+/**
+ * Properties of PdfPrinter
+ */
 export interface PdfPrinterProps {
+  /**
+   * method used for printing
+   */
   method: PrinterMethod;
 }
 
+/**
+ * Plugin used to printing pdf
+ * @param props - properties of PdfPrinter
+ * @returns
+ */
 export function PdfPrinter(props: PdfPrinterProps) {
   const strings = useUIStrings();
 
@@ -35,6 +49,13 @@ export function PdfPrinter(props: PdfPrinterProps) {
   );
 }
 
+/**
+ * Content of PdfPrinter
+ * @param props - properties of PdfPrinterContent
+ * @returns
+ *
+ * @public
+ */
 export function PdfPrinterContent(props: PdfPrinterProps) {
   const { method } = props;
   const strings = useUIStrings();
@@ -75,8 +96,6 @@ export function PdfPrinterContent(props: PdfPrinterProps) {
       }
     }
   }, [method, buffer]);
-
-  const { Dialog } = useUIComponents();
 
   const { hidePlugin } = usePdfApplication();
 

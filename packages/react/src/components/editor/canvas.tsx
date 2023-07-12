@@ -14,13 +14,32 @@ import './canvas.css';
 import { Drawable, DrawableHandle, DrawablePath } from '../common';
 import { restoreRect } from '@unionpdf/models';
 
-export interface PdfEditorCanvasProps {
+/**
+ * Properties of PdfEditorCanvas
+ */
+export interface PdfPageEditorCanvasProps {
+  /**
+   * page object that annotation is belonged to
+   */
   page: PdfPageObject;
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * Rotation angle
+   */
   rotation: Rotation;
 }
 
-export function PdfEditorCanvas(props: PdfEditorCanvasProps) {
+/**
+ * Pdf editor canvas for pdf page, used for drawing path on pdf page
+ * @param props - properties of PdfEditorCanvas
+ * @returns
+ *
+ * @public
+ */
+export function PdfPageEditorCanvas(props: PdfPageEditorCanvasProps) {
   const { page, scaleFactor, rotation } = props;
 
   const style = useMemo(() => {

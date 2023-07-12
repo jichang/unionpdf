@@ -6,13 +6,21 @@ import {
   usePdfDocument,
   usePdfEngine,
 } from '../../core';
-import { PdfPageEditorAnnotations, PdfEditorCanvas } from '../editor';
+import { PdfPageEditorAnnotations, PdfPageEditorCanvas } from '../editor';
 import { PdfPageLayerComponentProps } from './layer';
 import { PdfAnnotationTool, usePdfEditor } from '../editor/editor.context';
 import './editor.css';
 
+/**
+ * Properties of PdfPageEditorLayer
+ */
 export interface PdfPageEditorLayerProps extends PdfPageLayerComponentProps {}
 
+/**
+ * Page layer used to render page editor
+ * @param props - properties of PdfPageEditorLayer
+ * @returns
+ */
 export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
   const { mode } = usePdfApplication();
@@ -53,7 +61,7 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
         rotation={rotation}
       />
       {annotationTool === PdfAnnotationTool.Pencil ? (
-        <PdfEditorCanvas
+        <PdfPageEditorCanvas
           page={page}
           scaleFactor={scaleFactor}
           rotation={rotation}

@@ -1,5 +1,13 @@
 import { calculateAngle, Rotation } from '@unionpdf/models';
 
+/**
+ * Rotate image
+ * @param imageData - original image data
+ * @param rotation - rotation angle
+ * @returns image data after rotation
+ *
+ * @public
+ */
 export function rotateImageData(imageData: ImageData, rotation: Rotation) {
   const size = { width: imageData.width, height: imageData.height };
   const canvasElem = document.createElement('canvas');

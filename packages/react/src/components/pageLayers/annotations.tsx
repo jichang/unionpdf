@@ -10,6 +10,11 @@ import { PdfPageLayerComponentProps } from './layer';
 import { PdfPageAnnotations } from '../common';
 import './annotations.css';
 
+/**
+ * Page layer used to render annotations
+ * @param props - properties of PdfPageAnnotationsLayer
+ * @returns
+ */
 export function PdfPageAnnotationsLayer(props: PdfPageLayerComponentProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();

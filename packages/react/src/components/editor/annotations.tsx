@@ -30,13 +30,35 @@ import {
 
 export const EDITOR_ANNOTATIONS_LOG_SOURCE = 'PdfEditorAnnotations';
 
+/**
+ * Properties of PdfPageEditorAnnotations
+ */
 export interface PdfPageEditorAnnotationsProps {
+  /**
+   * page object that annotation is belonged to
+   */
   page: PdfPageObject;
+  /**
+   * pdf annotations on the pdf page
+   */
   annotations: PdfAnnotationObject[];
+  /**
+   * scaling factor
+   */
   scaleFactor: number;
+  /**
+   * Rotation angle
+   */
   rotation: Rotation;
 }
 
+/**
+ * Page annotations components, used for rendering all annotations on pdf page
+ * @param props - properties of PdfPageEditorAnnotations
+ * @returns
+ *
+ * @public
+ */
 export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
   const { page, annotations, scaleFactor, rotation } = props;
 

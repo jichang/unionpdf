@@ -10,6 +10,14 @@ import {
 import { Operation } from '../editor/editor.context';
 import { ResizerPosition } from '../editor/annotations.context';
 
+/**
+ * Apply operations on annotations
+ * @param annotations - all annotations
+ * @param operations - all operations
+ * @returns updated annotations
+ *
+ * @public
+ */
 export function apply(
   annotations: PdfAnnotationObject[],
   operations: Operation[]
@@ -38,6 +46,11 @@ export function apply(
   }, annotations);
 }
 
+/**
+ * Calculate bounding rect of all ink list
+ * @param inkLists - all ink lists
+ * @returns bounding rect
+ */
 export function calculateBoundingRect(inkLists: PdfInkListObject[]): Rect {
   let minX = Number.MAX_VALUE;
   let minY = Number.MAX_VALUE;
@@ -67,6 +80,12 @@ export function calculateBoundingRect(inkLists: PdfInkListObject[]): Rect {
   };
 }
 
+/**
+ * Transfrom annotation
+ * @param params - transformation params
+ * @param annotation - target annotations
+ * @returns transformed annotation
+ */
 export function transform(
   params: { offset: Position; scale: Size },
   annotation: PdfAnnotationObject
@@ -137,12 +156,20 @@ export function transform(
   return updated;
 }
 
+/**
+ * Calculate transformation
+ * @param rect - target rect
+ * @param offset - translate offset
+ * @param rotation - rotated angle
+ * @param resizerPosition - position of resizer
+ * @returns transform
+ */
 export function calculateTransformation(
   rect: Rect,
   offset: Position,
   rotation: Rotation,
   resizerPosition: ResizerPosition
-) {
+): { offset: Position; scale: Size } {
   const transformation = {
     offset: {
       x: 0,
@@ -299,6 +326,11 @@ export function calculateTransformation(
   return transformation;
 }
 
+/**
+ * Clone annotation
+ * @param annotation - target annotation
+ * @returns cloned annotation
+ */
 export function clone(annotation: PdfAnnotationObject) {
   const { rect } = annotation;
   const { origin, size } = rect;

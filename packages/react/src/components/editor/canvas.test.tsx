@@ -11,8 +11,8 @@ import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '@shopify/jest-dom-mocks';
-import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
-import { PdfEditorCanvas } from './canvas';
+import { PdfApplicationContextProvider } from '../../core';
+import { PdfPageEditorCanvas } from './canvas';
 import { PdfEditorContextProvider } from './editor.context';
 import { testingMemoryPdfApplicationConfigurationProvider } from '../../adapters/testing';
 
@@ -42,7 +42,7 @@ describe('PdfEditorAnnotations', () => {
             onOpenFailure={jest.fn()}
           >
             <PdfEditorContextProvider>
-              <PdfPages pageGap={8} pageLayers={[PdfEditorCanvas]} />
+              <PdfPages pageGap={8} pageLayers={[PdfPageEditorCanvas]} />
             </PdfEditorContextProvider>
           </PdfDocument>
         </PdfEngineContextProvider>

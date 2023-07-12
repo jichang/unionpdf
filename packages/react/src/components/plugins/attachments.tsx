@@ -8,10 +8,18 @@ import { usePdfEngine } from '../../core/engine.context';
 import { useUIComponents, useUIStrings } from '../../adapters';
 import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
 
+/**
+ * Properties of PdfAttachments
+ */
 export interface PdfAttachmentsProps extends ComponentProps<'div'> {}
 
 export const PDF_NAVIGATOR_ATTACHMENTS_PANEL = 'PdfAttachments';
 
+/**
+ * Plugin for viewing pdf attachments
+ * @param props - properties of PdfAttachments
+ * @returns
+ */
 export function PdfAttachments(props: PdfAttachmentsProps) {
   const strings = useUIStrings();
 
@@ -27,6 +35,11 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
   );
 }
 
+/**
+ * pdf attachments content
+ * @param props - properties of PdfAttachmentsContent
+ * @returns
+ */
 export function PdfAttachmentsContent(props: PdfAttachmentsProps) {
   const { className, children, ...rest } = props;
 

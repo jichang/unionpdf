@@ -3,15 +3,24 @@ import {
   PdfWidgetAnnoOption,
   PDF_FORM_FIELD_FLAG,
   PDF_FORM_FIELD_TYPE,
+  PdfWidgetAnnoField,
 } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents } from '../../adapters';
 
 export interface RadioButtonFieldProps {
-  field: PdfWidgetAnnoObject['field'];
+  /**
+   * Field info
+   */
+  field: PdfWidgetAnnoField;
 }
 
+/**
+ *
+ * @param props - properties of RadioButton field
+ * @returns RadioButtonField component
+ */
 export function RadioButtonField(props: RadioButtonFieldProps) {
   const { field } = props;
   const { mode } = usePdfApplication();

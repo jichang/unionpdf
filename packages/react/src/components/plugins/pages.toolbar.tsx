@@ -11,6 +11,11 @@ export const PDF_NAVIGATOR_SOURCE_PAGES_TOOLBAR = 'PdfToolbarPagesItemGroup';
 
 export interface PdfToolbarPagesItemGroupProps extends ComponentProps<'div'> {}
 
+/**
+ * Toolbar for pdf pages, used for navigation, rotation and scaling
+ * @param props - properties of PdfToolbarPagesItemGroup
+ * @returns
+ */
 export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
   const { className, children, ...rest } = props;
   const strings = useUIStrings();

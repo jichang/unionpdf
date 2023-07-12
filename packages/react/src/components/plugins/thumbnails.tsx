@@ -21,13 +21,28 @@ import {
 import { IntersectionObserverEntry } from '../../core';
 import './thumbnails.css';
 
+/**
+ * Thumbnail layout direction
+ */
 export type Direction = 'horizontal' | 'vertical';
 
+/**
+ * Thumbnail layout
+ */
 export interface Layout {
+  /**
+   * direction of layout
+   */
   direction: Direction;
+  /**
+   * items count
+   */
   itemsCount: number;
 }
 
+/**
+ * Properties of PdfThumbnail
+ */
 export interface PdfThumbnailsProps {
   layout?: Layout;
   size: Size;
@@ -40,6 +55,11 @@ export interface PdfThumbnailsProps {
 
 export const PDF_NAVIGATOR_SOURCE_THUMBNAILS = 'PdfThumbnails';
 
+/**
+ * Plugin used to viewing thumbnails
+ * @param props - properties of PdfThumbnail
+ * @returns
+ */
 export function PdfThumbnails(props: PdfThumbnailsProps) {
   const strings = useUIStrings();
 
@@ -55,6 +75,13 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
   );
 }
 
+/**
+ * Content of PdfThumbnail
+ * @param props - properties of PdfThumbnailContent
+ * @returns
+ *
+ * @public
+ */
 export function PdfThumbnailsContent(props: PdfThumbnailsProps) {
   const {
     layout = { direction: 'vertical', itemsCount: 1 },

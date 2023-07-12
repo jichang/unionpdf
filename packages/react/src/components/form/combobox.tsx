@@ -1,16 +1,24 @@
 import {
-  PdfWidgetAnnoObject,
   PdfWidgetAnnoOption,
   PDF_FORM_FIELD_FLAG,
+  PdfWidgetAnnoField,
 } from '@unionpdf/models';
 import React, { FormEvent, useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents } from '../../adapters';
 
 export interface ComboboxFieldProps {
-  field: PdfWidgetAnnoObject['field'];
+  /**
+   * Field info
+   */
+  field: PdfWidgetAnnoField;
 }
 
+/**
+ *
+ * @param props - properties of Combobox field
+ * @returns ComboboxField component
+ */
 export function ComboboxField(props: ComboboxFieldProps) {
   const { field } = props;
   const { mode } = usePdfApplication();

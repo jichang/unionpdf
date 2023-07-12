@@ -1,3 +1,8 @@
+/**
+ * Check whether elem is scrollable
+ * @param elem - target elem
+ * @returns whether elem is scrollable
+ */
 export function isScrollableElem(elem: HTMLElement) {
   const isScrollable = elem.scrollHeight !== elem.clientHeight;
   const isOverflowHidden = getComputedStyle(elem).overflowY.includes('hidden');
@@ -5,6 +10,11 @@ export function isScrollableElem(elem: HTMLElement) {
   return isScrollable || isOverflowHidden;
 }
 
+/**
+ * Find the closest scrollable container
+ * @param elem - source element
+ * @returns closest scrollable container
+ */
 export function findScollableContainer(
   elem: HTMLElement
 ): HTMLElement | Window {

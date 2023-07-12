@@ -16,17 +16,41 @@ import { clone } from '../helpers/editor';
 
 export const EDITOR_CONTEXT_LOG_SOURCE = 'PdfEditorContext';
 
+/**
+ * Tool of pdf editor
+ */
 export enum PdfEditorTool {
+  /**
+   * Create/Edit Annotation
+   */
   Annotation,
+  /**
+   * Extract Page or Text
+   */
   Extract,
+  /**
+   * Create/Add  stamp
+   */
   Stamp,
 }
 
+/**
+ * Annotation tool
+ */
 export enum PdfAnnotationTool {
+  /**
+   * Select annotation for move or resize
+   */
   Selection,
+  /**
+   * Drawing path
+   */
   Pencil,
 }
 
+/**
+ * Operation for annotations
+ */
 export type Operation =
   | {
       id: string;
@@ -45,35 +69,125 @@ export type Operation =
       };
     };
 
+/**
+ * Stack to track all operations on pdf document
+ */
 export interface PdfEditorStacks {
+  /**
+   * Undo stack, it contains all the uncommitted operations
+   */
   undo: Operation[];
+  /**
+   * Redo stack, it contains all the cancelled operations
+   */
   redo: Operation[];
+  /**
+   * Track operations by pages
+   */
   pages: Record<string, Operation[]>;
 }
 
+/**
+ * Status of operation stack
+ */
 export enum StackStatus {
+  /**
+   * No operations
+   */
   Empty,
+  /**
+   * Has pending operations, need to dicard or commit
+   */
   Pending,
 }
 
+/**
+ * Flags for track pdf annotation
+ */
 export enum PdfAnnotationMarker {
+  /**
+   * current dragging annotation
+   */
   Dragging,
 }
 
+/**
+ * Value in PdfEditorContext
+ */
 export interface PdfEditorContextValue {
+  /**
+   * Current editor tool
+   */
   tool: PdfEditorTool;
+  /**
+   * Set editor tool
+   * @param tool - target tool
+   * @returns
+   */
   setTool: (tool: PdfEditorTool) => void;
+  /**
+   * Toggle editor tool
+   * @param tool - target tool
+   * @returns
+   */
   toggleTool: (tool: PdfEditorTool) => void;
+  /**
+   * Current annotation tool
+   */
   annotationTool: PdfAnnotationTool;
+  /**
+   * Set current annotation tool
+   * @param tool - target annotation tool
+   * @returns
+   */
   setAnnotationTool: (tool: PdfAnnotationTool) => void;
+  /**
+   * Query current stack status
+   * @returns stack status
+   */
   queryStatus: () => StackStatus;
+  /**
+   * Query operations on specific pdf page
+   * @param pageIndex - index of pdf page
+   * @returns operations on pdf page
+   */
   queryByPageIndex: (pageIndex: number) => Operation[];
+  /**
+   * Execute editing operation
+   * @param operation - editing operation
+   * @returns
+   */
   exec: (operation: Operation) => void;
+  /**
+   * Undo last operation if exist
+   * @returns
+   */
   undo: () => void;
+  /**
+   * Redo last operation if exist
+   * @returns
+   */
   redo: () => void;
+  /**
+   * commit operations
+   */
   commit: () => void;
+  /**
+   * discard operations
+   * @returns di
+   */
   discard: () => void;
+  /**
+   * Copy annotation
+   * @param annotation - target annotation
+   * @returns
+   */
   copy: (annotation: PdfAnnotationObject) => void;
+  /**
+   * Paste annotation to pdf page
+   * @param page - target pdf page
+   * @returns
+   */
   paste: (page: PdfPageObject) => void;
 }
 
@@ -98,10 +212,23 @@ export const PdfEditorContext = React.createContext<PdfEditorContextValue>({
   paste: () => {},
 });
 
+/**
+ * Properties of PdfEditorContextProvider
+ */
 export interface PdfEditorContextProviderProps {
+  /**
+   * Children nodes
+   */
   children: ReactNode;
 }
 
+/**
+ * Provider of PdfEditorContext, used to maintaining editor status and data
+ * @param props - properties of PdfEditorContextProvider
+ * @returns
+ *
+ * @public
+ */
 export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   const { children } = props;
 

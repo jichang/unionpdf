@@ -9,10 +9,19 @@ import {
   usePdfApplication,
 } from '../../core';
 
-export interface PdfToolbarEditorItemGroupProps extends ComponentProps<'div'> {}
+/**
+ * Properties of PdfToolbarEditorOperationItemGroup
+ */
+export interface PdfToolbarEditorOperationItemGroupProps
+  extends ComponentProps<'div'> {}
 
-export function PdfToolbarEditorItemGroup(
-  props: PdfToolbarEditorItemGroupProps
+/**
+ * Toolbar items for pdf editor, for edit operations
+ * @param props - properties of PdfToolbarEditorOperationItemGroup
+ * @returns
+ */
+export function PdfToolbarEditorOperationItemGroup(
+  props: PdfToolbarEditorOperationItemGroupProps
 ) {
   const { className, children, ...rest } = props;
   const { ToolbarItemGroup, Button } = useUIComponents();
@@ -49,9 +58,17 @@ export function PdfToolbarEditorItemGroup(
   );
 }
 
+/**
+ * Properties of PdfToolbarEditorFileItemGroup
+ */
 export interface PdfToolbarEditorFileItemGroupProps
   extends ComponentProps<'div'> {}
 
+/**
+ * Toolbar items for pdf editor, for file operations
+ * @param props - properties of PdfToolbarEditorFileItemGroup
+ * @returns
+ */
 export function PdfToolbarEditorFileItemGroup(
   props: PdfToolbarEditorFileItemGroupProps
 ) {

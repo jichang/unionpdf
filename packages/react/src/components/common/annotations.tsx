@@ -2,6 +2,9 @@ import React from 'react';
 import { PdfAnnotationObject, PdfPageObject, Rotation } from '@unionpdf/models';
 import { usePdfPageAnnotationComponent } from './annotations.context';
 
+/**
+ * Properties of PdfPageAnnotations
+ */
 export interface PdfPageAnnotationsProps {
   /**
    * page object that annotation is belonged to
@@ -21,6 +24,13 @@ export interface PdfPageAnnotationsProps {
   rotation: Rotation;
 }
 
+/**
+ * Page annotations components, used for rendering all annotations on pdf page
+ * @param props - properties of PdfPageAnnotations
+ * @returns
+ *
+ * @public
+ */
 export function PdfPageAnnotations(props: PdfPageAnnotationsProps) {
   const { annotations, page, scaleFactor, rotation } = props;
 

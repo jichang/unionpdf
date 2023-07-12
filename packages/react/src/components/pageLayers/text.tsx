@@ -4,8 +4,16 @@ import { usePdfEngine, usePdfDocument } from '../../core';
 import { PdfPageLayerComponentProps } from './layer';
 import './text.css';
 
+/**
+ * Properties of PdfPageTextLayer
+ */
 export interface PdfPageTextLayerProps extends PdfPageLayerComponentProps {}
 
+/**
+ * Page layer used to render page text
+ * @param props - properties of PdfPageTextLayer
+ * @returns
+ */
 export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
   const { isVisible, page, scaleFactor, rotation } = props;
   const engine = usePdfEngine();

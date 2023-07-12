@@ -9,10 +9,18 @@ import {
 } from '../../core';
 import './downloader.css';
 import { Downloader } from '../common';
-import { useUIComponents, useUIStrings } from '../../adapters';
+import { useUIStrings } from '../../adapters';
 
+/**
+ * Properties of PdfDownloader
+ */
 export interface PdfDownloaderProps {}
 
+/**
+ * Plugin used to download pdf file
+ * @param props - properties of PdfDownloader
+ * @returns
+ */
 export function PdfDownloader(props: PdfDownloaderProps) {
   const strings = useUIStrings();
 
@@ -28,6 +36,13 @@ export function PdfDownloader(props: PdfDownloaderProps) {
   );
 }
 
+/**
+ * Content of PdfDownloader
+ * @param props - properties of PdfDownloaderContent
+ * @returns
+ *
+ * @public
+ */
 export function PdfDownloaderContent(props: PdfDownloaderProps) {
   const engine = usePdfEngine();
   const { doc } = usePdfDocument();

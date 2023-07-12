@@ -59,6 +59,8 @@ export interface PdfPageEditorAnnotationProps {
  * Component for editable annotation
  * @param props - properties of PdfPageAnnotation
  * @returns
+ *
+ * @public
  */
 export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;

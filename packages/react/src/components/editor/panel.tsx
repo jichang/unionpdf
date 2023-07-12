@@ -5,8 +5,16 @@ import { useUIComponents, useUIStrings } from '../../adapters';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
 import './panel.css';
 
+/**
+ * Properties of PdfEditorPanel
+ */
 export interface PdfEditorPanelProps {}
 
+/**
+ * Editor panel, used to switch different annotation tool
+ * @param props - properties of PdfEditorPanel
+ * @returns
+ */
 export function PdfEditorPanel(props: PdfEditorPanelProps) {
   const { Button } = useUIComponents();
 

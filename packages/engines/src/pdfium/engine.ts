@@ -62,6 +62,7 @@ import {
   PdfLineAnnoObject,
   PdfHighlightAnnoObject,
   PdfStampAnnoObjectContents,
+  PdfWidgetAnnoField,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -3851,7 +3852,7 @@ export class PdfiumEngine implements PdfEngine {
   private readPdfWidgetAnnoField(
     formHandle: number,
     annotationPtr: number
-  ): PdfWidgetAnnoObject['field'] {
+  ): PdfWidgetAnnoField {
     const flag = this.wasmModuleWrapper.FPDFAnnot_GetFormFieldFlags(
       formHandle,
       annotationPtr
