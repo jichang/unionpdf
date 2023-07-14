@@ -65,14 +65,11 @@ export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
  * PDF engine that runs within webworker
  */
 export class WebWorkerEngine implements PdfEngine {
-  /**
-   * Web worker instance that execute the pdf engine
-   */
-  worker: Worker;
+  static readyTaskId = '0';
   /**
    * Task that represent the state of preparation
    */
-  prepareTask: WorkerTask<boolean, PdfEngineError>;
+  readyTask: WorkerTask<boolean, PdfEngineError>;
   /**
    * All the tasks that is executing
    */
@@ -81,20 +78,22 @@ export class WebWorkerEngine implements PdfEngine {
   /**
    * Create an instance of WebWorkerEngine, it will create a worker with
    * specified url.
-   * @param url - webworker script url, this script contains the implementation of pdf engine and message handling
+   * @param worker - webworker instance, this worker needs to contains the running instance of {@link EngineRunner}
    * @param logger - logger instance
    *
    * @public
    */
-  constructor(url: URL, private logger: Logger = new NoopLogger()) {
-    this.worker = new Worker(url);
+  constructor(
+    private worker: Worker,
+    private logger: Logger = new NoopLogger()
+  ) {
     this.worker.addEventListener('message', this.handle);
 
-    this.prepareTask = new WorkerTask<boolean, PdfEngineError>(
+    this.readyTask = new WorkerTask<boolean, PdfEngineError>(
       this.worker,
-      '0'
+      WebWorkerEngine.readyTaskId
     );
-    this.tasks.set('0', this.prepareTask);
+    this.tasks.set(WebWorkerEngine.readyTaskId, this.readyTask);
   }
 
   /**
@@ -122,7 +121,7 @@ export class WebWorkerEngine implements PdfEngine {
 
       switch (response.type) {
         case 'ReadyResponse':
-          this.prepareTask.resolve(true);
+          this.readyTask.resolve(true);
           break;
         case 'ExecuteResponse':
           {
@@ -909,7 +908,7 @@ export class WebWorkerEngine implements PdfEngine {
       request,
       transferables
     );
-    this.prepareTask.wait(
+    this.readyTask.wait(
       () => {
         this.worker.postMessage(request, transferables);
         this.tasks.set(request.id, task);

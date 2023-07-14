@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import {
-  Rotation,
   ConsoleLogger,
   Logger,
   PdfEngine,
@@ -324,7 +323,10 @@ async function run() {
   const enableWebworker = url.searchParams.get('webworker');
   let engine: PdfEngine;
   if (enableWebworker) {
-    engine = new WebWorkerEngine(new URL('./webworker'), logger);
+    const worker = new Worker(new URL('./webworker.ts', import.meta.url), {
+      type: 'module',
+    });
+    engine = new WebWorkerEngine(worker, logger);
   } else {
     const response = await fetch(pdfiumWasm);
     const wasmBinary = await response.arrayBuffer();

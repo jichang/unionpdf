@@ -12,14 +12,12 @@ export class PdfiumEngineRunner extends EngineRunner {
    */
   constructor(private wasmBinary: ArrayBuffer) {
     super();
-
-    this.initialize();
   }
 
   /**
    * Initialize runner
    */
-  async initialize() {
+  async prepare() {
     const wasmBinary = this.wasmBinary;
     const wasmModule = await createPdfiumModule({ wasmBinary });
     this.engine = new PdfiumEngine(wasmModule);
