@@ -17,7 +17,7 @@ describe('PdfEditorStamps', () => {
         >
           <PdfEditorStamps />
         </PdfApplicationContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     expect(document.querySelectorAll('.pdf__editor__stamps').length).toEqual(1);

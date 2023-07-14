@@ -27,7 +27,7 @@ describe('PdfDocumentContextProvider ', () => {
         doc={doc}
       >
         <Consumer />
-      </PdfDocumentContextProvider>
+      </PdfDocumentContextProvider>,
     );
 
     expect(pdfDocInContext).toMatchObject({ doc, version });

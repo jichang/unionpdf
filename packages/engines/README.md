@@ -31,6 +31,6 @@ task.wait(
   },
   (err) => {
     console.log('failed: ', err);
-  }
+  },
 );
 ```

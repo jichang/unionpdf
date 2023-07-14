@@ -23,7 +23,7 @@ import { PdfPageAnnotation } from './annotation';
  * @public
  */
 export function PdfPageDefaultAnnotation(
-  props: PdfPageAnnotationComponentProps
+  props: PdfPageAnnotationComponentProps,
 ) {
   const { page, annotation, rotation, scaleFactor } = props;
   let content = null;

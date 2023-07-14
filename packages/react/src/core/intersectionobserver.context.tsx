@@ -41,7 +41,7 @@ export interface IntersectionObserverContextProviderProps
  * @public
  */
 export function IntersectionObserverContextProvider(
-  props: IntersectionObserverContextProviderProps
+  props: IntersectionObserverContextProviderProps,
 ) {
   const {
     asRoot = false,
@@ -55,7 +55,7 @@ export function IntersectionObserverContextProvider(
   const containerElemRef = useRef<HTMLDivElement | null>(null);
   const [observer, setObserver] = useState<IntersectionObserver | null>(null);
   const [visibleEntryIds, setVisibleEntryIds] = useState<Set<number>>(
-    new Set()
+    new Set(),
   );
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function IntersectionObserverContextProvider(
         root: asRoot ? containerElemRef.current : root,
         rootMargin,
         threshold,
-      }
+      },
     );
     setObserver(observer);
 

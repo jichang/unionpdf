@@ -19,11 +19,11 @@ describe('PdfEditorExtractor', () => {
         >
           <PdfEditorExtractor />
         </PdfApplicationContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     expect(document.querySelectorAll('.pdf__editor__extractor').length).toEqual(
-      1
+      1,
     );
 
     result.unmount();

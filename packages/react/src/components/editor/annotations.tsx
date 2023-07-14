@@ -77,7 +77,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
         setIsDropTarget(true);
       }
     },
-    [setIsDropTarget]
+    [setIsDropTarget],
   );
 
   const handleDragOver = useCallback((evt: React.DragEvent<HTMLDivElement>) => {
@@ -95,7 +95,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
         setIsDropTarget(false);
       }
     },
-    [setIsDropTarget]
+    [setIsDropTarget],
   );
 
   const handleDrop = useCallback(
@@ -123,7 +123,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
             size,
           },
           rotation,
-          scaleFactor
+          scaleFactor,
         );
 
         const imageData = rotateImageData(stamp.source, rotation);
@@ -151,7 +151,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
         });
       }
     },
-    [exec, page, annotations, scaleFactor, rotation, stamps]
+    [exec, page, annotations, scaleFactor, rotation, stamps],
   );
 
   const draggableDataRef = useRef<DraggableData | null>(null);
@@ -162,7 +162,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
     (
       draggableData: DraggableData,
       startPosition: Position,
-      endPosition: Position
+      endPosition: Position,
     ) => {
       const offset = {
         x: endPosition.x - startPosition.x,
@@ -190,7 +190,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
             rect,
             offset,
             rotation,
-            option.position
+            option.position,
           );
 
           exec({
@@ -203,14 +203,14 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
           break;
       }
     },
-    [exec, page]
+    [exec, page],
   );
 
   const handlePointerDown = useCallback(
     (
       evt: React.PointerEvent,
       annotation: PdfAnnotationObject,
-      option: DraggableOption
+      option: DraggableOption,
     ) => {
       const position = {
         x: evt.pageX,
@@ -222,7 +222,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
       };
       setStartPosition(position);
     },
-    [setStartPosition]
+    [setStartPosition],
   );
 
   const handlePointerMove = useCallback(
@@ -232,7 +232,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
           EDITOR_ANNOTATIONS_LOG_SOURCE,
           'PointerEvent',
           'pointer move',
-          evt.nativeEvent
+          evt.nativeEvent,
         );
 
         const endPosition = {
@@ -243,7 +243,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
         setEndPosition(endPosition);
       }
     },
-    [logger, setEndPosition]
+    [logger, setEndPosition],
   );
 
   const handlePointerCancel = useCallback(
@@ -252,7 +252,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
       setStartPosition(null);
       setEndPosition(null);
     },
-    [setStartPosition, setEndPosition]
+    [setStartPosition, setEndPosition],
   );
 
   const handlePointerUp = useCallback(
@@ -270,7 +270,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
       setStartPosition(null);
       setEndPosition(null);
     },
-    [applyUpdate, startPosition, endPosition, setStartPosition, setEndPosition]
+    [applyUpdate, startPosition, endPosition, setStartPosition, setEndPosition],
   );
 
   const handlePointerLeave = useCallback(
@@ -288,7 +288,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
       setStartPosition(null);
       setEndPosition(null);
     },
-    [applyUpdate, startPosition, setStartPosition, setEndPosition]
+    [applyUpdate, startPosition, setStartPosition, setEndPosition],
   );
 
   const handles = useMemo(() => {
@@ -329,7 +329,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
             rect,
             offset,
             rotation,
-            option.position
+            option.position,
           );
 
           operations.push({
@@ -381,7 +381,7 @@ export interface PdfPageEditableAnnotationsProps {
 }
 
 export function PdfPageEditableAnnotations(
-  props: PdfPageEditableAnnotationsProps
+  props: PdfPageEditableAnnotationsProps,
 ) {
   const { page, annotations, scaleFactor, rotation, extraOperations } = props;
 
@@ -394,7 +394,7 @@ export function PdfPageEditableAnnotations(
     return apply(annotations, allOperations).filter(
       (annotation: PdfAnnotationObject) => {
         return annotation.type !== PdfAnnotationSubtype.WIDGET;
-      }
+      },
     );
   }, [page, operations, annotations, extraOperations]);
 

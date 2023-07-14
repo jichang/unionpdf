@@ -35,7 +35,7 @@ export function PdfPageLineAnnotation(props: PdfPageLineAnnotationProps) {
         page.size,
         annotation.rect,
         rotation,
-        scaleFactor
+        scaleFactor,
       );
       const { origin, size } = rect;
       canvasElem.width = size.width;
@@ -48,13 +48,13 @@ export function PdfPageLineAnnotation(props: PdfPageLineAnnotationProps) {
           page.size,
           annotation.startPoint,
           rotation,
-          scaleFactor
+          scaleFactor,
         );
         const endPoint = transformPosition(
           page.size,
           annotation.endPoint,
           rotation,
-          scaleFactor
+          scaleFactor,
         );
         ctx.beginPath();
         ctx.moveTo(startPoint.x - origin.x, startPoint.y - origin.y);

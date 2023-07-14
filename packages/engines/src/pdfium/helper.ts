@@ -14,7 +14,7 @@ export function readString(
   wasmModule: PdfiumModule,
   readChars: (buffer: number, bufferLength: number) => number,
   parseChars: (buffer: number) => string,
-  defaultLength: number = 100
+  defaultLength: number = 100,
 ): string {
   let buffer = wasmModule._malloc(defaultLength);
   for (let i = 0; i < defaultLength; i++) {
@@ -47,7 +47,7 @@ export function readString(
  */
 export function readArrayBuffer(
   wasmModule: PdfiumModule,
-  readChars: (buffer: number, bufferLength: number) => number
+  readChars: (buffer: number, bufferLength: number) => number,
 ): ArrayBuffer {
   const bufferSize = readChars(0, 0);
 

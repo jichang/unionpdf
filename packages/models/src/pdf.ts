@@ -1064,7 +1064,7 @@ export interface SearchTarget {
  */
 export function compareSearchTarget(
   targetA: SearchTarget,
-  targetB: SearchTarget
+  targetB: SearchTarget,
 ) {
   const flagA = unionFlags(targetA.flags);
   const flagB = unionFlags(targetB.flags);
@@ -1178,7 +1178,7 @@ export interface Task<R, E = Error> {
    */
   wait: (
     resolvedCallback: ResolvedCallback<R>,
-    rejectedCallback: RejectedCallback<E>
+    rejectedCallback: RejectedCallback<E>,
   ) => void;
   /**
    * Resolve the task with value
@@ -1249,7 +1249,7 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
    */
   wait(
     resolvedCallback: ResolvedCallback<R>,
-    rejectedCallback: RejectedCallback<E>
+    rejectedCallback: RejectedCallback<E>,
   ) {
     switch (this.state.stage) {
       case TaskStage.Pending:
@@ -1417,7 +1417,7 @@ export interface PdfEngine {
    * @returns support or not
    */
   isSupport?: (
-    feature: PdfEngineFeature
+    feature: PdfEngineFeature,
   ) => Task<PdfEngineOperation[], PdfEngineError>;
   /**
    * Initialize the engine
@@ -1437,7 +1437,7 @@ export interface PdfEngine {
    */
   openDocument: (
     file: PdfFile,
-    password: string
+    password: string,
   ) => Task<PdfDocumentObject, PdfEngineError>;
   /**
    * Get the metadata of the file
@@ -1445,7 +1445,7 @@ export interface PdfEngine {
    * @returns task that contains the metadata or error
    */
   getMetadata: (
-    doc: PdfDocumentObject
+    doc: PdfDocumentObject,
   ) => Task<PdfMetadataObject, PdfEngineError>;
   /**
    * Get the signatures of the file
@@ -1453,7 +1453,7 @@ export interface PdfEngine {
    * @returns task that contains the signatures or error
    */
   getSignatures: (
-    doc: PdfDocumentObject
+    doc: PdfDocumentObject,
   ) => Task<PdfSignatureObject[], PdfEngineError>;
   /**
    * Get the bookmarks of the file
@@ -1461,7 +1461,7 @@ export interface PdfEngine {
    * @returns task that contains the bookmarks or error
    */
   getBookmarks: (
-    doc: PdfDocumentObject
+    doc: PdfDocumentObject,
   ) => Task<PdfBookmarksObject, PdfEngineError>;
   /**
    * Render the specified pdf page
@@ -1477,7 +1477,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-    options: PdfRenderOptions
+    options: PdfRenderOptions,
   ) => Task<ImageData, PdfEngineError>;
   /**
    * Render the specified rect of pdf page
@@ -1495,7 +1495,7 @@ export interface PdfEngine {
     scaleFactor: number,
     rotation: Rotation,
     rect: Rect,
-    options: PdfRenderOptions
+    options: PdfRenderOptions,
   ) => Task<ImageData, PdfEngineError>;
   /**
    * Get annotations of pdf page
@@ -1509,7 +1509,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
   ) => Task<PdfAnnotationObject[], PdfEngineError>;
   /**
    * Create a annotation on specified page
@@ -1521,7 +1521,7 @@ export interface PdfEngine {
   createPageAnnotation: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
-    annotation: PdfAnnotationObject
+    annotation: PdfAnnotationObject,
   ) => Task<boolean, PdfEngineError>;
   /**
    * Transform the annotation
@@ -1535,7 +1535,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-    transformation: PdfAnnotationTransformation
+    transformation: PdfAnnotationTransformation,
   ) => Task<boolean, PdfEngineError>;
   /**
    * Remove a annotation on specified page
@@ -1547,7 +1547,7 @@ export interface PdfEngine {
   removePageAnnotation: (
     doc: PdfDocumentObject,
     page: PdfPageObject,
-    annotation: PdfAnnotationObject
+    annotation: PdfAnnotationObject,
   ) => Task<boolean, PdfEngineError>;
   /**
    * get all text rects in pdf page
@@ -1561,7 +1561,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
   ) => Task<PdfTextRectObject[], PdfEngineError>;
   /**
    * Render the thumbnail of specified pdf page
@@ -1576,7 +1576,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
   ) => Task<ImageData, PdfEngineError>;
   /**
    * Start searching with new context
@@ -1586,7 +1586,7 @@ export interface PdfEngine {
    */
   startSearch: (
     doc: PdfDocumentObject,
-    contextId: number
+    contextId: number,
   ) => Task<boolean, PdfEngineError>;
   /**
    * Search next target
@@ -1598,7 +1598,7 @@ export interface PdfEngine {
   searchNext: (
     doc: PdfDocumentObject,
     contextId: number,
-    target: SearchTarget
+    target: SearchTarget,
   ) => Task<SearchResult | undefined, PdfEngineError>;
   /**
    * Search the previous targets
@@ -1610,7 +1610,7 @@ export interface PdfEngine {
   searchPrev: (
     doc: PdfDocumentObject,
     contextId: number,
-    target: SearchTarget
+    target: SearchTarget,
   ) => Task<SearchResult | undefined, PdfEngineError>;
   /**
    * Stop searching with new context
@@ -1620,7 +1620,7 @@ export interface PdfEngine {
    */
   stopSearch: (
     doc: PdfDocumentObject,
-    contextId: number
+    contextId: number,
   ) => Task<boolean, PdfEngineError>;
   /**
    * Get all attachments in this file
@@ -1628,7 +1628,7 @@ export interface PdfEngine {
    * @returns task that contains the attachments or error
    */
   getAttachments: (
-    doc: PdfDocumentObject
+    doc: PdfDocumentObject,
   ) => Task<PdfAttachmentObject[], PdfEngineError>;
   /**
    * Read content of pdf attachment
@@ -1638,7 +1638,7 @@ export interface PdfEngine {
    */
   readAttachmentContent: (
     doc: PdfDocumentObject,
-    attachment: PdfAttachmentObject
+    attachment: PdfAttachmentObject,
   ) => Task<ArrayBuffer, PdfEngineError>;
   /**
    * Extract pdf pages to a new file
@@ -1648,7 +1648,7 @@ export interface PdfEngine {
    */
   extractPages: (
     doc: PdfDocumentObject,
-    pageIndexes: number[]
+    pageIndexes: number[],
   ) => Task<ArrayBuffer>;
   /**
    * Extract text on specified pdf pages

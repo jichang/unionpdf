@@ -25,7 +25,7 @@ describe('PdfApplicationContextProvider ', () => {
         component={AnnotationComponent}
       >
         <Consumer />
-      </PdfPageAnnotationComponentContextProvider>
+      </PdfPageAnnotationComponentContextProvider>,
     );
 
     expect(appInContext).toEqual(AnnotationComponent);

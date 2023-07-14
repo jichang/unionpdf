@@ -39,7 +39,7 @@ export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
               page.size,
               textRect.rect,
               rotation,
-              scaleFactor
+              scaleFactor,
             );
             const style = {
               top: rect.origin.y,

@@ -7,5 +7,5 @@ export interface PdfiumModule extends Module, ModuleRuntimeMethods {}
  * @param init - override pdfium methods
  */
 export default function createPdfiumModule(
-  init: Partial<PdfiumModule>
+  init: Partial<PdfiumModule>,
 ): Promise<PdfiumModule>;

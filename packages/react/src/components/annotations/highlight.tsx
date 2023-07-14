@@ -22,7 +22,7 @@ export interface PdfPageHighlightAnnotationProps
  * @public
  */
 export function PdfPageHighlightAnnotation(
-  props: PdfPageHighlightAnnotationProps
+  props: PdfPageHighlightAnnotationProps,
 ) {
   return <div className="pdf__page__annotation__highlight" />;
 }

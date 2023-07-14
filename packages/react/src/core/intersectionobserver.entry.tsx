@@ -21,7 +21,7 @@ export interface IntersectionObserverEntryProps extends ComponentProps<'div'> {
  * @public
  */
 export function IntersectionObserverEntry(
-  props: IntersectionObserverEntryProps
+  props: IntersectionObserverEntryProps,
 ) {
   const { entryId, children, ...rest } = props;
   const { observer } = useIntersectionObserver();

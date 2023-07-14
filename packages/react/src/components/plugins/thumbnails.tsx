@@ -106,10 +106,10 @@ export function PdfThumbnailsContent(props: PdfThumbnailsProps) {
             view: [],
           },
         },
-        PDF_NAVIGATOR_SOURCE_THUMBNAILS
+        PDF_NAVIGATOR_SOURCE_THUMBNAILS,
       );
     },
-    [gotoPage]
+    [gotoPage],
   );
 
   const styleTemplate: string[] = [];

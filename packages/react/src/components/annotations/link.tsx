@@ -66,7 +66,7 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
           case PdfActionType.Goto:
             gotoPage(
               { destination: annotation.target.action.destination },
-              'annotation'
+              'annotation',
             );
             break;
           case PdfActionType.URI:
@@ -77,7 +77,7 @@ export function PdfPageLinkAnnotation(props: PdfPageLinkAnnotationProps) {
         gotoPage({ destination: annotation.target.destination }, 'annotation');
       }
     },
-    [gotoPage, page, annotation, context.onClick]
+    [gotoPage, page, annotation, context.onClick],
   );
 
   return (

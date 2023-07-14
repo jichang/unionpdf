@@ -61,14 +61,14 @@ describe('PdfPageAnnotation', () => {
         annotation={link}
         scaleFactor={1}
         rotation={0}
-      />
+      />,
     );
 
     const linkElem = document.querySelector(
-      '.pdf__page__annotation'
+      '.pdf__page__annotation',
     ) as HTMLDivElement;
     expect(linkElem?.getAttribute('style')).toEqual(
-      'top: 0px; left: 0px; width: 100px; height: 100px;'
+      'top: 0px; left: 0px; width: 100px; height: 100px;',
     );
 
     result.unmount();

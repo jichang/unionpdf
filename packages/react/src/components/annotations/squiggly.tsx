@@ -21,7 +21,7 @@ export interface PdfPageSquigglyAnnotationProps extends PdfPageAnnotationProps {
  * @public
  */
 export function PdfPageSquigglyAnnotation(
-  props: PdfPageSquigglyAnnotationProps
+  props: PdfPageSquigglyAnnotationProps,
 ) {
   return <div className="pdf__page__annotation__squiggly" />;
 }

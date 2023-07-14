@@ -71,7 +71,7 @@ export interface PdfNavigator {
    */
   addEventListener(
     source: string,
-    handler: PdfNavigatorListener['handler']
+    handler: PdfNavigatorListener['handler'],
   ): void;
   /**
    * remove event listener
@@ -80,7 +80,7 @@ export interface PdfNavigator {
    */
   removeEventListener(
     source: string,
-    handler: PdfNavigatorListener['handler']
+    handler: PdfNavigatorListener['handler'],
   ): void;
 }
 
@@ -110,7 +110,7 @@ export interface PdfNavigatorContextProviderProps {
  * @returns
  */
 export function PdfNavigatorContextProvider(
-  props: PdfNavigatorContextProviderProps
+  props: PdfNavigatorContextProviderProps,
 ) {
   const { children } = props;
 
@@ -130,7 +130,7 @@ export function PdfNavigatorContextProvider(
       logger.debug(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `emit navigator event from ${source}`
+        `emit navigator event from ${source}`,
       );
       for (const listener of listeners) {
         try {
@@ -142,12 +142,12 @@ export function PdfNavigatorContextProvider(
             LOG_SOURCE,
             LOG_CATEGORY,
             'error happens when calling navigator listener: ',
-            e
+            e,
           );
         }
       }
     },
-    [listeners, logger]
+    [listeners, logger],
   );
 
   const gotoPage = useCallback(
@@ -155,7 +155,7 @@ export function PdfNavigatorContextProvider(
       logger.debug(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `${source} try to navigate from ${currPageIndex} to ${data.destination.pageIndex}`
+        `${source} try to navigate from ${currPageIndex} to ${data.destination.pageIndex}`,
       );
 
       if (currPageIndex === data.destination.pageIndex) {
@@ -167,12 +167,12 @@ export function PdfNavigatorContextProvider(
           kind: 'GotoPage',
           data,
         },
-        source
+        source,
       );
 
       setCurrPageIndex(data.destination.pageIndex);
     },
-    [currPageIndex, setCurrPageIndex, emit]
+    [currPageIndex, setCurrPageIndex, emit],
   );
 
   const addEventListener = useCallback(
@@ -180,7 +180,7 @@ export function PdfNavigatorContextProvider(
       logger.debug(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `add navigator listener from ${source}`
+        `add navigator listener from ${source}`,
       );
       setListeners((listeners) => {
         const index = listeners.findIndex((_listener) => {
@@ -193,7 +193,7 @@ export function PdfNavigatorContextProvider(
         }
       });
     },
-    [setListeners]
+    [setListeners],
   );
 
   const removeEventListener = useCallback(
@@ -201,7 +201,7 @@ export function PdfNavigatorContextProvider(
       logger.debug(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `remove navigator listener from ${source}`
+        `remove navigator listener from ${source}`,
       );
       setListeners((listeners) => {
         const index = listeners.findIndex((_listener) => {
@@ -216,7 +216,7 @@ export function PdfNavigatorContextProvider(
         }
       });
     },
-    [setListeners]
+    [setListeners],
   );
 
   return (

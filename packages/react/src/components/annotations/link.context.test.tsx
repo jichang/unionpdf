@@ -22,7 +22,7 @@ describe('PdfLinkAnnoContextProvider ', () => {
     const result = render(
       <PdfLinkAnnoContextProvider onClick={value.onClick}>
         <Consumer />
-      </PdfLinkAnnoContextProvider>
+      </PdfLinkAnnoContextProvider>,
     );
 
     expect(context?.onClick).toEqual(value.onClick);

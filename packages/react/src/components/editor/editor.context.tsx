@@ -246,11 +246,11 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         }
       });
     },
-    [setTool]
+    [setTool],
   );
 
   const [annotationTool, setAnnotationTool] = useState(
-    PdfAnnotationTool.Selection
+    PdfAnnotationTool.Selection,
   );
 
   const [stacks, setStacks] = useState<PdfEditorStacks>({
@@ -276,7 +276,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
       return pageStack;
     },
-    [stacks]
+    [stacks],
   );
 
   const exec = useCallback(
@@ -285,7 +285,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         EDITOR_CONTEXT_LOG_SOURCE,
         'operation',
         'exec operation: ',
-        operation
+        operation,
       );
       setStacks((stacks) => {
         const { annotation } = operation;
@@ -302,7 +302,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         };
       });
     },
-    [logger, setStacks]
+    [logger, setStacks],
   );
 
   const undo = useCallback(() => {
@@ -467,7 +467,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
               doc,
               page,
               annotation,
-              params
+              params,
             );
             break;
           case 'remove':
@@ -501,7 +501,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     (annotation: PdfAnnotationObject) => {
       setAnnotation(annotation);
     },
-    [setAnnotation]
+    [setAnnotation],
   );
 
   const paste = useCallback(
@@ -518,7 +518,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         });
       }
     },
-    [annotation, exec]
+    [annotation, exec],
   );
 
   useEffect(() => {

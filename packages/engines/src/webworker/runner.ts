@@ -176,7 +176,7 @@ export class EngineRunner {
       LOG_SOURCE,
       LOG_CATEGORY,
       'webworker receive message event: ',
-      evt.data
+      evt.data,
     );
     try {
       const request = evt.data as Request;
@@ -190,7 +190,7 @@ export class EngineRunner {
         LOG_SOURCE,
         LOG_CATEGORY,
         'webworker met error when processing message event:',
-        e
+        e,
       );
     }
   }
@@ -352,7 +352,7 @@ export class EngineRunner {
           },
         };
         this.respond(response);
-      }
+      },
     );
   };
 

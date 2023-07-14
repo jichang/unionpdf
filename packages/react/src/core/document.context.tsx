@@ -40,7 +40,7 @@ export interface PdfDocumentContextProviderProps
  * @returns new pdf application component
  */
 export function PdfDocumentContextProvider(
-  props: PdfDocumentContextProviderProps
+  props: PdfDocumentContextProviderProps,
 ) {
   const { children, ...rest } = props;
 

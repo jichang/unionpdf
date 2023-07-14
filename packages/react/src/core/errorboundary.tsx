@@ -52,7 +52,7 @@ export class ErrorBoundary extends React.Component<
       this.props.source,
       'UncaughtError',
       error,
-      errorInfo
+      errorInfo,
     );
   }
 

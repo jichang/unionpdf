@@ -77,7 +77,7 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
               case PdfActionType.Goto:
                 gotoPage(
                   { destination: bookmark.target.action.destination },
-                  PDF_NAVIGATOR_SOURCE_BOOKMARKS
+                  PDF_NAVIGATOR_SOURCE_BOOKMARKS,
                 );
 
                 break;
@@ -87,12 +87,12 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
         case 'destination':
           gotoPage(
             { destination: bookmark.target.destination },
-            PDF_NAVIGATOR_SOURCE_BOOKMARKS
+            PDF_NAVIGATOR_SOURCE_BOOKMARKS,
           );
           break;
       }
     },
-    [gotoPage]
+    [gotoPage],
   );
 
   return (

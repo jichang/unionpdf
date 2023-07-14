@@ -63,7 +63,7 @@ export function PdfMerger(props: PdfMergerProps) {
 
       setStep(MergeStep.Succeed);
     },
-    [props.onMerged, setStep, setMergedFile]
+    [props.onMerged, setStep, setMergedFile],
   );
 
   const onFailed = useCallback(() => {

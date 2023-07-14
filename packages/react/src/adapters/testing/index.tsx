@@ -24,7 +24,7 @@ export function Dialog(props: DialogProps) {
 }
 
 export function PdfTestingAdapterProvider(
-  props: PdfNativeAdapterProviderProps
+  props: PdfNativeAdapterProviderProps,
 ) {
   const { children } = props;
 

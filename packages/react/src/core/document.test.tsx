@@ -47,7 +47,7 @@ describe('PdfDocument', () => {
         >
           <Consumer />
         </PdfDocument>
-      </PdfEngineContextProvider>
+      </PdfEngineContextProvider>,
     );
 
     expect(document.querySelector('.pdf__document')).toBeDefined();

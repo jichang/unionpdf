@@ -89,7 +89,7 @@ export interface PdfApplicationContextProviderProps {
  * @returns new application context provider component
  */
 export function PdfApplicationContextProvider(
-  props: PdfApplicationContextProviderProps
+  props: PdfApplicationContextProviderProps,
 ) {
   const { children, provider } = props;
 
@@ -107,35 +107,35 @@ export function PdfApplicationContextProvider(
     (scaleFactor: number) => {
       provider.setScaleFactor(scaleFactor);
     },
-    [provider]
+    [provider],
   );
 
   const setRotation = useCallback(
     (rotation: Rotation) => {
       provider.setRotation(rotation);
     },
-    [provider]
+    [provider],
   );
 
   const showPlugin = useCallback(
     (pluginKey: PdfApplicatinPluginKey) => {
       provider.showPlugin(pluginKey);
     },
-    [provider]
+    [provider],
   );
 
   const hidePlugin = useCallback(
     (pluginKey: PdfApplicatinPluginKey) => {
       provider.hidePlugin(pluginKey);
     },
-    [provider]
+    [provider],
   );
 
   const togglePlugin = useCallback(
     (pluginKey: PdfApplicatinPluginKey) => {
       provider.togglePlugin(pluginKey);
     },
-    [provider]
+    [provider],
   );
 
   const contextValue = useMemo(() => {

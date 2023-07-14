@@ -4,7 +4,7 @@ import { JSTypeName, CWrappedFunc, CWrap } from './emscripten';
  * Wrapped WASM module
  */
 export type WrappedModule<
-  T extends Record<string, readonly [readonly JSTypeName[], JSTypeName]>
+  T extends Record<string, readonly [readonly JSTypeName[], JSTypeName]>,
 > = {
   [P in keyof T]: CWrappedFunc<T[P][0], T[P][1]>;
 };
@@ -18,7 +18,7 @@ export type WrappedModule<
  * @public
  */
 export function wrap<
-  T extends Record<string, readonly [readonly JSTypeName[], JSTypeName]>
+  T extends Record<string, readonly [readonly JSTypeName[], JSTypeName]>,
 >(cwrap: CWrap, dict: T): WrappedModule<T> {
   const wrappedModle = {} as WrappedModule<T>;
 

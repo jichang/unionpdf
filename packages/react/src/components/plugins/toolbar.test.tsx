@@ -9,7 +9,7 @@ describe('Toolbar', () => {
     const result = render(
       <PdfTestingAdapterProvider>
         <PdfToolbar />
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     const divElem = document.querySelector('div') as HTMLDivElement;

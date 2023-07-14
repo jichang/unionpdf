@@ -34,7 +34,7 @@ describe('PdfBookmark', () => {
         >
           <PdfEditor />
         </PdfDocument>
-      </PdfEngineContextProvider>
+      </PdfEngineContextProvider>,
     );
 
     act(() => {

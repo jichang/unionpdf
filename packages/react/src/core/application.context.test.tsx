@@ -26,7 +26,7 @@ describe('PdfApplicationContextProvider ', () => {
         provider={testingMemoryPdfApplicationConfigurationProvider}
       >
         <Consumer />
-      </PdfApplicationContextProvider>
+      </PdfApplicationContextProvider>,
     );
 
     expect(appInContext?.mode).toEqual(app.mode);

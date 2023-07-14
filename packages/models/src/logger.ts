@@ -114,7 +114,10 @@ export class LevelLogger implements Logger {
    * @param logger - the original logger
    * @param level - log level that used for filtering, all logs lower than this level will be filtered out
    */
-  constructor(private logger: Logger, private level: LogLevel) {}
+  constructor(
+    private logger: Logger,
+    private level: LogLevel,
+  ) {}
 
   /** {@inheritDoc Logger.debug} */
   debug(source: string, category: string, ...args: any) {

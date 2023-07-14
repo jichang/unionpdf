@@ -25,7 +25,7 @@ export interface PdfPagePolylineAnnotationProps extends PdfPageAnnotationProps {
  * @public
  */
 export function PdfPagePolylineAnnotation(
-  props: PdfPagePolylineAnnotationProps
+  props: PdfPagePolylineAnnotationProps,
 ) {
   const { page, annotation, scaleFactor, rotation } = props;
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -37,7 +37,7 @@ export function PdfPagePolylineAnnotation(
         page.size,
         annotation.rect,
         rotation,
-        scaleFactor
+        scaleFactor,
       );
       const { origin, size } = rect;
       canvasElem.width = size.width;
@@ -51,7 +51,7 @@ export function PdfPagePolylineAnnotation(
             page.size,
             vertices[0],
             rotation,
-            scaleFactor
+            scaleFactor,
           );
           ctx.beginPath();
           ctx.moveTo(startPoint.x - origin.x, startPoint.y - origin.y);

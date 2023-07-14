@@ -38,7 +38,7 @@ describe('PdfPageTextLayer', () => {
         >
           <PdfPages pageGap={8} pageLayers={[PdfPageTextLayer]} />
         </PdfDocument>
-      </PdfEngineContextProvider>
+      </PdfEngineContextProvider>,
     );
 
     act(() => {
@@ -50,7 +50,7 @@ describe('PdfPageTextLayer', () => {
     });
 
     expect(document.querySelectorAll('.pdf__text__rect').length).toEqual(
-      pdf.pageCount
+      pdf.pageCount,
     );
 
     result.unmount();

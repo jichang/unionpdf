@@ -20,7 +20,7 @@ import { ResizerPosition } from '../editor/annotations.context';
  */
 export function apply(
   annotations: PdfAnnotationObject[],
-  operations: Operation[]
+  operations: Operation[],
 ) {
   return operations.reduce((annotations, operation) => {
     switch (operation.action) {
@@ -88,7 +88,7 @@ export function calculateBoundingRect(inkLists: PdfInkListObject[]): Rect {
  */
 export function transform(
   params: { offset: Position; scale: Size },
-  annotation: PdfAnnotationObject
+  annotation: PdfAnnotationObject,
 ) {
   const { offset, scale } = params;
   const { rect } = annotation;
@@ -168,7 +168,7 @@ export function calculateTransformation(
   rect: Rect,
   offset: Position,
   rotation: Rotation,
-  resizerPosition: ResizerPosition
+  resizerPosition: ResizerPosition,
 ): { offset: Position; scale: Size } {
   const transformation = {
     offset: {

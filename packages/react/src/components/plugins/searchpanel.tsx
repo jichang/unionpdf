@@ -80,7 +80,7 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
     (evt: ChangeEvent<HTMLInputElement>) => {
       setKeyword(evt.target.value);
     },
-    [setKeyword]
+    [setKeyword],
   );
 
   const toggleFlag = useCallback(
@@ -96,7 +96,7 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
         }
       });
     },
-    [setFlags]
+    [setFlags],
   );
 
   const searchNext = useCallback(
@@ -114,13 +114,13 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
                   view: [],
                 },
               },
-              PDF_NAVIGATOR_SOURCE_SEARCH_PANEL
+              PDF_NAVIGATOR_SOURCE_SEARCH_PANEL,
             );
           }
         }, ignore);
       }
     },
-    [engine, doc, contextId, gotoPage]
+    [engine, doc, contextId, gotoPage],
   );
 
   const searchPrev = useCallback(
@@ -131,7 +131,7 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
           .wait(ignore, ignore);
       }
     },
-    [engine, doc, contextId]
+    [engine, doc, contextId],
   );
 
   const search = useCallback(
@@ -142,7 +142,7 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
         searchNext(keyword, flags);
       }
     },
-    [keyword, flags, searchNext, searchPrev]
+    [keyword, flags, searchNext, searchPrev],
   );
 
   const { Input, Checkbox, Label, Form } = useUIComponents();

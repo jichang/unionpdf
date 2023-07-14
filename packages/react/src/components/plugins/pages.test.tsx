@@ -48,7 +48,7 @@ describe('PdfPages', () => {
             pageLayers={[PdfPageNumber]}
           />
         </PdfDocument>
-      </PdfEngineContextProvider>
+      </PdfEngineContextProvider>,
     );
 
     act(() => {
@@ -57,10 +57,10 @@ describe('PdfPages', () => {
 
     expect(document.querySelector('.pdf__pages')).toBeDefined();
     expect(document.querySelectorAll('.pdf__page').length).toEqual(
-      pdf.pageCount
+      pdf.pageCount,
     );
     expect(
-      document.querySelectorAll('.pdf__page__layer--number').length
+      document.querySelectorAll('.pdf__page__layer--number').length,
     ).toEqual(pdf.pageCount);
 
     result.unmount();

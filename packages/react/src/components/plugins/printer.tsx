@@ -81,7 +81,7 @@ export function PdfPrinterContent(props: PdfPrinterProps) {
         const url = URL.createObjectURL(
           new Blob([buffer], {
             type: 'application/pdf',
-          })
+          }),
         );
         const iframeElem = document.createElement('iframe');
         iframeElem.style.display = 'none';

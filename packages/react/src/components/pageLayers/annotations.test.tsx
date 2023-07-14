@@ -47,7 +47,7 @@ describe('PdfPageAnnotationsLayer', () => {
             <PdfPages pageGap={8} pageLayers={[PdfPageAnnotationsLayer]} />
           </PdfPageAnnotationComponentContextProvider>
         </PdfDocument>
-      </PdfEngineContextProvider>
+      </PdfEngineContextProvider>,
     );
 
     act(() => {
@@ -59,7 +59,7 @@ describe('PdfPageAnnotationsLayer', () => {
     });
 
     expect(
-      document.querySelectorAll('.pdf__page__annotation--custom').length
+      document.querySelectorAll('.pdf__page__annotation--custom').length,
     ).toEqual(pdf.pageCount);
 
     result.unmount();

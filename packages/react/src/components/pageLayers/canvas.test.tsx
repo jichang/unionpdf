@@ -37,7 +37,7 @@ describe('PdfPageCanvasLayer', () => {
         >
           <PdfPages pageGap={8} pageLayers={[PdfPageCanvasLayer]} />
         </PdfDocument>
-      </PdfEngineContextProvider>
+      </PdfEngineContextProvider>,
     );
 
     act(() => {
@@ -49,7 +49,7 @@ describe('PdfPageCanvasLayer', () => {
     });
 
     expect(
-      document.querySelectorAll('.pdf__page__layer--canvas').length
+      document.querySelectorAll('.pdf__page__layer--canvas').length,
     ).toEqual(10);
 
     result.unmount();

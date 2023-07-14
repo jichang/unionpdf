@@ -57,7 +57,7 @@ describe('PdfPageWidget', () => {
           scaleFactor={0}
           rotation={Rotation.Degree0}
         />
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     const elem = document.querySelector('.pdf__form__field');

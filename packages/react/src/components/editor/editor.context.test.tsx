@@ -20,7 +20,7 @@ describe('PdfEditorContextProvider ', () => {
     const result = render(
       <PdfEditorContextProvider>
         <Consumer />
-      </PdfEditorContextProvider>
+      </PdfEditorContextProvider>,
     );
 
     expect(editorInContext?.tool).toBe(PdfEditorTool.Annotation);

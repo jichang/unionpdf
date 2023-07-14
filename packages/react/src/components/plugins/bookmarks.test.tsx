@@ -45,7 +45,7 @@ describe('PdfBookmark', () => {
             </PdfDocument>
           </PdfApplicationContextProvider>
         </PdfEngineContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     act(() => {
@@ -54,7 +54,7 @@ describe('PdfBookmark', () => {
 
     expect(document.querySelector('.pdf__bookmarks')).toBeDefined();
     expect(document.querySelectorAll('.pdf__bookmarks__entry').length).toEqual(
-      2
+      2,
     );
 
     result.unmount();

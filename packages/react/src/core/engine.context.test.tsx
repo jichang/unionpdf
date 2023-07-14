@@ -18,7 +18,7 @@ describe('PdfEngineContextProvider ', () => {
     const result = render(
       <PdfEngineContextProvider engine={engine}>
         <Consumer />
-      </PdfEngineContextProvider>
+      </PdfEngineContextProvider>,
     );
 
     expect(engineInContext).toBe(engine);

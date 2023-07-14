@@ -125,7 +125,7 @@ export function PdfPages(props: PdfPagesProps) {
                 page.size,
                 destination.zoom.params,
                 scaleFactor,
-                rotation
+                rotation,
               );
               const scrollOffset: { top: number; left: number } = {
                 top: pageOffset + y,
@@ -225,7 +225,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
 
   const [minVisiblePageIndex, maxVisiblePageIndex] = useMemo((): [
     number,
-    number
+    number,
   ] => {
     if (visibleEntryIds.size === 0) {
       return [0, 0];
@@ -252,7 +252,7 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
           view: [],
         },
       },
-      PDF_NAVIGATOR_SOURCE_PAGES
+      PDF_NAVIGATOR_SOURCE_PAGES,
     );
   }, [minVisiblePageIndex, gotoPage]);
 

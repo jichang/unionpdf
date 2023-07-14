@@ -33,7 +33,7 @@ export function PdfPagePopupAnnotation(props: PdfPagePopupAnnotationProps) {
       page.size,
       annotation.rect,
       rotation,
-      scaleFactor
+      scaleFactor,
     );
 
     return {

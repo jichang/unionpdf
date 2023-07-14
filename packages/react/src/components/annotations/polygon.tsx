@@ -35,7 +35,7 @@ export function PdfPagePolygonAnnotation(props: PdfPagePolygonAnnotationProps) {
         page.size,
         annotation.rect,
         rotation,
-        scaleFactor
+        scaleFactor,
       );
       const { origin, size } = rect;
       canvasElem.width = size.width;
@@ -49,7 +49,7 @@ export function PdfPagePolygonAnnotation(props: PdfPagePolygonAnnotationProps) {
             page.size,
             vertices[0],
             rotation,
-            scaleFactor
+            scaleFactor,
           );
           ctx.beginPath();
           ctx.moveTo(startPoint.x - origin.x, startPoint.y - origin.y);

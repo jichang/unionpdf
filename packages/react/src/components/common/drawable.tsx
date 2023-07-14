@@ -94,13 +94,13 @@ export function Drawable(props: DrawableProps) {
               origin.x,
               origin.y,
               Number(size.width),
-              Number(size.height)
+              Number(size.height),
             );
           }
         },
       };
     },
-    [width, height, paths]
+    [width, height, paths],
   );
 
   useEffect(() => {

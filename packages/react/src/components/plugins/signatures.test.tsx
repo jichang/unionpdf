@@ -36,7 +36,7 @@ describe('PdfSignatures', () => {
             <PdfSignatures />
           </PdfDocument>
         </PdfEngineContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     act(() => {
@@ -44,7 +44,7 @@ describe('PdfSignatures', () => {
     });
 
     const divElem = document.querySelector(
-      '.pdf__signatures'
+      '.pdf__signatures',
     ) as HTMLDivElement;
     expect(divElem).toBeDefined();
     result.unmount();

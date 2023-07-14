@@ -17,7 +17,7 @@ describe('PdfEditorPanel', () => {
         >
           <PdfEditorPanel />
         </PdfApplicationContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     expect(document.querySelectorAll('.pdf__editor__panel').length).toEqual(1);

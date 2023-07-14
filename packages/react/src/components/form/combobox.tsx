@@ -53,7 +53,7 @@ export function ComboboxField(props: ComboboxFieldProps) {
         setValues([target.value]);
       }
     },
-    [isMultipleChoice, setValues]
+    [isMultipleChoice, setValues],
   );
 
   const { Select } = useUIComponents();

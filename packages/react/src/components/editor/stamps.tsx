@@ -27,7 +27,7 @@ export function PdfEditorStamps() {
         return [...paths, path];
       });
     },
-    [setPaths]
+    [setPaths],
   );
 
   const cancel = useCallback(() => {
@@ -132,10 +132,10 @@ export function PdfEditorStamp(props: PdfEditorStampProps) {
       evt.dataTransfer.dropEffect = 'move';
       evt.dataTransfer.setData(
         'application/json',
-        JSON.stringify(draggbleData)
+        JSON.stringify(draggbleData),
       );
     },
-    [index]
+    [index],
   );
 
   const handleDrag = useCallback(
@@ -143,14 +143,14 @@ export function PdfEditorStamp(props: PdfEditorStampProps) {
       evt.dataTransfer.dropEffect = 'move';
       setIsDragging(true);
     },
-    [setIsDragging]
+    [setIsDragging],
   );
 
   const handleDragEnd = useCallback(
     (evt: React.DragEvent<HTMLDivElement>) => {
       setIsDragging(false);
     },
-    [setIsDragging]
+    [setIsDragging],
   );
 
   const canvasElemRef = useRef<HTMLCanvasElement>(null);

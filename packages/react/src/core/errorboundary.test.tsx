@@ -13,7 +13,7 @@ describe('ErrorBoundary', () => {
     const result = render(
       <ErrorBoundary source={'test'} logger={new NoopLogger()}>
         <Normal />
-      </ErrorBoundary>
+      </ErrorBoundary>,
     );
 
     const divElem = document.querySelector('.normal') as HTMLDivElement;

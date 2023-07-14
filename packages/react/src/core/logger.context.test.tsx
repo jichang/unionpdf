@@ -17,7 +17,7 @@ describe('LoggerContextProvider ', () => {
     const result = render(
       <LoggerContextProvider logger={logger}>
         <Consumer />
-      </LoggerContextProvider>
+      </LoggerContextProvider>,
     );
 
     expect(loggerInContext).toBe(logger);

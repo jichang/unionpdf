@@ -52,7 +52,7 @@ describe('PdfThumbnails', () => {
             </PdfDocument>
           </PdfApplicationContextProvider>
         </PdfEngineContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     act(() => {
@@ -61,7 +61,7 @@ describe('PdfThumbnails', () => {
 
     expect(document.querySelector('.pdf__thumbnails')).toBeDefined();
     expect(document.querySelectorAll('.pdf__thumbnail').length).toEqual(
-      pdf.pageCount
+      pdf.pageCount,
     );
 
     result.unmount();

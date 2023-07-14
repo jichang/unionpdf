@@ -22,7 +22,7 @@ export interface PdfPageUnderlineAnnotationProps
  * @public
  */
 export function PdfPageUnderlineAnnotation(
-  props: PdfPageUnderlineAnnotationProps
+  props: PdfPageUnderlineAnnotationProps,
 ) {
   return <div className="pdf__page__annotation__underline" />;
 }

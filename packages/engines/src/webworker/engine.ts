@@ -40,7 +40,10 @@ export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
    *
    * @public
    */
-  constructor(public worker: Worker, private messageId: string) {
+  constructor(
+    public worker: Worker,
+    private messageId: string,
+  ) {
     super();
   }
 
@@ -85,13 +88,13 @@ export class WebWorkerEngine implements PdfEngine {
    */
   constructor(
     private worker: Worker,
-    private logger: Logger = new NoopLogger()
+    private logger: Logger = new NoopLogger(),
   ) {
     this.worker.addEventListener('message', this.handle);
 
     this.readyTask = new WorkerTask<boolean, PdfEngineError>(
       this.worker,
-      WebWorkerEngine.readyTaskId
+      WebWorkerEngine.readyTaskId,
     );
     this.tasks.set(WebWorkerEngine.readyTaskId, this.readyTask);
   }
@@ -110,7 +113,7 @@ export class WebWorkerEngine implements PdfEngine {
       LOG_SOURCE,
       LOG_CATEGORY,
       'webworker engine start handling message: ',
-      evt.data
+      evt.data,
     );
     try {
       const response = evt.data as Response;
@@ -142,7 +145,7 @@ export class WebWorkerEngine implements PdfEngine {
         LOG_SOURCE,
         LOG_CATEGORY,
         'webworker met error when handling message: ',
-        e
+        e,
       );
     }
   };
@@ -196,7 +199,7 @@ export class WebWorkerEngine implements PdfEngine {
       },
       () => {
         this.worker.removeEventListener('message', this.handle);
-      }
+      },
     );
 
     const request: ExecuteRequest = {
@@ -314,7 +317,7 @@ export class WebWorkerEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-    options: PdfRenderOptions
+    options: PdfRenderOptions,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -324,7 +327,7 @@ export class WebWorkerEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
-      options
+      options,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<ImageData>(this.worker, requestId);
@@ -353,7 +356,7 @@ export class WebWorkerEngine implements PdfEngine {
     scaleFactor: number,
     rotation: Rotation,
     rect: Rect,
-    options: PdfRenderOptions
+    options: PdfRenderOptions,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -364,7 +367,7 @@ export class WebWorkerEngine implements PdfEngine {
       scaleFactor,
       rotation,
       rect,
-      options
+      options,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<ImageData>(this.worker, requestId);
@@ -391,7 +394,7 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -400,7 +403,7 @@ export class WebWorkerEngine implements PdfEngine {
       doc,
       page,
       scaleFactor,
-      rotation
+      rotation,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<PdfAnnotationObject[]>(this.worker, requestId);
@@ -426,7 +429,7 @@ export class WebWorkerEngine implements PdfEngine {
   createPageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
-    annotation: PdfAnnotationObject
+    annotation: PdfAnnotationObject,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -434,7 +437,7 @@ export class WebWorkerEngine implements PdfEngine {
       'createPageAnnotations',
       doc,
       page,
-      annotation
+      annotation,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -461,7 +464,7 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-    transformation: PdfAnnotationTransformation
+    transformation: PdfAnnotationTransformation,
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
@@ -470,7 +473,7 @@ export class WebWorkerEngine implements PdfEngine {
       doc,
       page,
       annotation,
-      transformation
+      transformation,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -496,7 +499,7 @@ export class WebWorkerEngine implements PdfEngine {
   removePageAnnotation(
     doc: PdfDocumentObject,
     page: PdfPageObject,
-    annotation: PdfAnnotationObject
+    annotation: PdfAnnotationObject,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -504,7 +507,7 @@ export class WebWorkerEngine implements PdfEngine {
       'removePageAnnotations',
       doc,
       page,
-      annotation
+      annotation,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -531,7 +534,7 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -540,7 +543,7 @@ export class WebWorkerEngine implements PdfEngine {
       doc,
       page,
       scaleFactor,
-      rotation
+      rotation,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<PdfTextRectObject[]>(this.worker, requestId);
@@ -567,7 +570,7 @@ export class WebWorkerEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     scaleFactor: number,
-    rotation: Rotation
+    rotation: Rotation,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -576,7 +579,7 @@ export class WebWorkerEngine implements PdfEngine {
       doc,
       page,
       scaleFactor,
-      rotation
+      rotation,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<ImageData>(this.worker, requestId);
@@ -601,7 +604,7 @@ export class WebWorkerEngine implements PdfEngine {
    */
   startSearch(
     doc: PdfDocumentObject,
-    contextId: number
+    contextId: number,
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', doc, contextId);
     const requestId = this.generateRequestId();
@@ -628,7 +631,7 @@ export class WebWorkerEngine implements PdfEngine {
   searchNext(
     doc: PdfDocumentObject,
     contextId: number,
-    target: SearchTarget
+    target: SearchTarget,
   ): Task<SearchResult | undefined, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
@@ -636,12 +639,12 @@ export class WebWorkerEngine implements PdfEngine {
       'searchNext',
       doc,
       contextId,
-      target
+      target,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<SearchResult | undefined>(
       this.worker,
-      requestId
+      requestId,
     );
 
     const request: ExecuteRequest = {
@@ -665,7 +668,7 @@ export class WebWorkerEngine implements PdfEngine {
   searchPrev(
     doc: PdfDocumentObject,
     contextId: number,
-    target: SearchTarget
+    target: SearchTarget,
   ): Task<SearchResult | undefined, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
@@ -673,12 +676,12 @@ export class WebWorkerEngine implements PdfEngine {
       'searchPrev',
       doc,
       contextId,
-      target
+      target,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<SearchResult | undefined>(
       this.worker,
-      requestId
+      requestId,
     );
 
     const request: ExecuteRequest = {
@@ -701,7 +704,7 @@ export class WebWorkerEngine implements PdfEngine {
    */
   stopSearch(
     doc: PdfDocumentObject,
-    contextId: number
+    contextId: number,
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', doc, contextId);
     const requestId = this.generateRequestId();
@@ -773,14 +776,14 @@ export class WebWorkerEngine implements PdfEngine {
    */
   readAttachmentContent(
     pdf: PdfDocumentObject,
-    attachment: PdfAttachmentObject
+    attachment: PdfAttachmentObject,
   ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
       'readAttachmentContent',
       pdf,
-      attachment
+      attachment,
     );
     const requestId = this.generateRequestId();
     const task = new WorkerTask<ArrayBuffer>(this.worker, requestId);
@@ -906,7 +909,7 @@ export class WebWorkerEngine implements PdfEngine {
       'send request to worker',
       task,
       request,
-      transferables
+      transferables,
     );
     this.readyTask.wait(
       () => {
@@ -915,7 +918,7 @@ export class WebWorkerEngine implements PdfEngine {
       },
       () => {
         task.reject(new PdfEngineError('worker initialization failed'));
-      }
+      },
     );
   }
 }

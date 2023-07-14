@@ -51,7 +51,7 @@ describe('PdfPageTextAnnotation', () => {
         annotation={text}
         scaleFactor={0}
         rotation={Rotation.Degree0}
-      />
+      />,
     );
 
     const spanElem = document.querySelector('span');

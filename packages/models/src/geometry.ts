@@ -85,7 +85,7 @@ export function swap(size: Size): Size {
 export function transformSize(
   size: Size,
   rotation: Rotation,
-  scaleFactor: number
+  scaleFactor: number,
 ) {
   size = rotation % 2 === 0 ? size : swap(size);
 
@@ -125,7 +125,7 @@ export interface Position {
 export function rotatePosition(
   containerSize: Size,
   position: Position,
-  rotation: Rotation
+  rotation: Rotation,
 ): Position {
   switch (rotation) {
     case Rotation.Degree0:
@@ -161,7 +161,7 @@ export function rotatePosition(
  */
 export function scalePosition(
   position: Position,
-  scaleFactor: number
+  scaleFactor: number,
 ): Position {
   return {
     x: position.x * scaleFactor,
@@ -183,11 +183,11 @@ export function transformPosition(
   containerSize: Size,
   position: Position,
   rotation: Rotation,
-  scaleFactor: number
+  scaleFactor: number,
 ): Position {
   return scalePosition(
     rotatePosition(containerSize, position, rotation),
-    scaleFactor
+    scaleFactor,
   );
 }
 
@@ -205,11 +205,11 @@ export function restorePosition(
   containerSize: Size,
   position: Position,
   rotation: Rotation,
-  scaleFactor: number
+  scaleFactor: number,
 ): Position {
   return scalePosition(
     rotatePosition(containerSize, position, (4 - rotation) % 4),
-    1 / scaleFactor
+    1 / scaleFactor,
   );
 }
 
@@ -242,7 +242,7 @@ export interface Rect {
 export function rotateRect(
   containerSize: Size,
   rect: Rect,
-  rotation: Rotation
+  rotation: Rotation,
 ): Rect {
   switch (rotation) {
     case Rotation.Degree0:
@@ -309,7 +309,7 @@ export function transformRect(
   containerSize: Size,
   rect: Rect,
   rotation: Rotation,
-  scaleFactor: number
+  scaleFactor: number,
 ) {
   return scaleRect(rotateRect(containerSize, rect, rotation), scaleFactor);
 }
@@ -328,11 +328,11 @@ export function restoreRect(
   containerSize: Size,
   rect: Rect,
   rotation: Rotation,
-  scaleFactor: number
+  scaleFactor: number,
 ) {
   return scaleRect(
     rotateRect(containerSize, rect, (4 - rotation) % 4),
-    1 / scaleFactor
+    1 / scaleFactor,
   );
 }
 
@@ -348,7 +348,7 @@ export function restoreRect(
 export function restoreOffset(
   offset: Position,
   rotation: Rotation,
-  scaleFactor: number
+  scaleFactor: number,
 ) {
   let offsetX = offset.x;
   let offsetY = offset.y;

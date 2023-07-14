@@ -19,7 +19,7 @@ describe('PdfNavigatorContextProvider ', () => {
     const result = render(
       <PdfNavigatorContextProvider>
         <Consumer />
-      </PdfNavigatorContextProvider>
+      </PdfNavigatorContextProvider>,
     );
 
     expect(pdfNavigatorInContext?.currPageIndex).toBe(0);

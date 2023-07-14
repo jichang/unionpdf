@@ -36,7 +36,7 @@ describe('PdfSearchPanel', () => {
             <PdfSearchPanel />
           </PdfDocument>
         </PdfEngineContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     act(() => {
@@ -44,7 +44,7 @@ describe('PdfSearchPanel', () => {
     });
 
     const divElem = document.querySelector(
-      '.pdf__search__panel'
+      '.pdf__search__panel',
     ) as HTMLDivElement;
     expect(divElem).toBeDefined();
     result.unmount();

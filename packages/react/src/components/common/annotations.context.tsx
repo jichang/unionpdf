@@ -54,7 +54,7 @@ export interface PdfPageAnnotationComponentContexProviderProps
  * @returns
  */
 export function PdfPageAnnotationComponentContextProvider(
-  props: PdfPageAnnotationComponentContexProviderProps
+  props: PdfPageAnnotationComponentContexProviderProps,
 ) {
   const { children, component } = props;
   return (

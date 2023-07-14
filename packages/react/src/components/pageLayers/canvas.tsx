@@ -62,7 +62,7 @@ export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
           0,
           0,
           imageData.width,
-          imageData.height
+          imageData.height,
         );
       }
     }

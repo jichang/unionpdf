@@ -21,7 +21,7 @@ export interface PdfPageFreeTextAnnotationProps extends PdfPageAnnotationProps {
  * @public
  */
 export function PdfPageFreeTextAnnotation(
-  props: PdfPageFreeTextAnnotationProps
+  props: PdfPageFreeTextAnnotationProps,
 ) {
   const { annotation } = props;
 

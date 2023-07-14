@@ -46,13 +46,13 @@ describe('PdfPagePopup', () => {
         annotation={popup}
         scaleFactor={1}
         rotation={0}
-      />
+      />,
     );
 
     const textElem = document.querySelector('.pdf__page__annotation--popup');
     expect(textElem).toBeDefined();
     const spanElem = document.querySelector(
-      '.pdf__page__annotation--popup span'
+      '.pdf__page__annotation--popup span',
     );
     expect(spanElem?.textContent).toBe(popup.contents);
 

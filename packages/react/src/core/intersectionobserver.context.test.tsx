@@ -24,7 +24,7 @@ describe('IntersectionObserverContextProvider ', () => {
       <IntersectionObserverContextProvider>
         <Consumer />
         <IntersectionObserverEntry entryId="100" />
-      </IntersectionObserverContextProvider>
+      </IntersectionObserverContextProvider>,
     );
 
     expect(intersectionObserverInContext).toBeDefined();

@@ -81,7 +81,7 @@ export interface UIComponentsContextProviderProps {
  * @beta
  */
 export function UIComponentsContextProvider(
-  props: UIComponentsContextProviderProps
+  props: UIComponentsContextProviderProps,
 ) {
   const { children, components } = props;
 

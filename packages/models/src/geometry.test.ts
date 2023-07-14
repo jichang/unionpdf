@@ -146,7 +146,7 @@ describe('Geometry', () => {
       container.size,
       rect,
       Rotation.Degree90,
-      scaleFactor
+      scaleFactor,
     );
     expect(transformedRect).toStrictEqual({
       origin: {
@@ -164,8 +164,8 @@ describe('Geometry', () => {
         transformSize(container.size, rotation, scaleFactor),
         transformedRect,
         rotation,
-        scaleFactor
-      )
+        scaleFactor,
+      ),
     ).toStrictEqual(rect);
   });
 });

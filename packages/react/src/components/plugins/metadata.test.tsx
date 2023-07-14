@@ -45,7 +45,7 @@ describe('PdfMetadata', () => {
             </PdfDocument>
           </PdfApplicationContextProvider>
         </PdfEngineContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     act(() => {

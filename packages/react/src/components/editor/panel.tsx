@@ -37,7 +37,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
           className={classNames(
             annotationTool === PdfAnnotationTool.Selection
               ? 'pdf__ui__button--active'
-              : ''
+              : '',
           )}
         >
           {strings.selection}
@@ -49,7 +49,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
           className={classNames(
             annotationTool === PdfAnnotationTool.Pencil
               ? 'pdf__ui__button--active'
-              : ''
+              : '',
           )}
         >
           {strings.pencil}

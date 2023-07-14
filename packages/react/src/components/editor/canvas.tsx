@@ -61,7 +61,7 @@ export function PdfPageEditorCanvas(props: PdfPageEditorCanvasProps) {
         pageSize,
         calculateBoundingRect([path]),
         rotation,
-        scaleFactor
+        scaleFactor,
       );
       exec({
         id: `${Date.now()}.${Math.random()}`,
@@ -87,7 +87,7 @@ export function PdfPageEditorCanvas(props: PdfPageEditorCanvasProps) {
       });
       drawableRef.current?.clearCanvas();
     },
-    [page, exec, rotation, scaleFactor]
+    [page, exec, rotation, scaleFactor],
   );
 
   return (
@@ -96,7 +96,7 @@ export function PdfPageEditorCanvas(props: PdfPageEditorCanvasProps) {
         'pdf__editor__canvas',
         annotationTool === PdfAnnotationTool.Pencil
           ? 'pdf__editor__canvas--active'
-          : 'pdf__editor__canvas--inactive'
+          : 'pdf__editor__canvas--inactive',
       )}
       componentRef={drawableRef}
       width={style.width}

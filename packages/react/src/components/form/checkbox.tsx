@@ -30,7 +30,7 @@ export function CheckboxField(props: CheckboxFieldProps) {
     (evt: FormEvent) => {
       setValue((evt.target as HTMLInputElement | HTMLSelectElement).value);
     },
-    [setValue]
+    [setValue],
   );
 
   const isDisabled =

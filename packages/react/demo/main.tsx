@@ -68,7 +68,7 @@ function App(props: AppProps) {
   const [provider] = useState(() => {
     return new StoragePdfApplicationConfigurationProvider(
       localStorage,
-      'pdfviewer.configurtion'
+      'pdfviewer.configurtion',
     );
   });
 
@@ -100,7 +100,7 @@ function App(props: AppProps) {
         setPassword('');
       }
     },
-    [setFile, provider]
+    [setFile, provider],
   );
 
   const closeFile = useCallback(() => {
@@ -116,7 +116,7 @@ function App(props: AppProps) {
         return [...stamps, stamp];
       });
     },
-    [setStamps]
+    [setStamps],
   );
 
   const removeStamp = useCallback(
@@ -127,7 +127,7 @@ function App(props: AppProps) {
         });
       });
     },
-    [setStamps]
+    [setStamps],
   );
 
   const [isMergerOpened, setIsMergerOpened] = useState(false);
@@ -156,7 +156,7 @@ function App(props: AppProps) {
         setFiles(files);
       }
     },
-    [setFiles]
+    [setFiles],
   );
 
   const removeFile = useCallback(
@@ -173,7 +173,7 @@ function App(props: AppProps) {
         return files;
       });
     },
-    [setFiles]
+    [setFiles],
   );
 
   const exitMerger = useCallback(() => {
@@ -340,7 +340,7 @@ async function run() {
   root.render(
     <React.StrictMode>
       <App engine={engine} logger={logger} />
-    </React.StrictMode>
+    </React.StrictMode>,
   );
 }
 

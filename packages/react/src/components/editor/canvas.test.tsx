@@ -46,7 +46,7 @@ describe('PdfEditorAnnotations', () => {
             </PdfEditorContextProvider>
           </PdfDocument>
         </PdfEngineContextProvider>
-      </PdfApplicationContextProvider>
+      </PdfApplicationContextProvider>,
     );
 
     act(() => {
@@ -58,7 +58,7 @@ describe('PdfEditorAnnotations', () => {
     });
 
     expect(document.querySelectorAll('.pdf__editor__canvas').length).toEqual(
-      10
+      10,
     );
 
     result.unmount();

@@ -73,7 +73,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
         copy(annotation);
       }
     },
-    [annotation, copy]
+    [annotation, copy],
   );
 
   const handleKeyUp = useCallback(
@@ -87,7 +87,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
         });
       }
     },
-    [annotation, page, exec]
+    [annotation, page, exec],
   );
 
   let content: React.ReactElement | null = null;
@@ -342,21 +342,21 @@ export function PdfPageAnnotationMover(props: PdfPageAnnotationMoverProps) {
     (evt: React.PointerEvent) => {
       onPointerDown(evt, annotation, { type: 'mover' });
     },
-    [annotation, onPointerDown]
+    [annotation, onPointerDown],
   );
 
   const handlePointerUp = React.useCallback(
     (evt: React.PointerEvent) => {
       onPointerUp(evt);
     },
-    [onPointerUp]
+    [onPointerUp],
   );
 
   const handlePointerCancel = React.useCallback(
     (evt: React.PointerEvent) => {
       onPointerCancel(evt);
     },
-    [onPointerCancel]
+    [onPointerCancel],
   );
 
   return (
@@ -430,21 +430,21 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
     (evt: React.PointerEvent) => {
       onPointerDown(evt, annotation, { type: 'resizer', position });
     },
-    [annotation, position, onPointerDown]
+    [annotation, position, onPointerDown],
   );
 
   const handlePointerUp = React.useCallback(
     (evt: React.PointerEvent) => {
       onPointerUp(evt);
     },
-    [onPointerUp]
+    [onPointerUp],
   );
 
   const handlePointerCancel = React.useCallback(
     (evt: React.PointerEvent) => {
       onPointerCancel(evt);
     },
-    [onPointerCancel]
+    [onPointerCancel],
   );
 
   const { IconButton } = useUIComponents();
@@ -454,7 +454,7 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
       className={classNames(
         'pdf__page__annotation__resizer',
         `pdf__page__annotation__resizer--${ResizerPositionClassName[position]}`,
-        className
+        className,
       )}
       type="button"
       iconName="Drag"

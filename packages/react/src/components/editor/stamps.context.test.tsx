@@ -27,7 +27,7 @@ describe('PdfEditorStampsContextProvider ', () => {
         onRemoveStamp={onRemoveStamp}
       >
         <Consumer />
-      </PdfEditorStampsContextProvider>
+      </PdfEditorStampsContextProvider>,
     );
 
     expect(stampsInContext?.stamps).toBe(stamps);

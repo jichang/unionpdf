@@ -35,7 +35,7 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
         page.size,
         annotation.rect,
         rotation,
-        scaleFactor
+        scaleFactor,
       );
       const { origin, size } = rect;
       canvasElem.width = size.width;
@@ -51,7 +51,7 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
               page.size,
               inkList.points[0],
               rotation,
-              scaleFactor
+              scaleFactor,
             );
             ctx.beginPath();
             ctx.moveTo(startPoint.x - origin.x, startPoint.y - origin.y);
@@ -63,7 +63,7 @@ export function PdfPageInkAnnotation(props: PdfPageInkAnnotationProps) {
                   page.size,
                   point,
                   rotation,
-                  scaleFactor
+                  scaleFactor,
                 );
               })
               .forEach((point) => {

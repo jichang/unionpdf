@@ -55,7 +55,7 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
       page.size,
       annotation.rect,
       rotation,
-      scaleFactor
+      scaleFactor,
     );
 
     return {
@@ -74,7 +74,7 @@ export function PdfPageAnnotation(props: PdfPageAnnotationProps) {
       className={classNames(
         'pdf__page__annotation',
         `pdf__page__annotation--${PdfAnnotationSubtypeName[annotation.type]}`,
-        className
+        className,
       )}
       data-page-index={page.index}
       {...rest}

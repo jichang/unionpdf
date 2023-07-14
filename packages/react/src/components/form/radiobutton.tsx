@@ -46,7 +46,7 @@ export function RadioButtonField(props: RadioButtonFieldProps) {
         return !isChecked;
       });
     },
-    [setIsChecked]
+    [setIsChecked],
   );
 
   const isDisabled =

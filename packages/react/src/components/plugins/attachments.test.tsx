@@ -47,7 +47,7 @@ describe('PdfAttachments', () => {
             </PdfDocument>
           </PdfApplicationContextProvider>
         </PdfEngineContextProvider>
-      </PdfTestingAdapterProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     act(() => {
@@ -55,7 +55,7 @@ describe('PdfAttachments', () => {
     });
 
     const divElem = document.querySelector(
-      '.pdf__attachments'
+      '.pdf__attachments',
     ) as HTMLDivElement;
     expect(divElem).toBeDefined();
     result.unmount();

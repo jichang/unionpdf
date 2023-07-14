@@ -43,7 +43,7 @@ export function TextField(props: TextFieldProps) {
     (evt: FormEvent) => {
       setValue((evt.target as HTMLInputElement | HTMLSelectElement).value);
     },
-    [setValue]
+    [setValue],
   );
 
   const isDisabled =

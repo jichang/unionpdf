@@ -178,7 +178,7 @@ export interface PdfApplicationConfigurationProvider {
    * @returns
    */
   subscribe: (
-    callback: (configuration: PdfApplicationConfiguration) => void
+    callback: (configuration: PdfApplicationConfiguration) => void,
   ) => void;
   /**
    * Unsubscribe from the configuration changes
@@ -186,7 +186,7 @@ export interface PdfApplicationConfigurationProvider {
    * @returns
    */
   unsubscribe: (
-    callback: (configuration: PdfApplicationConfiguration) => void
+    callback: (configuration: PdfApplicationConfiguration) => void,
   ) => void;
 }
 
@@ -215,7 +215,7 @@ export class PdfApplicationConfigurationProviderBase {
     protected plugins: Record<
       PdfApplicatinPluginKey,
       PdfApplicatinPluginConfiguration
-    > = DEFAULT_PLUGIN_CONFIGURATIONS
+    > = DEFAULT_PLUGIN_CONFIGURATIONS,
   ) {}
 
   /**
@@ -346,7 +346,7 @@ export class StoragePdfApplicationConfigurationProvider
     protected plugins: Record<
       PdfApplicatinPluginKey,
       PdfApplicatinPluginConfiguration
-    > = DEFAULT_PLUGIN_CONFIGURATIONS
+    > = DEFAULT_PLUGIN_CONFIGURATIONS,
   ) {
     super(rotation, scaleFactor, plugins);
 

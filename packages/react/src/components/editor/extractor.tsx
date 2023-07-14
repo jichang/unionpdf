@@ -26,7 +26,7 @@ export function PdfEditorExtractor() {
         }
       });
     },
-    [setSelectedIndexes]
+    [setSelectedIndexes],
   );
 
   const { Button } = useUIComponents();

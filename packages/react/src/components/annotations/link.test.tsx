@@ -69,7 +69,7 @@ describe('PdfPageLink', () => {
           scaleFactor={0}
           rotation={Rotation.Degree0}
         />
-      </PdfLinkAnnoContextProvider>
+      </PdfLinkAnnoContextProvider>,
     );
 
     const aElem = document.querySelector('a') as HTMLAnchorElement;

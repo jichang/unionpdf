@@ -41,11 +41,11 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
               view: [],
             },
           },
-          PDF_NAVIGATOR_SOURCE_PAGES_TOOLBAR
+          PDF_NAVIGATOR_SOURCE_PAGES_TOOLBAR,
         );
       }
     },
-    [gotoPage]
+    [gotoPage],
   );
 
   const rotationOptions = [
@@ -72,14 +72,14 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
       const rotation = parseInt(evt.target.value, 10) as Rotation;
       setRotation(rotation);
     },
-    [setRotation]
+    [setRotation],
   );
 
   const changeScaleFactor = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       setScaleFactor(Number(evt.target.value));
     },
-    [setScaleFactor]
+    [setScaleFactor],
   );
 
   return (

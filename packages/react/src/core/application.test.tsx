@@ -13,11 +13,11 @@ describe('PdfApplication', () => {
         provider={testingMemoryPdfApplicationConfigurationProvider}
       >
         <PdfApplication />
-      </PdfApplicationContextProvider>
+      </PdfApplicationContextProvider>,
     );
 
     expect(
-      document.querySelector('.pdf__application.pdf__application--edit')
+      document.querySelector('.pdf__application.pdf__application--edit'),
     ).toBeDefined();
 
     result.unmount();

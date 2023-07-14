@@ -57,7 +57,7 @@ export function PdfPageStampAnnotation(props: PdfPageStampAnnotationProps) {
 
 export function renderObject(
   ctx: CanvasRenderingContext2D,
-  object: PdfImageObject | PdfFormObject | PdfPathObject
+  object: PdfImageObject | PdfFormObject | PdfPathObject,
 ) {
   switch (object.type) {
     case PdfPageObjectType.FORM:
@@ -95,7 +95,7 @@ export function renderObject(
                   points[1].x,
                   points[1].y,
                   points[2].x,
-                  points[2].y
+                  points[2].y,
                 );
               }
               i = i + 3;

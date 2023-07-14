@@ -40,11 +40,11 @@ async function run() {
   engine.initialize();
 
   const passwordElem = document.getElementById(
-    'pdf-password'
+    'pdf-password',
   ) as HTMLInputElement;
   const inputElem = document.getElementById('pdf-file') as HTMLInputElement;
   const bookmarksElem = document.getElementById(
-    'pdf-bookmarks'
+    'pdf-bookmarks',
   ) as HTMLParagraphElement;
   const saveElem = document.getElementById('save') as HTMLInputElement;
 
@@ -62,7 +62,7 @@ async function run() {
         const password = passwordElem.value;
         const task = engine.openDocument(
           { id: file.name, name: file.name, content: arrayBuffer },
-          password
+          password,
         );
         task.wait(
           (doc) => {
@@ -81,10 +81,10 @@ async function run() {
               });
               renderTask.wait((imageData) => {
                 const canvasElem = document.createElement(
-                  'canvas'
+                  'canvas',
                 ) as HTMLCanvasElement;
                 const rootElem = document.getElementById(
-                  'root'
+                  'root',
                 ) as HTMLDivElement;
                 rootElem.appendChild(canvasElem);
                 canvasElem.style.width = `${page.size.width}px`;
@@ -100,7 +100,7 @@ async function run() {
                   0,
                   0,
                   imageData.width,
-                  imageData.height
+                  imageData.height,
                 );
                 console.log(imageData);
               }, logError);
@@ -109,7 +109,7 @@ async function run() {
                 doc,
                 page,
                 1,
-                0
+                0,
               );
               annotationsTask.wait((annotations) => {
                 console.log(page.index, annotations);
@@ -123,7 +123,7 @@ async function run() {
           },
           () => {
             currDoc = null;
-          }
+          },
         );
       }
     }, logError);

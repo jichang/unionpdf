@@ -21,7 +21,7 @@ describe('UIComponentsContextProvider ', () => {
     const result = render(
       <UIComponentsContextProvider components={components}>
         <Consumer />
-      </UIComponentsContextProvider>
+      </UIComponentsContextProvider>,
     );
 
     expect(uiComponentsInContext.Link).toEqual('test');

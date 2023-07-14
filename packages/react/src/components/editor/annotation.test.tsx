@@ -49,7 +49,7 @@ describe('PdfEditorAnnotation', () => {
             </PdfPageAnnotationComponentContextProvider>
           </PdfDocument>
         </PdfEngineContextProvider>
-      </PdfApplicationContextProvider>
+      </PdfApplicationContextProvider>,
     );
 
     act(() => {
@@ -61,7 +61,7 @@ describe('PdfEditorAnnotation', () => {
     });
 
     expect(
-      document.querySelectorAll('.pdf__page__annotation--editor').length
+      document.querySelectorAll('.pdf__page__annotation--editor').length,
     ).toEqual(10);
 
     result.unmount();

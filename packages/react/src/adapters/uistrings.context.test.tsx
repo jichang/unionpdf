@@ -21,7 +21,7 @@ describe('UIStringsContextProvider ', () => {
     const result = render(
       <UIStringsContextProvider strings={components}>
         <Consumer />
-      </UIStringsContextProvider>
+      </UIStringsContextProvider>,
     );
 
     expect(uiStringsInContext.download).toEqual('test');

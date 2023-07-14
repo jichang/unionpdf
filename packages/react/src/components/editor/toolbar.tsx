@@ -21,7 +21,7 @@ export interface PdfToolbarEditorOperationItemGroupProps
  * @returns
  */
 export function PdfToolbarEditorOperationItemGroup(
-  props: PdfToolbarEditorOperationItemGroupProps
+  props: PdfToolbarEditorOperationItemGroupProps,
 ) {
   const { className, children, ...rest } = props;
   const { ToolbarItemGroup, Button } = useUIComponents();
@@ -70,7 +70,7 @@ export interface PdfToolbarEditorFileItemGroupProps
  * @returns
  */
 export function PdfToolbarEditorFileItemGroup(
-  props: PdfToolbarEditorFileItemGroupProps
+  props: PdfToolbarEditorFileItemGroupProps,
 ) {
   const { className, children, ...rest } = props;
 

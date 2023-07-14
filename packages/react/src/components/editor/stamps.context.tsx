@@ -44,7 +44,7 @@ export interface PdfEditorStampsContextProviderProps
  * @returns
  */
 export function PdfEditorStampsContextProvider(
-  props: PdfEditorStampsContextProviderProps
+  props: PdfEditorStampsContextProviderProps,
 ) {
   const { onAddStamp, onRemoveStamp, stamps, children } = props;
 

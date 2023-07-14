@@ -76,7 +76,7 @@ export function PdfDocument(props: PdfDocumentProps) {
           },
           (error: Error) => {
             onOpenFailureRef.current?.(error);
-          }
+          },
         );
 
         return () => {

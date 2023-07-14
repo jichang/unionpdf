@@ -16,7 +16,7 @@ describe('ThemeContextProvider ', () => {
     const result = render(
       <ThemeContextProvider theme={theme}>
         <Consumer />
-      </ThemeContextProvider>
+      </ThemeContextProvider>,
     );
 
     expect(themeInContext).toEqual(theme);

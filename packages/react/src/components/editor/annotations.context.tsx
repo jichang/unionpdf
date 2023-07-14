@@ -33,7 +33,7 @@ export interface AnnotationsContextValue {
   onPointerDown: (
     evt: React.PointerEvent,
     annotation: PdfAnnotationObject,
-    option: DraggableOption
+    option: DraggableOption,
   ) => void;
   onPointerUp: (evt: React.PointerEvent) => void;
   onPointerCancel: (evt: React.PointerEvent) => void;

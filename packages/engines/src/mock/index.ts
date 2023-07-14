@@ -30,7 +30,7 @@ import {
  * @public
  */
 export function createMockPdfEngine(
-  partialEngine?: Partial<PdfEngine>
+  partialEngine?: Partial<PdfEngine>,
 ): PdfEngine {
   const engine: PdfEngine = {
     openDocument: jest.fn((file: PdfFile, password: string) => {
@@ -95,7 +95,7 @@ export function createMockPdfEngine(
               },
             },
           ],
-        }
+        },
       );
       return TaskBase.resolve({
         bookmarks,
@@ -107,7 +107,7 @@ export function createMockPdfEngine(
         page: PdfPageObject,
         scaleFactor: number,
         rotation: Rotation,
-        options: PdfRenderOptions
+        options: PdfRenderOptions,
       ) => {
         const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
         const imageSize = {
@@ -127,9 +127,9 @@ export function createMockPdfEngine(
         }
 
         return TaskBase.resolve(
-          new ImageData(array, imageSize.width, imageSize.height)
+          new ImageData(array, imageSize.width, imageSize.height),
         );
-      }
+      },
     ),
     renderPageRect: jest.fn(
       (
@@ -138,7 +138,7 @@ export function createMockPdfEngine(
         scaleFactor: number,
         rotation: Rotation,
         rect: Rect,
-        options: PdfRenderOptions
+        options: PdfRenderOptions,
       ) => {
         const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
         const imageSize = {
@@ -158,9 +158,9 @@ export function createMockPdfEngine(
         }
 
         return TaskBase.resolve(
-          new ImageData(array, imageSize.width, imageSize.height)
+          new ImageData(array, imageSize.width, imageSize.height),
         );
-      }
+      },
     ),
     renderThumbnail: jest.fn((doc: PdfDocumentObject, page: PdfPageObject) => {
       const thumbnailWidth = page.size.width / 4;
@@ -178,7 +178,7 @@ export function createMockPdfEngine(
       }
 
       return TaskBase.resolve(
-        new ImageData(array, thumbnailWidth, thumbnailHeight)
+        new ImageData(array, thumbnailWidth, thumbnailHeight),
       );
     }),
     getPageAnnotations: jest.fn(
@@ -186,7 +186,7 @@ export function createMockPdfEngine(
         doc: PdfDocumentObject,
         page: PdfPageObject,
         scaleFactor: number,
-        rotation: Rotation
+        rotation: Rotation,
       ) => {
         const link: PdfLinkAnnoObject = {
           status: PdfAnnotationObjectStatus.Committed,
@@ -218,7 +218,7 @@ export function createMockPdfEngine(
         const annotations: PdfAnnotationObject[] = [];
         annotations.push(link);
         return TaskBase.resolve(annotations);
-      }
+      },
     ),
     createPageAnnotation: jest.fn(() => {
       return TaskBase.resolve(true);
@@ -234,7 +234,7 @@ export function createMockPdfEngine(
         doc: PdfDocumentObject,
         page: PdfPageObject,
         scaleFactor: number,
-        rotation: Rotation
+        rotation: Rotation,
       ) => {
         const textRects: PdfTextRectObject[] = [
           {
@@ -256,7 +256,7 @@ export function createMockPdfEngine(
           },
         ];
         return TaskBase.resolve(textRects);
-      }
+      },
     ),
     closeDocument: (pdf: PdfDocumentObject) => {
       return TaskBase.resolve(true);
@@ -283,7 +283,7 @@ export function createMockPdfEngine(
     searchNext: (
       doc: PdfDocumentObject,
       contextId: number,
-      target: SearchTarget
+      target: SearchTarget,
     ) => {
       return TaskBase.resolve<SearchResult | undefined>({
         pageIndex: 0,
@@ -294,7 +294,7 @@ export function createMockPdfEngine(
     searchPrev: (
       doc: PdfDocumentObject,
       contextId: number,
-      target: SearchTarget
+      target: SearchTarget,
     ) => {
       return TaskBase.resolve<SearchResult | undefined>({
         pageIndex: 0,
@@ -310,7 +310,7 @@ export function createMockPdfEngine(
     },
     readAttachmentContent: (
       doc: PdfDocumentObject,
-      attachment: PdfAttachmentObject
+      attachment: PdfAttachmentObject,
     ) => {
       return TaskBase.resolve(new ArrayBuffer(0));
     },
@@ -327,7 +327,7 @@ export function createMockPdfEngine(
  * @public
  */
 export function createMockPdfDocument(
-  doc?: Partial<PdfDocumentObject>
+  doc?: Partial<PdfDocumentObject>,
 ): PdfDocumentObject {
   const pageCount = 10;
   const pageWidth = 100;

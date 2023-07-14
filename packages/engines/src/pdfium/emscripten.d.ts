@@ -36,7 +36,7 @@ export type NamesToType<T extends readonly JSTypeName[]> = T extends []
   ? [NameToType<U>]
   : T extends readonly [
       infer U extends JSTypeName,
-      ...infer Rest extends readonly JSTypeName[]
+      ...infer Rest extends readonly JSTypeName[],
     ]
   ? [NameToType<U>, ...NamesToType<Rest>]
   : [];
@@ -101,11 +101,11 @@ export interface Module {
   destroy(object: object): void;
   getPreloadedPackage(
     remotePackageName: string,
-    remotePackageSize: number
+    remotePackageSize: number,
   ): ArrayBuffer;
   instantiateWasm(
     imports: WebAssemblyImports,
-    successCallback: (module: WebAssembly.Module) => void
+    successCallback: (module: WebAssembly.Module) => void,
   ): WebAssemblyExports;
   locateFile(url: string, scriptDirectory: string): string;
   onCustomMessage(event: MessageEvent): void;
@@ -140,7 +140,7 @@ export interface Module {
  * Function for creating WebAssembly module
  */
 export type ModuleFactory<T extends Module = Module> = (
-  moduleOverrides?: Partial<T>
+  moduleOverrides?: Partial<T>,
 ) => Promise<T>;
 
 export interface Lookup {
@@ -206,7 +206,7 @@ export interface FS {
     flags: string,
     mode?: number,
     fd_start?: number,
-    fd_end?: number
+    fd_end?: number,
   ): FSStream;
   close(stream: FSStream): void;
   llseek(stream: FSStream, offset: number, whence: number): any;
@@ -215,7 +215,7 @@ export interface FS {
     buffer: ArrayBufferView,
     offset: number,
     length: number,
-    position?: number
+    position?: number,
   ): number;
   write(
     stream: FSStream,
@@ -223,7 +223,7 @@ export interface FS {
     offset: number,
     length: number,
     position?: number,
-    canOwn?: boolean
+    canOwn?: boolean,
   ): number;
   allocate(stream: FSStream, offset: number, length: number): void;
   mmap(
@@ -233,22 +233,22 @@ export interface FS {
     length: number,
     position: number,
     prot: number,
-    flags: number
+    flags: number,
   ): any;
   ioctl(stream: FSStream, cmd: any, arg: any): any;
   readFile(
     path: string,
-    opts: { encoding: 'binary'; flags?: string | undefined }
+    opts: { encoding: 'binary'; flags?: string | undefined },
   ): Uint8Array;
   readFile(
     path: string,
-    opts: { encoding: 'utf8'; flags?: string | undefined }
+    opts: { encoding: 'utf8'; flags?: string | undefined },
   ): string;
   readFile(path: string, opts?: { flags?: string | undefined }): Uint8Array;
   writeFile(
     path: string,
     data: string | ArrayBufferView,
-    opts?: { flags?: string | undefined }
+    opts?: { flags?: string | undefined },
   ): void;
 
   cwd(): string;
@@ -256,7 +256,7 @@ export interface FS {
   init(
     input: null | (() => number | null),
     output: null | ((c: number) => any),
-    error: null | ((c: number) => any)
+    error: null | ((c: number) => any),
   ): void;
 
   createLazyFile(
@@ -264,7 +264,7 @@ export interface FS {
     name: string,
     url: string,
     canRead: boolean,
-    canWrite: boolean
+    canWrite: boolean,
   ): FSNode;
   createPreloadedFile(
     parent: string | FSNode,
@@ -275,7 +275,7 @@ export interface FS {
     onload?: () => void,
     onerror?: () => void,
     dontCreateFile?: boolean,
-    canOwn?: boolean
+    canOwn?: boolean,
   ): void;
   createDataFile(
     parent: string | FSNode,
@@ -283,7 +283,7 @@ export interface FS {
     data: ArrayBufferView,
     canRead: boolean,
     canWrite: boolean,
-    canOwn: boolean
+    canOwn: boolean,
   ): FSNode;
 }
 
@@ -301,7 +301,7 @@ export interface ModuleRuntimeMethods {
     ident: string,
     returnType: R,
     argTypes: I,
-    opts?: CCallOpts
+    opts?: CCallOpts,
   ) => (...arg: NamesToType<I>) => NameToType<R>;
 
   ccall: <I extends readonly JSTypeName[], R extends JSTypeName>(
@@ -309,7 +309,7 @@ export interface ModuleRuntimeMethods {
     returnType: R,
     argTypes: I,
     args: NamesToType<I>,
-    opts?: CCallOpts
+    opts?: CCallOpts,
   ) => NameToType<R>;
 
   setValue(ptr: number, value: any, type: CTypeName, noSafe?: boolean): void;
@@ -319,7 +319,7 @@ export interface ModuleRuntimeMethods {
     slab: number[] | ArrayBufferView | number,
     types: CTypeName | CTypeName[],
     allocator: number,
-    ptr?: number
+    ptr?: number,
   ): number;
 
   stackAlloc(size: number): number;
@@ -343,7 +343,7 @@ export interface ModuleRuntimeMethods {
   intArrayFromString(
     stringy: string,
     dontAddNull?: boolean,
-    length?: number
+    length?: number,
   ): number[];
   intArrayToString(array: number[]): string;
   writeStringToMemory(str: string, buffer: number, dontAddNull: boolean): void;
@@ -370,7 +370,7 @@ export type CWrap = <I extends readonly JSTypeName[], R extends JSTypeName>(
   ident: string,
   returnType: R,
   argTypes: I,
-  opts?: CCallOpts
+  opts?: CCallOpts,
 ) => CWrappedFunc<I, R>;
 
 /**
@@ -378,7 +378,7 @@ export type CWrap = <I extends readonly JSTypeName[], R extends JSTypeName>(
  */
 export type CWrappedFunc<
   I extends readonly JSTypeName[],
-  R extends JSTypeName
+  R extends JSTypeName,
 > = (...args: NamesToType<I>) => NameToType<R>;
 
 /**
@@ -389,5 +389,5 @@ export type CCall = <I extends readonly JSTypeName[], R extends JSTypeName>(
   returnType: R,
   argTypes: I,
   args: NamesToType<I>,
-  opts?: CCallOpts
+  opts?: CCallOpts,
 ) => NameToType<R>;

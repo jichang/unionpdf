@@ -16,7 +16,7 @@ export function isScrollableElem(elem: HTMLElement) {
  * @returns closest scrollable container
  */
 export function findScollableContainer(
-  elem: HTMLElement
+  elem: HTMLElement,
 ): HTMLElement | Window {
   if (isScrollableElem(elem)) {
     return elem;
@@ -36,7 +36,7 @@ export function findScollableContainer(
 
 export function calculateScrollOffset(
   from: HTMLElement,
-  to: HTMLElement | Window
+  to: HTMLElement | Window,
 ) {
   if (to === window) {
     const rect = from.getBoundingClientRect();

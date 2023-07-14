@@ -43,7 +43,7 @@ describe('PdfPageEditorLayer', () => {
             <PdfPages pageGap={8} pageLayers={[PdfPageEditorLayer]} />
           </PdfDocument>
         </PdfEngineContextProvider>
-      </PdfApplicationContextProvider>
+      </PdfApplicationContextProvider>,
     );
 
     act(() => {
@@ -55,7 +55,7 @@ describe('PdfPageEditorLayer', () => {
     });
 
     expect(
-      document.querySelectorAll('.pdf__page__layer--editor').length
+      document.querySelectorAll('.pdf__page__layer--editor').length,
     ).toEqual(10);
 
     result.unmount();

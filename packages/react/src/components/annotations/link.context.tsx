@@ -4,12 +4,12 @@ import { PdfLinkAnnoObject } from '@unionpdf/models';
 export interface PdfLinkAnnoContextValue {
   onClick?: (
     evt: React.MouseEvent<HTMLAnchorElement>,
-    link: PdfLinkAnnoObject
+    link: PdfLinkAnnoObject,
   ) => void;
 }
 
 export const PdfLinkAnnoContext = React.createContext<PdfLinkAnnoContextValue>(
-  {}
+  {},
 );
 
 export interface PdfLinkAnnoContextProviderProps
@@ -18,7 +18,7 @@ export interface PdfLinkAnnoContextProviderProps
 }
 
 export function PdfLinkAnnoContextProvider(
-  props: PdfLinkAnnoContextProviderProps
+  props: PdfLinkAnnoContextProviderProps,
 ) {
   const { children, onClick } = props;
 
