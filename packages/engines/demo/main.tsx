@@ -6,8 +6,7 @@ import {
   PdfDocumentObject,
   TaskBase,
 } from '@unionpdf/models';
-import { createPdfiumModule, PdfiumEngine } from '../src/index';
-
+import { createPdfiumModule, WebWorkerEngine } from '../src/index';
 import { pdfiumWasm } from '../src/index';
 
 async function loadWasmBinary() {
@@ -32,9 +31,11 @@ function logError(error: Error) {
 }
 
 async function run() {
-  const wasmBinary = await loadWasmBinary();
-  const wasmModule = await createPdfiumModule({ wasmBinary });
-  const engine = new PdfiumEngine(wasmModule, new ConsoleLogger());
+  const logger = new ConsoleLogger();
+  const worker = new Worker(new URL('./webworker.ts', import.meta.url), {
+    type: 'module',
+  });
+  const engine = new WebWorkerEngine(worker, logger);
 
   engine.initialize();
 

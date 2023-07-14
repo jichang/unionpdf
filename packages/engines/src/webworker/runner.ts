@@ -160,12 +160,50 @@ export class EngineRunner {
   constructor(public logger: Logger = new NoopLogger()) {}
 
   /**
+   * Listening on post message
+   */
+  listen() {
+    self.onmessage = (evt: MessageEvent<Request>) => {
+      return this.handle(evt);
+    };
+  }
+
+  /**
+   * Handle post message
+   */
+  handle(evt: MessageEvent<Request>) {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'webworker receive message event: ',
+      evt.data
+    );
+    try {
+      const request = evt.data as Request;
+      switch (request.type) {
+        case 'ExecuteRequest':
+          this.execute(request);
+          break;
+      }
+    } catch (e) {
+      this.logger.info(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        'webworker met error when processing message event:',
+        e
+      );
+    }
+  }
+
+  /**
    * Send the ready response when pdf engine is ready
    * @returns
    *
    * @protected
    */
   ready() {
+    this.listen();
+
     this.respond({
       id: '0',
       type: 'ReadyResponse',
@@ -328,41 +366,4 @@ export class EngineRunner {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner respond: ', response);
     self.postMessage(response);
   }
-}
-
-/**
- * Create a handler of webworker post message
- * @param runner - engine runner that will handle the message by calling pdf engine
- * @param logger - logger instance
- * @returns
- *
- * @public
- */
-export function handler(
-  runner: EngineRunner,
-  logger: Logger = new NoopLogger()
-) {
-  return (evt: MessageEvent<Request>) => {
-    logger.debug(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      'webworker receive message event: ',
-      evt.data
-    );
-    try {
-      const request = evt.data as Request;
-      switch (request.type) {
-        case 'ExecuteRequest':
-          runner.execute(request);
-          break;
-      }
-    } catch (e) {
-      logger.info(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        'webworker met error when processing message event:',
-        e
-      );
-    }
-  };
 }

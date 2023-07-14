@@ -16,26 +16,26 @@ UnionPDF contains several packages for displaying PDF files in browser
 git clone https://github.com/jichang/unionpdf.git
 ```
 
-2. bootstrap
+2. install dependencies
 
 ```
-lerna bootstrap
+npm install
 ```
 
 3. build
 
 ```
-lerna run build
+npm run build
 ```
 
 3. type checking
 
 ```
-lerna run typecheck
+npm run typecheck
 ```
 
 4. test
 
 ```
-lerna run test
+npm run test
 ```
