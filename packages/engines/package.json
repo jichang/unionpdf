@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/engines",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -15,9 +15,9 @@
       "import": "./dist/esm/index.mjs",
       "require": "./dist/cjs/index.js"
     },
-    "./wasm": {
-      "import": "./dist/wasm",
-      "require": "./dist/wasm"
+    "./wasm/*": {
+      "import": "./dist/wasm/*",
+      "require": "./dist/wasm/*"
     }
   },
   "scripts": {
