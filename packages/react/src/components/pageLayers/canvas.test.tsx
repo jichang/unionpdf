@@ -11,7 +11,7 @@ import { PdfPageCanvasLayer } from './canvas';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
-import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { intersectionObserver } from '../../mocks/intersectionObserver';
 
 describe('PdfPageCanvasLayer', () => {
   test('should render pdf canvas', async () => {

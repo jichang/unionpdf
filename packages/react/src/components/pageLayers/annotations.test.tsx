@@ -11,7 +11,7 @@ import { PdfPageAnnotationsLayer } from './annotations';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
-import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { intersectionObserver } from '../../mocks/intersectionObserver';
 import { PdfPageAnnotationComponentContextProvider } from '../common';
 
 describe('PdfPageAnnotationsLayer', () => {

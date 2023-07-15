@@ -1,4 +1,5 @@
-import { pdfiumWasm, PdfiumEngineRunner } from '@unionpdf/engines';
+import { PdfiumEngineRunner } from '@unionpdf/engines';
+import pdfiumWasm from '@unionpdf/engines/wasm/pdfium.wasm';
 
 async function init() {
   const response = await fetch(pdfiumWasm);

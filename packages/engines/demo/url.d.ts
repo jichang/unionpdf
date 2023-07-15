@@ -1,4 +1,4 @@
-declare module 'url:./webworker' {
+declare module '*.wasm' {
   const url: string;
   export = url;
 }

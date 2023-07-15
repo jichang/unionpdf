@@ -11,7 +11,7 @@ import { PdfPageTextLayer } from './text';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
-import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { intersectionObserver } from '../../mocks/intersectionObserver';
 
 describe('PdfPageTextLayer', () => {
   test('should render pdf text', async () => {

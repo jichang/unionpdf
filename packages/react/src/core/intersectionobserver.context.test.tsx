@@ -6,7 +6,7 @@ import {
 } from './intersectionobserver.context';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
-import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { intersectionObserver } from '../mocks/intersectionObserver';
 import { IntersectionObserverEntry } from './intersectionobserver.entry';
 
 describe('IntersectionObserverContextProvider ', () => {

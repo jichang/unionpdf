@@ -1,4 +1,4 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
@@ -6,5 +6,6 @@ module.exports = {
   transform: {
     '.+\\.(css|styl|less|sass|scss)$': 'jest-css-modules-transform',
   },
+  transformIgnorePatterns: ['node_modules/(?!(fetch-blob|node-fetch)/)'],
   rootDir: './src',
 };

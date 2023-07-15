@@ -10,7 +10,7 @@ import { PdfThumbnails } from './thumbnails';
 import { PdfDocumentObject, PdfEngineError, TaskBase } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
-import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { intersectionObserver } from '../../mocks/intersectionObserver';
 import {
   PdfTestingAdapterProvider,
   testingMemoryPdfApplicationConfigurationProvider,

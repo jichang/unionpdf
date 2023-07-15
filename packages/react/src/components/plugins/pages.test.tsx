@@ -10,8 +10,8 @@ import { PdfPages } from './pages';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
-import { intersectionObserver } from '@shopify/jest-dom-mocks';
 import { PdfPageLayerComponentProps } from '../pageLayers';
+import { intersectionObserver } from '../../mocks/intersectionObserver';
 
 function PdfPageNumber(props: PdfPageLayerComponentProps) {
   const { page } = props;

@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { intersectionObserver } from '@shopify/jest-dom-mocks';
+import { intersectionObserver } from '../mocks/intersectionObserver';
 import { IntersectionObserverEntry } from './intersectionobserver.entry';
 
 describe('IntersectionObserverEntry', () => {

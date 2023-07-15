@@ -21,5 +21,8 @@
     "publish": "npm run publish --workspaces --if-present",
     "format": "prettier --write .",
     "prepare": "husky install"
+  },
+  "overrides": {
+    "lmdb": "2.6.0"
   }
 }
