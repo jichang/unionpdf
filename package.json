@@ -24,5 +24,8 @@
   },
   "overrides": {
     "lmdb": "2.6.0"
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
   }
 }

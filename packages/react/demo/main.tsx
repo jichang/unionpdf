@@ -49,7 +49,7 @@ import {
 import { PdfiumErrorCode, WebWorkerEngine } from '@unionpdf/engines';
 import { PdfiumEngine } from '@unionpdf/engines';
 import { createPdfiumModule } from '@unionpdf/engines';
-import pdfiumWasm from '@unionpdf/engines/wasm/pdfium.wasm';
+import pdfiumWasm from 'url:@unionpdf/engines/wasm/pdfium.wasm';
 import {
   Toolbar,
   ToolbarItemGroup,
