@@ -6,6 +6,10 @@ import {
   PdfImageObject,
   PdfFormObject,
   PdfPathObject,
+  PdfSegmentObject,
+  Rect,
+  Position,
+  PdfTransformMatrix,
 } from '@unionpdf/models';
 import { PdfPageAnnotationProps } from '../common';
 import './stamp.css';
@@ -44,7 +48,7 @@ export function PdfPageStampAnnotation(props: PdfPageStampAnnotationProps) {
         ctx?.clearRect(0, 0, size.width, size.height);
 
         for (const content of annotation.contents) {
-          renderObject(ctx, content);
+          renderObject(ctx, content, annotation.rect);
         }
       }
     }
@@ -58,11 +62,12 @@ export function PdfPageStampAnnotation(props: PdfPageStampAnnotationProps) {
 export function renderObject(
   ctx: CanvasRenderingContext2D,
   object: PdfImageObject | PdfFormObject | PdfPathObject,
+  rect: Rect,
 ) {
   switch (object.type) {
     case PdfPageObjectType.FORM:
       for (const subObject of object.objects) {
-        renderObject(ctx, subObject);
+        renderObject(ctx, subObject, rect);
       }
       break;
     case PdfPageObjectType.IMAGE:
@@ -71,17 +76,25 @@ export function renderObject(
     case PdfPageObjectType.PATH:
       {
         ctx.beginPath();
+
+        const matrix = object.matrix;
         const segmentCount = object.segments.length;
         let i = 0;
         while (i < segmentCount) {
           const segment = object.segments[i];
           switch (segment.type) {
             case PdfSegmentObjectType.MOVETO:
-              ctx.moveTo(segment.point.x, segment.point.y);
+              {
+                const point = transform(segment.point, matrix, rect);
+                ctx.moveTo(point.x, point.y);
+              }
               i++;
               break;
             case PdfSegmentObjectType.LINETO:
-              ctx.lineTo(segment.point.x, segment.point.y);
+              {
+                const point = transform(segment.point, matrix, rect);
+                ctx.lineTo(point.x, point.y);
+              }
               i++;
               break;
             case PdfSegmentObjectType.BEZIERTO:
@@ -89,13 +102,16 @@ export function renderObject(
                 return segment.point;
               });
               if (points.length === 3) {
+                const point0 = transform(points[0], matrix, rect);
+                const point1 = transform(points[1], matrix, rect);
+                const point2 = transform(points[2], matrix, rect);
                 ctx.bezierCurveTo(
-                  points[0].x,
-                  points[0].y,
-                  points[1].x,
-                  points[1].y,
-                  points[2].x,
-                  points[2].y,
+                  point0.x,
+                  point0.y,
+                  point1.x,
+                  point1.y,
+                  point2.x,
+                  point2.y,
                 );
               }
               i = i + 3;
@@ -108,4 +124,15 @@ export function renderObject(
       }
       break;
   }
+}
+
+export function transform(
+  point: Position,
+  matrix: PdfTransformMatrix,
+  rect: Rect,
+) {
+  return {
+    x: (point.x + matrix.e) * matrix.a,
+    y: rect.size.height - (point.y + matrix.f) * matrix.d,
+  };
 }

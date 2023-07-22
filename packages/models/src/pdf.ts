@@ -775,6 +775,25 @@ export interface PdfHighlightAnnoObject extends PdfAnnotationObjectBase {
 }
 
 /**
+ * Matrix for transformation, in the form [a b c d e f], equivalent to:
+ * | a  b  0 |
+ * | c  d  0 |
+ * | e  f  1 |
+ *
+ * Translation is performed with [1 0 0 1 tx ty].
+ * Scaling is performed with [sx 0 0 sy 0 0].
+ * See PDF Reference 1.7, 4.2.2 Common Transformations for more.
+ */
+export interface PdfTransformMatrix {
+  a: number;
+  b: number;
+  c: number;
+  d: number;
+  e: number;
+  f: number;
+}
+
+/**
  * type of segment type in pdf path object
  *
  * @public
@@ -818,6 +837,10 @@ export interface PdfPathObject {
    * segments of the path
    */
   segments: PdfSegmentObject[];
+  /**
+   * transform matrix
+   */
+  matrix: PdfTransformMatrix;
 }
 
 /**
@@ -831,6 +854,10 @@ export interface PdfImageObject {
    * data of the image
    */
   imageData: ImageData;
+  /**
+   * transform matrix
+   */
+  matrix: PdfTransformMatrix;
 }
 
 /**
@@ -844,6 +871,10 @@ export interface PdfFormObject {
    * objects that in this form object
    */
   objects: (PdfImageObject | PdfPathObject | PdfFormObject)[];
+  /**
+   * transform matrix
+   */
+  matrix: PdfTransformMatrix;
 }
 
 /**

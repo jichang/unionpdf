@@ -63,6 +63,7 @@ import {
   PdfHighlightAnnoObject,
   PdfStampAnnoObjectContents,
   PdfWidgetAnnoField,
+  PdfTransformMatrix,
 } from '@unionpdf/models';
 import { WrappedModule, wrap } from './wrapper';
 import { readArrayBuffer, readString } from './helper';
@@ -154,6 +155,7 @@ export const wrappedModuleMethods = {
   FPDFBitmap_Destroy: [['number'] as const, ''] as const,
   FPDFPageObj_Destroy: [['number'] as const, ''] as const,
   FPDFPageObj_NewImageObj: [['number'] as const, 'number'] as const,
+  FPDFPageObj_GetMatrix: [['number', 'number'] as const, 'boolean'] as const,
   FPDFPageObj_SetMatrix: [['number', 'number'] as const, 'boolean'] as const,
   FPDFPageObj_GetBounds: [
     ['number', 'number', 'number', 'number', 'number'] as const,
@@ -3395,21 +3397,21 @@ export class PdfiumEngine implements PdfEngine {
 
   /**
    * Read pdf path object
-   * @param pageObjectPtr  - pointer to pdf path object in page
+   * @param pathObjectPtr  - pointer to pdf path object in page
    * @returns pdf path object
    *
    * @private
    */
-  private readPathObject(pageObjectPtr: number): PdfPathObject {
+  private readPathObject(pathObjectPtr: number): PdfPathObject {
     const segmentCount =
-      this.wasmModuleWrapper.FPDFPath_CountSegments(pageObjectPtr);
+      this.wasmModuleWrapper.FPDFPath_CountSegments(pathObjectPtr);
 
     const leftPtr = this.malloc(4);
     const bottomPtr = this.malloc(4);
     const rightPtr = this.malloc(4);
     const topPtr = this.malloc(4);
     this.wasmModuleWrapper.FPDFPageObj_GetBounds(
-      pageObjectPtr,
+      pathObjectPtr,
       leftPtr,
       bottomPtr,
       rightPtr,
@@ -3426,14 +3428,17 @@ export class PdfiumEngine implements PdfEngine {
     this.free(topPtr);
     const segments: PdfSegmentObject[] = [];
     for (let i = 0; i < segmentCount; i++) {
-      const segment = this.readPdfSegment(pageObjectPtr, i);
+      const segment = this.readPdfSegment(pathObjectPtr, i);
       segments.push(segment);
     }
+
+    const matrix = this.readPdfPageObjectTransformMatrix(pathObjectPtr);
 
     return {
       type: PdfPageObjectType.PATH,
       bounds,
       segments,
+      matrix,
     };
   }
 
@@ -3523,10 +3528,12 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     const imageData = new ImageData(array, bitmapWidth, bitmapHeight);
+    const matrix = this.readPdfPageObjectTransformMatrix(imageObjectPtr);
 
     return {
       type: PdfPageObjectType.IMAGE,
       imageData,
+      matrix,
     };
   }
 
@@ -3551,11 +3558,43 @@ export class PdfiumEngine implements PdfEngine {
         objects.push(pageObj);
       }
     }
+    const matrix = this.readPdfPageObjectTransformMatrix(formObjectPtr);
 
     return {
       type: PdfPageObjectType.FORM,
       objects,
+      matrix,
     };
+  }
+
+  /**
+   * Read pdf object in pdf page
+   * @param pageObjectPtr  - pointer to pdf object in page
+   * @returns pdf object in page
+   *
+   * @private
+   */
+  private readPdfPageObjectTransformMatrix(
+    pageObjectPtr: number,
+  ): PdfTransformMatrix {
+    const matrixPtr = this.malloc(4 * 6);
+    if (
+      this.wasmModuleWrapper.FPDFPageObj_GetMatrix(pageObjectPtr, matrixPtr)
+    ) {
+      const a = this.wasmModule.getValue(matrixPtr, 'float');
+      const b = this.wasmModule.getValue(matrixPtr + 4, 'float');
+      const c = this.wasmModule.getValue(matrixPtr + 8, 'float');
+      const d = this.wasmModule.getValue(matrixPtr + 12, 'float');
+      const e = this.wasmModule.getValue(matrixPtr + 16, 'float');
+      const f = this.wasmModule.getValue(matrixPtr + 20, 'float');
+      this.free(matrixPtr);
+
+      return { a, b, c, d, e, f };
+    }
+
+    this.free(matrixPtr);
+
+    return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
   }
 
   /**
