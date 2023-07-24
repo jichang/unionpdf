@@ -2,7 +2,7 @@ import { ignore, PdfPageObject } from '@unionpdf/models';
 import React, { useCallback, useState } from 'react';
 import { usePdfDocument, usePdfEngine } from '../../core';
 import { useUIComponents, useUIStrings } from '../../adapters';
-import { PdfThumbnails } from '../plugins/thumbnails';
+import { PdfThumbnailsContent } from '../plugins/thumbnails';
 import './extractor.css';
 
 /**
@@ -65,7 +65,7 @@ export function PdfEditorExtractor() {
 
   return (
     <div className="pdf__editor__extractor">
-      <PdfThumbnails
+      <PdfThumbnailsContent
         layout={{ direction: 'vertical', itemsCount: 4 }}
         size={{ width: 50, height: 50 }}
         scaleFactor={0.25}

@@ -71,7 +71,10 @@ export function renderObject(
       }
       break;
     case PdfPageObjectType.IMAGE:
-      ctx.putImageData(object.imageData, 0, 0);
+      {
+        const matrix = object.matrix;
+        ctx.putImageData(object.imageData, 0, 0, 0, 0, matrix.a, matrix.d);
+      }
       break;
     case PdfPageObjectType.PATH:
       {
