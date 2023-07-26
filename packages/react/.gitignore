@@ -4,3 +4,5 @@ demo/**/*.js
 dist
 .parcel-cache
 temp
+playwright-report
+test-results

@@ -18,6 +18,7 @@
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
+    "e2e": "npm run e2e --workspaces --if-present",
     "publish": "npm run build && npm publish --workspaces --if-present",
     "format": "prettier --write .",
     "prepare": "husky install"
