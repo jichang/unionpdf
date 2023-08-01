@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/models",
-  "version": "0.20.3",
+  "version": "0.20.4",
   "private": false,
   "publishConfig": {
     "access": "public"
