@@ -298,7 +298,7 @@ export class WebWorkerEngine implements PdfEngine {
       id: requestId,
       type: 'ExecuteRequest',
       data: {
-        name: 'getBookmarks',
+        name: 'getSignatures',
         args: [doc],
       },
     };

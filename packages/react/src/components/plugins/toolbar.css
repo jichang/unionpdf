@@ -1,3 +1,15 @@
 .pdf__toolbar__item__group {
   display: flex;
 }
+
+.pdf__toolbar__item__group--left {
+  justify-content: left;
+}
+
+.pdf__toolbar__item__group--center {
+  justify-content: center;
+}
+
+.pdf__toolbar__item__group--right {
+  justify-content: right;
+}
