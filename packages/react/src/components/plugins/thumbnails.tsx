@@ -118,7 +118,10 @@ export function PdfThumbnailsContent(props: PdfThumbnailsProps) {
   }
 
   return (
-    <div className="pdf__thumbnails">
+    <div
+      className="pdf__thumbnails"
+      data-testid="pdf__plugin__thumbnails__content"
+    >
       <IntersectionObserverContextProvider
         className={`pdf__thumbnails__grid pdf__thumbnails__grid--${layout.direction}`}
         style={

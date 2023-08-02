@@ -56,7 +56,7 @@ export function PdfMetadataContent(props: PdfMetadataProps) {
   }, [engine, doc]);
 
   return (
-    <div className="pdf__metadata">
+    <div className="pdf__metadata" date-testid="pdf__plugin__metadata__content">
       <table>
         <tbody>
           <tr>

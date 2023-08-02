@@ -4,3 +4,7 @@ dist
 pdfium.js
 docs
 temp
+logs
+playwright-report
+screenshots
+test-results

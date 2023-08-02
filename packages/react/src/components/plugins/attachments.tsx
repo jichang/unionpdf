@@ -62,7 +62,11 @@ export function PdfAttachmentsContent(props: PdfAttachmentsProps) {
   const strings = useUIStrings();
 
   return (
-    <div className={classNames('pdf__attachments', className)} {...rest}>
+    <div
+      data-testid="pdf__plugin__attachments__content"
+      className={classNames('pdf__attachments', className)}
+      {...rest}
+    >
       <table>
         <thead>
           <tr>

@@ -85,16 +85,19 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
   return (
     <ErrorBoundary source={PDF_NAVIGATOR_SOURCE_PAGES_TOOLBAR} logger={logger}>
       <ToolbarItemGroup
+        date-testid="pdf__toolbar__plugin__pages__group"
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
         <Select
+          data-testid="pdf__toolbar__pages__rotation"
           className="pdf__toolbar__select pdf__toolbar__select--rotation"
           value={rotation}
           onChange={changeRotation}
           options={rotationOptions}
         />
         <Input
+          data-testid="pdf__toolbar__pages__scale__factor"
           className="pdf__toolbar__input pdf__toolbar__input--scalefactor"
           type="number"
           min="0.25"
@@ -104,6 +107,7 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
           onChange={changeScaleFactor}
         />
         <Input
+          data-testid="pdf__toolbar__pages__navigation"
           className="pdf__toolbar__input pdf__toolbar__input--page"
           value={currPageIndex + 1}
           min="1"

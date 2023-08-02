@@ -219,7 +219,7 @@ export function Dialog(props: DialogProps) {
         <>
           <header className="pdf__ui__dialog__header">
             <h2 className="pdf__ui__dialog__header__title">{title}</h2>
-            <Button onClick={onClose}>
+            <Button onClick={onClose} data-testid="pdf__ui__dialog__close__btn">
               <Icon name="Close" />
             </Button>
           </header>

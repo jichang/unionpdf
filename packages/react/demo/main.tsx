@@ -281,10 +281,18 @@ function App(props: AppProps) {
         </LoggerContextProvider>
         {file === null && !isMergerOpened ? (
           <div>
-            <Button type="button" onClick={toggleIsMergerOpened}>
+            <Button
+              type="button"
+              date-testid="demo-app-merge-files-btn"
+              onClick={toggleIsMergerOpened}
+            >
               Merge Files
             </Button>
-            <Input type="file" onChange={selectFile} />
+            <Input
+              type="file"
+              data-testid="demo-app-select-file-btn"
+              onChange={selectFile}
+            />
           </div>
         ) : null}
         {isPasswordOpened ? (

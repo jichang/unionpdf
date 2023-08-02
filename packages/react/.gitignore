@@ -6,3 +6,5 @@ dist
 temp
 playwright-report
 test-results
+logs
+screenshots

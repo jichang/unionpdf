@@ -75,7 +75,12 @@ export function PdfPluginDialog(props: PdfPluginDialogProps) {
   }, [pluginKey, hidePlugin]);
 
   return (
-    <Dialog title={title} isOpened={configuration.isVisible} onClose={close}>
+    <Dialog
+      data-testid={`pdf__plugin__dialog__${pluginKey}`}
+      title={title}
+      isOpened={configuration.isVisible}
+      onClose={close}
+    >
       {children}
     </Dialog>
   );

@@ -68,7 +68,11 @@ export function PdfSignaturesContent(props: PdfSignaturesProps) {
   const strings = useUIStrings();
 
   return (
-    <div className={classNames('pdf__signatures', className)} {...rest}>
+    <div
+      data-testid="pdf__plugin__signatures__content"
+      className={classNames('pdf__signatures', className)}
+      {...rest}
+    >
       <table>
         <tbody>
           {signatures.map((signature, index) => {

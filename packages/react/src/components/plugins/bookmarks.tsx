@@ -96,7 +96,10 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
   );
 
   return (
-    <div className="pdf__bookmarks">
+    <div
+      className="pdf__bookmarks"
+      data-testid="pdf__plugin__bookmarks__content"
+    >
       {bookmarks.bookmarks.length === 0 ? (
         <p>{strings.noBookmarks}</p>
       ) : (

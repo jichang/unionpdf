@@ -42,7 +42,7 @@ export function PdfToolbar(props: PdfToolbarProps) {
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Toolbar}>
-      <Toolbar className="pdf__toolbar" {...rest}>
+      <Toolbar date-testid="pdf__toolbar" className="pdf__toolbar" {...rest}>
         {mode === PdfApplicationMode.View ? (
           <PdfToolbarPluginItemGroup className="pdf__toolbar__item__group--left">
             {pluginItems}
@@ -87,6 +87,7 @@ export function PdfToolbarPluginItemGroup(
   return (
     <ErrorBoundary source="PdfToolbarPluginItemGroup" logger={logger}>
       <ToolbarItemGroup
+        date-testid="pdf__toolbar__plugin__item__group"
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
@@ -152,7 +153,11 @@ export function PdfToolbarPluginItem(props: PdfToolbarPluginItemProps) {
     return null;
   }
 
-  return <Button onClick={toggle}>{text}</Button>;
+  return (
+    <Button data-testid={`toolbar-item-plugin-${pluginKey}`} onClick={toggle}>
+      {text}
+    </Button>
+  );
 }
 
 /**
@@ -182,11 +187,14 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
   return (
     <ErrorBoundary source="PdfToolbarFileItemGroup" logger={logger}>
       <ToolbarItemGroup
+        date-testid="pdf__toolbar__plugin__file__group"
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
         {enableEdit ? (
-          <Button onClick={handleEdit}>{strings.edit}</Button>
+          <Button data-testid="toolbar-item-edit" onClick={handleEdit}>
+            {strings.edit}
+          </Button>
         ) : null}
         <PdfToolbarPluginItem
           pluginKey={PdfApplicatinPluginKey.Downloader}

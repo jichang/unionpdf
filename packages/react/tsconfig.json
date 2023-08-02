@@ -32,7 +32,8 @@
     // "paths": {},                                      /* Specify a set of bookmarks that re-map imports to additional lookup locations. */
     "rootDirs": [
       "./demo",
-      "./src"
+      "./src",
+      "./tests"
     ] /* Allow multiple folders to be treated as one when resolving modules. */,
     // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
     // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
