@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import { ComponentProps } from 'react';
-import './searchpanel.css';
+import './search.css';
 import classNames from 'classnames';
 import { ignore, MatchFlag, PdfZoomMode } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
@@ -15,45 +15,45 @@ import { useUIComponents, useUIStrings } from '../../adapters';
 import {
   PdfApplicatinPluginKey,
   PdfPlugin,
-  PdfPluginDialog,
+  PdfPluginPanel,
   usePdfNavigator,
 } from '../../core';
 
 /**
- * Properties of PdfSearchPanel
+ * Properties of PdfSearch
  */
-export interface PdfSearchPanelProps extends ComponentProps<'div'> {}
+export interface PdfSearchProps extends ComponentProps<'div'> {}
 
-export const PDF_NAVIGATOR_SOURCE_SEARCH_PANEL = 'PdfSearchPanel';
+export const PDF_NAVIGATOR_SOURCE_SEARCH = 'PdfSearch';
 
 /**
  * Plugin used to searching in pdf
- * @param props - properties of PdfSearchPanel
+ * @param props - properties of PdfSearch
  * @returns
  */
-export function PdfSearchPanel(props: PdfSearchPanelProps) {
+export function PdfSearch(props: PdfSearchProps) {
   const strings = useUIStrings();
 
   return (
-    <PdfPlugin pluginKey={PdfApplicatinPluginKey.SearchPanel}>
-      <PdfPluginDialog
-        pluginKey={PdfApplicatinPluginKey.SearchPanel}
+    <PdfPlugin pluginKey={PdfApplicatinPluginKey.Search}>
+      <PdfPluginPanel
+        pluginKey={PdfApplicatinPluginKey.Search}
         title={strings.search}
       >
-        <PdfSearchPanelContent {...props} />
-      </PdfPluginDialog>
+        <PdfSearchContent {...props} />
+      </PdfPluginPanel>
     </PdfPlugin>
   );
 }
 
 /**
- * Content of PdfSearchPanel
- * @param props - properties of PdfSearchPanelContent
+ * Content of PdfSearch
+ * @param props - properties of PdfSearchContent
  * @returns
  *
  * @public
  */
-export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
+export function PdfSearchContent(props: PdfSearchProps) {
   const { className, children, ...rest } = props;
 
   const engine = usePdfEngine();
@@ -114,7 +114,7 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
                   view: [],
                 },
               },
-              PDF_NAVIGATOR_SOURCE_SEARCH_PANEL,
+              PDF_NAVIGATOR_SOURCE_SEARCH,
             );
           }
         }, ignore);
@@ -149,39 +149,37 @@ export function PdfSearchPanelContent(props: PdfSearchPanelProps) {
   const strings = useUIStrings();
 
   return (
-    <div className={classNames('pdf__search__panel', className)} {...rest}>
+    <div className={classNames('pdf__search', className)} {...rest}>
       <Form onSubmit={search}>
         <Input onChange={updateKeyword} />
         <div>
           <Checkbox
-            id="pdf__searchpanel__matchcase"
+            id="pdf__search__matchcase"
             value={MatchFlag.MatchCase}
             checked={flags.includes(MatchFlag.MatchCase)}
             onChange={toggleFlag}
           />
-          <Label htmlFor="pdf__searchpanel__matchcase">
-            {strings.matchCase}
-          </Label>
+          <Label htmlFor="pdf__search__matchcase">{strings.matchCase}</Label>
         </div>
         <div>
           <Checkbox
-            id="pdf__searchpanel__matchwholeword"
+            id="pdf__search__matchwholeword"
             value={MatchFlag.MatchWholeWord}
             checked={flags.includes(MatchFlag.MatchWholeWord)}
             onChange={toggleFlag}
           />
-          <Label htmlFor="pdf__searchpanel__matchwholeword">
+          <Label htmlFor="pdf__search__matchwholeword">
             {strings.matchWholeWord}
           </Label>
         </div>
         <div>
           <Checkbox
-            id="pdf__searchpanel__matchsecutive"
+            id="pdf__search__matchsecutive"
             value={MatchFlag.MatchConsecutive}
             checked={flags.includes(MatchFlag.MatchConsecutive)}
             onChange={toggleFlag}
           />
-          <Label htmlFor="pdf__searchpanel__matchconsecutive">
+          <Label htmlFor="pdf__search__matchconsecutive">
             {strings.matchConsecutive}
           </Label>
         </div>

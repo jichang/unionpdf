@@ -27,8 +27,8 @@
     "prebuild": "npm run clean",
     "build": "parcel build",
     "postbuild": "npm run copy-types && npm run copy-files",
-    "copy-types": "cpy ./src/pdfium/*.d.ts ./dist/types --no-overwriten --flat ",
-    "copy-files": "cpy ./src/pdfium/pdfium.wasm ./dist/wasm --no-overwriten --flat",
+    "copy-types": "cpy ./src/pdfium/*.d.ts ./dist/types --flat ",
+    "copy-files": "cpy ./src/pdfium/pdfium.wasm ./dist/wasm --flat",
     "clean": "del-cli --force dist .parcel-cache",
     "test": "jest"
   },

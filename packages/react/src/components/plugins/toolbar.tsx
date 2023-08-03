@@ -112,7 +112,7 @@ export function PdfToolbarPluginItemGroup(
           text={strings.signatures}
         />
         <PdfToolbarPluginItem
-          pluginKey={PdfApplicatinPluginKey.SearchPanel}
+          pluginKey={PdfApplicatinPluginKey.Search}
           text={strings.search}
         />
         {children}

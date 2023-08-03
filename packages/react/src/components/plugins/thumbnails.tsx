@@ -15,7 +15,7 @@ import {
   IntersectionObserverContextProvider,
   PdfApplicatinPluginKey,
   PdfPlugin,
-  PdfPluginDialog,
+  PdfPluginPanel,
   useIntersectionObserver,
 } from '../../core';
 import { IntersectionObserverEntry } from '../../core';
@@ -65,12 +65,12 @@ export function PdfThumbnails(props: PdfThumbnailsProps) {
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Thumbnails}>
-      <PdfPluginDialog
+      <PdfPluginPanel
         pluginKey={PdfApplicatinPluginKey.Thumbnails}
         title={strings.thumbnails}
       >
         <PdfThumbnailsContent {...props} />
-      </PdfPluginDialog>
+      </PdfPluginPanel>
     </PdfPlugin>
   );
 }

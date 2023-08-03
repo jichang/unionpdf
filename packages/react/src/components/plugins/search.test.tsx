@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { act, render } from '@testing-library/react';
-import { PdfSearchPanel } from './searchpanel';
+import { PdfSearch } from './search';
 import {
   createMockPdfDocument,
   createMockPdfEngine,
@@ -11,8 +11,8 @@ import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider, PdfDocument } from '../../core';
 import { PdfTestingAdapterProvider } from '../../adapters/testing';
 
-describe('PdfSearchPanel', () => {
-  it('Toolbar should render div with children', () => {
+describe('PdfSearch', () => {
+  it('should render div with children', () => {
     const pdf = createMockPdfDocument();
     const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
     const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
@@ -33,7 +33,7 @@ describe('PdfSearchPanel', () => {
             onOpenSuccess={jest.fn()}
             onOpenFailure={jest.fn()}
           >
-            <PdfSearchPanel />
+            <PdfSearch />
           </PdfDocument>
         </PdfEngineContextProvider>
       </PdfTestingAdapterProvider>,
@@ -43,9 +43,7 @@ describe('PdfSearchPanel', () => {
       openDocumentTask.resolve(pdf);
     });
 
-    const divElem = document.querySelector(
-      '.pdf__search__panel',
-    ) as HTMLDivElement;
+    const divElem = document.querySelector('.pdf__search') as HTMLDivElement;
     expect(divElem).toBeDefined();
     result.unmount();
   });

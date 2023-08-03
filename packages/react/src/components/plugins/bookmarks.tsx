@@ -5,7 +5,7 @@ import {
   ignore,
 } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
-import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginPanel } from '../../core';
 import './bookmarks.css';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
@@ -29,12 +29,12 @@ export function PdfBookmarks(props: PdfBookmarksProps) {
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Bookmarks}>
-      <PdfPluginDialog
+      <PdfPluginPanel
         pluginKey={PdfApplicatinPluginKey.Bookmarks}
         title={strings.bookmarks}
       >
         <PdfBookmarksContent {...props} />
-      </PdfPluginDialog>
+      </PdfPluginPanel>
     </PdfPlugin>
   );
 }

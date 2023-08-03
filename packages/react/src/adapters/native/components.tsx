@@ -1,4 +1,12 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  ComponentProps,
+  DOMElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import classNames from 'classnames';
 import './components.css';
 import {
@@ -17,7 +25,9 @@ import {
   LinkProps,
   UIComponents,
   IconButtonProps,
+  PanelProps,
 } from '../uicomponents.context';
+import ReactDOM from 'react-dom';
 
 export function Icon(props: IconProps) {
   const { name, className, ...rest } = props;
@@ -230,7 +240,55 @@ export function Dialog(props: DialogProps) {
   );
 }
 
+export interface PanelMountPointContextValue {
+  domElem: HTMLElement | null;
+}
+
+export const PanelMountPointContext =
+  React.createContext<PanelMountPointContextValue>({ domElem: null });
+
+export interface PanelMountPointContextProviderProps {
+  domElem: HTMLElement | null;
+  children: React.ReactNode;
+}
+
+export function PanelMountPointContextProvider(
+  props: PanelMountPointContextProviderProps,
+) {
+  const { domElem, children } = props;
+
+  const value = useMemo(() => {
+    return {
+      domElem,
+    };
+  }, [domElem]);
+
+  return (
+    <PanelMountPointContext.Provider value={value}>
+      {children}
+    </PanelMountPointContext.Provider>
+  );
+}
+
+export function Panel(props: PanelProps) {
+  const { isOpened, title, onClose, className, children, ...rest } = props;
+
+  const { domElem } = useContext(PanelMountPointContext);
+
+  return domElem
+    ? ReactDOM.createPortal(
+        <div className={classNames('pdf__ui__panel', className)} {...rest}>
+          {isOpened ? (
+            <section className="pdf__ui__panel__content">{children}</section>
+          ) : null}
+        </div>,
+        domElem,
+      )
+    : null;
+}
+
 export const components: UIComponents = {
+  Panel,
   Dialog,
   Toolbar,
   ToolbarItemGroup,

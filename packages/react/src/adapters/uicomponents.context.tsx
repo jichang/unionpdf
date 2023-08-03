@@ -8,6 +8,12 @@ export interface DialogProps extends Omit<ComponentProps<'dialog'>, 'open'> {
   onClosed?: () => void;
 }
 
+export interface PanelProps extends ComponentProps<'div'> {
+  isOpened: boolean;
+  onClose: () => void;
+  onClosed?: () => void;
+}
+
 export interface ToolbarProps extends ComponentProps<'div'> {}
 export interface ToolbarItemGroupProps extends ComponentProps<'div'> {}
 
@@ -41,6 +47,7 @@ export type UIComponent<P> =
  * components used in the application
  */
 export interface UIComponents {
+  Panel: UIComponent<PanelProps>;
   Dialog: UIComponent<DialogProps>;
   Toolbar: UIComponent<ToolbarProps>;
   ToolbarItemGroup: UIComponent<ToolbarItemGroupProps>;

@@ -10,6 +10,7 @@ import { PdfEditor } from './editor';
 import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
+import { PdfTestingAdapterProvider } from '../../adapters/testing';
 
 describe('PdfBookmark', () => {
   test('should render pdf bookmark', async () => {
@@ -25,16 +26,18 @@ describe('PdfBookmark', () => {
       }),
     });
     const result = render(
-      <PdfEngineContextProvider engine={engine}>
-        <PdfDocument
-          file={createMockPdfFile()}
-          password=""
-          onOpenSuccess={jest.fn()}
-          onOpenFailure={jest.fn()}
-        >
-          <PdfEditor />
-        </PdfDocument>
-      </PdfEngineContextProvider>,
+      <PdfTestingAdapterProvider>
+        <PdfEngineContextProvider engine={engine}>
+          <PdfDocument
+            file={createMockPdfFile()}
+            password=""
+            onOpenSuccess={jest.fn()}
+            onOpenFailure={jest.fn()}
+          >
+            <PdfEditor />
+          </PdfDocument>
+        </PdfEngineContextProvider>
+      </PdfTestingAdapterProvider>,
     );
 
     act(() => {

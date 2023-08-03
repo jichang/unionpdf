@@ -25,7 +25,11 @@ test('view document', async ({ page }) => {
     )
     .click();
   await page.getByTestId('pdf__plugin__bookmarks__content');
-  await page.getByTestId('pdf__ui__dialog__close__btn').click();
+  await page
+    .getByTestId(
+      `pdf__toolbar__item__plugin__${PdfApplicatinPluginKey.Bookmarks}`,
+    )
+    .click();
 
   await page
     .getByTestId(
@@ -33,7 +37,11 @@ test('view document', async ({ page }) => {
     )
     .click();
   await page.getByTestId('pdf__plugin__thumbnails__content');
-  await page.getByTestId('pdf__ui__dialog__close__btn').click();
+  await page
+    .getByTestId(
+      `pdf__toolbar__item__plugin__${PdfApplicatinPluginKey.Thumbnails}`,
+    )
+    .click();
 
   await page
     .getByTestId(

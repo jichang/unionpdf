@@ -9,6 +9,7 @@ import {
   usePdfApplication,
   usePdfDocument,
   usePdfNavigator,
+  PdfPluginPanel,
 } from '../../core';
 import { PdfEditorExtractor, PdfEditorStamps } from '../editor';
 
@@ -25,7 +26,9 @@ export interface PdfEditorProps {}
 export function PdfEditor(props: PdfEditorProps) {
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Editor}>
-      <PdfEditorContent {...props} />
+      <PdfPluginPanel pluginKey={PdfApplicatinPluginKey.Editor}>
+        <PdfEditorContent {...props} />
+      </PdfPluginPanel>
     </PdfPlugin>
   );
 }

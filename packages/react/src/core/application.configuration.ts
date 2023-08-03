@@ -45,7 +45,7 @@ export enum PdfApplicatinPluginKey {
   Metadata,
   Pages,
   Printer,
-  SearchPanel,
+  Search,
   Signatures,
   Thumbnails,
   Toolbar,
@@ -86,7 +86,7 @@ export const DEFAULT_PLUGIN_CONFIGURATIONS = {
     isEnabled: true,
     isVisible: false,
   },
-  [PdfApplicatinPluginKey.SearchPanel]: {
+  [PdfApplicatinPluginKey.Search]: {
     isEnabled: true,
     isVisible: false,
   },

@@ -85,3 +85,43 @@ export function PdfPluginDialog(props: PdfPluginDialogProps) {
     </Dialog>
   );
 }
+
+/**
+ * Properties of PdfPluginDialog
+ */
+export interface PdfPluginPanelProps extends ComponentProps<'div'> {
+  /**
+   * key of plugin
+   */
+  pluginKey: PdfApplicatinPluginKey;
+}
+
+/**
+ * Pdf plugin panel, it will use configuration in PdfApplicationContext to
+ * maintain visiblity of plugin content
+ * @param props - properties of PdfPluginDialog
+ * @returns
+ *
+ * @public
+ */
+export function PdfPluginPanel(props: PdfPluginPanelProps) {
+  const { pluginKey, children } = props;
+
+  const { Panel } = useUIComponents();
+  const { plugins, hidePlugin } = usePdfApplication();
+  const configuration = plugins[pluginKey];
+
+  const close = useCallback(() => {
+    hidePlugin(pluginKey);
+  }, [pluginKey, hidePlugin]);
+
+  return (
+    <Panel
+      data-testid={`pdf__plugin__panel__${pluginKey}`}
+      isOpened={configuration.isVisible}
+      onClose={close}
+    >
+      {children}
+    </Panel>
+  );
+}

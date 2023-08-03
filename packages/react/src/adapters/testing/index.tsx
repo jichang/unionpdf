@@ -1,7 +1,12 @@
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import { UIStringsContextProvider } from '../uistrings.context';
 import React from 'react';
-import { strings, components } from '../native';
+import {
+  strings,
+  components,
+  PanelMountPointContextProvider,
+  PdfNativeAdapterProvider,
+} from '../native';
 import {
   DialogProps,
   UIComponentsContextProvider,
@@ -9,7 +14,6 @@ import {
 import {
   MemoryPdfApplicationConfigurationProvider,
   PdfApplicatinPluginKey,
-  PdfApplicationMode,
 } from '../../core';
 import { Rotation } from '@unionpdf/models';
 
@@ -28,10 +32,14 @@ export function PdfTestingAdapterProvider(
 ) {
   const { children } = props;
 
+  const panelRef = useRef<HTMLDivElement>(null);
+
   return (
     <UIStringsContextProvider strings={strings}>
       <UIComponentsContextProvider components={{ ...components, Dialog }}>
-        {children}
+        <PanelMountPointContextProvider domElem={document.body}>
+          {children}
+        </PanelMountPointContextProvider>
       </UIComponentsContextProvider>
     </UIStringsContextProvider>
   );
@@ -67,7 +75,7 @@ export const testingMemoryPdfApplicationConfigurationProvider =
       isEnabled: true,
       isVisible: true,
     },
-    [PdfApplicatinPluginKey.SearchPanel]: {
+    [PdfApplicatinPluginKey.Search]: {
       isEnabled: true,
       isVisible: true,
     },

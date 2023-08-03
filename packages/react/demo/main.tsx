@@ -26,7 +26,7 @@ import {
   PdfBookmarks,
   PdfSignatures,
   LoggerContextProvider,
-  PdfSearchPanel,
+  PdfSearch,
   PdfAttachments,
   PdfPageAnnotationComponentContextProvider,
   PdfLinkAnnoContextProvider,
@@ -56,6 +56,7 @@ import {
   Button,
   Input,
   PdfNativeAdapterProvider,
+  PanelMountPointContextProvider,
 } from '../src/adapters/native';
 
 export interface AppProps {
@@ -181,104 +182,118 @@ function App(props: AppProps) {
     setFiles([]);
   }, [setFiles, toggleIsMergerOpened]);
 
+  const panelMountPointElemRef = useRef<HTMLDivElement>(null);
+
   return (
     <PdfNativeAdapterProvider>
       <div className="App">
-        <LoggerContextProvider logger={logger}>
-          <ThemeContextProvider
-            theme={{
-              background: 'blue',
-            }}
-          >
-            <PdfApplicationContextProvider provider={provider}>
-              <PdfEditorStampsContextProvider
-                stamps={stamps}
-                onAddStamp={addStamp}
-                onRemoveStamp={removeStamp}
-              >
-                <PdfEngineContextProvider engine={engine}>
-                  <PdfApplication>
-                    <PdfNavigatorContextProvider>
-                      <PdfDocument
-                        file={file}
-                        password={password}
-                        onOpenSuccess={() => {
-                          setIsPasswordOpened(false);
-                        }}
-                        onOpenFailure={(error: PdfEngineError) => {
-                          if (error.code === PdfiumErrorCode.Password) {
-                            setIsPasswordOpened(true);
-                          }
-                        }}
-                      >
-                        <PdfEditorContextProvider>
-                          <PdfToolbar
-                            fileItems={
-                              <button onClick={closeFile}>Close</button>
+        <div
+          className="pdf__panel__mount__point"
+          ref={panelMountPointElemRef}
+        ></div>
+        <PanelMountPointContextProvider
+          domElem={panelMountPointElemRef.current}
+        >
+          <LoggerContextProvider logger={logger}>
+            <ThemeContextProvider
+              theme={{
+                background: 'blue',
+              }}
+            >
+              <PdfApplicationContextProvider provider={provider}>
+                <PdfEditorStampsContextProvider
+                  stamps={stamps}
+                  onAddStamp={addStamp}
+                  onRemoveStamp={removeStamp}
+                >
+                  <PdfEngineContextProvider engine={engine}>
+                    <PdfApplication>
+                      <PdfNavigatorContextProvider>
+                        <PdfDocument
+                          file={file}
+                          password={password}
+                          onOpenSuccess={() => {
+                            setIsPasswordOpened(false);
+                          }}
+                          onOpenFailure={(error: PdfEngineError) => {
+                            if (error.code === PdfiumErrorCode.Password) {
+                              setIsPasswordOpened(true);
                             }
-                          />
-                          <PdfPageAnnotationComponentContextProvider
-                            component={PdfPageDefaultAnnotation}
-                          >
-                            <PdfLinkAnnoContextProvider
-                              onClick={(evt, annotation) => {
-                                console.log(evt, annotation);
-                              }}
+                          }}
+                        >
+                          <PdfEditorContextProvider>
+                            <PdfToolbar
+                              fileItems={
+                                <button onClick={closeFile}>Close</button>
+                              }
+                            />
+                            <PdfPageAnnotationComponentContextProvider
+                              component={PdfPageDefaultAnnotation}
                             >
-                              <PdfPages
-                                prerenderRange={[-1, 1]}
-                                cacheRange={[-1, 1]}
-                                pageLayers={[
-                                  PdfPageCanvasLayer,
-                                  PdfPageTextLayer,
-                                  PdfPageAnnotationsLayer,
-                                  PdfPageEditorLayer,
-                                ]}
-                              />
-                            </PdfLinkAnnoContextProvider>
-                          </PdfPageAnnotationComponentContextProvider>
-                          <PdfMetadata />
-                          <PdfThumbnails
-                            layout={{
-                              direction: 'vertical',
-                              itemsCount: 2,
-                            }}
-                            size={{ width: 100, height: 100 }}
-                            scaleFactor={0.25}
-                          />
-                          <PdfBookmarks />
-                          <PdfSearchPanel />
-                          <PdfAttachments />
-                          <PdfSignatures />
-                          <PdfDownloader />
-                          <PdfPrinter method={PrinterMethod.Iframe} />
-                          <PdfEditor />
-                        </PdfEditorContextProvider>
-                      </PdfDocument>
-                    </PdfNavigatorContextProvider>
-                  </PdfApplication>
-                  {isMergerOpened ? (
-                    <div>
-                      <Toolbar className="pdf__merger__toolbar">
-                        <ToolbarItemGroup className="pdf__toolbar__item__group--left">
-                          <Input type="file" multiple onChange={selectFiles} />
-                        </ToolbarItemGroup>
-                        <ToolbarItemGroup className="pdf__toolbar__item__group--right">
-                          <Button onClick={exitMerger}>Exit</Button>
-                        </ToolbarItemGroup>
-                      </Toolbar>
-                      <PdfMerger
-                        files={files}
-                        onRemoveFile={removeFile}
-                        onMerged={(mergedFile) => {}}
-                      />
-                    </div>
-                  ) : null}
-                </PdfEngineContextProvider>
-              </PdfEditorStampsContextProvider>
-            </PdfApplicationContextProvider>
-          </ThemeContextProvider>
-        </LoggerContextProvider>
+                              <PdfLinkAnnoContextProvider
+                                onClick={(evt, annotation) => {
+                                  console.log(evt, annotation);
+                                }}
+                              >
+                                <PdfPages
+                                  prerenderRange={[-1, 1]}
+                                  cacheRange={[-1, 1]}
+                                  pageLayers={[
+                                    PdfPageCanvasLayer,
+                                    PdfPageTextLayer,
+                                    PdfPageAnnotationsLayer,
+                                    PdfPageEditorLayer,
+                                  ]}
+                                />
+                              </PdfLinkAnnoContextProvider>
+                            </PdfPageAnnotationComponentContextProvider>
+                            <PdfMetadata />
+                            <PdfThumbnails
+                              layout={{
+                                direction: 'vertical',
+                                itemsCount: 2,
+                              }}
+                              size={{ width: 100, height: 100 }}
+                              scaleFactor={0.25}
+                            />
+                            <PdfBookmarks />
+                            <PdfSearch />
+                            <PdfAttachments />
+                            <PdfSignatures />
+                            <PdfDownloader />
+                            <PdfPrinter method={PrinterMethod.Iframe} />
+                            <PdfEditor />
+                          </PdfEditorContextProvider>
+                        </PdfDocument>
+                      </PdfNavigatorContextProvider>
+                    </PdfApplication>
+                    {isMergerOpened ? (
+                      <div>
+                        <Toolbar className="pdf__merger__toolbar">
+                          <ToolbarItemGroup className="pdf__toolbar__item__group--left">
+                            <Input
+                              type="file"
+                              multiple
+                              onChange={selectFiles}
+                            />
+                          </ToolbarItemGroup>
+                          <ToolbarItemGroup className="pdf__toolbar__item__group--right">
+                            <Button onClick={exitMerger}>Exit</Button>
+                          </ToolbarItemGroup>
+                        </Toolbar>
+                        <PdfMerger
+                          files={files}
+                          onRemoveFile={removeFile}
+                          onMerged={(mergedFile) => {}}
+                        />
+                      </div>
+                    ) : null}
+                  </PdfEngineContextProvider>
+                </PdfEditorStampsContextProvider>
+              </PdfApplicationContextProvider>
+            </ThemeContextProvider>
+          </LoggerContextProvider>
+        </PanelMountPointContextProvider>
         {file === null && !isMergerOpened ? (
           <div>
             <Button

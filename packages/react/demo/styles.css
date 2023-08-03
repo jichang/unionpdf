@@ -10,37 +10,16 @@ body {
   width: 100%;
 }
 
-.app__toolbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 999;
-  padding: 1rem;
-
-  width: 100%;
-
-  background-color: rgba(0, 0, 0, 0.25);
-}
-
-.app__dialog {
-  position: fixed;
-  top: 3rem;
-  left: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 100%;
-}
-
-.app__pdf__thumbnails {
+.pdf__panel__mount__point {
   position: fixed;
   top: 10%;
   left: 0;
+  z-index: 100;
   box-shadow: 0 0 1px black;
 
   height: 80%;
 
   overflow: scroll;
+
+  background-color: white;
 }
