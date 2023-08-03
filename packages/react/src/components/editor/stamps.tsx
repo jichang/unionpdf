@@ -54,13 +54,21 @@ export function PdfEditorStamps() {
           onClick={() => {
             setDrawableDialogIsShown(true);
           }}
+          data-testid={`pdf__editor__stamps__create__button`}
         >
           {strings.createStamp}
         </Button>
       </header>
       <div className="pdf__editor__stamps__list">
         {stamps.map((stamp, index) => {
-          return <PdfEditorStamp key={index} index={index} stamp={stamp} />;
+          return (
+            <PdfEditorStamp
+              data-testid={`pdf__editor__stamps__item--${index}`}
+              key={index}
+              index={index}
+              stamp={stamp}
+            />
+          );
         })}
       </div>
       <Dialog

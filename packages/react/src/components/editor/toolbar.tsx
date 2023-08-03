@@ -39,7 +39,7 @@ export function PdfToolbarEditorOperationItemGroup(
     toggleTool(PdfEditorTool.Extract);
   }, [toggleTool]);
 
-  const handleSignature = useCallback(() => {
+  const handleStamp = useCallback(() => {
     toggleTool(PdfEditorTool.Stamp);
   }, [toggleTool]);
 
@@ -49,9 +49,21 @@ export function PdfToolbarEditorOperationItemGroup(
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <Button onClick={handleAnnotation}>{strings.annotation}</Button>
-        <Button onClick={handleExtract}>{strings.extract}</Button>
-        <Button onClick={handleSignature}>{strings.addStamp}</Button>
+        <Button
+          data-testid="pdf__toolbar__item__annotation"
+          onClick={handleAnnotation}
+        >
+          {strings.annotation}
+        </Button>
+        <Button
+          data-testid="pdf__toolbar__item__extract"
+          onClick={handleExtract}
+        >
+          {strings.extract}
+        </Button>
+        <Button data-testid="pdf__toolbar__item__stamp" onClick={handleStamp}>
+          {strings.addStamp}
+        </Button>
         {children}
       </ToolbarItemGroup>
     </ErrorBoundary>
@@ -110,8 +122,12 @@ export function PdfToolbarEditorFileItemGroup(
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <Button onClick={handleCommit}>{strings.commit}</Button>
-        <Button onClick={handleExit}>{strings.exit}</Button>
+        <Button data-testid="pdf__toolbar__item__commit" onClick={handleCommit}>
+          {strings.commit}
+        </Button>
+        <Button data-testid="pdf__toolbar__item__exit" onClick={handleExit}>
+          {strings.exit}
+        </Button>
         {children}
       </ToolbarItemGroup>
       <Dialog
@@ -122,8 +138,18 @@ export function PdfToolbarEditorFileItemGroup(
         }}
       >
         <footer className="pdf__ui__dialog__footer">
-          <Button onClick={handleDiscard}>{strings.discard}</Button>
-          <Button onClick={handleCommit}>{strings.commit}</Button>
+          <Button
+            data-testid="pdf__toolbar__item__discard"
+            onClick={handleDiscard}
+          >
+            {strings.discard}
+          </Button>
+          <Button
+            data-testid="pdf__toolbar__item__commit"
+            onClick={handleCommit}
+          >
+            {strings.commit}
+          </Button>
         </footer>
       </Dialog>
     </ErrorBoundary>

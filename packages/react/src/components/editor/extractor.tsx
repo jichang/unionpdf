@@ -74,8 +74,18 @@ export function PdfEditorExtractor() {
         onClickCheckbox={handleClickCheckbox}
       />
       <div className="pdf__editor__extractor__footer">
-        <Button onClick={extractPages}>{strings.extractPages}</Button>
-        <Button onClick={extractText}>{strings.extractText}</Button>
+        <Button
+          data-testid={`pdf__editor__extractor__extract__pages__button}`}
+          onClick={extractPages}
+        >
+          {strings.extractPages}
+        </Button>
+        <Button
+          data-testid={`pdf__editor__extractor__extract__text__button}`}
+          onClick={extractText}
+        >
+          {strings.extractText}
+        </Button>
       </div>
     </div>
   );

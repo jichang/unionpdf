@@ -39,6 +39,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
               ? 'pdf__ui__button--active'
               : '',
           )}
+          data-testid={`pdf__editor__panel__tool__${PdfAnnotationTool.Selection}`}
         >
           {strings.selection}
         </Button>
@@ -51,6 +52,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
               ? 'pdf__ui__button--active'
               : '',
           )}
+          data-testid={`pdf__editor__panel__tool__${PdfAnnotationTool.Pencil}`}
         >
           {strings.pencil}
         </Button>

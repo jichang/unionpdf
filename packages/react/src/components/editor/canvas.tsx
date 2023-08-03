@@ -98,6 +98,7 @@ export function PdfPageEditorCanvas(props: PdfPageEditorCanvasProps) {
           ? 'pdf__editor__canvas--active'
           : 'pdf__editor__canvas--inactive',
       )}
+      data-testid={`pdf__editor__canvas__${page.index}`}
       componentRef={drawableRef}
       width={style.width}
       height={style.height}

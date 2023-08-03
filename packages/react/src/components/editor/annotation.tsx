@@ -246,6 +246,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
     <PdfPageAnnotation
       page={page}
       className={classNames('pdf__page__annotation--editor')}
+      data-testid={`pdf__editor__annotation__${page.index}__${annotation.id}`}
       annotation={annotation}
       rotation={rotation}
       scaleFactor={scaleFactor}
@@ -361,6 +362,7 @@ export function PdfPageAnnotationMover(props: PdfPageAnnotationMoverProps) {
 
   return (
     <div
+      data-testid={`pdf__page__annotation__mover__${page.index}__${annotation.id}`}
       className={classNames('pdf__page__annotation__mover', className)}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
@@ -456,6 +458,7 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
         `pdf__page__annotation__resizer--${ResizerPositionClassName[position]}`,
         className,
       )}
+      data-testid={`pdf__page__annotation__resizer__${page.index}__${annotation.id}__${ResizerPositionClassName[position]}`}
       type="button"
       iconName="Drag"
       onPointerDown={handlePointerDown}

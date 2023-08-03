@@ -154,7 +154,10 @@ export function PdfToolbarPluginItem(props: PdfToolbarPluginItemProps) {
   }
 
   return (
-    <Button data-testid={`toolbar-item-plugin-${pluginKey}`} onClick={toggle}>
+    <Button
+      data-testid={`pdf__toolbar__item__plugin__${pluginKey}`}
+      onClick={toggle}
+    >
       {text}
     </Button>
   );
@@ -176,14 +179,6 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
   const strings = useUIStrings();
   const logger = useLogger();
 
-  const { plugins, showPlugin } = usePdfApplication();
-
-  const handleEdit = useCallback(() => {
-    showPlugin(PdfApplicatinPluginKey.Editor);
-  }, [showPlugin]);
-
-  const enableEdit = plugins[PdfApplicatinPluginKey.Editor].isEnabled;
-
   return (
     <ErrorBoundary source="PdfToolbarFileItemGroup" logger={logger}>
       <ToolbarItemGroup
@@ -191,11 +186,10 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        {enableEdit ? (
-          <Button data-testid="toolbar-item-edit" onClick={handleEdit}>
-            {strings.edit}
-          </Button>
-        ) : null}
+        <PdfToolbarPluginItem
+          pluginKey={PdfApplicatinPluginKey.Editor}
+          text={strings.edit}
+        />
         <PdfToolbarPluginItem
           pluginKey={PdfApplicatinPluginKey.Downloader}
           text={strings.saveAs}

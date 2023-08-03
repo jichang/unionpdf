@@ -1,9 +1,3 @@
-import {
-  PdfAnnotationObject,
-  PdfPageObject,
-  Position,
-  Size,
-} from '@unionpdf/models';
 import React, {
   ReactNode,
   useCallback,
@@ -11,6 +5,12 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import {
+  PdfAnnotationObject,
+  PdfPageObject,
+  Position,
+  Size,
+} from '@unionpdf/models';
 import { useLogger, usePdfDocument, usePdfEngine } from '../../core';
 import { clone } from '../helpers/editor';
 

@@ -354,6 +354,7 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
         className={classNames('pdf__page__annotations--editor', {
           'pdf__page__annotations--droptarget': isDropTarget,
         })}
+        data-testid={`pdf__editor__annotations__${page.index}`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}

@@ -87,5 +87,9 @@ export function PdfEditorContent(props: PdfEditorProps) {
       break;
   }
 
-  return <div className="pdf__editor">{content}</div>;
+  return (
+    <div date-testid="pdf__plugin__editor__content" className="pdf__editor">
+      {content}
+    </div>
+  );
 }

@@ -283,14 +283,14 @@ function App(props: AppProps) {
           <div>
             <Button
               type="button"
-              date-testid="demo-app-merge-files-btn"
+              date-testid="demo__app__merge__files__btn"
               onClick={toggleIsMergerOpened}
             >
               Merge Files
             </Button>
             <Input
               type="file"
-              data-testid="demo-app-select-file-btn"
+              data-testid="demo__app__select__file__btn"
               onChange={selectFile}
             />
           </div>
