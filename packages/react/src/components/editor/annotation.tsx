@@ -449,10 +449,11 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
     [onPointerCancel],
   );
 
-  const { IconButton } = useUIComponents();
+  const { Button, Icon } = useUIComponents();
 
   return (
-    <IconButton
+    <Button
+      scenario={{ usage: 'annotation-resizer' }}
       className={classNames(
         'pdf__page__annotation__resizer',
         `pdf__page__annotation__resizer--${ResizerPositionClassName[position]}`,
@@ -460,11 +461,12 @@ export function PdfPageAnnotationResizer(props: PdfPageAnnotationResizerProps) {
       )}
       data-testid={`pdf__page__annotation__resizer__${page.index}__${annotation.id}__${ResizerPositionClassName[position]}`}
       type="button"
-      iconName="Drag"
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
       {...rest}
-    />
+    >
+      <Icon name="Drag" />
+    </Button>
   );
 }

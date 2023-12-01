@@ -32,7 +32,11 @@ export function PushButtonField(props: PushButtonFieldProps) {
   const { Button } = useUIComponents();
 
   return (
-    <Button disabled={isDisabled} aria-label={name}>
+    <Button
+      scenario={{ usage: 'pdf-content-push-button' }}
+      disabled={isDisabled}
+      aria-label={name}
+    >
       {name}
     </Button>
   );

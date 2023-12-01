@@ -33,7 +33,7 @@ export function Downloader(props: DownloaderProps) {
     <div className="pdf__downloader">
       <p className="pdf__downloader__message">{name}</p>
       <div className="pdf__downloader__action">
-        <Link download={name} href={url}>
+        <Link scenario={{ usage: 'downloader' }} download={name} href={url}>
           {strings.download}
         </Link>
       </div>

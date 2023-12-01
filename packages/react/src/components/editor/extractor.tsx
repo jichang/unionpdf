@@ -75,12 +75,14 @@ export function PdfEditorExtractor() {
       />
       <div className="pdf__editor__extractor__footer">
         <Button
+          scenario={{ usage: 'extractor-extract-pages' }}
           data-testid={`pdf__editor__extractor__extract__pages__button}`}
           onClick={extractPages}
         >
           {strings.extractPages}
         </Button>
         <Button
+          scenario={{ usage: 'extractor-extract-text' }}
           data-testid={`pdf__editor__extractor__extract__text__button}`}
           onClick={extractText}
         >

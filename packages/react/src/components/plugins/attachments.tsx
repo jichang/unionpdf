@@ -83,6 +83,7 @@ export function PdfAttachmentsContent(props: PdfAttachmentsProps) {
                 <td>{attachment.creationDate}</td>
                 <td>
                   <Button
+                    scenario={{ usage: 'attachment-download' }}
                     onClick={async () => {
                       if (engine && doc) {
                         engine

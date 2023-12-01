@@ -31,6 +31,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
     <div className="pdf__editor__panel">
       <div className="pdf__editor__panel__tools">
         <Button
+          scenario={{ usage: 'editor-panel-selection' }}
           onClick={(evt) => {
             setAnnotationTool(PdfAnnotationTool.Selection);
           }}
@@ -44,6 +45,7 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
           {strings.selection}
         </Button>
         <Button
+          scenario={{ usage: 'editor-panel-pencil' }}
           onClick={(evt) => {
             setAnnotationTool(PdfAnnotationTool.Pencil);
           }}

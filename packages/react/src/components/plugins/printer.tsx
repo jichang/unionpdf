@@ -109,7 +109,9 @@ export function PdfPrinterContent(props: PdfPrinterProps) {
         {strings.printing}: {doc?.name}
       </p>
       <div className="pdf__printer__action">
-        <Button onClick={cancelPrint}>{strings.cancel}</Button>
+        <Button scenario={{ usage: 'cancel-print' }} onClick={cancelPrint}>
+          {strings.cancel}
+        </Button>
       </div>
     </div>
   );

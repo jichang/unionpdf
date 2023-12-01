@@ -42,7 +42,12 @@ export function PdfToolbar(props: PdfToolbarProps) {
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Toolbar}>
-      <Toolbar date-testid="pdf__toolbar" className="pdf__toolbar" {...rest}>
+      <Toolbar
+        scenario={{ usage: 'pdf-toolbar-plugin' }}
+        date-testid="pdf__toolbar"
+        className="pdf__toolbar"
+        {...rest}
+      >
         {mode === PdfApplicationMode.View ? (
           <PdfToolbarPluginItemGroup className="pdf__toolbar__item__group--left">
             {pluginItems}
@@ -87,6 +92,7 @@ export function PdfToolbarPluginItemGroup(
   return (
     <ErrorBoundary source="PdfToolbarPluginItemGroup" logger={logger}>
       <ToolbarItemGroup
+        scenario={{ usage: 'plugins-plugin-item-group' }}
         date-testid="pdf__toolbar__plugin__item__group"
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
@@ -155,6 +161,7 @@ export function PdfToolbarPluginItem(props: PdfToolbarPluginItemProps) {
 
   return (
     <Button
+      scenario={{ usage: 'plugin-toggle', pluginKey }}
       data-testid={`pdf__toolbar__item__plugin__${pluginKey}`}
       onClick={toggle}
     >
@@ -182,6 +189,7 @@ export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
   return (
     <ErrorBoundary source="PdfToolbarFileItemGroup" logger={logger}>
       <ToolbarItemGroup
+        scenario={{ usage: 'plugins-file-item-group' }}
         date-testid="pdf__toolbar__plugin__file__group"
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}

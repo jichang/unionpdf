@@ -150,7 +150,7 @@ export function PdfSearchContent(props: PdfSearchProps) {
 
   return (
     <div className={classNames('pdf__search', className)} {...rest}>
-      <Form onSubmit={search}>
+      <Form scenario={{ usage: 'search' }} onSubmit={search}>
         <Input onChange={updateKeyword} />
         <div>
           <Checkbox

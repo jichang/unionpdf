@@ -51,6 +51,7 @@ export function PdfEditorStamps() {
     <div className="pdf__editor__stamps">
       <header className="pdf__editor__stamps__header">
         <Button
+          scenario={{ usage: 'start-create-stamp' }}
           onClick={() => {
             setDrawableDialogIsShown(true);
           }}
@@ -72,6 +73,7 @@ export function PdfEditorStamps() {
         })}
       </div>
       <Dialog
+        scenario={{ usage: 'stamp' }}
         isOpened={drawableDialogIsShown}
         onClose={() => {
           setDrawableDialogIsShown(false);
@@ -85,8 +87,12 @@ export function PdfEditorStamps() {
           onAddPath={onAddPath}
         />
         <div>
-          <Button onClick={cancel}>{strings.cancel}</Button>
-          <Button onClick={submit}>{strings.createStamp}</Button>
+          <Button scenario={{ usage: 'cancel-create-stamp' }} onClick={cancel}>
+            {strings.cancel}
+          </Button>
+          <Button scenario={{ usage: 'confirm-create-stamp' }} onClick={submit}>
+            {strings.createStamp}
+          </Button>
         </div>
       </Dialog>
     </div>

@@ -269,16 +269,30 @@ function App(props: AppProps) {
                     </PdfApplication>
                     {isMergerOpened ? (
                       <div>
-                        <Toolbar className="pdf__merger__toolbar">
-                          <ToolbarItemGroup className="pdf__toolbar__item__group--left">
+                        <Toolbar
+                          scenario={{ usage: 'test' }}
+                          className="pdf__merger__toolbar"
+                        >
+                          <ToolbarItemGroup
+                            scenario={{ usage: 'test' }}
+                            className="pdf__toolbar__item__group--left"
+                          >
                             <Input
                               type="file"
                               multiple
                               onChange={selectFiles}
                             />
                           </ToolbarItemGroup>
-                          <ToolbarItemGroup className="pdf__toolbar__item__group--right">
-                            <Button onClick={exitMerger}>Exit</Button>
+                          <ToolbarItemGroup
+                            scenario={{ usage: 'test' }}
+                            className="pdf__toolbar__item__group--right"
+                          >
+                            <Button
+                              scenario={{ usage: 'test' }}
+                              onClick={exitMerger}
+                            >
+                              Exit
+                            </Button>
                           </ToolbarItemGroup>
                         </Toolbar>
                         <PdfMerger
@@ -297,6 +311,7 @@ function App(props: AppProps) {
         {file === null && !isMergerOpened ? (
           <div>
             <Button
+              scenario={{ usage: 'test' }}
               type="button"
               date-testid="demo__app__merge__files__btn"
               onClick={toggleIsMergerOpened}

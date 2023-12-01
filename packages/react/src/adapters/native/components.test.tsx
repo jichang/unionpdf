@@ -5,7 +5,9 @@ import { Button, Select, Toolbar } from './components';
 
 describe('UI', () => {
   it('Button should render button with label', () => {
-    const result = render(<Button aria-label="test" />);
+    const result = render(
+      <Button scenario={{ usage: 'test' }} aria-label="test" />,
+    );
 
     const buttonElem = document.querySelector('button') as HTMLButtonElement;
     expect(buttonElem).toBeDefined();
@@ -14,7 +16,7 @@ describe('UI', () => {
   });
 
   it('Toolbar should render div with children', () => {
-    const result = render(<Toolbar />);
+    const result = render(<Toolbar scenario={{ usage: 'test' }} />);
 
     const divElem = document.querySelector('div') as HTMLDivElement;
     expect(divElem).toBeDefined();

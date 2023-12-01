@@ -76,6 +76,7 @@ export function PdfPluginDialog(props: PdfPluginDialogProps) {
 
   return (
     <Dialog
+      scenario={{ usage: 'plugin', pluginKey }}
       data-testid={`pdf__plugin__dialog__${pluginKey}`}
       title={title}
       isOpened={configuration.isVisible}
@@ -117,6 +118,7 @@ export function PdfPluginPanel(props: PdfPluginPanelProps) {
 
   return (
     <Panel
+      scenario={{ usage: 'plugin', pluginKey }}
       data-testid={`pdf__plugin__panel__${pluginKey}`}
       isOpened={configuration.isVisible}
       onClose={close}

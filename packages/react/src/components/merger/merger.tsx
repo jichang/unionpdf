@@ -87,6 +87,7 @@ export function PdfMerger(props: PdfMergerProps) {
                         <td>{file.name}</td>
                         <td>
                           <Button
+                            scenario={{ usage: 'merger-remove-file' }}
                             onClick={() => {
                               onRemoveFile(file);
                             }}
@@ -99,7 +100,12 @@ export function PdfMerger(props: PdfMergerProps) {
                   })}
                 </tbody>
               </table>
-              <Button onClick={startMerge}>{strings.merge}</Button>
+              <Button
+                scenario={{ usage: 'merger-start-merge' }}
+                onClick={startMerge}
+              >
+                {strings.merge}
+              </Button>
             </div>
           )}
         </section>

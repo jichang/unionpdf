@@ -85,6 +85,7 @@ export function PdfToolbarPagesItemGroup(props: PdfToolbarPagesItemGroupProps) {
   return (
     <ErrorBoundary source={PDF_NAVIGATOR_SOURCE_PAGES_TOOLBAR} logger={logger}>
       <ToolbarItemGroup
+        scenario={{ usage: 'pages-plugin-item-group' }}
         date-testid="pdf__toolbar__plugin__pages__group"
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}

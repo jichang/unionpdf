@@ -1,32 +1,166 @@
 import React, { ComponentProps } from 'react';
 import { createContext, useContext } from 'react';
+import { PdfApplicatinPluginKey } from '../core';
 
-export interface DialogProps extends Omit<ComponentProps<'dialog'>, 'open'> {
+export interface AdaptableComponent<S> {
+  scenario:
+    | S
+    | {
+        usage: 'test';
+      };
+}
+
+export type DialogScenario =
+  | {
+      usage: 'stamp';
+    }
+  | {
+      usage: 'uncommitted-changes';
+    }
+  | {
+      usage: 'plugin';
+      pluginKey: PdfApplicatinPluginKey;
+    };
+
+export interface DialogProps
+  extends Omit<ComponentProps<'dialog'>, 'open'>,
+    AdaptableComponent<DialogScenario> {
   title: string;
   isOpened: boolean;
   onClose: () => void;
   onClosed?: () => void;
 }
 
-export interface PanelProps extends ComponentProps<'div'> {
+export type PanelScenario = {
+  usage: 'plugin';
+  pluginKey: PdfApplicatinPluginKey;
+};
+
+export interface PanelProps
+  extends ComponentProps<'div'>,
+    AdaptableComponent<PanelScenario> {
   isOpened: boolean;
   onClose: () => void;
   onClosed?: () => void;
 }
 
-export interface ToolbarProps extends ComponentProps<'div'> {}
-export interface ToolbarItemGroupProps extends ComponentProps<'div'> {}
+export type ToolbarScenario = {
+  usage: 'pdf-toolbar-plugin';
+};
 
-export interface LinkProps extends ComponentProps<'a'> {}
-export interface ButtonProps extends ComponentProps<'button'> {}
-export interface IconProps extends ComponentProps<'span'> {
-  name: string;
-}
-export interface IconButtonProps extends ComponentProps<'button'> {
-  iconName: string;
-}
+export interface ToolbarProps
+  extends ComponentProps<'div'>,
+    AdaptableComponent<ToolbarScenario> {}
 
-export interface FormProps extends ComponentProps<'form'> {}
+export type ToolbarItemGroupScenario =
+  | {
+      usage: 'editor-plugin-operation-item-group';
+    }
+  | {
+      usage: 'editor-plugin-file-item-group';
+    }
+  | {
+      usage: 'pages-plugin-item-group';
+    }
+  | {
+      usage: 'plugins-plugin-item-group';
+    }
+  | {
+      usage: 'plugins-file-item-group';
+    };
+
+export interface ToolbarItemGroupProps
+  extends ComponentProps<'div'>,
+    AdaptableComponent<ToolbarItemGroupScenario> {}
+
+export type LinkScenario = {
+  usage: 'downloader';
+};
+
+export interface LinkProps
+  extends ComponentProps<'a'>,
+    AdaptableComponent<LinkScenario> {}
+
+export type ButtonScenario =
+  | {
+      usage: 'annotation-resizer';
+    }
+  | {
+      usage: 'dialog-close';
+    }
+  | {
+      usage: 'extractor-extract-pages';
+    }
+  | {
+      usage: 'extractor-extract-text';
+    }
+  | {
+      usage: 'editor-panel-selection';
+    }
+  | {
+      usage: 'editor-panel-pencil';
+    }
+  | {
+      usage: 'start-create-stamp';
+    }
+  | {
+      usage: 'cancel-create-stamp';
+    }
+  | {
+      usage: 'confirm-create-stamp';
+    }
+  | {
+      usage: 'editor-operation-annotation';
+    }
+  | {
+      usage: 'editor-operation-stamp';
+    }
+  | {
+      usage: 'editor-operation-extract';
+    }
+  | {
+      usage: 'editor-operation-commit';
+    }
+  | {
+      usage: 'editor-operation-exit';
+    }
+  | {
+      usage: 'editor-operation-discard';
+    }
+  | {
+      usage: 'editor-operation-extract';
+    }
+  | {
+      usage: 'pdf-content-push-button';
+    }
+  | {
+      usage: 'merger-start-merge';
+    }
+  | {
+      usage: 'merger-remove-file';
+    }
+  | {
+      usage: 'attachment-download';
+    }
+  | {
+      usage: 'cancel-print';
+    }
+  | {
+      usage: 'plugin-toggle';
+      pluginKey: PdfApplicatinPluginKey;
+    };
+
+export interface ButtonProps
+  extends ComponentProps<'button'>,
+    AdaptableComponent<ButtonScenario> {}
+
+export type FormScenario = {
+  usage: 'search';
+};
+export interface FormProps
+  extends ComponentProps<'form'>,
+    AdaptableComponent<FormScenario> {}
+
 export interface LabelProps extends ComponentProps<'label'> {}
 export interface TextAreaProps extends ComponentProps<'textarea'> {}
 export interface InputProps extends ComponentProps<'input'> {}
@@ -38,6 +172,10 @@ export interface SelectProps extends ComponentProps<'select'> {
 }
 export interface CheckboxProps extends ComponentProps<'input'> {}
 export interface RadioButtonProps extends ComponentProps<'input'> {}
+
+export interface IconProps extends ComponentProps<'span'> {
+  name: string;
+}
 
 export type UIComponent<P> =
   | React.ComponentClass<P>
@@ -53,7 +191,6 @@ export interface UIComponents {
   ToolbarItemGroup: UIComponent<ToolbarItemGroupProps>;
   Link: UIComponent<LinkProps>;
   Button: UIComponent<ButtonProps>;
-  IconButton: UIComponent<IconButtonProps>;
   Icon: UIComponent<IconProps>;
   Form: UIComponent<FormProps>;
   Label: UIComponent<LabelProps>;

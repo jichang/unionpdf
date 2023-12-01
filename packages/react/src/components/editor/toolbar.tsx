@@ -46,22 +46,29 @@ export function PdfToolbarEditorOperationItemGroup(
   return (
     <ErrorBoundary source="PdfToolbarEditorItemGroup" logger={logger}>
       <ToolbarItemGroup
+        scenario={{ usage: 'editor-plugin-operation-item-group' }}
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
         <Button
+          scenario={{ usage: 'editor-operation-annotation' }}
           data-testid="pdf__toolbar__item__annotation"
           onClick={handleAnnotation}
         >
           {strings.annotation}
         </Button>
         <Button
+          scenario={{ usage: 'editor-operation-extract' }}
           data-testid="pdf__toolbar__item__extract"
           onClick={handleExtract}
         >
           {strings.extract}
         </Button>
-        <Button data-testid="pdf__toolbar__item__stamp" onClick={handleStamp}>
+        <Button
+          scenario={{ usage: 'editor-operation-stamp' }}
+          data-testid="pdf__toolbar__item__stamp"
+          onClick={handleStamp}
+        >
           {strings.addStamp}
         </Button>
         {children}
@@ -119,18 +126,28 @@ export function PdfToolbarEditorFileItemGroup(
   return (
     <ErrorBoundary source="PdfToolbarEditorFileItemGroup" logger={logger}>
       <ToolbarItemGroup
+        scenario={{ usage: 'editor-plugin-file-item-group' }}
         className={classNames('pdf__toolbar__item__group', className)}
         {...rest}
       >
-        <Button data-testid="pdf__toolbar__item__commit" onClick={handleCommit}>
+        <Button
+          scenario={{ usage: 'editor-operation-commit' }}
+          data-testid="pdf__toolbar__item__commit"
+          onClick={handleCommit}
+        >
           {strings.commit}
         </Button>
-        <Button data-testid="pdf__toolbar__item__exit" onClick={handleExit}>
+        <Button
+          scenario={{ usage: 'editor-operation-exit' }}
+          data-testid="pdf__toolbar__item__exit"
+          onClick={handleExit}
+        >
           {strings.exit}
         </Button>
         {children}
       </ToolbarItemGroup>
       <Dialog
+        scenario={{ usage: 'uncommitted-changes' }}
         title={strings.uncommittedWarning}
         isOpened={isUncommittedWarningVisible}
         onClose={() => {
@@ -139,12 +156,14 @@ export function PdfToolbarEditorFileItemGroup(
       >
         <footer className="pdf__ui__dialog__footer">
           <Button
+            scenario={{ usage: 'editor-operation-discard' }}
             data-testid="pdf__toolbar__item__discard"
             onClick={handleDiscard}
           >
             {strings.discard}
           </Button>
           <Button
+            scenario={{ usage: 'editor-operation-commit' }}
             data-testid="pdf__toolbar__item__commit"
             onClick={handleCommit}
           >

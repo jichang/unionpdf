@@ -1,12 +1,4 @@
-import React, {
-  ComponentProps,
-  DOMElement,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames';
 import './components.css';
 import {
@@ -24,7 +16,6 @@ import {
   ButtonProps,
   LinkProps,
   UIComponents,
-  IconButtonProps,
   PanelProps,
 } from '../uicomponents.context';
 import ReactDOM from 'react-dom';
@@ -99,19 +90,6 @@ export function Button(props: ButtonProps) {
   const { className, ...rest } = props;
   return (
     <button className={classNames('pdf__ui__button', className)} {...rest} />
-  );
-}
-
-export function IconButton(props: IconButtonProps) {
-  const { iconName, className, children, ...rest } = props;
-  return (
-    <button
-      className={classNames('pdf__ui__button pdf__ui__button--icon', className)}
-      {...rest}
-    >
-      <Icon name={iconName} />
-      {children}
-    </button>
   );
 }
 
@@ -229,7 +207,11 @@ export function Dialog(props: DialogProps) {
         <>
           <header className="pdf__ui__dialog__header">
             <h2 className="pdf__ui__dialog__header__title">{title}</h2>
-            <Button onClick={onClose} data-testid="pdf__ui__dialog__close__btn">
+            <Button
+              scenario={{ usage: 'dialog-close' }}
+              onClick={onClose}
+              data-testid="pdf__ui__dialog__close__btn"
+            >
               <Icon name="Close" />
             </Button>
           </header>
@@ -293,7 +275,6 @@ export const components: UIComponents = {
   Toolbar,
   ToolbarItemGroup,
   Button,
-  IconButton,
   Icon,
   Link,
   Form,
