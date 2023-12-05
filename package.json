@@ -9,8 +9,8 @@
   ],
   "devDependencies": {
     "husky": "^8.0.3",
-    "prettier": "^3.0.0",
-    "typedoc": "^0.24.8"
+    "prettier": "^3.1.0",
+    "typedoc": "^0.25.4"
   },
   "scripts": {
     "doc": "typedoc",

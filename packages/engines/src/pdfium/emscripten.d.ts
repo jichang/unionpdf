@@ -16,16 +16,16 @@ export type JSTypeName = null | 'number' | 'string' | 'array' | 'boolean' | '';
 export type NameToType<R extends JSTypeName> = R extends 'number'
   ? number
   : R extends 'string'
-  ? string
-  : R extends 'boolean'
-  ? boolean
-  : R extends 'array'
-  ? number[] | string[] | boolean[] | Uint8Array | Int8Array
-  : R extends ''
-  ? void
-  : R extends null
-  ? null
-  : never;
+    ? string
+    : R extends 'boolean'
+      ? boolean
+      : R extends 'array'
+        ? number[] | string[] | boolean[] | Uint8Array | Int8Array
+        : R extends ''
+          ? void
+          : R extends null
+            ? null
+            : never;
 
 /**
  * Convert array of names to JavaScript types
@@ -33,13 +33,13 @@ export type NameToType<R extends JSTypeName> = R extends 'number'
 export type NamesToType<T extends readonly JSTypeName[]> = T extends []
   ? []
   : T extends readonly [infer U extends JSTypeName]
-  ? [NameToType<U>]
-  : T extends readonly [
-      infer U extends JSTypeName,
-      ...infer Rest extends readonly JSTypeName[],
-    ]
-  ? [NameToType<U>, ...NamesToType<Rest>]
-  : [];
+    ? [NameToType<U>]
+    : T extends readonly [
+          infer U extends JSTypeName,
+          ...infer Rest extends readonly JSTypeName[],
+        ]
+      ? [NameToType<U>, ...NamesToType<Rest>]
+      : [];
 
 /**
  * Type name of integer in C
