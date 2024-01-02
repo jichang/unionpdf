@@ -114,8 +114,7 @@ export function PdfPages(props: PdfPagesProps) {
 
         const scrollableContainer = findScollableContainer(containerElem);
         const scrollOffsetBase =
-          calculateScrollOffset(containerElem, scrollableContainer) +
-          pageGap / 2;
+          calculateScrollOffset(containerElem, scrollableContainer) + pageGap;
         const pageOffset = page.offset * scaleFactor + pageGap * page.index;
 
         switch (destination.zoom.mode) {
@@ -146,10 +145,10 @@ export function PdfPages(props: PdfPagesProps) {
       }
     };
 
-    addEventListener(PDF_NAVIGATOR_SOURCE_PAGES + scaleFactor, scrollTo);
+    addEventListener(PDF_NAVIGATOR_SOURCE_PAGES, scrollTo);
 
     return () => {
-      removeEventListener(PDF_NAVIGATOR_SOURCE_PAGES + scaleFactor, scrollTo);
+      removeEventListener(PDF_NAVIGATOR_SOURCE_PAGES, scrollTo);
     };
   }, [
     addEventListener,

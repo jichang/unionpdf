@@ -6,11 +6,13 @@ import React, {
   useState,
 } from 'react';
 import {
+  AllLogger,
   ConsoleLogger,
   Logger,
   PdfEngine,
   PdfEngineError,
   PdfFile,
+  PerfLogger,
 } from '@unionpdf/models';
 import * as ReactDOM from 'react-dom/client';
 import {
@@ -356,7 +358,9 @@ async function readFile(file: File): Promise<ArrayBuffer> {
 }
 
 async function run() {
-  const logger = new ConsoleLogger();
+  const consoleLogger = new ConsoleLogger();
+  const perfLogger = new PerfLogger();
+  const logger = new AllLogger([consoleLogger, perfLogger]);
   const url = new URL(window.location.href);
   const enableWebworker = url.searchParams.get('webworker');
   let engine: PdfEngine;

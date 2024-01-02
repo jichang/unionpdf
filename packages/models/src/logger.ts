@@ -46,6 +46,25 @@ export interface Logger {
    * @public
    */
   error: (source: string, category: string, ...args: any) => void;
+
+  /**
+   * Log performance log
+   * @param source - source of log
+   * @param category - category of log
+   * @param event - event of log
+   * @param phase - event phase of log
+   * @param args - parameters of log
+   * @returns
+   *
+   * @public
+   */
+  perf: (
+    source: string,
+    category: string,
+    event: string,
+    phase: 'Begin' | 'End',
+    ...args: any
+  ) => void;
 }
 
 /**
@@ -62,6 +81,8 @@ export class NoopLogger implements Logger {
   warn() {}
   /** {@inheritDoc Logger.error} */
   error() {}
+  /** {@inheritDoc Logger.perf} */
+  perf() {}
 }
 
 /**
@@ -88,6 +109,17 @@ export class ConsoleLogger implements Logger {
   /** {@inheritDoc Logger.error} */
   error(source: string, category: string, ...args: any) {
     console.error(`${source}.${category}`, ...args);
+  }
+
+  /** {@inheritDoc Logger.perf} */
+  perf(
+    source: string,
+    category: string,
+    event: string,
+    phase: 'Begin' | 'End',
+    ...args: any
+  ) {
+    console.info(`${source}.${category}.${event}.${phase}`, ...args);
   }
 }
 
@@ -144,6 +176,121 @@ export class LevelLogger implements Logger {
   error(source: string, category: string, ...args: any) {
     if (this.level >= LogLevel.Error) {
       this.logger.debug(source, category, ...args);
+    }
+  }
+
+  /** {@inheritDoc Logger.perf} */
+  perf(
+    source: string,
+    category: string,
+    event: string,
+    phase: 'Begin' | 'End',
+    ...args: any
+  ) {
+    this.logger.perf(source, category, event, phase, ...args);
+  }
+}
+
+/**
+ * Logger for performance tracking
+ *
+ * @public
+ */
+export class PerfLogger implements Logger {
+  /**
+   * create new PerfLogger
+   */
+  constructor() {}
+
+  /** {@inheritDoc Logger.debug} */
+  debug(source: string, category: string, ...args: any) {}
+
+  /** {@inheritDoc Logger.info} */
+  info(source: string, category: string, ...args: any) {}
+
+  /** {@inheritDoc Logger.warn} */
+  warn(source: string, category: string, ...args: any) {}
+
+  /** {@inheritDoc Logger.error} */
+  error(source: string, category: string, ...args: any) {}
+
+  /** {@inheritDoc Logger.perf} */
+  perf(
+    source: string,
+    category: string,
+    event: string,
+    phase: 'Begin' | 'End',
+    ...args: any
+  ) {
+    switch (phase) {
+      case 'Begin':
+        window.performance.mark(`${source}.${category}.${event}.${phase}`, {
+          detail: args,
+        });
+        break;
+      case 'End':
+        window.performance.mark(`${source}.${category}.${event}.${phase}`, {
+          detail: args,
+        });
+        window.performance.measure(
+          `${source}.${category}.${event}`,
+          `${source}.${category}.${event}.Begin`,
+          `${source}.${category}.${event}.End`,
+        );
+        break;
+    }
+  }
+}
+
+/**
+ * Logger that will track and call child loggers
+ *
+ * @public
+ */
+export class AllLogger implements Logger {
+  /**
+   * create new PerfLogger
+   */
+  constructor(private loggers: Logger[]) {}
+
+  /** {@inheritDoc Logger.debug} */
+  debug(source: string, category: string, ...args: any) {
+    for (const logger of this.loggers) {
+      logger.debug(source, category, ...args);
+    }
+  }
+
+  /** {@inheritDoc Logger.info} */
+  info(source: string, category: string, ...args: any) {
+    for (const logger of this.loggers) {
+      logger.info(source, category, ...args);
+    }
+  }
+
+  /** {@inheritDoc Logger.warn} */
+  warn(source: string, category: string, ...args: any) {
+    for (const logger of this.loggers) {
+      logger.warn(source, category, ...args);
+    }
+  }
+
+  /** {@inheritDoc Logger.error} */
+  error(source: string, category: string, ...args: any) {
+    for (const logger of this.loggers) {
+      logger.error(source, category, ...args);
+    }
+  }
+
+  /** {@inheritDoc Logger.perf} */
+  perf(
+    source: string,
+    category: string,
+    event: string,
+    phase: 'Begin' | 'End',
+    ...args: any
+  ) {
+    for (const logger of this.loggers) {
+      logger.perf(source, category, event, phase, ...args);
     }
   }
 }
