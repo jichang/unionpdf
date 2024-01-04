@@ -516,9 +516,15 @@ export class PdfiumEngine implements PdfEngine {
    */
   initialize() {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'initialize');
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Initialize`, 'Begin');
+    this.logger.perf(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      `Initialize`,
+      'Begin',
+      'General',
+    );
     this.wasmModuleWrapper.PDFium_Init();
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Initialize`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Initialize`, 'End', 'General');
     return TaskBase.resolve(true);
   }
 
@@ -529,9 +535,9 @@ export class PdfiumEngine implements PdfEngine {
    */
   destroy() {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'destroy');
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Destroy`, 'Begin');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Destroy`, 'Begin', 'General');
     this.wasmModuleWrapper.FPDF_DestroyLibrary();
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Destroy`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Destroy`, 'End', 'General');
     return TaskBase.resolve(true);
   }
 
@@ -545,8 +551,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `OpenDocument.${file.id}`,
+      `OpenDocument`,
       'Begin',
+      file.id,
     );
     const array = new Uint8Array(file.content);
     const length = array.length;
@@ -576,8 +583,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `OpenDocument.${file.id}`,
+        `OpenDocument`,
         'End',
+        file.id,
       );
 
       return TaskBase.reject<PdfDocumentObject>(
@@ -609,8 +617,9 @@ export class PdfiumEngine implements PdfEngine {
         this.logger.perf(
           LOG_SOURCE,
           LOG_CATEGORY,
-          `OpenDocument.${file.id}`,
+          `OpenDocument`,
           'End',
+          file.id,
         );
         return TaskBase.reject<PdfDocumentObject>(
           new PdfEngineError(`FPDF_GetPageSizeByIndexF failed`, lastError),
@@ -641,12 +650,7 @@ export class PdfiumEngine implements PdfEngine {
       searchContexts: new Map(),
     };
 
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `OpenDocument.${file.id}`,
-      'End',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `OpenDocument`, 'End', file.id);
 
     return TaskBase.resolve(pdfDoc);
   }
@@ -658,20 +662,10 @@ export class PdfiumEngine implements PdfEngine {
    */
   getMetadata(doc: PdfDocumentObject): Task<PdfMetadataObject, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getMetadata', doc);
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `GetMetadata.${doc.id}`,
-      'Begin',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `GetMetadata.${doc.id}`,
-        'End',
-      );
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
@@ -688,7 +682,7 @@ export class PdfiumEngine implements PdfEngine {
       modificationDate: this.readMetaText(docPtr, 'ModDate'),
     };
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata`, 'End', doc.id);
 
     return TaskBase.resolve(metadata);
   }
@@ -705,16 +699,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `GetSignatures.${doc.id}`,
+      `GetSignatures`,
       'Begin',
+      doc.id,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `GetSignatures.${doc.id}`,
+        `GetSignatures`,
         'End',
+        doc.id,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -802,12 +798,7 @@ export class PdfiumEngine implements PdfEngine {
         docMDP,
       });
     }
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `GetSignatures.${doc.id}`,
-      'End',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetSignatures`, 'End', doc.id);
 
     return TaskBase.resolve(signatures);
   }
@@ -821,27 +812,17 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
   ): Task<PdfBookmarksObject, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getBookmarks', doc);
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `GetBookmarks.${doc.id}`,
-      'Begin',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetBookmarks`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `getBookmarks.${doc.id}`,
-        'End',
-      );
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `getBookmarks`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
     const { docPtr } = this.docs[doc.id];
     const bookmarks = this.readPdfBookmarks(docPtr, 0);
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetBookmarks.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetBookmarks`, 'End', doc.id);
 
     return TaskBase.resolve({
       bookmarks,
@@ -870,10 +851,22 @@ export class PdfiumEngine implements PdfEngine {
       rotation,
       options,
     );
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `RenderPage.${doc.id}`, 'Begin');
+    this.logger.perf(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      `RenderPage`,
+      'Begin',
+      `${doc.id}-${page.index}`,
+    );
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `RenderPage.${doc.id}`, 'End');
+      this.logger.perf(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `RenderPage`,
+        'End',
+        `${doc.id}-${page.index}`,
+      );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
@@ -889,7 +882,13 @@ export class PdfiumEngine implements PdfEngine {
       rotation,
       options,
     );
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `RenderPage.${doc.id}`, 'End');
+    this.logger.perf(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      `RenderPage`,
+      'End',
+      `${doc.id}-${page.index}`,
+    );
     return TaskBase.resolve(imageData);
   }
 
@@ -920,16 +919,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `RenderPageRect.${doc.id}`,
+      `RenderPageRect`,
       'Begin',
+      `${doc.id}-${page.index}`,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `RenderPageRect.${doc.id}`,
+        `RenderPageRect`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -946,8 +947,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `RenderPageRect.${doc.id}`,
+      `RenderPageRect`,
       'End',
+      `${doc.id}-${page.index}`,
     );
 
     return TaskBase.resolve(imageData);
@@ -976,16 +978,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `GetPageAnnotations.${doc.id}`,
+      `GetPageAnnotations`,
       'Begin',
+      `${doc.id}-${page.index}`,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `GetPageAnnotations.${doc.id}`,
+        `GetPageAnnotations`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1008,8 +1012,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `GetPageAnnotations.${doc.id}`,
+      `GetPageAnnotations`,
       'End',
+      `${doc.id}-${page.index}`,
     );
 
     return TaskBase.resolve(annotations);
@@ -1036,16 +1041,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `CreatePageAnnotation.${doc.id}`,
+      `CreatePageAnnotation`,
       'Begin',
+      `${doc.id}-${page.index}`,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `CreatePageAnnotation.${doc.id}`,
+        `CreatePageAnnotation`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1060,8 +1067,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `CreatePageAnnotation.${doc.id}`,
+        `CreatePageAnnotation`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(
         new PdfEngineError('can not create annotation with specified type'),
@@ -1074,8 +1082,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `CreatePageAnnotation.${doc.id}`,
+        `CreatePageAnnotation`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(
         new PdfEngineError('can not set the rect of the rect'),
@@ -1110,8 +1119,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `CreatePageAnnotation.${doc.id}`,
+        `CreatePageAnnotation`,
         'End',
+        `${doc.id}-${page.index}`,
       );
 
       return TaskBase.reject(
@@ -1126,8 +1136,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `CreatePageAnnotation.${doc.id}`,
+      `CreatePageAnnotation`,
       'End',
+      `${doc.id}-${page.index}`,
     );
 
     return TaskBase.resolve(true);
@@ -1156,16 +1167,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `TransformPageAnnotation.${doc.id}`,
+      `TransformPageAnnotation`,
       'Begin',
+      `${doc.id}-${page.index}`,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `TransformPageAnnotation.${doc.id}`,
+        `TransformPageAnnotation`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1193,8 +1206,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `TransformPageAnnotation.${doc.id}`,
+        `TransformPageAnnotation`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(
         new PdfEngineError('can not set the rect of the annotation'),
@@ -1210,8 +1224,9 @@ export class PdfiumEngine implements PdfEngine {
             this.logger.perf(
               LOG_SOURCE,
               LOG_CATEGORY,
-              `TransformPageAnnotation.${doc.id}`,
+              `TransformPageAnnotation`,
               'End',
+              `${doc.id}-${page.index}`,
             );
             return TaskBase.reject(
               new PdfEngineError('can not remove the ink list of annotation'),
@@ -1239,8 +1254,9 @@ export class PdfiumEngine implements PdfEngine {
             this.logger.perf(
               LOG_SOURCE,
               LOG_CATEGORY,
-              `TransformPageAnnotation.${doc.id}`,
+              `TransformPageAnnotation`,
               'End',
+              `${doc.id}-${page.index}`,
             );
             return TaskBase.reject(
               new PdfEngineError(
@@ -1260,8 +1276,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `TransformPageAnnotation.${doc.id}`,
+      `TransformPageAnnotation`,
       'End',
+      `${doc.id}-${page.index}`,
     );
     return TaskBase.resolve(true);
   }
@@ -1287,16 +1304,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `RemovePageAnnotation.${doc.id}`,
+      `RemovePageAnnotation`,
       'Begin',
+      `${doc.id}-${page.index}`,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `RemovePageAnnotation.${doc.id}`,
+        `RemovePageAnnotation`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1313,8 +1332,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `RemovePageAnnotation.${doc.id}`,
+      `RemovePageAnnotation`,
       'End',
+      `${doc.id}-${page.index}`,
     );
     return TaskBase.resolve(result);
   }
@@ -1342,16 +1362,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `GetPageTextRects.${doc.id}`,
+      `GetPageTextRects`,
       'Begin',
+      `${doc.id}-${page.index}`,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `GetPageTextRects.${doc.id}`,
+        `GetPageTextRects`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1373,8 +1395,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `GetPageTextRects.${doc.id}`,
+      `GetPageTextRects`,
       'End',
+      `${doc.id}-${page.index}`,
     );
     return TaskBase.resolve(textRects);
   }
@@ -1402,16 +1425,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `RenderThumbnail.${doc.id}`,
+      `RenderThumbnail`,
       'Begin',
+      `${doc.id}-${page.index}`,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `RenderThumbnail.${doc.id}`,
+        `RenderThumbnail`,
         'End',
+        `${doc.id}-${page.index}`,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1423,8 +1448,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `RenderThumbnail.${doc.id}`,
+      `RenderThumbnail`,
       'End',
+      `${doc.id}-${page.index}`,
     );
 
     return result;
@@ -1440,24 +1466,14 @@ export class PdfiumEngine implements PdfEngine {
     contextId: number,
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', doc, contextId);
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `StartSearch.${doc.id}`,
-      'Begin',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StartSearch`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `StartSearch.${doc.id}`,
-        'End',
-      );
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StartSearch`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StartSearch.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StartSearch`, 'End', doc.id);
     return TaskBase.resolve(true);
   }
 
@@ -1479,10 +1495,10 @@ export class PdfiumEngine implements PdfEngine {
       contextId,
       target,
     );
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext.${doc.id}`, 'Begin');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext.${doc.id}`, 'End');
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
@@ -1495,7 +1511,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     if (searchContext.currPageIndex === doc.pageCount) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext.${doc.id}`, 'End');
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
       return TaskBase.resolve<SearchResult | undefined>(undefined);
     }
 
@@ -1524,12 +1540,7 @@ export class PdfiumEngine implements PdfEngine {
         searchContext.startIndex = result.charIndex + result.charCount;
         this.free(keywordPtr);
 
-        this.logger.perf(
-          LOG_SOURCE,
-          LOG_CATEGORY,
-          `SearchNext.${doc.id}`,
-          'End',
-        );
+        this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
         return TaskBase.resolve<SearchResult | undefined>(result);
       }
 
@@ -1540,7 +1551,7 @@ export class PdfiumEngine implements PdfEngine {
     }
     this.free(keywordPtr);
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
     return TaskBase.resolve<SearchResult | undefined>(undefined);
   }
 
@@ -1562,10 +1573,10 @@ export class PdfiumEngine implements PdfEngine {
       contextId,
       target,
     );
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev.${doc.id}`, 'Begin');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev.${doc.id}`, 'End');
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
@@ -1578,7 +1589,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     if (searchContext.currPageIndex === -1) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev.${doc.id}`, 'End');
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
       return TaskBase.resolve<SearchResult | undefined>(undefined);
     }
 
@@ -1607,12 +1618,7 @@ export class PdfiumEngine implements PdfEngine {
         searchContext.startIndex = result.charIndex + result.charCount;
         this.free(keywordPtr);
 
-        this.logger.perf(
-          LOG_SOURCE,
-          LOG_CATEGORY,
-          `SearchPrev.${doc.id}`,
-          'End',
-        );
+        this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
         return TaskBase.resolve<SearchResult | undefined>(result);
       }
 
@@ -1624,7 +1630,7 @@ export class PdfiumEngine implements PdfEngine {
 
     this.free(keywordPtr);
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
     return TaskBase.resolve<SearchResult | undefined>(undefined);
   }
 
@@ -1638,10 +1644,10 @@ export class PdfiumEngine implements PdfEngine {
     contextId: number,
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', doc, contextId);
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch.${doc.id}`, 'Begin');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch.${doc.id}`, 'End');
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
@@ -1650,7 +1656,7 @@ export class PdfiumEngine implements PdfEngine {
       searchContexts.delete(contextId);
     }
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch`, 'End', doc.id);
     return TaskBase.resolve(true);
   }
 
@@ -1666,16 +1672,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `GetAttachments.${doc.id}`,
+      `GetAttachments`,
       'Begin',
+      doc.id,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `GetAttachments.${doc.id}`,
+        `GetAttachments`,
         'End',
+        doc.id,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1689,12 +1697,7 @@ export class PdfiumEngine implements PdfEngine {
       attachments.push(attachment);
     }
 
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `GetAttachments.${doc.id}`,
-      'End',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetAttachments`, 'End', doc.id);
     return TaskBase.resolve(attachments);
   }
 
@@ -1717,16 +1720,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `ReadAttachmentContent.${doc.id}`,
+      `ReadAttachmentContent`,
       'Begin',
+      doc.id,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `ReadAttachmentContent.${doc.id}`,
+        `ReadAttachmentContent`,
         'End',
+        doc.id,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -1749,8 +1754,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `ReadAttachmentContent.${doc.id}`,
+        `ReadAttachmentContent`,
         'End',
+        doc.id,
       );
       return TaskBase.reject(
         new PdfEngineError('can not read attachment size'),
@@ -1772,8 +1778,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `ReadAttachmentContent.${doc.id}`,
+        `ReadAttachmentContent`,
         'End',
+        doc.id,
       );
 
       return TaskBase.reject(
@@ -1792,8 +1799,9 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `ReadAttachmentContent.${doc.id}`,
+      `ReadAttachmentContent`,
       'End',
+      doc.id,
     );
 
     return TaskBase.resolve(buffer);
@@ -1815,20 +1823,10 @@ export class PdfiumEngine implements PdfEngine {
       doc,
       pageIndexes,
     );
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `ExtractPages.${doc.id}`,
-      'Begin',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `ExtractPages.${doc.id}`,
-        'End',
-      );
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
@@ -1836,12 +1834,7 @@ export class PdfiumEngine implements PdfEngine {
 
     const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
     if (!newDocPtr) {
-      this.logger.perf(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `ExtractPages.${doc.id}`,
-        'End',
-      );
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('can not create new document'));
     }
 
@@ -1860,12 +1853,7 @@ export class PdfiumEngine implements PdfEngine {
       )
     ) {
       this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
-      this.logger.perf(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `ExtractPages.${doc.id}`,
-        'End',
-      );
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
       return TaskBase.reject(
         new PdfEngineError('can not import pages to new document'),
       );
@@ -1875,7 +1863,7 @@ export class PdfiumEngine implements PdfEngine {
 
     this.wasmModuleWrapper.FPDF_CloseDocument(newDocPtr);
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
     return TaskBase.resolve(buffer);
   }
 
@@ -1895,20 +1883,10 @@ export class PdfiumEngine implements PdfEngine {
       doc,
       pageIndexes,
     );
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `ExtractText.${doc.id}`,
-      'Begin',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractText`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(
-        LOG_SOURCE,
-        LOG_CATEGORY,
-        `ExtractText.${doc.id}`,
-        'End',
-      );
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractText`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
@@ -1934,7 +1912,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     const text = strings.join('\n\n');
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractText.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractText`, 'End', doc.id);
     return TaskBase.resolve(text);
   }
 
@@ -1946,11 +1924,11 @@ export class PdfiumEngine implements PdfEngine {
   merge(files: PdfFile[]): Task<PdfFile, Error> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'merge', files);
     const fileIds = files.map((file) => file.id).join('.');
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge.${fileIds}`, 'Begin');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'Begin', fileIds);
 
     const newDocPtr = this.wasmModuleWrapper.FPDF_CreateNewDocument();
     if (!newDocPtr) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge.${fileIds}`, 'End');
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
       return TaskBase.reject(new PdfEngineError('can not create new document'));
     }
 
@@ -1980,7 +1958,7 @@ export class PdfiumEngine implements PdfEngine {
           this.free(ptr.filePtr);
         }
 
-        this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge.${fileIds}`, 'End');
+        this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
         return TaskBase.reject<PdfFile>(
           new PdfEngineError(`FPDF_LoadMemDocument failed`, lastError),
         );
@@ -1995,7 +1973,7 @@ export class PdfiumEngine implements PdfEngine {
           this.free(ptr.filePtr);
         }
 
-        this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge.${fileIds}`, 'End');
+        this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
         return TaskBase.reject(
           new PdfEngineError('can not import pages to new document'),
         );
@@ -2015,7 +1993,7 @@ export class PdfiumEngine implements PdfEngine {
       name: `merged.${Math.random()}.pdf`,
       content: buffer,
     };
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge.${fileIds}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
     return TaskBase.resolve(file);
   }
 
@@ -2026,17 +2004,17 @@ export class PdfiumEngine implements PdfEngine {
    */
   saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', doc);
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy.${doc.id}`, 'Begin');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
-      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy.${doc.id}`, 'End');
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy`, 'End', doc.id);
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
 
     const { docPtr } = this.docs[doc.id];
     const buffer = this.saveDocument(docPtr);
 
-    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy.${doc.id}`, 'End');
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy`, 'End', doc.id);
     return TaskBase.resolve(buffer);
   }
 
@@ -2050,16 +2028,18 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `CloseDocument.${doc.id}`,
+      `CloseDocument`,
       'Begin',
+      doc.id,
     );
 
     if (!this.docs[doc.id]) {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `CloseDocument.${doc.id}`,
+        `CloseDocument`,
         'End',
+        doc.id,
       );
       return TaskBase.reject(new PdfEngineError('document does not exist'));
     }
@@ -2074,8 +2054,9 @@ export class PdfiumEngine implements PdfEngine {
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `CloseDocument.${doc.id}`,
+        `CloseDocument`,
         'End',
+        doc.id,
       );
       return TaskBase.reject<boolean>(
         new PdfEngineError(`can not close document ${doc.id}`),
@@ -2086,12 +2067,7 @@ export class PdfiumEngine implements PdfEngine {
     this.wasmModuleWrapper.FPDF_CloseDocument(docPtr);
     this.free(filePtr);
     delete this.docs[doc.id];
-    this.logger.perf(
-      LOG_SOURCE,
-      LOG_CATEGORY,
-      `CloseDocument.${doc.id}`,
-      'End',
-    );
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `CloseDocument`, 'End', doc.id);
     return TaskBase.resolve(true);
   }
 

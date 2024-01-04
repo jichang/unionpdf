@@ -88,7 +88,7 @@ export function PdfDocument(props: PdfDocumentProps) {
         };
       }
     }
-  }, [engine, file, password]);
+  }, [engine, file, password, setDoc]);
 
   const themeStyle = useMemo(() => {
     const styles = {} as Record<string, string | number>;

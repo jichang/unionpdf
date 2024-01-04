@@ -19,7 +19,34 @@ body {
 
   height: 80%;
 
-  overflow: scroll;
+  overflow: auto;
+
+  background-color: white;
+}
+
+.perf__viewer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  max-height: 80%;
+
+  overflow: auto;
+
+  background-color: white;
+}
+
+.perf__viewer td {
+  padding: 0.5rem;
+
+  text-align: left;
+}
+
+.perf__viewer .toolbar {
+  position: sticky;
+  top: 0;
+  padding: 0.5rem;
 
   background-color: white;
 }

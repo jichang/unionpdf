@@ -24,7 +24,7 @@ import {
   TaskAbortError,
   TaskBase,
 } from '@unionpdf/models';
-import { ExecuteRequest, Request, Response } from './runner';
+import { ExecuteRequest, Response } from './runner';
 
 const LOG_SOURCE = 'WebWorkerEngine';
 const LOG_CATEGORY = 'Engine';
@@ -919,8 +919,9 @@ export class WebWorkerEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `${request.data.name}.${request.id}`,
+      `${request.data.name}`,
       'Begin',
+      request.id,
     );
     this.readyTask.wait(
       () => {
@@ -930,16 +931,18 @@ export class WebWorkerEngine implements PdfEngine {
             this.logger.perf(
               LOG_SOURCE,
               LOG_CATEGORY,
-              `${request.data.name}.${request.id}`,
+              `${request.data.name}`,
               'End',
+              request.id,
             );
           },
           () => {
             this.logger.perf(
               LOG_SOURCE,
               LOG_CATEGORY,
-              `${request.data.name}.${request.id}`,
+              `${request.data.name}`,
               'End',
+              request.id,
             );
           },
         );
@@ -949,8 +952,9 @@ export class WebWorkerEngine implements PdfEngine {
         this.logger.perf(
           LOG_SOURCE,
           LOG_CATEGORY,
-          `${request.data.name}.${request.id}`,
+          `${request.data.name}`,
           'End',
+          request.id,
         );
         task.reject(new PdfEngineError('worker initialization failed'));
       },
