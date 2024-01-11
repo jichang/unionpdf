@@ -94,7 +94,7 @@ export function transform(
   const { rect } = annotation;
   const { origin, size } = rect;
 
-  let updated = {
+  const updated = {
     ...annotation,
     rect: {
       origin: {
@@ -335,7 +335,7 @@ export function clone(annotation: PdfAnnotationObject) {
   const { rect } = annotation;
   const { origin, size } = rect;
 
-  let updated: typeof annotation = {
+  const updated: typeof annotation = {
     ...annotation,
     id: Date.now(),
     rect: {

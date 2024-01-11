@@ -1,5 +1,3 @@
-/// <reference path="./url.d.ts" />
-
 import {
   ConsoleLogger,
   ignore,
@@ -8,6 +6,7 @@ import {
 } from '@unionpdf/models';
 import { WebWorkerEngine } from '../src/index';
 import pdfiumWasm from '../src/pdfium/pdfium.wasm';
+import './url';
 
 async function loadWasmBinary() {
   const response = await fetch(pdfiumWasm);
@@ -18,7 +17,7 @@ async function loadWasmBinary() {
 async function readFile(file: File): Promise<ArrayBuffer> {
   return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = (evt) => {
+    reader.onload = () => {
       resolve(reader.result as ArrayBuffer);
     };
 

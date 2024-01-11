@@ -182,7 +182,7 @@ export interface PdfToolbarFileItemGroupProps extends ComponentProps<'div'> {}
  */
 export function PdfToolbarFileItemGroup(props: PdfToolbarFileItemGroupProps) {
   const { className, children, ...rest } = props;
-  const { ToolbarItemGroup, Button, Dialog } = useUIComponents();
+  const { ToolbarItemGroup } = useUIComponents();
   const strings = useUIStrings();
   const logger = useLogger();
 

@@ -1,8 +1,8 @@
-import { Position } from '@unionpdf/models';
+import { Position, ignore } from '@unionpdf/models';
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useUIComponents, useUIStrings } from '../../adapters';
-import { Drawable, DrawableHandle, DrawablePath } from '../common';
+import { Drawable, DrawableHandle } from '../common';
 import { usePdfEditorStamps } from './stamps.context';
 import './stamps.css';
 
@@ -19,16 +19,6 @@ export function PdfEditorStamps() {
   const { Dialog, Button } = useUIComponents();
 
   const [drawableDialogIsShown, setDrawableDialogIsShown] = useState(false);
-  const [paths, setPaths] = useState<DrawablePath[]>([]);
-
-  const onAddPath = useCallback(
-    (path: DrawablePath) => {
-      setPaths((paths) => {
-        return [...paths, path];
-      });
-    },
-    [setPaths],
-  );
 
   const cancel = useCallback(() => {
     setDrawableDialogIsShown(false);
@@ -84,7 +74,7 @@ export function PdfEditorStamps() {
           componentRef={drawableHandleRef}
           width={320}
           height={480}
-          onAddPath={onAddPath}
+          onAddPath={ignore}
         />
         <div>
           <Button scenario={{ usage: 'cancel-create-stamp' }} onClick={cancel}>

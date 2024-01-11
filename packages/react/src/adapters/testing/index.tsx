@@ -32,8 +32,6 @@ export function PdfTestingAdapterProvider(
 ) {
   const { children } = props;
 
-  const panelRef = useRef<HTMLDivElement>(null);
-
   return (
     <UIStringsContextProvider strings={strings}>
       <UIComponentsContextProvider components={{ ...components, Dialog }}>

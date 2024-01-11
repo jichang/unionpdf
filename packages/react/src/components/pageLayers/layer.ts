@@ -1,4 +1,4 @@
-import { PdfPageObject, Rotation, Size } from '@unionpdf/models';
+import { PdfPageObject, Rotation } from '@unionpdf/models';
 import { ComponentType } from 'react';
 
 /**

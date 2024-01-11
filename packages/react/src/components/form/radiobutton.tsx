@@ -1,11 +1,10 @@
 import {
-  PdfWidgetAnnoObject,
   PdfWidgetAnnoOption,
   PDF_FORM_FIELD_FLAG,
   PDF_FORM_FIELD_TYPE,
   PdfWidgetAnnoField,
 } from '@unionpdf/models';
-import React, { FormEvent, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents } from '../../adapters';
 
@@ -29,25 +28,23 @@ export function RadioButtonField(props: RadioButtonFieldProps) {
   const name = field.alternateName || field.name;
   const [value] = useState(() => {
     switch (type) {
-      case PDF_FORM_FIELD_TYPE.COMBOBOX:
-        let option = options.find((option: PdfWidgetAnnoOption) => {
+      case PDF_FORM_FIELD_TYPE.COMBOBOX: {
+        const option = options.find((option: PdfWidgetAnnoOption) => {
           return option.isSelected;
         });
         return option?.label || field.value;
+      }
       default:
         return field.value;
     }
   });
 
   const [isChecked, setIsChecked] = useState(field.isChecked);
-  const changeIsChecked = useCallback(
-    (evt: FormEvent) => {
-      setIsChecked((isChecked: boolean) => {
-        return !isChecked;
-      });
-    },
-    [setIsChecked],
-  );
+  const changeIsChecked = useCallback(() => {
+    setIsChecked((isChecked: boolean) => {
+      return !isChecked;
+    });
+  }, [setIsChecked]);
 
   const isDisabled =
     mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);

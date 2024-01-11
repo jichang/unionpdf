@@ -3,7 +3,6 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfApplication } from './application';
 import { PdfApplicationContextProvider } from './application.context';
-import { MemoryPdfApplicationConfigurationProvider } from './application.configuration';
 import { testingMemoryPdfApplicationConfigurationProvider } from '../adapters/testing';
 
 describe('PdfApplication', () => {

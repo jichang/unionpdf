@@ -370,7 +370,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
       return;
     }
 
-    const operations: Operation[] = [];
     const pageOperations: Record<number, Operation[]> = {};
 
     for (const operation of undo) {
@@ -462,13 +461,10 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
             engine.createPageAnnotation(doc, page, annotation);
             break;
           case 'transform':
-            const { params } = operation;
-            const task = engine.transformPageAnnotation(
-              doc,
-              page,
-              annotation,
-              params,
-            );
+            {
+              const { params } = operation;
+              engine.transformPageAnnotation(doc, page, annotation, params);
+            }
             break;
           case 'remove':
             engine.removePageAnnotation(doc, page, annotation);

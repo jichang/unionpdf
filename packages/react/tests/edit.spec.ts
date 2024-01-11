@@ -1,6 +1,5 @@
 import { test } from '@playwright/test';
 import { PdfApplicatinPluginKey } from '../src/core/application.configuration';
-import { PdfAnnotationTool } from '../src/components/editor/editor.context';
 
 test('edit document', async ({ page }) => {
   await page.goto('http://localhost:1234');

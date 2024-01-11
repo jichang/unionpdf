@@ -6,7 +6,6 @@ import {
   PdfImageObject,
   PdfFormObject,
   PdfPathObject,
-  PdfSegmentObject,
   Rect,
   Position,
   PdfTransformMatrix,
@@ -101,23 +100,27 @@ export function renderObject(
               i++;
               break;
             case PdfSegmentObjectType.BEZIERTO:
-              const points = object.segments.slice(i, i + 3).map((segment) => {
-                return segment.point;
-              });
-              if (points.length === 3) {
-                const point0 = transform(points[0], matrix, rect);
-                const point1 = transform(points[1], matrix, rect);
-                const point2 = transform(points[2], matrix, rect);
-                ctx.bezierCurveTo(
-                  point0.x,
-                  point0.y,
-                  point1.x,
-                  point1.y,
-                  point2.x,
-                  point2.y,
-                );
+              {
+                const points = object.segments
+                  .slice(i, i + 3)
+                  .map((segment) => {
+                    return segment.point;
+                  });
+                if (points.length === 3) {
+                  const point0 = transform(points[0], matrix, rect);
+                  const point1 = transform(points[1], matrix, rect);
+                  const point2 = transform(points[2], matrix, rect);
+                  ctx.bezierCurveTo(
+                    point0.x,
+                    point0.y,
+                    point1.x,
+                    point1.y,
+                    point2.x,
+                    point2.y,
+                  );
+                }
+                i = i + 3;
               }
-              i = i + 3;
               break;
             default:
               i++;

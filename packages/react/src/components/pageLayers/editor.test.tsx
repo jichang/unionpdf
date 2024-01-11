@@ -12,7 +12,7 @@ import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '../../mocks/intersectionObserver';
-import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
+import { PdfApplicationContextProvider } from '../../core';
 import { testingMemoryPdfApplicationConfigurationProvider } from '../../adapters/testing';
 
 describe('PdfPageEditorLayer', () => {

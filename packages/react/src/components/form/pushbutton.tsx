@@ -1,8 +1,4 @@
-import {
-  PdfWidgetAnnoObject,
-  PDF_FORM_FIELD_FLAG,
-  PdfWidgetAnnoField,
-} from '@unionpdf/models';
+import { PDF_FORM_FIELD_FLAG, PdfWidgetAnnoField } from '@unionpdf/models';
 import React from 'react';
 import { usePdfApplication, PdfApplicationMode } from '../../core';
 import { useUIComponents } from '../../adapters';

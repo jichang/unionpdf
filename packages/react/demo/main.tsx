@@ -2,7 +2,6 @@ import React, {
   ChangeEvent,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -291,7 +290,7 @@ function App(props: AppProps) {
           <PdfMerger
             files={files}
             onRemoveFile={removeFile}
-            onMerged={(mergedFile) => {}}
+            onMerged={() => {}}
           />
         </div>
       );
@@ -412,7 +411,7 @@ export function PerfViewer() {
 async function readFile(file: File): Promise<ArrayBuffer> {
   return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = (evt) => {
+    reader.onload = () => {
       resolve(reader.result as ArrayBuffer);
     };
 

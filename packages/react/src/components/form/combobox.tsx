@@ -45,7 +45,7 @@ export function ComboboxField(props: ComboboxFieldProps) {
       const target = evt.target as HTMLSelectElement;
       if (isMultipleChoice) {
         const values: string[] = [];
-        for (let option of target.selectedOptions) {
+        for (const option of target.selectedOptions) {
           values.push(option.value);
         }
         setValues(values);

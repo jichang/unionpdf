@@ -10,7 +10,7 @@ describe('wrap', () => {
       };
     };
 
-    // @ts-ignore
+    // @ts-expect-error ignore type check in test
     const result = wrap(cwrap, {
       A: [['number', 'number'] as const, 'number'] as const,
       B: [['number', 'number', 'number'] as const, ''] as const,

@@ -13,11 +13,11 @@ describe('TaskBase', () => {
     task.wait(resolved, rejected);
     task.resolve('hello');
     expect(task.state.stage).toBe(TaskStage.Resolved);
-    // @ts-ignore
+    // @ts-expect-error ignore type check in test
     expect(task.state.result).toBe('hello');
-    expect(resolved).toBeCalledTimes(1);
-    expect(resolved).toBeCalledWith('hello');
-    expect(rejected).not.toBeCalled();
+    expect(resolved).toHaveBeenCalledTimes(1);
+    expect(resolved).toHaveBeenCalledWith('hello');
+    expect(rejected).not.toHaveBeenCalled();
   });
 
   test('reject should update state to rejected and call rejected callback', () => {
@@ -28,11 +28,11 @@ describe('TaskBase', () => {
     const error = new PdfEngineError('hello');
     task.reject(error);
     expect(task.state.stage).toBe(TaskStage.Rejected);
-    // @ts-ignore
+    // @ts-expect-error ignore type check in test
     expect(task.state.error).toBe(error);
-    expect(rejected).toBeCalledTimes(1);
-    expect(rejected).toBeCalledWith(error);
-    expect(resolved).not.toBeCalled();
+    expect(rejected).toHaveBeenCalledTimes(1);
+    expect(rejected).toHaveBeenCalledWith(error);
+    expect(resolved).not.toHaveBeenCalled();
   });
 
   test('abort should update state to aborted and call rejected callback', () => {
@@ -42,12 +42,12 @@ describe('TaskBase', () => {
     task.wait(resolved, rejected);
     task.abort();
     expect(task.state.stage).toBe(TaskStage.Aborted);
-    // @ts-ignore
+    // @ts-expect-error ignore type check in test
     expect(task.state.error instanceof TaskAbortError).toBe(true);
-    expect(rejected).toBeCalledTimes(1);
-    // @ts-ignore
-    expect(rejected).toBeCalledWith(task.state.error);
-    expect(resolved).not.toBeCalled();
+    expect(rejected).toHaveBeenCalledTimes(1);
+    // @ts-expect-error ignore type check in test
+    expect(rejected).toHaveBeenCalledWith(task.state.error);
+    expect(resolved).not.toHaveBeenCalled();
   });
 
   test('abort can accept customized error', () => {
@@ -58,10 +58,10 @@ describe('TaskBase', () => {
     const error = new PdfEngineError('hello');
     task.abort(error);
     expect(task.state.stage).toBe(TaskStage.Aborted);
-    // @ts-ignore
+    // @ts-expect-error ignore type check in test
     expect(task.state.error).toBe(error);
-    expect(rejected).toBeCalledTimes(1);
-    expect(rejected).toBeCalledWith(error);
-    expect(resolved).not.toBeCalled();
+    expect(rejected).toHaveBeenCalledTimes(1);
+    expect(rejected).toHaveBeenCalledWith(error);
+    expect(resolved).not.toHaveBeenCalled();
   });
 });

@@ -22,7 +22,7 @@ export function findScollableContainer(
     return elem;
   }
 
-  let parentElement: HTMLElement | null = elem.parentElement;
+  const parentElement: HTMLElement | null = elem.parentElement;
   if (!parentElement || parentElement === document.body) {
     return window;
   }

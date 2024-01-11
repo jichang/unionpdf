@@ -234,8 +234,8 @@ export function PdfPagesContent(props: PdfPagesContentProps) {
       return indexA - indexB;
     });
 
-    let minPageIndex: number = pageIndexes[0];
-    let maxPageIndex: number = pageIndexes[pageIndexes.length - 1];
+    const minPageIndex: number = pageIndexes[0];
+    const maxPageIndex: number = pageIndexes[pageIndexes.length - 1];
 
     return [minPageIndex, maxPageIndex];
   }, [visibleEntryIds]);

@@ -10,10 +10,13 @@
   "devDependencies": {
     "@parcel/packager-ts": "^2.10.3",
     "@parcel/transformer-typescript-types": "^2.10.3",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "eslint": "^8.56.0",
     "husky": "^8.0.3",
     "prettier": "^3.1.0",
     "typedoc": "^0.25.4",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "doc": "typedoc",
@@ -24,6 +27,7 @@
     "e2e": "npm run e2e --workspaces --if-present",
     "publish": "npm run build && npm publish --workspaces --if-present",
     "format": "prettier --write .",
+    "lint": "eslint . --fix",
     "prepare": "husky install"
   },
   "overrides": {

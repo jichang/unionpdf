@@ -153,29 +153,29 @@ export class LevelLogger implements Logger {
 
   /** {@inheritDoc Logger.debug} */
   debug(source: string, category: string, ...args: any) {
-    if (this.level >= LogLevel.Debug) {
+    if (this.level <= LogLevel.Debug) {
       this.logger.debug(source, category, ...args);
     }
   }
 
   /** {@inheritDoc Logger.info} */
   info(source: string, category: string, ...args: any) {
-    if (this.level >= LogLevel.Info) {
-      this.logger.debug(source, category, ...args);
+    if (this.level <= LogLevel.Info) {
+      this.logger.info(source, category, ...args);
     }
   }
 
   /** {@inheritDoc Logger.warn} */
   warn(source: string, category: string, ...args: any) {
-    if (this.level >= LogLevel.Warn) {
-      this.logger.debug(source, category, ...args);
+    if (this.level <= LogLevel.Warn) {
+      this.logger.warn(source, category, ...args);
     }
   }
 
   /** {@inheritDoc Logger.error} */
   error(source: string, category: string, ...args: any) {
-    if (this.level >= LogLevel.Error) {
-      this.logger.debug(source, category, ...args);
+    if (this.level <= LogLevel.Error) {
+      this.logger.error(source, category, ...args);
     }
   }
 

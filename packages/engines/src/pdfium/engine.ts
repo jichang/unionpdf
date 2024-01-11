@@ -4621,9 +4621,9 @@ export class PdfiumEngine implements PdfEngine {
         const hasY = this.wasmModule.getValue(hasYPtr, 'i8');
         const hasZ = this.wasmModule.getValue(hasZPtr, 'i8');
 
-        const x = !!hasX ? this.wasmModule.getValue(xPtr, 'float') : 0;
-        const y = !!hasY ? this.wasmModule.getValue(yPtr, 'float') : 0;
-        const zoom = !!hasZ ? this.wasmModule.getValue(zPtr, 'float') : 0;
+        const x = hasX ? this.wasmModule.getValue(xPtr, 'float') : 0;
+        const y = hasY ? this.wasmModule.getValue(yPtr, 'float') : 0;
+        const zoom = hasZ ? this.wasmModule.getValue(zPtr, 'float') : 0;
 
         this.free(hasXPtr);
         this.free(hasYPtr);

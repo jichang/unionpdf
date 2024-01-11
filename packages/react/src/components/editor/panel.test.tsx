@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfEditorPanel } from './panel';
-import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
+import { PdfApplicationContextProvider } from '../../core';
 import {
   PdfTestingAdapterProvider,
   testingMemoryPdfApplicationConfigurationProvider,

@@ -92,7 +92,7 @@ export function PdfDocument(props: PdfDocumentProps) {
 
   const themeStyle = useMemo(() => {
     const styles = {} as Record<string, string | number>;
-    for (let key in theme) {
+    for (const key in theme) {
       styles[`--${key}`] = theme[key];
     }
 

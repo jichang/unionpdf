@@ -367,7 +367,9 @@ export class StoragePdfApplicationConfigurationProvider
         this.scaleFactor = configruation.scaleFactor;
         this.plugins = configruation.plugins;
       }
-    } catch (e) {}
+    } catch (e) {
+      /* ignore it */
+    }
   }
 
   /**
@@ -379,7 +381,9 @@ export class StoragePdfApplicationConfigurationProvider
     try {
       const configruation = this.get();
       this.storage.setItem(this.key, JSON.stringify(configruation));
-    } catch (e) {}
+    } catch (e) {
+      /* ignore it */
+    }
   }
 
   /**

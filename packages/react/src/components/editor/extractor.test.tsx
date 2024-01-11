@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { PdfEditorExtractor } from './extractor';
-import { PdfApplicationContextProvider, PdfApplicationMode } from '../../core';
+import { PdfApplicationContextProvider } from '../../core';
 import { intersectionObserver } from '../../mocks/intersectionObserver';
 import {
   PdfTestingAdapterProvider,

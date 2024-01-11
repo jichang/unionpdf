@@ -1,5 +1,4 @@
 import {
-  PdfWidgetAnnoObject,
   PdfWidgetAnnoOption,
   PDF_FORM_FIELD_FLAG,
   PDF_FORM_FIELD_TYPE,
@@ -29,11 +28,12 @@ export function TextField(props: TextFieldProps) {
   const name = field.alternateName || field.name;
   const [value, setValue] = useState(() => {
     switch (type) {
-      case PDF_FORM_FIELD_TYPE.COMBOBOX:
-        let option = options.find((option: PdfWidgetAnnoOption) => {
+      case PDF_FORM_FIELD_TYPE.COMBOBOX: {
+        const option = options.find((option: PdfWidgetAnnoOption) => {
           return option.isSelected;
         });
         return option?.label || field.value;
+      }
       default:
         return field.value;
     }

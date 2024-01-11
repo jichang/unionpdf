@@ -1313,7 +1313,9 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
       for (const resolvedCallback of this.resolvedCallbacks) {
         try {
           resolvedCallback(result);
-        } catch (e) {}
+        } catch (e) {
+          /* ignore */
+        }
       }
       this.resolvedCallbacks = [];
       this.rejectedCallbacks = [];
@@ -1334,7 +1336,9 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
       for (const rejectedCallback of this.rejectedCallbacks) {
         try {
           rejectedCallback(error);
-        } catch (e) {}
+        } catch (e) {
+          /*ignore */
+        }
       }
       this.resolvedCallbacks = [];
       this.rejectedCallbacks = [];
@@ -1351,7 +1355,9 @@ export class TaskBase<R, E = Error> implements Task<R, E> {
       for (const rejectedCallback of this.rejectedCallbacks) {
         try {
           rejectedCallback(this.state.error);
-        } catch (e) {}
+        } catch (e) {
+          /* ignore */
+        }
       }
       this.resolvedCallbacks = [];
       this.rejectedCallbacks = [];

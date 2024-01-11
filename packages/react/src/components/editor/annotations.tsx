@@ -15,7 +15,7 @@ import {
   PdfPageAnnotations,
   PdfPageAnnotationComponentContextProvider,
 } from '../common';
-import { apply, calculateTransformation, clone } from '../helpers/editor';
+import { apply, calculateTransformation } from '../helpers/editor';
 import { rotateImageData } from '../helpers/image';
 import { PdfPageEditorAnnotation } from './annotation';
 import './annotations.css';
@@ -185,22 +185,24 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
           });
           break;
         case 'resizer':
-          const { rect } = annotation;
+          {
+            const { rect } = annotation;
 
-          const params = calculateTransformation(
-            rect,
-            offset,
-            rotation,
-            option.position,
-          );
+            const params = calculateTransformation(
+              rect,
+              offset,
+              rotation,
+              option.position,
+            );
 
-          exec({
-            id: `${Date.now()}.${Math.random()}`,
-            action: 'transform',
-            page,
-            annotation,
-            params,
-          });
+            exec({
+              id: `${Date.now()}.${Math.random()}`,
+              action: 'transform',
+              page,
+              annotation,
+              params,
+            });
+          }
           break;
       }
     },
@@ -324,22 +326,24 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
           });
           break;
         case 'resizer':
-          const { rect } = annotation;
+          {
+            const { rect } = annotation;
 
-          const params = calculateTransformation(
-            rect,
-            offset,
-            rotation,
-            option.position,
-          );
+            const params = calculateTransformation(
+              rect,
+              offset,
+              rotation,
+              option.position,
+            );
 
-          operations.push({
-            id: `${Date.now()}.${Math.random()}`,
-            action: 'transform',
-            page,
-            annotation,
-            params,
-          });
+            operations.push({
+              id: `${Date.now()}.${Math.random()}`,
+              action: 'transform',
+              page,
+              annotation,
+              params,
+            });
+          }
           break;
       }
     }
