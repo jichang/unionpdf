@@ -4,7 +4,7 @@ import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIStrings } from '../../adapters';
 import './metadata.css';
-import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginPanel } from '../../core';
 
 /**
  * Properties of PdfMetadata
@@ -21,12 +21,12 @@ export function PdfMetadata(props: PdfMetadataProps) {
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Metadata}>
-      <PdfPluginDialog
+      <PdfPluginPanel
         pluginKey={PdfApplicatinPluginKey.Metadata}
         title={strings.metadata}
       >
         <PdfMetadataContent {...props} />
-      </PdfPluginDialog>
+      </PdfPluginPanel>
     </PdfPlugin>
   );
 }

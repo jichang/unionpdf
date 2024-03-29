@@ -22,7 +22,7 @@ export const strings: UIStrings = {
   modificationDate: 'Modification Date',
   search: 'Search',
   nextMatch: 'Next',
-  previousMatch: 'Next',
+  previousMatch: 'Previous',
   matchCase: 'Match Case',
   matchWholeWord: 'Match Whole Word',
   matchConsecutive: 'Match Consecutive',

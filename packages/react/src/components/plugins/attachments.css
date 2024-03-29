@@ -1,13 +1,5 @@
 .pdf__attachments {
-  padding: 1rem;
-
   background-color: white;
-}
-
-.pdf__attachments table {
-  border: 1px solid black;
-
-  border-collapse: collapse;
 }
 
 .pdf__attachments td {

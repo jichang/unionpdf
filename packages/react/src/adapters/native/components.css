@@ -43,6 +43,10 @@
   flex: 1;
 }
 
+.pdf__ui__form__field {
+  padding: 0.5rem;
+}
+
 .pdf__ui__dialog {
   top: 50%;
   left: 50%;

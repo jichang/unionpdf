@@ -6,7 +6,7 @@ import { ignore, PdfSignatureObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIStrings } from '../../adapters';
-import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginPanel } from '../../core';
 
 /**
  * Properties of PdfSignature
@@ -27,12 +27,12 @@ export function PdfSignatures(props: PdfSignaturesProps) {
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Signatures}>
-      <PdfPluginDialog
+      <PdfPluginPanel
         pluginKey={PdfApplicatinPluginKey.Signatures}
         title={strings.signatures}
       >
         <PdfSignaturesContent {...props} />
-      </PdfPluginDialog>
+      </PdfPluginPanel>
     </PdfPlugin>
   );
 }

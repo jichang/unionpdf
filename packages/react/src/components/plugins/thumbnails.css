@@ -1,7 +1,5 @@
 .pdf__thumbnails {
   position: relative;
-
-  overflow: scroll;
 }
 
 .pdf__thumbnails__grid {

@@ -17,6 +17,7 @@ import {
   LinkProps,
   UIComponents,
   PanelProps,
+  FormFieldProps,
 } from '../uicomponents.context';
 import ReactDOM from 'react-dom';
 
@@ -181,6 +182,14 @@ export function Form(props: FormProps) {
   return <form className={classNames('pdf__ui__form', className)} {...rest} />;
 }
 
+export function FormField(props: FormFieldProps) {
+  const { className, ...rest } = props;
+
+  return (
+    <div className={classNames('pdf__ui__form__field', className)} {...rest} />
+  );
+}
+
 export function Dialog(props: DialogProps) {
   const { isOpened, title, onClose, className, children, ...rest } = props;
 
@@ -278,6 +287,7 @@ export const components: UIComponents = {
   Icon,
   Link,
   Form,
+  FormField,
   Label,
   Select,
   Input,

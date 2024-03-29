@@ -6,7 +6,7 @@ import { ignore, PdfAttachmentObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIComponents, useUIStrings } from '../../adapters';
-import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginDialog } from '../../core';
+import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginPanel } from '../../core';
 
 /**
  * Properties of PdfAttachments
@@ -25,12 +25,12 @@ export function PdfAttachments(props: PdfAttachmentsProps) {
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Attachments}>
-      <PdfPluginDialog
+      <PdfPluginPanel
         pluginKey={PdfApplicatinPluginKey.Attachments}
         title={strings.attchments}
       >
         <PdfAttachmentsContent {...props} />
-      </PdfPluginDialog>
+      </PdfPluginPanel>
     </PdfPlugin>
   );
 }

@@ -146,6 +146,12 @@ export type ButtonScenario =
       usage: 'cancel-print';
     }
   | {
+      usage: 'search-previous-match';
+    }
+  | {
+      usage: 'search-next-match';
+    }
+  | {
       usage: 'plugin-toggle';
       pluginKey: PdfApplicatinPluginKey;
     };
@@ -160,6 +166,14 @@ export type FormScenario = {
 export interface FormProps
   extends ComponentProps<'form'>,
     AdaptableComponent<FormScenario> {}
+
+export type FormFieldScenario = {
+  usage: 'search';
+};
+
+export interface FormFieldProps
+  extends ComponentProps<'div'>,
+    AdaptableComponent<FormFieldScenario> {}
 
 export interface LabelProps extends ComponentProps<'label'> {}
 export interface TextAreaProps extends ComponentProps<'textarea'> {}
@@ -193,6 +207,7 @@ export interface UIComponents {
   Button: UIComponent<ButtonProps>;
   Icon: UIComponent<IconProps>;
   Form: UIComponent<FormProps>;
+  FormField: UIComponent<FormFieldProps>;
   Label: UIComponent<LabelProps>;
   TextArea: UIComponent<TextAreaProps>;
   Input: UIComponent<InputProps>;

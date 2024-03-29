@@ -126,12 +126,36 @@ export function PdfSearchContent(props: PdfSearchProps) {
   const searchPrev = useCallback(
     (keyword: string, flags: MatchFlag[]) => {
       if (engine && doc) {
-        engine
-          .searchPrev(doc, contextId, { keyword, flags })
-          .wait(ignore, ignore);
+        engine.searchPrev(doc, contextId, { keyword, flags }).wait((result) => {
+          if (result) {
+            gotoPage(
+              {
+                destination: {
+                  pageIndex: result?.pageIndex,
+                  zoom: {
+                    mode: PdfZoomMode.Unknown,
+                  },
+                  view: [],
+                },
+              },
+              PDF_NAVIGATOR_SOURCE_SEARCH,
+            );
+          }
+        }, ignore);
       }
     },
-    [engine, doc, contextId],
+    [engine, doc, contextId, gotoPage],
+  );
+
+  const startSearchPrevious = useCallback(
+    (evt: FormEvent) => {
+      evt.preventDefault();
+
+      if (engine && doc) {
+        searchPrev(keyword, flags);
+      }
+    },
+    [keyword, flags, searchPrev],
   );
 
   const search = useCallback(
@@ -142,17 +166,19 @@ export function PdfSearchContent(props: PdfSearchProps) {
         searchNext(keyword, flags);
       }
     },
-    [keyword, flags, searchNext, searchPrev],
+    [keyword, flags, searchNext],
   );
 
-  const { Input, Checkbox, Label, Form } = useUIComponents();
+  const { Input, Checkbox, Button, Label, Form, FormField } = useUIComponents();
   const strings = useUIStrings();
 
   return (
     <div className={classNames('pdf__search', className)} {...rest}>
       <Form scenario={{ usage: 'search' }} onSubmit={search}>
-        <Input onChange={updateKeyword} />
-        <div>
+        <FormField scenario={{ usage: 'search' }}>
+          <Input onChange={updateKeyword} />
+        </FormField>
+        <FormField scenario={{ usage: 'search' }}>
           <Checkbox
             id="pdf__search__matchcase"
             value={MatchFlag.MatchCase}
@@ -160,8 +186,8 @@ export function PdfSearchContent(props: PdfSearchProps) {
             onChange={toggleFlag}
           />
           <Label htmlFor="pdf__search__matchcase">{strings.matchCase}</Label>
-        </div>
-        <div>
+        </FormField>
+        <FormField scenario={{ usage: 'search' }}>
           <Checkbox
             id="pdf__search__matchwholeword"
             value={MatchFlag.MatchWholeWord}
@@ -171,8 +197,8 @@ export function PdfSearchContent(props: PdfSearchProps) {
           <Label htmlFor="pdf__search__matchwholeword">
             {strings.matchWholeWord}
           </Label>
-        </div>
-        <div>
+        </FormField>
+        <FormField scenario={{ usage: 'search' }}>
           <Checkbox
             id="pdf__search__matchsecutive"
             value={MatchFlag.MatchConsecutive}
@@ -182,7 +208,19 @@ export function PdfSearchContent(props: PdfSearchProps) {
           <Label htmlFor="pdf__search__matchconsecutive">
             {strings.matchConsecutive}
           </Label>
-        </div>
+        </FormField>
+        <FormField scenario={{ usage: 'search' }}>
+          <Button
+            type="button"
+            scenario={{ usage: 'search-previous-match' }}
+            onClick={startSearchPrevious}
+          >
+            {strings.previousMatch}
+          </Button>
+          <Button scenario={{ usage: 'search-next-match' }}>
+            {strings.nextMatch}
+          </Button>
+        </FormField>
       </Form>
     </div>
   );
