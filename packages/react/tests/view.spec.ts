@@ -17,7 +17,11 @@ test('view document', async ({ page }) => {
     )
     .click();
   await page.getByTestId('pdf__plugin__metadata__content');
-  await page.getByTestId('pdf__ui__dialog__close__btn').click();
+  await page
+    .getByTestId(
+      `pdf__toolbar__item__plugin__${PdfApplicatinPluginKey.Metadata}`,
+    )
+    .click();
 
   await page
     .getByTestId(
@@ -49,7 +53,11 @@ test('view document', async ({ page }) => {
     )
     .click();
   await page.getByTestId('pdf__plugin__attachments__content');
-  await page.getByTestId('pdf__ui__dialog__close__btn').click();
+  await page
+    .getByTestId(
+      `pdf__toolbar__item__plugin__${PdfApplicatinPluginKey.Attachments}`,
+    )
+    .click();
 
   await page
     .getByTestId(
@@ -57,5 +65,9 @@ test('view document', async ({ page }) => {
     )
     .click();
   await page.getByTestId('pdf__plugin__signatures__content');
-  await page.getByTestId('pdf__ui__dialog__close__btn').click();
+  await page
+    .getByTestId(
+      `pdf__toolbar__item__plugin__${PdfApplicatinPluginKey.Signatures}`,
+    )
+    .click();
 });
