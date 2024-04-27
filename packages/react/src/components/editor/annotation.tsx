@@ -16,6 +16,7 @@ import {
   PdfPageUnderlineAnnotation,
   PdfPageCaretAnnotation,
   PdfPageStrikeOutAnnotation,
+  PdfPageWidgetAnnotation,
 } from '../annotations';
 import classNames from 'classnames';
 import { PdfAnnotationTool, usePdfEditor } from './editor.context';
@@ -235,6 +236,17 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
         />
       );
       break;
+    case PdfAnnotationSubtype.WIDGET:
+      content = (
+        <PdfPageWidgetAnnotation
+          key={annotation.id}
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        />
+      );
+      break;
     default:
       content = null;
   }
@@ -254,14 +266,18 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
     >
-      <PdfPageAnnotationMover
-        page={page}
-        annotation={annotation}
-        rotation={rotation}
-        scaleFactor={scaleFactor}
-      >
-        {content}
-      </PdfPageAnnotationMover>
+      {isSelection ? (
+        <PdfPageAnnotationMover
+          page={page}
+          annotation={annotation}
+          rotation={rotation}
+          scaleFactor={scaleFactor}
+        >
+          {content}
+        </PdfPageAnnotationMover>
+      ) : (
+        content
+      )}
       {isSelection && isResizable ? (
         <>
           <PdfPageAnnotationResizer

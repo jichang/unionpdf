@@ -41,6 +41,7 @@ export interface UIStrings {
   noSignatures: string;
   extract: string;
   pencil: string;
+  fillForm: string;
   stamps: string;
   addTextBox: string;
   addStamp: string;

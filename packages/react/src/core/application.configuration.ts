@@ -52,12 +52,30 @@ export enum PdfApplicatinPluginKey {
   Uploader,
 }
 
+export const ALL_PDF_APPLICATION_PLUGIN_KEYS: PdfApplicatinPluginKey[] = [
+  PdfApplicatinPluginKey.Attachments,
+  PdfApplicatinPluginKey.Bookmarks,
+  PdfApplicatinPluginKey.Downloader,
+  PdfApplicatinPluginKey.Editor,
+  PdfApplicatinPluginKey.Metadata,
+  PdfApplicatinPluginKey.Pages,
+  PdfApplicatinPluginKey.Printer,
+  PdfApplicatinPluginKey.Search,
+  PdfApplicatinPluginKey.Signatures,
+  PdfApplicatinPluginKey.Thumbnails,
+  PdfApplicatinPluginKey.Toolbar,
+  PdfApplicatinPluginKey.Uploader,
+];
+
 /**
  * Default configuration for plugins
  *
  * @public
  */
-export const DEFAULT_PLUGIN_CONFIGURATIONS = {
+export const DEFAULT_PLUGIN_CONFIGURATIONS: Record<
+  PdfApplicatinPluginKey,
+  PdfApplicatinPluginConfiguration
+> = {
   [PdfApplicatinPluginKey.Attachments]: {
     isEnabled: true,
     isVisible: false,
@@ -195,7 +213,9 @@ export interface PdfApplicationConfigurationProvider {
  *
  * @public
  */
-export class PdfApplicationConfigurationProviderBase {
+export class PdfApplicationConfigurationProviderBase
+  implements PdfApplicationConfigurationProvider
+{
   /**
    * Callbacks that subscribed to the configuration change event
    *
@@ -252,15 +272,7 @@ export class PdfApplicationConfigurationProviderBase {
       this.callbacks.splice(index, 1);
     }
   }
-}
 
-/**
- * Configuration provider that maintains configuration with variables in memory
- */
-export class MemoryPdfApplicationConfigurationProvider
-  extends PdfApplicationConfigurationProviderBase
-  implements PdfApplicationConfigurationProvider
-{
   /** @inheritDoc PdfApplicationConfigurationProvider.get  */
   get(): PdfApplicationConfiguration {
     return {
@@ -284,30 +296,20 @@ export class MemoryPdfApplicationConfigurationProvider
 
   /** @inheritDoc PdfApplicationConfigurationProvider.showPlugin */
   showPlugin(pluginKey: PdfApplicatinPluginKey) {
-    const pluginConfiguration = this.plugins[pluginKey];
-
-    this.plugins = {
-      ...this.plugins,
-      [pluginKey]: {
-        ...pluginConfiguration,
-        isVisible: true,
-      },
-    };
+    for (const key of ALL_PDF_APPLICATION_PLUGIN_KEYS) {
+      this.plugins[key].isVisible = key === pluginKey;
+    }
 
     this.broadcast();
   }
 
   /** @inheritDoc PdfApplicationConfigurationProvider.hidePlugin  */
   hidePlugin(pluginKey: PdfApplicatinPluginKey) {
-    const pluginConfiguration = this.plugins[pluginKey];
-
-    this.plugins = {
-      ...this.plugins,
-      [pluginKey]: {
-        ...pluginConfiguration,
-        isVisible: false,
-      },
-    };
+    for (const key of ALL_PDF_APPLICATION_PLUGIN_KEYS) {
+      if (pluginKey === key) {
+        this.plugins[key].isVisible = false;
+      }
+    }
 
     this.broadcast();
   }
@@ -322,6 +324,13 @@ export class MemoryPdfApplicationConfigurationProvider
     }
   }
 }
+
+/**
+ * Configuration provider that maintains configuration with variables in memory
+ */
+export class MemoryPdfApplicationConfigurationProvider
+  extends PdfApplicationConfigurationProviderBase
+  implements PdfApplicationConfigurationProvider {}
 
 /**
  * Configuration provider that maintains configuration with variables in storage
@@ -394,79 +403,6 @@ export class StoragePdfApplicationConfigurationProvider
       super.broadcast();
     } finally {
       this.save();
-    }
-  }
-
-  /**
-   * @inheritdoc PdfApplicationConfigurationProvider.get
-   */
-  get(): PdfApplicationConfiguration {
-    return {
-      rotation: this.rotation,
-      scaleFactor: this.scaleFactor,
-      plugins: this.plugins,
-    };
-  }
-
-  /**
-   * @inheritdoc PdfApplicationConfigurationProvider.setRotation
-   */
-  setRotation(rotation: Rotation) {
-    this.rotation = rotation;
-    this.broadcast();
-  }
-
-  /**
-   * @inheritdoc PdfApplicationConfigurationProvider.setScaleFactor
-   */
-  setScaleFactor(scaleFactor: number) {
-    this.scaleFactor = scaleFactor;
-    this.broadcast();
-  }
-
-  /**
-   * @inheritdoc PdfApplicationConfigurationProvider.showPlugin
-   */
-  showPlugin(pluginKey: PdfApplicatinPluginKey) {
-    const pluginConfiguration = this.plugins[pluginKey];
-
-    this.plugins = {
-      ...this.plugins,
-      [pluginKey]: {
-        ...pluginConfiguration,
-        isVisible: true,
-      },
-    };
-
-    this.broadcast();
-  }
-
-  /**
-   * @inheritdoc PdfApplicationConfigurationProvider.hidePlugin
-   */
-  hidePlugin(pluginKey: PdfApplicatinPluginKey) {
-    const pluginConfiguration = this.plugins[pluginKey];
-
-    this.plugins = {
-      ...this.plugins,
-      [pluginKey]: {
-        ...pluginConfiguration,
-        isVisible: false,
-      },
-    };
-
-    this.broadcast();
-  }
-
-  /**
-   * @inheritdoc PdfApplicationConfigurationProvider.togglePlugin
-   */
-  togglePlugin(pluginKey: PdfApplicatinPluginKey) {
-    const pluginConfiguration = this.plugins[pluginKey];
-    if (pluginConfiguration.isVisible) {
-      this.hidePlugin(pluginKey);
-    } else {
-      this.showPlugin(pluginKey);
     }
   }
 }

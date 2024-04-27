@@ -397,11 +397,7 @@ export function PdfPageEditableAnnotations(
   const editableAnnotations = useMemo(() => {
     const allOperations: Operation[] = [...operations, ...extraOperations];
 
-    return apply(annotations, allOperations).filter(
-      (annotation: PdfAnnotationObject) => {
-        return annotation.type !== PdfAnnotationSubtype.WIDGET;
-      },
-    );
+    return apply(annotations, allOperations);
   }, [page, operations, annotations, extraOperations]);
 
   return (

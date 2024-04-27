@@ -46,6 +46,10 @@ export enum PdfAnnotationTool {
    * Drawing path
    */
   Pencil,
+  /**
+   * Fill form
+   */
+  FillForm,
 }
 
 /**

@@ -37,6 +37,7 @@ export const strings: UIStrings = {
   noSignatures: 'No Signatures',
   extract: 'Extract',
   pencil: 'Pencil',
+  fillForm: 'Fill Form',
   addTextBox: 'Add Text Box',
   addStamp: 'Add Stamp',
   addImage: 'Add Image',
