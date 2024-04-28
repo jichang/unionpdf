@@ -101,9 +101,6 @@ export type ButtonScenario =
       usage: 'editor-panel-pencil';
     }
   | {
-      usage: 'editor-panel-fill-form';
-    }
-  | {
       usage: 'start-create-stamp';
     }
   | {
@@ -117,6 +114,9 @@ export type ButtonScenario =
     }
   | {
       usage: 'editor-operation-stamp';
+    }
+  | {
+      usage: 'editor-operation-fill-form';
     }
   | {
       usage: 'editor-operation-extract';

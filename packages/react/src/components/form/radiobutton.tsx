@@ -1,19 +1,9 @@
-import {
-  PdfWidgetAnnoOption,
-  PDF_FORM_FIELD_FLAG,
-  PDF_FORM_FIELD_TYPE,
-  PdfWidgetAnnoField,
-} from '@unionpdf/models';
-import React, { useCallback, useState } from 'react';
-import { usePdfApplication, PdfApplicationMode } from '../../core';
+import { PdfWidgetAnnoOption, PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
+import React, { FormEvent, useCallback, useMemo, useState } from 'react';
 import { useUIComponents } from '../../adapters';
+import { FieldCommonProps } from './common';
 
-export interface RadioButtonFieldProps {
-  /**
-   * Field info
-   */
-  field: PdfWidgetAnnoField;
-}
+export interface RadioButtonFieldProps extends FieldCommonProps {}
 
 /**
  *
@@ -21,33 +11,28 @@ export interface RadioButtonFieldProps {
  * @returns RadioButtonField component
  */
 export function RadioButtonField(props: RadioButtonFieldProps) {
-  const { field } = props;
-  const { mode } = usePdfApplication();
+  const { field, isEditable, config, onChangeValues } = props;
 
-  const { type, flag, options } = field;
+  const { flag, options } = field;
   const name = field.alternateName || field.name;
-  const [value] = useState(() => {
-    switch (type) {
-      case PDF_FORM_FIELD_TYPE.COMBOBOX: {
-        const option = options.find((option: PdfWidgetAnnoOption) => {
-          return option.isSelected;
-        });
-        return option?.label || field.value;
-      }
-      default:
-        return field.value;
-    }
-  });
-
-  const [isChecked, setIsChecked] = useState(field.isChecked);
-  const changeIsChecked = useCallback(() => {
-    setIsChecked((isChecked: boolean) => {
-      return !isChecked;
+  const defaultValue = useMemo(() => {
+    const option = options.find((option: PdfWidgetAnnoOption) => {
+      return option.isSelected;
     });
-  }, [setIsChecked]);
+    return option?.label || field.value;
+  }, [options]);
 
-  const isDisabled =
-    mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
+  const isChecked = field.isChecked || config?.values[0] === defaultValue;
+
+  const handleChange = useCallback(
+    (evt: FormEvent) => {
+      const value = (evt.target as HTMLInputElement | HTMLSelectElement).value;
+      onChangeValues?.([value]);
+    },
+    [onChangeValues],
+  );
+
+  const isDisabled = !isEditable || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
 
   const { RadioButton } = useUIComponents();
@@ -58,9 +43,9 @@ export function RadioButtonField(props: RadioButtonFieldProps) {
       disabled={isDisabled}
       name={name}
       aria-label={name}
-      value={value}
+      value={defaultValue}
       checked={isChecked}
-      onChange={changeIsChecked}
+      onChange={handleChange}
     />
   );
 }

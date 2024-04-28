@@ -39,6 +39,10 @@ export function PdfToolbarEditorOperationItemGroup(
     toggleTool(PdfEditorTool.Extract);
   }, [toggleTool]);
 
+  const handleFillForm = useCallback(() => {
+    toggleTool(PdfEditorTool.FillForm);
+  }, [toggleTool]);
+
   const handleStamp = useCallback(() => {
     toggleTool(PdfEditorTool.Stamp);
   }, [toggleTool]);
@@ -56,6 +60,13 @@ export function PdfToolbarEditorOperationItemGroup(
           onClick={handleAnnotation}
         >
           {strings.annotation}
+        </Button>
+        <Button
+          scenario={{ usage: 'editor-operation-fill-form' }}
+          data-testid="pdf__toolbar__item__fill__form"
+          onClick={handleFillForm}
+        >
+          {strings.fillForm}
         </Button>
         <Button
           scenario={{ usage: 'editor-operation-extract' }}

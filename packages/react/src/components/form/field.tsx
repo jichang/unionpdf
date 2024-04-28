@@ -6,13 +6,9 @@ import { ComboboxField } from './combobox';
 import { PushButtonField } from './pushbutton';
 import { RadioButtonField } from './radiobutton';
 import { TextField } from './textfield';
+import { FieldCommonProps } from './common';
 
-export interface FieldProps {
-  /**
-   * Field info
-   */
-  field: PdfWidgetAnnoField;
-}
+export interface FieldProps extends FieldCommonProps {}
 
 /**
  *
@@ -27,22 +23,22 @@ export function Field(props: FieldProps) {
 
   switch (type) {
     case PDF_FORM_FIELD_TYPE.TEXTFIELD:
-      content = <TextField field={field} />;
+      content = <TextField {...props} />;
       break;
     case PDF_FORM_FIELD_TYPE.CHECKBOX:
-      content = <CheckboxField field={field} />;
+      content = <CheckboxField {...props} />;
       break;
     case PDF_FORM_FIELD_TYPE.RADIOBUTTON:
-      content = <RadioButtonField field={field} />;
+      content = <RadioButtonField {...props} />;
       break;
     case PDF_FORM_FIELD_TYPE.COMBOBOX:
-      content = <ComboboxField field={field} />;
+      content = <ComboboxField {...props} />;
       break;
     case PDF_FORM_FIELD_TYPE.LISTBOX:
-      content = <ComboboxField field={field} />;
+      content = <ComboboxField {...props} />;
       break;
     case PDF_FORM_FIELD_TYPE.PUSHBUTTON:
-      content = <PushButtonField field={field} />;
+      content = <PushButtonField {...props} />;
       break;
     default:
       break;

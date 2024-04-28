@@ -1,17 +1,12 @@
-import { PDF_FORM_FIELD_FLAG, PdfWidgetAnnoField } from '@unionpdf/models';
-import React, { FormEvent, useCallback, useState } from 'react';
-import { usePdfApplication, PdfApplicationMode } from '../../core';
+import { PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
+import React, { FormEvent, useCallback } from 'react';
 import { useUIComponents } from '../../adapters';
+import { FieldCommonProps } from './common';
 
 /**
  * Properties of form checkbox field
  */
-export interface CheckboxFieldProps {
-  /**
-   * Field info
-   */
-  field: PdfWidgetAnnoField;
-}
+export interface CheckboxFieldProps extends FieldCommonProps {}
 
 /**
  *
@@ -19,22 +14,21 @@ export interface CheckboxFieldProps {
  * @returns CheckboxField component
  */
 export function CheckboxField(props: CheckboxFieldProps) {
-  const { field } = props;
-  const { mode } = usePdfApplication();
+  const { field, isEditable, config, onChangeValues } = props;
 
   const { flag } = field;
   const name = field.alternateName || field.name;
-  const [value, setValue] = useState(field.value);
+  const value = config?.values[0] || field.value;
 
-  const changeValue = useCallback(
+  const handleChange = useCallback(
     (evt: FormEvent) => {
-      setValue((evt.target as HTMLInputElement | HTMLSelectElement).value);
+      const value = (evt.target as HTMLInputElement | HTMLSelectElement).value;
+      onChangeValues?.([value]);
     },
-    [setValue],
+    [onChangeValues],
   );
 
-  const isDisabled =
-    mode === PdfApplicationMode.View || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
+  const isDisabled = !isEditable || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
 
   const { Checkbox } = useUIComponents();
@@ -47,7 +41,7 @@ export function CheckboxField(props: CheckboxFieldProps) {
       aria-label={name}
       value={value === 'Yes' ? 'Off' : 'Yes'}
       checked={value === 'Yes'}
-      onChange={changeValue}
+      onChange={handleChange}
     />
   );
 }

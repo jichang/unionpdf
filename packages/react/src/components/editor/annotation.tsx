@@ -19,7 +19,11 @@ import {
   PdfPageWidgetAnnotation,
 } from '../annotations';
 import classNames from 'classnames';
-import { PdfAnnotationTool, usePdfEditor } from './editor.context';
+import {
+  PdfAnnotationTool,
+  PdfEditorTool,
+  usePdfEditor,
+} from './editor.context';
 import { PdfPageAnnotation } from '../common';
 import { ResizerPosition, useAnnotationsContext } from './annotations.context';
 import { useUIComponents } from '../../adapters';
@@ -66,29 +70,48 @@ export interface PdfPageEditorAnnotationProps {
 export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   const { page, annotation, scaleFactor, rotation } = props;
 
-  const { annotationTool, exec, copy } = usePdfEditor();
+  const { annotationTool, tool, form, setFormField, getFormField, exec, copy } =
+    usePdfEditor();
+
+  const isAnnotationTool = tool === PdfEditorTool.Annotation;
+  const isMovable =
+    isAnnotationTool && annotationTool === PdfAnnotationTool.Selection;
+  const isResizable =
+    isAnnotationTool &&
+    ResizablePdfAnnotationSubTypes.includes(annotation.type);
 
   const handleKeyDown = useCallback(
     (evt: React.KeyboardEvent) => {
-      if (evt.key === 'c' && (evt.ctrlKey || evt.metaKey)) {
-        copy(annotation);
+      if (isAnnotationTool) {
+        if (evt.key === 'c' && (evt.ctrlKey || evt.metaKey)) {
+          copy(annotation);
+        }
       }
     },
-    [annotation, copy],
+    [isAnnotationTool, annotation, copy],
   );
 
   const handleKeyUp = useCallback(
     (evt: React.KeyboardEvent) => {
-      if (evt.key === 'Delete' || evt.key === 'Backspace') {
-        exec({
-          id: `${Date.now()}.${Math.random()}`,
-          action: 'remove',
-          page,
-          annotation,
-        });
+      if (isAnnotationTool) {
+        if (evt.key === 'Delete' || evt.key === 'Backspace') {
+          exec({
+            id: `${Date.now()}.${Math.random()}`,
+            action: 'remove',
+            page,
+            annotation,
+          });
+        }
       }
     },
-    [annotation, page, exec],
+    [isAnnotationTool, annotation, page, exec],
+  );
+
+  const handleFormFieldChangeValues = useCallback(
+    (values: string[]) => {
+      setFormField(page, annotation, { values });
+    },
+    [page, annotation, setFormField],
   );
 
   let content: React.ReactElement | null = null;
@@ -237,22 +260,25 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       );
       break;
     case PdfAnnotationSubtype.WIDGET:
-      content = (
-        <PdfPageWidgetAnnotation
-          key={annotation.id}
-          page={page}
-          annotation={annotation}
-          rotation={rotation}
-          scaleFactor={scaleFactor}
-        />
-      );
+      {
+        const config = getFormField(page, annotation);
+        content = (
+          <PdfPageWidgetAnnotation
+            key={annotation.id}
+            page={page}
+            annotation={annotation}
+            rotation={rotation}
+            scaleFactor={scaleFactor}
+            isEditable={tool === PdfEditorTool.FillForm}
+            config={config}
+            onChangeValues={handleFormFieldChangeValues}
+          />
+        );
+      }
       break;
     default:
       content = null;
   }
-
-  const isSelection = annotationTool === PdfAnnotationTool.Selection;
-  const isResizable = ResizablePdfAnnotationSubTypes.includes(annotation.type);
 
   return (
     <PdfPageAnnotation
@@ -266,7 +292,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       onKeyDown={handleKeyDown}
       onKeyUp={handleKeyUp}
     >
-      {isSelection ? (
+      {isMovable ? (
         <PdfPageAnnotationMover
           page={page}
           annotation={annotation}
@@ -278,7 +304,7 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
       ) : (
         content
       )}
-      {isSelection && isResizable ? (
+      {isMovable && isResizable ? (
         <>
           <PdfPageAnnotationResizer
             page={page}

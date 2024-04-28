@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@unionpdf/models';
 import { useLogger, usePdfDocument, usePdfEngine } from '../../core';
 import { clone } from '../helpers/editor';
+import { PdfFormFieldConfig } from '../annotations/widget';
 
 export const EDITOR_CONTEXT_LOG_SOURCE = 'PdfEditorContext';
 
@@ -24,6 +26,10 @@ export enum PdfEditorTool {
    * Create/Edit Annotation
    */
   Annotation,
+  /**
+   * Fill form
+   */
+  FillForm,
   /**
    * Extract Page or Text
    */
@@ -46,10 +52,6 @@ export enum PdfAnnotationTool {
    * Drawing path
    */
   Pencil,
-  /**
-   * Fill form
-   */
-  FillForm,
 }
 
 /**
@@ -70,6 +72,15 @@ export type Operation =
       params: {
         offset: Position;
         scale: Size;
+      };
+    }
+  | {
+      id: string;
+      action: 'set-form-field';
+      page: PdfPageObject;
+      annotation: PdfAnnotationObject;
+      params: {
+        config: PdfFormFieldConfig;
       };
     };
 
@@ -146,6 +157,25 @@ export interface PdfEditorContextValue {
    */
   setAnnotationTool: (tool: PdfAnnotationTool) => void;
   /**
+   * Form fields
+   */
+  form: Record<string, PdfFormFieldConfig>;
+  /**
+   * Set field settings
+   */
+  setFormField: (
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject,
+    config: PdfFormFieldConfig,
+  ) => void;
+  /**
+   * Set field settings
+   */
+  getFormField: (
+    page: PdfPageObject,
+    annotation: PdfAnnotationObject,
+  ) => PdfFormFieldConfig | undefined;
+  /**
    * Query current stack status
    * @returns stack status
    */
@@ -201,6 +231,11 @@ export const PdfEditorContext = React.createContext<PdfEditorContextValue>({
   toggleTool: (tool: PdfEditorTool) => {},
   annotationTool: PdfAnnotationTool.Selection,
   setAnnotationTool: (tool: PdfAnnotationTool) => {},
+  form: {},
+  setFormField: () => {},
+  getFormField: () => {
+    return undefined;
+  },
   queryStatus: () => {
     return StackStatus.Empty;
   },
@@ -473,6 +508,9 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
           case 'remove':
             engine.removePageAnnotation(doc, page, annotation);
             break;
+          case 'set-form-field':
+            // Todo: update engine to support update form
+            break;
         }
       }
     }
@@ -529,6 +567,46 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     });
   }, [doc]);
 
+  const setFormField = useCallback(
+    (
+      page: PdfPageObject,
+      annotation: PdfAnnotationObject,
+      config: PdfFormFieldConfig,
+    ) => {
+      exec({
+        id: `${Date.now()}.${Math.random()}`,
+        action: 'set-form-field',
+        page,
+        annotation,
+        params: {
+          config,
+        },
+      });
+    },
+    [exec],
+  );
+
+  const form = useMemo(() => {
+    const _form: Record<string, PdfFormFieldConfig> = {};
+
+    stacks.undo.forEach((operation) => {
+      if (operation.action === 'set-form-field') {
+        const { page, annotation, params } = operation;
+        _form[`${page.index}.${annotation.id}`] = params.config;
+      }
+    });
+
+    return _form;
+  }, [stacks]);
+
+  const getFormField = useCallback(
+    (page: PdfPageObject, annotation: PdfAnnotationObject) => {
+      console.log(form, page, annotation);
+      return form[`${page.index}.${annotation.id}`];
+    },
+    [form],
+  );
+
   return (
     <PdfEditorContext.Provider
       value={{
@@ -537,6 +615,9 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
         toggleTool,
         annotationTool,
         setAnnotationTool,
+        form,
+        setFormField,
+        getFormField,
         queryStatus,
         queryByPageIndex,
         copy,

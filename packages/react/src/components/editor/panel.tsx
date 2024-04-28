@@ -58,20 +58,6 @@ export function PdfEditorPanel(props: PdfEditorPanelProps) {
         >
           {strings.pencil}
         </Button>
-        <Button
-          scenario={{ usage: 'editor-panel-fill-form' }}
-          onClick={() => {
-            setAnnotationTool(PdfAnnotationTool.FillForm);
-          }}
-          className={classNames(
-            annotationTool === PdfAnnotationTool.FillForm
-              ? 'pdf__ui__button--active'
-              : '',
-          )}
-          data-testid={`pdf__editor__panel__tool__${PdfAnnotationTool.FillForm}`}
-        >
-          {strings.fillForm}
-        </Button>
       </div>
     </div>
   );

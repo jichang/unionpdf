@@ -5,6 +5,13 @@ import { Field } from '../form';
 import { PdfPageAnnotationProps } from '../common';
 
 /**
+ * Pdf form fied
+ */
+export interface PdfFormFieldConfig {
+  values: string[];
+}
+
+/**
  * Properties of PdfPageWidgetAnnotation
  */
 export interface PdfPageWidgetAnnotationProps extends PdfPageAnnotationProps {
@@ -12,6 +19,18 @@ export interface PdfPageWidgetAnnotationProps extends PdfPageAnnotationProps {
    * Pdf widget annotation object
    */
   annotation: PdfWidgetAnnoObject;
+  /**
+   * Whether this field is editable
+   */
+  isEditable?: boolean;
+  /**
+   * Field settings
+   */
+  config?: PdfFormFieldConfig;
+  /**
+   * callback for value change
+   */
+  onChangeValues?: (values: string[]) => void;
 }
 
 /**
@@ -22,7 +41,22 @@ export interface PdfPageWidgetAnnotationProps extends PdfPageAnnotationProps {
  * @public
  */
 export function PdfPageWidgetAnnotation(props: PdfPageWidgetAnnotationProps) {
-  const { annotation } = props;
+  const {
+    page,
+    annotation,
+    isEditable = false,
+    config,
+    onChangeValues,
+  } = props;
 
-  return <Field field={annotation.field} />;
+  return (
+    <Field
+      page={page}
+      annotation={annotation}
+      field={annotation.field}
+      isEditable={isEditable}
+      config={config}
+      onChangeValues={onChangeValues}
+    />
+  );
 }
