@@ -26,7 +26,7 @@
     "clean": "del-cli --force dist .parcel-cache",
     "postbuild": "npm run copy-types",
     "copy-types": "cpy src/pdfium.d.ts dist/types/ --flat && cpy ./dist/types/* ./dist/cjs --flat && cpy ./dist/types/* ./dist/esm --flat",
-    "build:wasm": "make && cpy ./docker/src/pdifum.js ./src --flat && cpy ./docker/src/pdfium.wasm ./src --flat",
+    "build:wasm": "make build && cpy ./docker/src/pdifum.js ./src --flat && cpy ./docker/src/pdfium.wasm ./src --flat",
     "build:all": "npm run build:wasm && npm run build",
     "test": "jest"
   },

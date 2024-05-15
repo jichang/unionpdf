@@ -13,4 +13,33 @@ ENV EM_PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig:/emsdk/upstream/emscripten/sys
 ENV EM_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$EM_PKG_CONFIG_PATH
 RUN apt-get update && \
-      apt-get install -y pkg-config autoconf automake libtool ragel git yasm subversion
+      apt-get install -y pkg-config autoconf automake libtool ragel git yasm subversion lsb-release
+
+FROM emsdk-base AS node-setup
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+RUN sudo apt-get install -y nodejs
+
+FROM node-setup AS depot-tools
+RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git -b main /opt/depot-tools
+ENV PATH=${PATH}:/opt/depot-tools
+
+FROM depot-tools AS pdfium-src
+WORKDIR /build
+RUN gclient config --unmanaged https://pdfium.googlesource.com/pdfium.git
+RUN gclient sync -r origin/chromium/6478 --no-history --shallow
+RUN bash -x ./pdfium/build/install-build-deps.sh
+
+FROM pdfium-src AS pdfium-patch
+COPY build/patch/BUILD.gn /build/pdfium/BUILD.gn
+COPY build/patch/build/compiler/BUILD.gn /build/pdfium/build/compiler/BUILD.gn
+COPY build/patch/build/config/wasm/BUILD.gn /build/pdfium/build/config/wasm/BUILD.gn
+COPY build/patch/build/config/BUILDCONFIG.gn /build/pdfium/build/config/BUILDCONFIG.gn
+COPY build/patch/build/toolchain/wasm/BUILD.gn /build/pdfium/build/toolchain/wasm/BUILD.gn
+COPY build/patch/core/fxge/BUILD.gn /build/pdfium/core/fxge/BUILD.gn
+
+FROM pdfium-patch AS pdfium-compile
+WORKDIR /build/pdfium
+RUN gn gen out/prod --args='use_goma=false is_debug=false treat_warnings_as_errors=false pdf_use_skia=false pdf_enable_xfa=false pdf_enable_v8=false is_component_build=false clang_use_chrome_plugins=false pdf_is_standalone=true use_debug_fission=false use_custom_libcxx=false use_sysroot=false pdf_is_complete_lib=true pdf_use_partition_alloc=false is_clang=false symbol_level=0'
+RUN echo 'target_os="wasm"' >> out/prod/args.gn
+RUN echo 'target_cpu="wasm"' >> out/prod/args.gn
+RUN ninja -C out/prod pdfium

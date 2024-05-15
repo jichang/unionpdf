@@ -8,3 +8,4 @@ logs
 playwright-report
 screenshots
 test-results
+docker
