@@ -8,4 +8,5 @@ module.exports = {
   },
   transformIgnorePatterns: ['node_modules/(?!(fetch-blob|node-fetch)/)'],
   rootDir: './src',
+  errorOnDeprecated: false,
 };

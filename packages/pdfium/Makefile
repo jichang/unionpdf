@@ -6,4 +6,4 @@ clean:
 .PHONY: build
 build:
 	make clean
-	docker buildx build -o ./docker .
+	docker buildx build -o docker .

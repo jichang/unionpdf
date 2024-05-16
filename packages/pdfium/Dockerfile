@@ -31,8 +31,6 @@ RUN bash -x ./pdfium/build/install-build-deps.sh
 
 FROM pdfium-src AS pdfium-patch
 COPY build/patch/BUILD.gn /build/pdfium/BUILD.gn
-COPY build/patch/build/compiler/BUILD.gn /build/pdfium/build/compiler/BUILD.gn
-COPY build/patch/build/config/wasm/BUILD.gn /build/pdfium/build/config/wasm/BUILD.gn
 COPY build/patch/build/config/BUILDCONFIG.gn /build/pdfium/build/config/BUILDCONFIG.gn
 COPY build/patch/build/toolchain/wasm/BUILD.gn /build/pdfium/build/toolchain/wasm/BUILD.gn
 COPY build/patch/core/fxge/BUILD.gn /build/pdfium/core/fxge/BUILD.gn
@@ -42,4 +40,10 @@ WORKDIR /build/pdfium
 RUN gn gen out/prod --args='use_goma=false is_debug=false treat_warnings_as_errors=false pdf_use_skia=false pdf_enable_xfa=false pdf_enable_v8=false is_component_build=false clang_use_chrome_plugins=false pdf_is_standalone=true use_debug_fission=false use_custom_libcxx=false use_sysroot=false pdf_is_complete_lib=true pdf_use_partition_alloc=false is_clang=false symbol_level=0'
 RUN echo 'target_os="wasm"' >> out/prod/args.gn
 RUN echo 'target_cpu="wasm"' >> out/prod/args.gn
-RUN ninja -C out/prod pdfium
+RUN ninja -C out/prod pdfium -v
+
+FROM pdfium-compile AS pdfium-wasm
+RUN mkdir /build/out
+COPY build/code/cpp/wasm.cpp /build/out
+WORKDIR /build/out
+RUN em++ wasm.cpp /build/pdfium/out/prod/obj/libpdfium.a -O2 -sEXPORT_ES6=1 -sENVIRONMENT=worker -sWASM_BIGINT -sMODULARIZE=1 -sWASM=1 -sALLOW_MEMORY_GROWTH=1 -sEXPORT_NAME=createPdfium -sUSE_ZLIB=1 -sUSE_LIBJPEG=1 -sASSERTIONS=1 -I/build/pdfium/public -L/build/pdfium/out/prod/obj -std=c++11 -Wall --no-entry -o ./pdfium.js

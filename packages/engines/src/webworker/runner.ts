@@ -33,17 +33,15 @@ export type PdfEngineMethodReturnType<P extends PdfEngineMethodName> = Readonly<
  *
  * @public
  */
-export type TaskResolveValueType<T> = T extends Task<infer R, infer U>
-  ? R
-  : never;
+export type TaskResolveValueType<T> =
+  T extends Task<infer R, infer U> ? R : never;
 /**
  * Type of task rejected error
  *
  * @public
  */
-export type TaskRejectErrorType<T> = T extends Task<infer R, infer U>
-  ? U
-  : never;
+export type TaskRejectErrorType<T> =
+  T extends Task<infer R, infer U> ? U : never;
 
 /**
  * Request body that represent method calls of PdfEngine, it contains the
@@ -59,12 +57,10 @@ export type PdfEngineMethodRequestBody = {
 /**
  * Type that represent the result of executing task
  */
-export type TaskResultType<T extends Task<any, any>> = T extends Task<
-  infer R,
-  infer E
->
-  ? { type: 'resolve'; result: R } | { type: 'reject'; error: E }
-  : never;
+export type TaskResultType<T extends Task<any, any>> =
+  T extends Task<infer R, infer E>
+    ? { type: 'resolve'; result: R } | { type: 'reject'; error: E }
+    : never;
 /**
  * Response body that represent return value of PdfEngine
  */

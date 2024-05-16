@@ -28,7 +28,7 @@
     "copy-types": "cpy src/pdfium.d.ts dist/types/ --flat && cpy ./dist/types/* ./dist/cjs --flat && cpy ./dist/types/* ./dist/esm --flat",
     "build:wasm": "make build && cpy ./docker/src/pdifum.js ./src --flat && cpy ./docker/src/pdfium.wasm ./src --flat",
     "build:all": "npm run build:wasm && npm run build",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
@@ -50,8 +50,6 @@
   },
   "homepage": "https://github.com/jichang/unionpdf#readme",
   "devDependencies": {
-    "@parcel/packager-ts": "^2.12.0",
-    "@parcel/transformer-typescript-types": "^2.12.0",
     "buffer": "^6.0.3",
     "comlink": "^4.4.1",
     "cpy-cli": "^5.0.0",
@@ -65,7 +63,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@types/emscripten": "^1.39.10",
+    "@types/emscripten": "^1.39.12",
     "parcel": "^2.12.0"
   }
 }

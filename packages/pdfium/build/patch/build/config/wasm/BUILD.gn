@@ -1,6 +1,0 @@
-config("compiler") {
-  defines = [
-    # Enable fseeko() and ftello() (required by libopenjpeg20)
-    # https://github.com/emscripten-core/emscripten/issues/4932
-  ]
-}
