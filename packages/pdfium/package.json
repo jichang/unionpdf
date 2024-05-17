@@ -16,18 +16,20 @@
       "require": "./dist/cjs/index.js"
     },
     "./pdfium.wasm": {
-      "import": "./dist/esm/pdfium.f83f3440.wasm",
-      "require": "./dist/cjs/pdfium.f83f3440.wasm"
+      "import": "./dist/esm/pdfium.eafe45e1.wasm",
+      "require": "./dist/cjs/pdfium.eafe45e1.wasm"
     }
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "prebuild": "node ./scripts/generate-exported-runtime-methods.js",
     "build": "parcel build",
-    "clean": "del-cli --force dist .parcel-cache",
     "postbuild": "npm run copy-types",
+    "clean": "del-cli --force dist .parcel-cache",
     "copy-types": "cpy src/pdfium.d.ts dist/types/ --flat && cpy ./dist/types/* ./dist/cjs --flat && cpy ./dist/types/* ./dist/esm --flat",
-    "build:wasm": "make build && cpy ./docker/src/pdifum.js ./src --flat && cpy ./docker/src/pdfium.wasm ./src --flat",
-    "build:all": "npm run build:wasm && npm run build",
+    "prewasm": "node ./scripts/generate-exported-functions.js",
+    "wasm": "make build && cpy ./docker/src/pdifum.js ./src --flat && cpy ./docker/src/pdfium.wasm ./src --flat",
+    "build:all": "npm run wasm && npm run build",
     "test": "jest --passWithNoTests"
   },
   "repository": {

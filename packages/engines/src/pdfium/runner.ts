@@ -1,6 +1,6 @@
+import { init } from '@unionpdf/pdfium';
 import { EngineRunner } from '../webworker';
 import { PdfiumEngine } from './engine';
-import createPdfiumModule from './pdfium';
 
 /**
  * EngineRunner for pdfium-based wasm engine
@@ -19,7 +19,7 @@ export class PdfiumEngineRunner extends EngineRunner {
    */
   async prepare() {
     const wasmBinary = this.wasmBinary;
-    const wasmModule = await createPdfiumModule({ wasmBinary });
+    const wasmModule = await init({ wasmBinary });
     this.engine = new PdfiumEngine(wasmModule);
     this.ready();
   }

@@ -46,4 +46,7 @@ FROM pdfium-compile AS pdfium-wasm
 RUN mkdir /build/out
 COPY build/code/cpp/wasm.cpp /build/out
 WORKDIR /build/out
-RUN em++ wasm.cpp /build/pdfium/out/prod/obj/libpdfium.a -O2 -sEXPORT_ES6=1 -sENVIRONMENT=worker -sWASM_BIGINT -sMODULARIZE=1 -sWASM=1 -sALLOW_MEMORY_GROWTH=1 -sEXPORT_NAME=createPdfium -sUSE_ZLIB=1 -sUSE_LIBJPEG=1 -sASSERTIONS=1 -I/build/pdfium/public -L/build/pdfium/out/prod/obj -std=c++11 -Wall --no-entry -o ./pdfium.js
+COPY build/compile.sh /build/compile.sh
+COPY build/exported-runtime-methods.txt /build/exported-runtime-methods.txt
+COPY build/exported-functions.txt /build/exported-functions.txt
+RUN bash -E /build/compile.sh

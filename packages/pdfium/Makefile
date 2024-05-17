@@ -1,7 +1,7 @@
 all: dev
 
 clean:
-	rm -rf ./src/pdfium.js ./src/pdifum.wasm
+	rm -rf ./src/pdfium.js ./src/pdfium.wasm
 
 .PHONY: build
 build:

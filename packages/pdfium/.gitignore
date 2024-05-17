@@ -1,2 +1,4 @@
 docker
 dist
+build/exported-functions.txt
+build/exported-runtime-methods.txt

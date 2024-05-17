@@ -1,11 +1,12 @@
-import type { Module, ModuleRuntimeMethods } from '@types/emscripten';
+/// <reference types="emscripten" />
 
-export interface PdfiumModule extends Module, ModuleRuntimeMethods {}
+export interface PdfiumModule extends EmscriptenModule {
+}
 
 /**
  * Create an instance of pdfium wasm module
  * @param init - override pdfium methods
  */
-export default function createPdfium(
+export default function createPdfium<T>(
   init: Partial<PdfiumModule>,
-): Promise<PdfiumModule>;
+): Promise<PdfiumModule & T>;

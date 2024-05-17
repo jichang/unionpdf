@@ -26,8 +26,7 @@
     "start": "parcel --no-cache ./demo/index.html",
     "prebuild": "npm run clean",
     "build": "parcel build",
-    "postbuild": "npm run copy-wasm && npm run copy-types",
-    "copy-wasm": "cpy ./src/pdfium/*.d.ts ./dist/types --flat && cpy ./src/pdfium/pdfium.wasm ./dist/wasm --flat",
+    "postbuild": "npm run copy-types",
     "copy-types": "cpy ./dist/types/* ./dist/cjs --flat && cpy ./dist/types/* ./dist/esm --flat",
     "clean": "del-cli --force dist .parcel-cache",
     "test": "jest"
@@ -69,6 +68,7 @@
   },
   "dependencies": {
     "@unionpdf/models": "^0.24.0",
+    "@unionpdf/pdfium": "^0.24.0",
     "buffer": "^6.0.3",
     "process": "^0.11.10"
   },

@@ -1,4 +1,4 @@
-import { PdfiumModule } from './pdfium';
+import { PdfiumRuntimeMethods, PdfiumModule } from "@unionpdf/pdfium";
 
 /**
  * Read string from WASM heap
@@ -11,7 +11,7 @@ import { PdfiumModule } from './pdfium';
  * @public
  */
 export function readString(
-  wasmModule: PdfiumModule,
+  wasmModule: PdfiumRuntimeMethods & PdfiumModule,
   readChars: (buffer: number, bufferLength: number) => number,
   parseChars: (buffer: number) => string,
   defaultLength: number = 100,
@@ -46,7 +46,7 @@ export function readString(
  * @public
  */
 export function readArrayBuffer(
-  wasmModule: PdfiumModule,
+  wasmModule: PdfiumRuntimeMethods & PdfiumModule,
   readChars: (buffer: number, bufferLength: number) => number,
 ): ArrayBuffer {
   const bufferSize = readChars(0, 0);

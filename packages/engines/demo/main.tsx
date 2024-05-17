@@ -5,8 +5,7 @@ import {
   TaskBase,
 } from '@unionpdf/models';
 import { WebWorkerEngine } from '../src/index';
-import pdfiumWasm from '../src/pdfium/pdfium.wasm';
-import './url';
+import pdfiumWasm from 'url:@unionpdf/pdfium/pdfium.wasm';
 
 async function loadWasmBinary() {
   const response = await fetch(pdfiumWasm);

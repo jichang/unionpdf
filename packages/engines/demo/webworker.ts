@@ -1,5 +1,5 @@
 import { PdfiumEngineRunner } from '../src/index';
-import pdfiumWasm from '../src/pdfium/pdfium.wasm';
+import pdfiumWasm from 'url:@unionpdf/pdfium/pdfium.wasm';
 
 async function init() {
   const response = await fetch(pdfiumWasm);
