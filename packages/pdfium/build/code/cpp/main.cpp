@@ -14,8 +14,6 @@ extern "C"
 
 void PDFium_Init()
 {
-    // https://source.chromium.org/chromium/chromium/src/+/master:third_party/pdfium/samples/pdfium_test.cc;l=1172
-
     FPDF_LIBRARY_CONFIG config;
     config.version = 3;
     config.m_pUserFontPaths = nullptr;

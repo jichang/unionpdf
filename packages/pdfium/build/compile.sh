@@ -1,9 +1,9 @@
-em++ wasm.cpp \
+em++ ./main.cpp \
   /build/pdfium/out/prod/obj/libpdfium.a \
-  -O2 \
+  -g \
+  -v \
   -sEXPORT_ES6=1 \
   -sENVIRONMENT=worker \
-  -sWASM_BIGINT \
   -sMODULARIZE=1 \
   -sWASM=1 \
   -sALLOW_MEMORY_GROWTH=1 \
@@ -11,10 +11,11 @@ em++ wasm.cpp \
   -sUSE_ZLIB=1 \
   -sUSE_LIBJPEG=1 \
   -sASSERTIONS=1 \
-  -sEXPORTED_RUNTIME_METHODS=$(cat /build/exported-runtime-methods.txt) \
-  -sEXPORTED_FUNCTIONS=$(cat /build/exported-functions.txt) \
-  -I/build/pdfium/public \
+  -sEXPORTED_RUNTIME_METHODS=$(cat ./exported-runtime-methods.txt) \
+  -sEXPORTED_FUNCTIONS=$(cat ./exported-functions.txt) \
+  -lpdfium \
   -L/build/pdfium/out/prod/obj \
+  -I/build/pdfium/public \
   -std=c++11 \
   -Wall \
   --no-entry \

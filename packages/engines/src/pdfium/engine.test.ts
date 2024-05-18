@@ -1,5 +1,5 @@
+import { WrappedPdfiumModule } from '@unionpdf/pdfium';
 import { PdfiumEngine } from './engine';
-import { PdfiumModule } from './pdfium';
 
 describe('PdfiumEngine', () => {
   it('should return module with cwrap function', () => {
@@ -11,7 +11,7 @@ describe('PdfiumEngine', () => {
           argTypes,
         };
       },
-    } as unknown as PdfiumModule;
+    } as unknown as WrappedPdfiumModule;
     const engine = new PdfiumEngine(wasmModule);
 
     expect(engine).toBeDefined();

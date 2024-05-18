@@ -1,7 +1,12 @@
-
 /// <reference types="emscripten" />
 
+export interface WasmExports {
+  malloc: (size: number) => number;
+  free: (ptr: number) => void;
+}
+
 export interface PdfiumRuntimeMethods {
+  wasmExports: WasmExports;
   cwrap: typeof cwrap;
   ccall: typeof ccall;
   setValue: typeof setValue;

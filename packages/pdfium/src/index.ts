@@ -14,24 +14,22 @@ export type Type = null | 'number' | 'string' | 'boolean' | null;
 /**
  * Type of wrapped function
  */
-export type CWrappedFunc<
-  I extends readonly Type[],
-  R extends Type,
-> = (...args: NamesToType<I>) => NameToType<R>;
+export type CWrappedFunc<I extends readonly Type[], R extends Type> = (
+  ...args: NamesToType<I>
+) => NameToType<R>;
 
 /**
  * Convert name to type
  */
-export type NameToType<R extends Type> =
-  R extends 'number'
+export type NameToType<R extends Type> = R extends 'number'
   ? number
   : R extends 'string'
-  ? string
-  : R extends 'boolean'
-  ? boolean
-  : R extends null
-  ? null
-  : never;
+    ? string
+    : R extends 'boolean'
+      ? boolean
+      : R extends null
+        ? null
+        : never;
 
 /**
  * Convert array of names to JavaScript types
@@ -39,21 +37,21 @@ export type NameToType<R extends Type> =
 export type NamesToType<T extends readonly Type[]> = T extends []
   ? []
   : T extends readonly [infer U extends Type]
-  ? [NameToType<U>]
-  : T extends readonly [
-    infer U extends Type,
-    ...infer Rest extends readonly Type[],
-  ]
-  ? [NameToType<U>, ...NamesToType<Rest>]
-  : [];
+    ? [NameToType<U>]
+    : T extends readonly [
+          infer U extends Type,
+          ...infer Rest extends readonly Type[],
+        ]
+      ? [NameToType<U>, ...NamesToType<Rest>]
+      : [];
 
-export type Functions = typeof functions
+export type Functions = typeof functions;
 
 export type Wrapped<
   T extends Record<string, readonly [readonly Type[], Type]>,
 > = {
-    [P in keyof T]: CWrappedFunc<T[P][0], T[P][1]>;
-  };
+  [P in keyof T]: CWrappedFunc<T[P][0], T[P][1]>;
+};
 
 export type Methods = Wrapped<Functions>;
 
@@ -61,11 +59,13 @@ export type WrappedPdfiumModule = {
   pdfium: PdfiumModule & PdfiumRuntimeMethods;
 } & Methods;
 
-export async function init(moduleOverrides: Partial<PdfiumModule>): Promise<WrappedPdfiumModule> {
+export async function init(
+  moduleOverrides: Partial<PdfiumModule>,
+): Promise<WrappedPdfiumModule> {
   const pdfium = await createPdfium<PdfiumRuntimeMethods>(moduleOverrides);
 
   const module: WrappedPdfiumModule = {
-    pdfium
+    pdfium,
   } as WrappedPdfiumModule;
 
   for (const key in functions) {

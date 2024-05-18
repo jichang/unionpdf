@@ -159,8 +159,7 @@ export class PdfiumEngine implements PdfEngine {
   constructor(
     private pdfiumModule: WrappedPdfiumModule,
     private logger: Logger = new NoopLogger(),
-  ) {
-  }
+  ) {}
 
   /**
    * {@inheritDoc @unionpdf/models!PdfEngine.initialize}
@@ -215,7 +214,11 @@ export class PdfiumEngine implements PdfEngine {
 
     const passwordBytesSize = new TextEncoder().encode(password).length + 1;
     const passwordPtr = this.malloc(passwordBytesSize);
-    this.pdfiumModule.pdfium.stringToUTF8(password, passwordPtr, passwordBytesSize);
+    this.pdfiumModule.pdfium.stringToUTF8(
+      password,
+      passwordPtr,
+      passwordBytesSize,
+    );
 
     const docPtr = this.pdfiumModule.FPDF_LoadMemDocument(
       filePtr,
@@ -438,9 +441,7 @@ export class PdfiumEngine implements PdfEngine {
       );
 
       const docMDP =
-        this.pdfiumModule.FPDFSignatureObj_GetDocMDPPermission(
-          signatureObjPtr,
-        );
+        this.pdfiumModule.FPDFSignatureObj_GetDocMDPPermission(signatureObjPtr);
 
       signatures.push({
         contents,
@@ -892,11 +893,11 @@ export class PdfiumEngine implements PdfEngine {
                   x:
                     rect.origin.x +
                     (point.x - annotation.rect.origin.x) *
-                    transformation.scale.width,
+                      transformation.scale.width,
                   y:
                     rect.origin.y +
                     (point.y - annotation.rect.origin.y) *
-                    transformation.scale.height,
+                      transformation.scale.height,
                 };
               }),
             };
@@ -1396,12 +1397,7 @@ export class PdfiumEngine implements PdfEngine {
     );
     const sizePtr = this.malloc(8);
     if (
-      !this.pdfiumModule.FPDFAttachment_GetFile(
-        attachmentPtr,
-        0,
-        0,
-        sizePtr,
-      )
+      !this.pdfiumModule.FPDFAttachment_GetFile(attachmentPtr, 0, 0, sizePtr)
     ) {
       this.free(sizePtr);
       this.logger.perf(
@@ -1493,7 +1489,11 @@ export class PdfiumEngine implements PdfEngine {
 
     const pageIndexesPtr = this.malloc(pageIndexes.length * 4);
     for (let i = 0; i < pageIndexes.length; i++) {
-      this.pdfiumModule.pdfium.setValue(pageIndexesPtr + i * 4, pageIndexes[i], 'i32');
+      this.pdfiumModule.pdfium.setValue(
+        pageIndexesPtr + i * 4,
+        pageIndexes[i],
+        'i32',
+      );
     }
 
     if (
@@ -1546,19 +1546,11 @@ export class PdfiumEngine implements PdfEngine {
     const { docPtr } = this.docs[doc.id];
     const strings: string[] = [];
     for (let i = 0; i < pageIndexes.length; i++) {
-      const pagePtr = this.pdfiumModule.FPDF_LoadPage(
-        docPtr,
-        pageIndexes[i],
-      );
+      const pagePtr = this.pdfiumModule.FPDF_LoadPage(docPtr, pageIndexes[i]);
       const textPagePtr = this.pdfiumModule.FPDFText_LoadPage(pagePtr);
       const charCount = this.pdfiumModule.FPDFText_CountChars(textPagePtr);
       const bufferPtr = this.malloc((charCount + 1) * 2);
-      this.pdfiumModule.FPDFText_GetText(
-        textPagePtr,
-        0,
-        charCount,
-        bufferPtr,
-      );
+      this.pdfiumModule.FPDFText_GetText(textPagePtr, 0, charCount, bufferPtr);
       const text = this.pdfiumModule.pdfium.UTF16ToString(bufferPtr);
       this.free(bufferPtr);
       strings.push(text);
@@ -1592,11 +1584,7 @@ export class PdfiumEngine implements PdfEngine {
       const filePtr = this.malloc(length);
       this.pdfiumModule.pdfium.HEAPU8.set(array, filePtr);
 
-      const docPtr = this.pdfiumModule.FPDF_LoadMemDocument(
-        filePtr,
-        length,
-        0,
-      );
+      const docPtr = this.pdfiumModule.FPDF_LoadMemDocument(filePtr, length, 0);
       if (!docPtr) {
         const lastError = this.pdfiumModule.FPDF_GetLastError();
         this.logger.error(
@@ -1732,7 +1720,7 @@ export class PdfiumEngine implements PdfEngine {
    * @public
    */
   malloc(size: number) {
-    const ptr = this.pdfiumModule.pdfium._malloc(size);
+    const ptr = this.pdfiumModule.pdfium.wasmExports.malloc(size);
     for (let i = 0; i < size; i++) {
       this.pdfiumModule.pdfium.HEAP8[ptr + i] = 0;
     }
@@ -1747,7 +1735,7 @@ export class PdfiumEngine implements PdfEngine {
    * @public
    */
   free(ptr: number) {
-    this.pdfiumModule.pdfium._free(ptr);
+    this.pdfiumModule.pdfium.wasmExports.free(ptr);
   }
 
   /**
@@ -1865,7 +1853,11 @@ export class PdfiumEngine implements PdfEngine {
       const blue = imageData.data[i * bytesPerPixel + 2];
       const alpha = imageData.data[i * bytesPerPixel + 3];
 
-      this.pdfiumModule.pdfium.setValue(bitmapBufferPtr + i * bytesPerPixel, blue, 'i8');
+      this.pdfiumModule.pdfium.setValue(
+        bitmapBufferPtr + i * bytesPerPixel,
+        blue,
+        'i8',
+      );
       this.pdfiumModule.pdfium.setValue(
         bitmapBufferPtr + i * bytesPerPixel + 1,
         green,
@@ -1896,8 +1888,7 @@ export class PdfiumEngine implements PdfEngine {
       return false;
     }
 
-    const imageObjectPtr =
-      this.pdfiumModule.FPDFPageObj_NewImageObj(docPtr);
+    const imageObjectPtr = this.pdfiumModule.FPDFPageObj_NewImageObj(docPtr);
     if (!imageObjectPtr) {
       this.pdfiumModule.FPDFBitmap_Destroy(bitmapPtr);
       this.free(bitmapBufferPtr);
@@ -1922,12 +1913,14 @@ export class PdfiumEngine implements PdfEngine {
     this.pdfiumModule.pdfium.setValue(matrixPtr, imageData.width, 'float');
     this.pdfiumModule.pdfium.setValue(matrixPtr + 4, 0, 'float');
     this.pdfiumModule.pdfium.setValue(matrixPtr + 8, 0, 'float');
-    this.pdfiumModule.pdfium.setValue(matrixPtr + 12, imageData.height, 'float');
+    this.pdfiumModule.pdfium.setValue(
+      matrixPtr + 12,
+      imageData.height,
+      'float',
+    );
     this.pdfiumModule.pdfium.setValue(matrixPtr + 16, 0, 'float');
     this.pdfiumModule.pdfium.setValue(matrixPtr + 20, 0, 'float');
-    if (
-      !this.pdfiumModule.FPDFPageObj_SetMatrix(imageObjectPtr, matrixPtr)
-    ) {
+    if (!this.pdfiumModule.FPDFPageObj_SetMatrix(imageObjectPtr, matrixPtr)) {
       this.free(matrixPtr);
       this.pdfiumModule.FPDFBitmap_Destroy(bitmapPtr);
       this.pdfiumModule.FPDFPageObj_Destroy(imageObjectPtr);
@@ -1947,10 +1940,7 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     if (
-      !this.pdfiumModule.FPDFAnnot_AppendObject(
-        annotationPtr,
-        imageObjectPtr,
-      )
+      !this.pdfiumModule.FPDFAnnot_AppendObject(annotationPtr, imageObjectPtr)
     ) {
       this.pdfiumModule.FPDFBitmap_Destroy(bitmapPtr);
       this.pdfiumModule.FPDFPageObj_Destroy(imageObjectPtr);
@@ -2084,8 +2074,7 @@ export class PdfiumEngine implements PdfEngine {
     if (found) {
       const charIndex =
         this.pdfiumModule.FPDFText_GetSchResultIndex(searchHandle);
-      const charCount =
-        this.pdfiumModule.FPDFText_GetSchCount(searchHandle);
+      const charCount = this.pdfiumModule.FPDFText_GetSchCount(searchHandle);
 
       result = {
         pageIndex,
@@ -2120,8 +2109,10 @@ export class PdfiumEngine implements PdfEngine {
       const bookmark = this.readPdfBookmark(docPtr, bookmarkPtr);
       bookmarks.push(bookmark);
 
-      const nextBookmarkPtr =
-        this.pdfiumModule.FPDFBookmark_GetNextSibling(docPtr, bookmarkPtr);
+      const nextBookmarkPtr = this.pdfiumModule.FPDFBookmark_GetNextSibling(
+        docPtr,
+        bookmarkPtr,
+      );
 
       bookmarkPtr = nextBookmarkPtr;
     }
@@ -2358,8 +2349,7 @@ export class PdfiumEngine implements PdfEngine {
       formFillInfoPtr,
     );
 
-    const annotationCount =
-      this.pdfiumModule.FPDFPage_GetAnnotCount(pagePtr);
+    const annotationCount = this.pdfiumModule.FPDFPage_GetAnnotCount(pagePtr);
 
     const annotations: PdfAnnotationObject[] = [];
     for (let i = 0; i < annotationCount; i++) {
@@ -2408,10 +2398,7 @@ export class PdfiumEngine implements PdfEngine {
     scaleFactor: number,
     rotation: Rotation,
   ) {
-    const annotationPtr = this.pdfiumModule.FPDFPage_GetAnnot(
-      pagePtr,
-      index,
-    );
+    const annotationPtr = this.pdfiumModule.FPDFPage_GetAnnot(pagePtr, index);
     const subType = this.pdfiumModule.FPDFAnnot_GetSubtype(
       annotationPtr,
     ) as PdfAnnotationObject['type'];
@@ -2943,8 +2930,7 @@ export class PdfiumEngine implements PdfEngine {
 
     const inkList: PdfInkListObject[] = [];
 
-    const count =
-      this.pdfiumModule.FPDFAnnot_GetInkListCount(annotationPtr);
+    const count = this.pdfiumModule.FPDFAnnot_GetInkListCount(annotationPtr);
     for (let i = 0; i < count; i++) {
       const points: Position[] = [];
       const pointsCount = this.pdfiumModule.FPDFAnnot_GetInkListPath(
@@ -2964,7 +2950,10 @@ export class PdfiumEngine implements PdfEngine {
         );
 
         for (let j = 0; j < pointsCount; j++) {
-          const pointX = this.pdfiumModule.pdfium.getValue(pointsPtr + j * 8, 'float');
+          const pointX = this.pdfiumModule.pdfium.getValue(
+            pointsPtr + j * 8,
+            'float',
+          );
           const pointY = this.pdfiumModule.pdfium.getValue(
             pointsPtr + j * 8 + 4,
             'float',
@@ -3112,15 +3101,24 @@ export class PdfiumEngine implements PdfEngine {
       endPointPtr,
     );
 
-    const startPointX = this.pdfiumModule.pdfium.getValue(startPointPtr, 'float');
-    const startPointY = this.pdfiumModule.pdfium.getValue(startPointPtr + 4, 'float');
+    const startPointX = this.pdfiumModule.pdfium.getValue(
+      startPointPtr,
+      'float',
+    );
+    const startPointY = this.pdfiumModule.pdfium.getValue(
+      startPointPtr + 4,
+      'float',
+    );
     const startPoint = this.convertPagePointToDevicePoint(page, {
       x: startPointX,
       y: startPointY,
     });
 
     const endPointX = this.pdfiumModule.pdfium.getValue(endPointPtr, 'float');
-    const endPointY = this.pdfiumModule.pdfium.getValue(endPointPtr + 4, 'float');
+    const endPointY = this.pdfiumModule.pdfium.getValue(
+      endPointPtr + 4,
+      'float',
+    );
     const endPoint = this.convertPagePointToDevicePoint(page, {
       x: endPointX,
       y: endPointY,
@@ -3480,10 +3478,8 @@ export class PdfiumEngine implements PdfEngine {
       annotationObjectPtr,
       segmentIndex,
     );
-    const segmentType =
-      this.pdfiumModule.FPDFPathSegment_GetType(segmentPtr);
-    const isClosed =
-      this.pdfiumModule.FPDFPathSegment_GetClose(segmentPtr);
+    const segmentType = this.pdfiumModule.FPDFPathSegment_GetType(segmentPtr);
+    const isClosed = this.pdfiumModule.FPDFPathSegment_GetClose(segmentPtr);
     const pointXPtr = this.malloc(4);
     const pointYPtr = this.malloc(4);
     this.pdfiumModule.FPDFPathSegment_GetPoint(
@@ -3511,10 +3507,8 @@ export class PdfiumEngine implements PdfEngine {
    * @private
    */
   private readImageObject(imageObjectPtr: number): PdfImageObject {
-    const bitmapPtr =
-      this.pdfiumModule.FPDFImageObj_GetBitmap(imageObjectPtr);
-    const bitmapBufferPtr =
-      this.pdfiumModule.FPDFBitmap_GetBuffer(bitmapPtr);
+    const bitmapPtr = this.pdfiumModule.FPDFImageObj_GetBitmap(imageObjectPtr);
+    const bitmapBufferPtr = this.pdfiumModule.FPDFBitmap_GetBuffer(bitmapPtr);
     const bitmapWidth = this.pdfiumModule.FPDFBitmap_GetWidth(bitmapPtr);
     const bitmapHeight = this.pdfiumModule.FPDFBitmap_GetHeight(bitmapPtr);
     const format = this.pdfiumModule.FPDFBitmap_GetFormat(
@@ -3600,9 +3594,7 @@ export class PdfiumEngine implements PdfEngine {
     pageObjectPtr: number,
   ): PdfTransformMatrix {
     const matrixPtr = this.malloc(4 * 6);
-    if (
-      this.pdfiumModule.FPDFPageObj_GetMatrix(pageObjectPtr, matrixPtr)
-    ) {
+    if (this.pdfiumModule.FPDFPageObj_GetMatrix(pageObjectPtr, matrixPtr)) {
       const a = this.pdfiumModule.pdfium.getValue(matrixPtr, 'float');
       const b = this.pdfiumModule.pdfium.getValue(matrixPtr + 4, 'float');
       const c = this.pdfiumModule.pdfium.getValue(matrixPtr + 8, 'float');
@@ -3831,18 +3823,10 @@ export class PdfiumEngine implements PdfEngine {
     annotationPtr: number,
   ): Position[] {
     const vertices: Position[] = [];
-    const count = this.pdfiumModule.FPDFAnnot_GetVertices(
-      annotationPtr,
-      0,
-      0,
-    );
+    const count = this.pdfiumModule.FPDFAnnot_GetVertices(annotationPtr, 0, 0);
     const pointMemorySize = 8;
     const pointsPtr = this.malloc(count * pointMemorySize);
-    this.pdfiumModule.FPDFAnnot_GetVertices(
-      annotationPtr,
-      pointsPtr,
-      count,
-    );
+    this.pdfiumModule.FPDFAnnot_GetVertices(annotationPtr, pointsPtr, count);
     for (let i = 0; i < count; i++) {
       const pointX = this.pdfiumModule.pdfium.getValue(
         pointsPtr + i * pointMemorySize,
@@ -4079,7 +4063,10 @@ export class PdfiumEngine implements PdfEngine {
     const array = new Uint8ClampedArray(bitmapHeapLength);
     const dataView = new DataView(array.buffer);
     for (let i = 0; i < bitmapHeapLength; i++) {
-      dataView.setInt8(i, this.pdfiumModule.pdfium.getValue(bitmapHeapPtr + i, 'i8'));
+      dataView.setInt8(
+        i,
+        this.pdfiumModule.pdfium.getValue(bitmapHeapPtr + i, 'i8'),
+      );
     }
     this.free(bitmapHeapPtr);
 
@@ -4243,7 +4230,10 @@ export class PdfiumEngine implements PdfEngine {
       paramsCountPtr,
       paramsPtr,
     ) as PdfZoomMode;
-    const paramsCount = this.pdfiumModule.pdfium.getValue(paramsCountPtr, 'i32');
+    const paramsCount = this.pdfiumModule.pdfium.getValue(
+      paramsCountPtr,
+      'i32',
+    );
     const view: number[] = [];
     for (let i = 0; i < paramsCount; i++) {
       const paramPtr = paramsPtr + i * 4;
@@ -4276,7 +4266,9 @@ export class PdfiumEngine implements PdfEngine {
 
         const x = hasX ? this.pdfiumModule.pdfium.getValue(xPtr, 'float') : 0;
         const y = hasY ? this.pdfiumModule.pdfium.getValue(yPtr, 'float') : 0;
-        const zoom = hasZ ? this.pdfiumModule.pdfium.getValue(zPtr, 'float') : 0;
+        const zoom = hasZ
+          ? this.pdfiumModule.pdfium.getValue(zPtr, 'float')
+          : 0;
 
         this.free(hasXPtr);
         this.free(hasYPtr);
@@ -4538,7 +4530,11 @@ export class PdfiumEngine implements PdfEngine {
     const pageRectPtr = this.malloc(4 * 4);
     this.pdfiumModule.pdfium.setValue(pageRectPtr, pageX, 'float');
     this.pdfiumModule.pdfium.setValue(pageRectPtr + 4, pageY, 'float');
-    this.pdfiumModule.pdfium.setValue(pageRectPtr + 8, pageX + rect.size.width, 'float');
+    this.pdfiumModule.pdfium.setValue(
+      pageRectPtr + 8,
+      pageX + rect.size.width,
+      'float',
+    );
     this.pdfiumModule.pdfium.setValue(
       pageRectPtr + 12,
       pageY - rect.size.height,
@@ -4571,9 +4567,18 @@ export class PdfiumEngine implements PdfEngine {
     };
     if (this.pdfiumModule.FPDFAnnot_GetRect(annotationPtr, pageRectPtr)) {
       pageRect.left = this.pdfiumModule.pdfium.getValue(pageRectPtr, 'float');
-      pageRect.top = this.pdfiumModule.pdfium.getValue(pageRectPtr + 4, 'float');
-      pageRect.right = this.pdfiumModule.pdfium.getValue(pageRectPtr + 8, 'float');
-      pageRect.bottom = this.pdfiumModule.pdfium.getValue(pageRectPtr + 12, 'float');
+      pageRect.top = this.pdfiumModule.pdfium.getValue(
+        pageRectPtr + 4,
+        'float',
+      );
+      pageRect.right = this.pdfiumModule.pdfium.getValue(
+        pageRectPtr + 8,
+        'float',
+      );
+      pageRect.bottom = this.pdfiumModule.pdfium.getValue(
+        pageRectPtr + 12,
+        'float',
+      );
     }
     this.free(pageRectPtr);
 

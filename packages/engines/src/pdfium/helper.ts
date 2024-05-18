@@ -1,4 +1,4 @@
-import { PdfiumRuntimeMethods, PdfiumModule } from "@unionpdf/pdfium";
+import { PdfiumRuntimeMethods, PdfiumModule } from '@unionpdf/pdfium';
 
 /**
  * Read string from WASM heap
@@ -16,15 +16,15 @@ export function readString(
   parseChars: (buffer: number) => string,
   defaultLength: number = 100,
 ): string {
-  let buffer = wasmModule._malloc(defaultLength);
+  let buffer = wasmModule.wasmExports.malloc(defaultLength);
   for (let i = 0; i < defaultLength; i++) {
     wasmModule.HEAP8[buffer + i] = 0;
   }
   const actualLength = readChars(buffer, defaultLength);
   let str: string;
   if (actualLength > defaultLength) {
-    wasmModule._free(buffer);
-    buffer = wasmModule._malloc(actualLength);
+    wasmModule.wasmExports.free(buffer);
+    buffer = wasmModule.wasmExports.malloc(actualLength);
     for (let i = 0; i < actualLength; i++) {
       wasmModule.HEAP8[buffer + i] = 0;
     }
@@ -33,7 +33,7 @@ export function readString(
   } else {
     str = parseChars(buffer);
   }
-  wasmModule._free(buffer);
+  wasmModule.wasmExports.free(buffer);
 
   return str;
 }
@@ -51,7 +51,7 @@ export function readArrayBuffer(
 ): ArrayBuffer {
   const bufferSize = readChars(0, 0);
 
-  const bufferPtr = wasmModule._malloc(bufferSize);
+  const bufferPtr = wasmModule.wasmExports.malloc(bufferSize);
 
   readChars(bufferPtr, bufferSize);
 
@@ -62,7 +62,7 @@ export function readArrayBuffer(
     view.setInt8(i, wasmModule.getValue(bufferPtr + i, 'i8'));
   }
 
-  wasmModule._free(bufferPtr);
+  wasmModule.wasmExports.free(bufferPtr);
 
   return arrayBuffer;
 }

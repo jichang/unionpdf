@@ -1,7 +1,6 @@
 /// <reference types="emscripten" />
 
-export interface PdfiumModule extends EmscriptenModule {
-}
+export interface PdfiumModule extends EmscriptenModule {}
 
 /**
  * Create an instance of pdfium wasm module
