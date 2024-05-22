@@ -13,7 +13,7 @@ export const functions = {
     ['number', 'number'] as const,
     'number',
   ] as const,
-  PDFium_ExitFormFillEnvironment: [['number'] as const, 'number'] as const,
+  PDFium_ExitFormFillEnvironment: [['number'] as const, null] as const,
   PDFium_SaveAsCopy: [['number', 'number'] as const, null] as const,
   FPDF_LoadMemDocument: [
     ['number', 'number', 'number'] as const,

@@ -601,7 +601,6 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
 
   const getFormField = useCallback(
     (page: PdfPageObject, annotation: PdfAnnotationObject) => {
-      console.log(form, page, annotation);
       return form[`${page.index}.${annotation.id}`];
     },
     [form],

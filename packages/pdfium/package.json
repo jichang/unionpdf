@@ -16,12 +16,13 @@
       "require": "./dist/cjs/index.js"
     },
     "./pdfium.wasm": {
-      "import": "./dist/esm/pdfium.6c7787b5.wasm",
-      "require": "./dist/cjs/pdfium.6c7787b5.wasm"
+      "import": "./dist/esm/pdfium.caa89ca9.wasm",
+      "require": "./dist/cjs/pdfium.caa89ca9.wasm"
     }
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "prebuild": "npm run clean",
     "build": "parcel build",
     "postbuild": "npm run copy-types",
     "clean": "del-cli --force dist .parcel-cache",

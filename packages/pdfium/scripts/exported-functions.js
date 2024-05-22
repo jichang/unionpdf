@@ -7,7 +7,7 @@ exports.functions = {
   PDFium_OpenFormFillInfo: [[], 'number'],
   PDFium_CloseFormFillInfo: [['number'], null],
   PDFium_InitFormFillEnvironment: [['number', 'number'], 'number'],
-  PDFium_ExitFormFillEnvironment: [['number'], 'number'],
+  PDFium_ExitFormFillEnvironment: [['number'], null],
   PDFium_SaveAsCopy: [['number', 'number'], null],
   FPDF_LoadMemDocument: [['number', 'number', 'number'], 'number'],
   FPDF_GetPageSizeByIndexF: [['number', 'number', 'number'], 'number'],

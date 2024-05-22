@@ -45,7 +45,8 @@ RUN ninja -C out/prod pdfium -v
 
 FROM pdfium-compile AS pdfium-wasm
 RUN mkdir /build/wasm
-COPY build/code/cpp/main.cpp /build/wasm/main.cpp
+COPY build/code/cpp/*.h /build/wasm/
+COPY build/code/cpp/*.cpp /build/wasm/
 COPY build/compile.sh /build/wasm/compile.sh
 COPY build/exported-runtime-methods.txt /build/wasm/exported-runtime-methods.txt
 COPY build/exported-functions.txt /build/wasm/exported-functions.txt
@@ -54,3 +55,5 @@ RUN bash -E /build/wasm/compile.sh
 
 FROM scratch AS exportor
 COPY --from=pdfium-wasm /build/wasm /dist
+COPY --from=pdfium-wasm /build/pdfium/public /dist/pdifum
+COPY --from=pdfium-wasm /emsdk/upstream/emscripten/cache/sysroot/include /dist/emscripten

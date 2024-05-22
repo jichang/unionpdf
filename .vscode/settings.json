@@ -1,6 +1,5 @@
 {
   "editor.tabSize": 2,
   "editor.formatOnPaste": true,
-  "editor.formatOnSave": true,
-  "prettier.endOfLine": "lf"
+  "editor.formatOnSave": true
 }

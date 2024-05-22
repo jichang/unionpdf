@@ -1,4 +1,4 @@
-em++ ./main.cpp \
+em++ $(ls *.cpp) \
   /build/pdfium/out/prod/obj/libpdfium.a \
   -g \
   -v \

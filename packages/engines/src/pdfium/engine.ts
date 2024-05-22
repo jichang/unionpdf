@@ -3983,7 +3983,10 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     let isChecked = false;
-    if (type === PDF_FORM_FIELD_TYPE.CHECKBOX) {
+    if (
+      type === PDF_FORM_FIELD_TYPE.CHECKBOX ||
+      type === PDF_FORM_FIELD_TYPE.RADIOBUTTON
+    ) {
       isChecked = this.pdfiumModule.FPDFAnnot_IsChecked(
         formHandle,
         annotationPtr,
