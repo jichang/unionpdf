@@ -21,7 +21,10 @@ export function ComboboxField(props: ComboboxFieldProps) {
         return option.isSelected;
       })
       .map((option) => {
-        return option.label;
+        return {
+          kind: 'text',
+          text: option.label,
+        };
       });
   }, [options]);
 
@@ -33,8 +36,8 @@ export function ComboboxField(props: ComboboxFieldProps) {
 
   const handleChange = useCallback(
     (evt: FormEvent) => {
-      const value = (evt.target as HTMLInputElement | HTMLSelectElement).value;
-      onChangeValues?.([value]);
+      const value = (evt.target as HTMLSelectElement).value;
+      onChangeValues?.([{ kind: 'text', text: value }]);
     },
     [onChangeValues],
   );
@@ -48,7 +51,15 @@ export function ComboboxField(props: ComboboxFieldProps) {
       multiple={isMultipleChoice}
       name={name}
       aria-label={name}
-      value={isMultipleChoice ? values : values[0]}
+      value={
+        isMultipleChoice
+          ? values.map((value) => {
+              return value.kind === 'text' ? value.text : 'On';
+            })
+          : values[0].kind === 'text'
+            ? values[0].text
+            : ''
+      }
       onChange={handleChange}
       options={options.map((opt: PdfWidgetAnnoOption) => {
         return {

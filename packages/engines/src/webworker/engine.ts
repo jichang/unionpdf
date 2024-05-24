@@ -1,11 +1,15 @@
 import {
+  FormFieldValue,
   PdfAnnotationTransformation,
   PdfAttachmentObject,
   PdfEngineError,
+  PdfEngineFeature,
+  PdfEngineOperation,
   PdfFile,
   PdfMetadataObject,
   PdfSignatureObject,
   PdfTextRectObject,
+  PdfWidgetAnnoObject,
   SearchResult,
   SearchTarget,
   Task,
@@ -98,6 +102,11 @@ export class WebWorkerEngine implements PdfEngine {
     );
     this.tasks.set(WebWorkerEngine.readyTaskId, this.readyTask);
   }
+  isSupport?:
+    | ((
+        feature: PdfEngineFeature,
+      ) => Task<PdfEngineOperation[], PdfEngineError>)
+    | undefined;
 
   /**
    * Handle event from web worker. There are 2 kinds of event
@@ -794,6 +803,40 @@ export class WebWorkerEngine implements PdfEngine {
       data: {
         name: 'readAttachmentContent',
         args: [doc, attachment],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.setFormFieldValue}
+   *
+   * @public
+   */
+  setFormFieldValue(
+    doc: PdfDocumentObject,
+    annotation: PdfWidgetAnnoObject,
+    value: FormFieldValue,
+  ) {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'setFormFieldValue',
+      doc,
+      annotation,
+      value,
+    );
+    const requestId = this.generateRequestId(doc.id);
+    const task = new WorkerTask<boolean>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'setFormFieldValue',
+        args: [doc, annotation, value],
       },
     };
     this.proxy(task, request);

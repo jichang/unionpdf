@@ -64,6 +64,9 @@ import {
   PdfStampAnnoObjectContents,
   PdfWidgetAnnoField,
   PdfTransformMatrix,
+  PdfEngineFeature,
+  PdfEngineOperation,
+  FormFieldValue,
 } from '@unionpdf/models';
 import { readArrayBuffer, readString } from './helper';
 import { WrappedPdfiumModule } from '@unionpdf/pdfium';
@@ -160,6 +163,11 @@ export class PdfiumEngine implements PdfEngine {
     private pdfiumModule: WrappedPdfiumModule,
     private logger: Logger = new NoopLogger(),
   ) {}
+  isSupport?:
+    | ((
+        feature: PdfEngineFeature,
+      ) => Task<PdfEngineOperation[], PdfEngineError>)
+    | undefined;
 
   /**
    * {@inheritDoc @unionpdf/models!PdfEngine.initialize}
@@ -1454,6 +1462,91 @@ export class PdfiumEngine implements PdfEngine {
     );
 
     return TaskBase.resolve(buffer);
+  }
+
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.setFormFieldValue}
+   *
+   * @public
+   */
+  setFormFieldValue(
+    doc: PdfDocumentObject,
+    annotation: PdfWidgetAnnoObject,
+    value: FormFieldValue,
+  ): Task<boolean, PdfEngineError> {
+    this.logger.debug(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      'setFormFieldValue',
+      doc,
+      annotation,
+      value,
+    );
+    this.logger.perf(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      `TransformPageAnnotation`,
+      'Begin',
+      `${doc.id}-${annotation.id}`,
+    );
+
+    if (!this.docs[doc.id]) {
+      this.logger.perf(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `TransformPageAnnotation`,
+        'End',
+        `${doc.id}-${annotation.id}`,
+      );
+      return TaskBase.reject(new PdfEngineError('document does not exist'));
+    }
+
+    const { docPtr } = this.docs[doc.id];
+
+    const pagePtr = this.pdfiumModule.FPDF_LoadPage(
+      docPtr,
+      annotation.pageIndex,
+    );
+    const annotationPtr = this.pdfiumModule.FPDFPage_GetAnnot(
+      pagePtr,
+      annotation.id,
+    );
+
+    const formFillInfoPtr = this.pdfiumModule.PDFiumExt_OpenFormFillInfo();
+    const formHandle = this.pdfiumModule.PDFiumExt_InitFormFillEnvironment(
+      docPtr,
+      formFillInfoPtr,
+    );
+
+    this.pdfiumModule.FORM_SetFocusedAnnot(formHandle, annotationPtr);
+
+    switch (value.kind) {
+      case 'text':
+        {
+          this.pdfiumModule.FORM_SelectAllText(formHandle, pagePtr);
+          this.pdfiumModule.FORM_ReplaceSelection(
+            formHandle,
+            pagePtr,
+            value.text,
+          );
+        }
+        break;
+      case 'selection':
+        this.pdfiumModule.FORM_SetIndexSelected(
+          formHandle,
+          pagePtr,
+          value.index,
+          value.isSelected,
+        );
+        break;
+    }
+
+    this.pdfiumModule.FORM_ForceToKillFocus(formHandle);
+
+    this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
+    this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
+
+    return TaskBase.resolve<boolean>(true);
   }
 
   /**

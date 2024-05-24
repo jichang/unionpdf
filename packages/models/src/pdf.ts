@@ -1122,6 +1122,14 @@ export interface SearchResult {
    */
   charCount: number;
 }
+/**
+ * form field value
+ * @public
+ */
+export type FormFieldValue =
+  | { kind: 'text'; text: string }
+  | { kind: 'selection'; index: number; isSelected: boolean }
+  | { kind: 'checked'; isChecked: boolean };
 
 /**
  * Stage of task
@@ -1677,6 +1685,17 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     attachment: PdfAttachmentObject,
   ) => Task<ArrayBuffer, PdfEngineError>;
+  /**
+   * Set form field value
+   * @param doc - pdf document
+   * @param annotation - pdf annotation
+   * @param text - text value
+   */
+  setFormFieldValue: (
+    doc: PdfDocumentObject,
+    annotation: PdfWidgetAnnoObject,
+    value: FormFieldValue,
+  ) => Task<boolean, PdfEngineError>;
   /**
    * Extract pdf pages to a new file
    * @param doc - pdf document

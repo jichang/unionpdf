@@ -307,6 +307,17 @@ export const functions = {
     ['number', 'number', 'number', 'number'] as const,
     'boolean',
   ] as const,
+  FORM_SetFocusedAnnot: [['number', 'number'] as const, 'boolean'] as const,
+  FORM_SetIndexSelected: [
+    ['number', 'number', 'number', 'boolean'] as const,
+    'boolean',
+  ] as const,
+  FORM_SelectAllText: [['number', 'number'] as const, 'boolean'] as const,
+  FORM_ReplaceSelection: [
+    ['number', 'number', 'string'] as const,
+    'boolean',
+  ] as const,
+  FORM_ForceToKillFocus: [['number'] as const, 'boolean'] as const,
   FPDF_GetSignatureCount: [['number'] as const, 'number'] as const,
   FPDF_GetSignatureObject: [['number', 'number'] as const, 'number'] as const,
   FPDFSignatureObj_GetContents: [

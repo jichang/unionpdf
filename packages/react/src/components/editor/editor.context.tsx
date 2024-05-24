@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import {
   PdfAnnotationObject,
+  PdfWidgetAnnoObject,
   PdfPageObject,
   Position,
   Size,
@@ -78,10 +79,8 @@ export type Operation =
       id: string;
       action: 'set-form-field';
       page: PdfPageObject;
-      annotation: PdfAnnotationObject;
-      params: {
-        config: PdfFormFieldConfig;
-      };
+      annotation: PdfWidgetAnnoObject;
+      params: PdfFormFieldConfig;
     };
 
 /**
@@ -165,7 +164,7 @@ export interface PdfEditorContextValue {
    */
   setFormField: (
     page: PdfPageObject,
-    annotation: PdfAnnotationObject,
+    annotation: PdfWidgetAnnoObject,
     config: PdfFormFieldConfig,
   ) => void;
   /**
@@ -173,7 +172,7 @@ export interface PdfEditorContextValue {
    */
   getFormField: (
     page: PdfPageObject,
-    annotation: PdfAnnotationObject,
+    annotation: PdfWidgetAnnoObject,
   ) => PdfFormFieldConfig | undefined;
   /**
    * Query current stack status
@@ -509,7 +508,12 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
             engine.removePageAnnotation(doc, page, annotation);
             break;
           case 'set-form-field':
-            // Todo: update engine to support update form
+            {
+              const { params } = operation;
+              for (const value of params.values) {
+                engine.setFormFieldValue(doc, annotation, value);
+              }
+            }
             break;
         }
       }
@@ -570,17 +574,15 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   const setFormField = useCallback(
     (
       page: PdfPageObject,
-      annotation: PdfAnnotationObject,
-      config: PdfFormFieldConfig,
+      annotation: PdfWidgetAnnoObject,
+      params: PdfFormFieldConfig,
     ) => {
       exec({
         id: `${Date.now()}.${Math.random()}`,
         action: 'set-form-field',
         page,
         annotation,
-        params: {
-          config,
-        },
+        params,
       });
     },
     [exec],
@@ -592,7 +594,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
     stacks.undo.forEach((operation) => {
       if (operation.action === 'set-form-field') {
         const { page, annotation, params } = operation;
-        _form[`${page.index}.${annotation.id}`] = params.config;
+        _form[`${page.index}.${annotation.id}`] = params;
       }
     });
 
@@ -600,7 +602,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
   }, [stacks]);
 
   const getFormField = useCallback(
-    (page: PdfPageObject, annotation: PdfAnnotationObject) => {
+    (page: PdfPageObject, annotation: PdfWidgetAnnoObject) => {
       return form[`${page.index}.${annotation.id}`];
     },
     [form],

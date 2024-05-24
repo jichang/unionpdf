@@ -1,5 +1,5 @@
 import { PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
-import React, { FormEvent, useCallback } from 'react';
+import React, { FormEvent, useCallback, useMemo } from 'react';
 import { useUIComponents } from '../../adapters';
 import { FieldCommonProps } from './common';
 
@@ -15,12 +15,22 @@ export function TextField(props: TextFieldProps) {
 
   const { flag } = field;
   const name = field.alternateName || field.name;
-  const value = config?.values[0] || field.value;
+  const value = useMemo(() => {
+    if (config?.values[0].kind === 'text') {
+      return config?.values[0].text;
+    }
+    return field.value;
+  }, [config?.values[0], field.value]);
 
   const changeValue = useCallback(
     (evt: FormEvent) => {
-      const value = (evt.target as HTMLInputElement | HTMLSelectElement).value;
-      onChangeValues?.([value]);
+      const value = (evt.target as HTMLInputElement).value;
+      onChangeValues?.([
+        {
+          kind: 'text',
+          text: value,
+        },
+      ]);
     },
     [onChangeValues],
   );

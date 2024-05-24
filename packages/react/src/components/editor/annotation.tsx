@@ -1,4 +1,8 @@
-import { PdfAnnotationObject, PdfAnnotationSubtype } from '@unionpdf/models';
+import {
+  FormFieldValue,
+  PdfAnnotationObject,
+  PdfAnnotationSubtype,
+} from '@unionpdf/models';
 import { PdfPageObject, Rotation } from '@unionpdf/models';
 import React, { ComponentProps, useCallback } from 'react';
 import './annotation.css';
@@ -17,6 +21,7 @@ import {
   PdfPageCaretAnnotation,
   PdfPageStrikeOutAnnotation,
   PdfPageWidgetAnnotation,
+  PdfFormFieldConfig,
 } from '../annotations';
 import classNames from 'classnames';
 import {
@@ -108,8 +113,10 @@ export function PdfPageEditorAnnotation(props: PdfPageEditorAnnotationProps) {
   );
 
   const handleFormFieldChangeValues = useCallback(
-    (values: string[]) => {
-      setFormField(page, annotation, { values });
+    (values: FormFieldValue[]) => {
+      if (annotation.type === PdfAnnotationSubtype.WIDGET) {
+        setFormField(page, annotation, { values });
+      }
     },
     [page, annotation, setFormField],
   );

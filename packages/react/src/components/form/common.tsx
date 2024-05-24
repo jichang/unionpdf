@@ -1,5 +1,6 @@
 import { ComponentProps } from 'react';
 import {
+  FormFieldValue,
   PdfAnnotationObject,
   PdfPageObject,
   PdfWidgetAnnoField,
@@ -31,5 +32,5 @@ export interface FieldCommonProps extends ComponentProps<'div'> {
   /**
    * callback for value change
    */
-  onChangeValues?: (values: string[]) => void;
+  onChangeValues?: (values: FormFieldValue[]) => void;
 }

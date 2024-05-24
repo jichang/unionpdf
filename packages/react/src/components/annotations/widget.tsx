@@ -1,5 +1,5 @@
 import React from 'react';
-import { PdfWidgetAnnoObject } from '@unionpdf/models';
+import { FormFieldValue, PdfWidgetAnnoObject } from '@unionpdf/models';
 import './widget.css';
 import { Field } from '../form';
 import { PdfPageAnnotationProps } from '../common';
@@ -8,7 +8,7 @@ import { PdfPageAnnotationProps } from '../common';
  * Pdf form fied
  */
 export interface PdfFormFieldConfig {
-  values: string[];
+  values: FormFieldValue[];
 }
 
 /**
@@ -30,7 +30,7 @@ export interface PdfPageWidgetAnnotationProps extends PdfPageAnnotationProps {
   /**
    * callback for value change
    */
-  onChangeValues?: (values: string[]) => void;
+  onChangeValues?: (values: FormFieldValue[]) => void;
 }
 
 /**

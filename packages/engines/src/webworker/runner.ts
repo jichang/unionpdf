@@ -315,6 +315,9 @@ export class EngineRunner {
       case 'readAttachmentContent':
         task = this.engine[name]!(...args);
         break;
+      case 'setFormFieldValue':
+        task = this.engine[name]!(...args);
+        break;
       case 'extractPages':
         task = this.engine[name]!(...args);
         break;

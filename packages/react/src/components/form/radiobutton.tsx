@@ -22,12 +22,18 @@ export function RadioButtonField(props: RadioButtonFieldProps) {
     return option?.label || field.value;
   }, [options]);
 
-  const isChecked = field.isChecked || config?.values[0] === defaultValue;
+  const isChecked = useMemo(() => {
+    if (config?.values[0].kind === 'checked') {
+      return config.values[0].isChecked;
+    }
+
+    return field.isChecked;
+  }, [field.isChecked, config?.values[0]]);
 
   const handleChange = useCallback(
     (evt: FormEvent) => {
-      const value = (evt.target as HTMLInputElement | HTMLSelectElement).value;
-      onChangeValues?.([value]);
+      const isChecked = (evt.target as HTMLInputElement).checked;
+      onChangeValues?.([{ kind: 'checked', isChecked }]);
     },
     [onChangeValues],
   );

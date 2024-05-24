@@ -1,12 +1,12 @@
 import { PDF_FORM_FIELD_FLAG } from '@unionpdf/models';
-import React, { FormEvent, useCallback } from 'react';
+import React, { FormEvent, useCallback, useMemo } from 'react';
 import { useUIComponents } from '../../adapters';
 import { FieldCommonProps } from './common';
 
 /**
  * Properties of form checkbox field
  */
-export interface CheckboxFieldProps extends FieldCommonProps {}
+export interface CheckboxFieldProps extends FieldCommonProps { }
 
 /**
  *
@@ -18,15 +18,22 @@ export function CheckboxField(props: CheckboxFieldProps) {
 
   const { flag } = field;
   const name = field.alternateName || field.name;
-  const value = config?.values[0] || field.value;
 
   const handleChange = useCallback(
     (evt: FormEvent) => {
-      const value = (evt.target as HTMLInputElement | HTMLSelectElement).value;
-      onChangeValues?.([value]);
+      const isChecked = (evt.target as HTMLInputElement).checked;
+      onChangeValues?.([{ kind: 'checked', isChecked }]);
     },
     [onChangeValues],
   );
+
+  const isChecked = useMemo(() => {
+    if (config?.values[0].kind === 'checked') {
+      return config.values[0].isChecked;
+    }
+
+    return field.isChecked;
+  }, [field.isChecked, config?.values[0]]);
 
   const isDisabled = !isEditable || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
   const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
@@ -39,8 +46,8 @@ export function CheckboxField(props: CheckboxFieldProps) {
       disabled={isDisabled}
       name={name}
       aria-label={name}
-      value={value === 'Yes' ? 'Off' : 'Yes'}
-      checked={value === 'Yes'}
+      value={field.value}
+      checked={isChecked}
       onChange={handleChange}
     />
   );

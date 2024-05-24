@@ -20,6 +20,8 @@ import {
   PdfRenderOptions,
   PdfFile,
   PdfAnnotationObjectStatus,
+  PdfWidgetAnnoObject,
+  FormFieldValue,
 } from '@unionpdf/models';
 
 /**
@@ -313,6 +315,13 @@ export function createMockPdfEngine(
       attachment: PdfAttachmentObject,
     ) => {
       return TaskBase.resolve(new ArrayBuffer(0));
+    },
+    setFormFieldValue: (
+      doc: PdfDocumentObject,
+      annotation: PdfWidgetAnnoObject,
+      text: FormFieldValue,
+    ) => {
+      return TaskBase.resolve(true);
     },
     ...partialEngine,
   };
