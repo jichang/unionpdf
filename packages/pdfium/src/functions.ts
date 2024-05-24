@@ -1,20 +1,20 @@
 export const functions = {
-  PDFium_Init: [[] as const, null] as const,
-  PDFium_OpenFileWriter: [[] as const, 'number'] as const,
-  PDFium_CloseFileWriter: [['number'] as const, null] as const,
-  PDFium_GetFileWriterSize: [['number'] as const, 'number'] as const,
-  PDFium_GetFileWriterData: [
+  PDFiumExt_Init: [[] as const, null] as const,
+  PDFiumExt_OpenFileWriter: [[] as const, 'number'] as const,
+  PDFiumExt_CloseFileWriter: [['number'] as const, null] as const,
+  PDFiumExt_GetFileWriterSize: [['number'] as const, 'number'] as const,
+  PDFiumExt_GetFileWriterData: [
     ['number', 'number', 'number'] as const,
     null,
   ] as const,
-  PDFium_OpenFormFillInfo: [[] as const, 'number'] as const,
-  PDFium_CloseFormFillInfo: [['number'] as const, null] as const,
-  PDFium_InitFormFillEnvironment: [
+  PDFiumExt_OpenFormFillInfo: [[] as const, 'number'] as const,
+  PDFiumExt_CloseFormFillInfo: [['number'] as const, null] as const,
+  PDFiumExt_InitFormFillEnvironment: [
     ['number', 'number'] as const,
     'number',
   ] as const,
-  PDFium_ExitFormFillEnvironment: [['number'] as const, null] as const,
-  PDFium_SaveAsCopy: [['number', 'number'] as const, null] as const,
+  PDFiumExt_ExitFormFillEnvironment: [['number'] as const, null] as const,
+  PDFiumExt_SaveAsCopy: [['number', 'number'] as const, null] as const,
   FPDF_LoadMemDocument: [
     ['number', 'number', 'number'] as const,
     'number',

@@ -175,7 +175,7 @@ export class PdfiumEngine implements PdfEngine {
       'Begin',
       'General',
     );
-    this.pdfiumModule.PDFium_Init();
+    this.pdfiumModule.PDFiumExt_Init();
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Initialize`, 'End', 'General');
     return TaskBase.resolve(true);
   }
@@ -1963,18 +1963,18 @@ export class PdfiumEngine implements PdfEngine {
    * @private
    */
   saveDocument(docPtr: number) {
-    const writerPtr = this.pdfiumModule.PDFium_OpenFileWriter();
-    this.pdfiumModule.PDFium_SaveAsCopy(docPtr, writerPtr);
-    const size = this.pdfiumModule.PDFium_GetFileWriterSize(writerPtr);
+    const writerPtr = this.pdfiumModule.PDFiumExt_OpenFileWriter();
+    this.pdfiumModule.PDFiumExt_SaveAsCopy(docPtr, writerPtr);
+    const size = this.pdfiumModule.PDFiumExt_GetFileWriterSize(writerPtr);
     const dataPtr = this.malloc(size);
-    this.pdfiumModule.PDFium_GetFileWriterData(writerPtr, dataPtr, size);
+    this.pdfiumModule.PDFiumExt_GetFileWriterData(writerPtr, dataPtr, size);
     const buffer = new ArrayBuffer(size);
     const view = new DataView(buffer);
     for (let i = 0; i < size; i++) {
       view.setInt8(i, this.pdfiumModule.pdfium.getValue(dataPtr + i, 'i8'));
     }
     this.free(dataPtr);
-    this.pdfiumModule.PDFium_CloseFileWriter(writerPtr);
+    this.pdfiumModule.PDFiumExt_CloseFileWriter(writerPtr);
 
     return buffer;
   }
@@ -2343,8 +2343,8 @@ export class PdfiumEngine implements PdfEngine {
     scaleFactor: number,
     rotation: Rotation,
   ) {
-    const formFillInfoPtr = this.pdfiumModule.PDFium_OpenFormFillInfo();
-    const formHandle = this.pdfiumModule.PDFium_InitFormFillEnvironment(
+    const formFillInfoPtr = this.pdfiumModule.PDFiumExt_OpenFormFillInfo();
+    const formHandle = this.pdfiumModule.PDFiumExt_InitFormFillEnvironment(
       docPtr,
       formFillInfoPtr,
     );
@@ -2368,8 +2368,8 @@ export class PdfiumEngine implements PdfEngine {
       }
     }
 
-    this.pdfiumModule.PDFium_ExitFormFillEnvironment(formHandle);
-    this.pdfiumModule.PDFium_CloseFormFillInfo(formFillInfoPtr);
+    this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
+    this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
 
     return annotations;
   }

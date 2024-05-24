@@ -5,25 +5,23 @@
 #include "fpdf_save.h"
 #include "filewriter.h"
 
-PDFiumFileWriter::PDFiumFileWriter()
+PDFiumExtFileWriter::PDFiumExtFileWriter()
 {
   FPDF_FILEWRITE::version = 1;
   FPDF_FILEWRITE::WriteBlock = WriteBlockCallback;
 }
 
-PDFiumFileWriter::~PDFiumFileWriter()
+PDFiumExtFileWriter::~PDFiumExtFileWriter()
 {
 }
 
-int PDFiumFileWriter::WriteBlockCallback(FPDF_FILEWRITE *pFileWrite,
-                                         const void *data,
-                                         unsigned long size)
+int PDFiumExtFileWriter::WriteBlockCallback(FPDF_FILEWRITE *pFileWrite,
+                                            const void *data,
+                                            unsigned long size)
 {
-  PDFiumFileWriter *pThis = static_cast<PDFiumFileWriter *>(pFileWrite);
+  PDFiumExtFileWriter *pThis = static_cast<PDFiumExtFileWriter *>(pFileWrite);
 
   pThis->data.append(static_cast<const char *>(data), size);
 
-  debug_log(size);
-
-  return 1;
+  return size;
 }

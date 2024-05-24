@@ -7,6 +7,7 @@ import {
   PdfDocumentContextValue,
   usePdfDocument,
 } from './document.context';
+import { PdfFile } from '@unionpdf/models';
 
 describe('PdfDocumentContextProvider ', () => {
   let pdfDocInContext: PdfDocumentContextValue | null;
@@ -17,6 +18,7 @@ describe('PdfDocumentContextProvider ', () => {
   }
 
   test('should assign context value', async () => {
+    const file = {} as PdfFile;
     const doc = createMockPdfDocument();
     const version = Date.now();
     const result = render(
@@ -24,6 +26,7 @@ describe('PdfDocumentContextProvider ', () => {
         version={version}
         setVersion={jest.fn()}
         doc={doc}
+        file={file}
       >
         <Consumer />
       </PdfDocumentContextProvider>,

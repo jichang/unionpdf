@@ -1,11 +1,11 @@
 #include <string>
 #include "fpdf_save.h"
 
-class PDFiumFileWriter : public FPDF_FILEWRITE
+class PDFiumExtFileWriter : public FPDF_FILEWRITE
 {
 public:
-  PDFiumFileWriter();
-  ~PDFiumFileWriter();
+  PDFiumExtFileWriter();
+  ~PDFiumExtFileWriter();
 
 private:
   static int WriteBlockCallback(FPDF_FILEWRITE *pFileWrite,

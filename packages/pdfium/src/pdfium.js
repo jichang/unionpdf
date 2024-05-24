@@ -28,7 +28,7 @@ var readyPromise = new Promise((resolve, reject) => {
   readyPromiseResolve = resolve;
   readyPromiseReject = reject;
 });
-["_malloc","_free","_PDFium_Init","_PDFium_OpenFileWriter","_PDFium_CloseFileWriter","_PDFium_GetFileWriterSize","_PDFium_GetFileWriterData","_PDFium_OpenFormFillInfo","_PDFium_CloseFormFillInfo","_PDFium_InitFormFillEnvironment","_PDFium_ExitFormFillEnvironment","_PDFium_SaveAsCopy","_FPDF_LoadMemDocument","_FPDF_GetPageSizeByIndexF","_FPDF_GetLastError","_FPDF_GetPageCount","_FPDF_CloseDocument","_FPDF_DestroyLibrary","_FPDF_GetMetaText","_FPDFBitmap_FillRect","_FPDFBitmap_Create","_FPDFBitmap_CreateEx","_FPDFBitmap_GetBuffer","_FPDFBitmap_GetWidth","_FPDFBitmap_GetHeight","_FPDFBitmap_GetFormat","_FPDFBitmap_Destroy","_FPDFPageObj_Destroy","_FPDFPageObj_NewImageObj","_FPDFPageObj_GetMatrix","_FPDFPageObj_SetMatrix","_FPDFPageObj_GetBounds","_FPDFPageObj_Transform","_FPDFImageObj_SetBitmap","_FPDFImageObj_GetBitmap","_FPDFPath_CountSegments","_FPDFPath_GetPathSegment","_FPDFPathSegment_GetType","_FPDFPathSegment_GetPoint","_FPDFPathSegment_GetClose","_FPDFFormObj_CountObjects","_FPDFFormObj_GetObject","_FPDFBookmark_GetFirstChild","_FPDFBookmark_GetNextSibling","_FPDFBookmark_Find","_FPDFBookmark_GetTitle","_FPDFBookmark_GetAction","_FPDFBookmark_GetDest","_FPDFAction_GetType","_FPDFAction_GetFilePath","_FPDFAction_GetDest","_FPDFAction_GetURIPath","_FPDFDest_GetDestPageIndex","_FPDFDest_GetView","_FPDFDest_GetLocationInPage","_FPDF_LoadPage","_FPDF_RenderPageBitmap","_FPDF_PageToDevice","_FPDF_DeviceToPage","_FPDFPage_GetAnnotCount","_FPDFPage_GetAnnot","_FPDFPage_CreateAnnot","_FPDFPage_InsertObject","_FPDFPage_RemoveAnnot","_FPDFPage_GenerateContent","_FPDF_ClosePage","_FPDFAnnot_GetSubtype","_FPDFAnnot_GetAP","_FPDFAnnot_GetObjectCount","_FPDFAnnot_GetObject","_FPDFAnnot_AppendObject","_FPDFAnnot_GetRect","_FPDFAnnot_SetRect","_FPDFAnnot_GetLink","_FPDFAnnot_GetFormFieldType","_FPDFAnnot_GetFormFieldFlags","_FPDFAnnot_GetFormFieldName","_FPDFAnnot_GetFormFieldAlternateName","_FPDFAnnot_GetFormFieldValue","_FPDFAnnot_GetOptionCount","_FPDFAnnot_GetOptionLabel","_FPDFAnnot_IsOptionSelected","_FPDFAnnot_IsChecked","_FPDFAnnot_GetStringValue","_FPDFAnnot_GetColor","_FPDFAnnot_GetLinkedAnnot","_FPDFAnnot_GetInkListCount","_FPDFAnnot_GetInkListPath","_FPDFAnnot_AddInkStroke","_FPDFAnnot_RemoveInkList","_FPDFAnnot_GetVertices","_FPDFAnnot_GetLine","_FPDFPageObj_GetType","_FPDFLink_GetDest","_FPDFLink_GetAction","_FPDFText_LoadPage","_FPDFText_CountChars","_FPDFText_CountRects","_FPDFText_GetRect","_FPDFText_GetCharIndexAtPos","_FPDFText_GetFontSize","_FPDFText_GetFontInfo","_FPDFText_GetBoundedText","_FPDFText_FindStart","_FPDFText_FindNext","_FPDFText_FindPrev","_FPDFText_GetSchResultIndex","_FPDFText_GetSchCount","_FPDFText_FindClose","_FPDFText_ClosePage","_FPDFText_GetText","_FPDFPage_CloseAnnot","_FPDFDoc_GetAttachmentCount","_FPDFDoc_GetAttachment","_FPDFAttachment_GetName","_FPDFAttachment_GetStringValue","_FPDFAttachment_GetFile","_FPDF_GetSignatureCount","_FPDF_GetSignatureObject","_FPDFSignatureObj_GetContents","_FPDFSignatureObj_GetByteRange","_FPDFSignatureObj_GetSubFilter","_FPDFSignatureObj_GetReason","_FPDFSignatureObj_GetTime","_FPDFSignatureObj_GetDocMDPPermission","_FPDF_CreateNewDocument","_FPDF_ImportPagesByIndex","_FPDF_ImportPages","_memory","_debug_log","___indirect_function_table","_debug_writer","onRuntimeInitialized"].forEach((prop) => {
+["_malloc","_free","_PDFiumExt_Init","_PDFiumExt_OpenFileWriter","_PDFiumExt_CloseFileWriter","_PDFiumExt_GetFileWriterSize","_PDFiumExt_GetFileWriterData","_PDFiumExt_OpenFormFillInfo","_PDFiumExt_CloseFormFillInfo","_PDFiumExt_InitFormFillEnvironment","_PDFiumExt_ExitFormFillEnvironment","_PDFiumExt_SaveAsCopy","_FPDF_LoadMemDocument","_FPDF_GetPageSizeByIndexF","_FPDF_GetLastError","_FPDF_GetPageCount","_FPDF_CloseDocument","_FPDF_DestroyLibrary","_FPDF_GetMetaText","_FPDFBitmap_FillRect","_FPDFBitmap_Create","_FPDFBitmap_CreateEx","_FPDFBitmap_GetBuffer","_FPDFBitmap_GetWidth","_FPDFBitmap_GetHeight","_FPDFBitmap_GetFormat","_FPDFBitmap_Destroy","_FPDFPageObj_Destroy","_FPDFPageObj_NewImageObj","_FPDFPageObj_GetMatrix","_FPDFPageObj_SetMatrix","_FPDFPageObj_GetBounds","_FPDFPageObj_Transform","_FPDFImageObj_SetBitmap","_FPDFImageObj_GetBitmap","_FPDFPath_CountSegments","_FPDFPath_GetPathSegment","_FPDFPathSegment_GetType","_FPDFPathSegment_GetPoint","_FPDFPathSegment_GetClose","_FPDFFormObj_CountObjects","_FPDFFormObj_GetObject","_FPDFBookmark_GetFirstChild","_FPDFBookmark_GetNextSibling","_FPDFBookmark_Find","_FPDFBookmark_GetTitle","_FPDFBookmark_GetAction","_FPDFBookmark_GetDest","_FPDFAction_GetType","_FPDFAction_GetFilePath","_FPDFAction_GetDest","_FPDFAction_GetURIPath","_FPDFDest_GetDestPageIndex","_FPDFDest_GetView","_FPDFDest_GetLocationInPage","_FPDF_LoadPage","_FPDF_RenderPageBitmap","_FPDF_PageToDevice","_FPDF_DeviceToPage","_FPDFPage_GetAnnotCount","_FPDFPage_GetAnnot","_FPDFPage_CreateAnnot","_FPDFPage_InsertObject","_FPDFPage_RemoveAnnot","_FPDFPage_GenerateContent","_FPDF_ClosePage","_FPDFAnnot_GetSubtype","_FPDFAnnot_GetAP","_FPDFAnnot_GetObjectCount","_FPDFAnnot_GetObject","_FPDFAnnot_AppendObject","_FPDFAnnot_GetRect","_FPDFAnnot_SetRect","_FPDFAnnot_GetLink","_FPDFAnnot_GetFormFieldType","_FPDFAnnot_GetFormFieldFlags","_FPDFAnnot_GetFormFieldName","_FPDFAnnot_GetFormFieldAlternateName","_FPDFAnnot_GetFormFieldValue","_FPDFAnnot_GetOptionCount","_FPDFAnnot_GetOptionLabel","_FPDFAnnot_IsOptionSelected","_FPDFAnnot_IsChecked","_FPDFAnnot_GetStringValue","_FPDFAnnot_GetColor","_FPDFAnnot_GetLinkedAnnot","_FPDFAnnot_GetInkListCount","_FPDFAnnot_GetInkListPath","_FPDFAnnot_AddInkStroke","_FPDFAnnot_RemoveInkList","_FPDFAnnot_GetVertices","_FPDFAnnot_GetLine","_FPDFPageObj_GetType","_FPDFLink_GetDest","_FPDFLink_GetAction","_FPDFText_LoadPage","_FPDFText_CountChars","_FPDFText_CountRects","_FPDFText_GetRect","_FPDFText_GetCharIndexAtPos","_FPDFText_GetFontSize","_FPDFText_GetFontInfo","_FPDFText_GetBoundedText","_FPDFText_FindStart","_FPDFText_FindNext","_FPDFText_FindPrev","_FPDFText_GetSchResultIndex","_FPDFText_GetSchCount","_FPDFText_FindClose","_FPDFText_ClosePage","_FPDFText_GetText","_FPDFPage_CloseAnnot","_FPDFDoc_GetAttachmentCount","_FPDFDoc_GetAttachment","_FPDFAttachment_GetName","_FPDFAttachment_GetStringValue","_FPDFAttachment_GetFile","_FPDF_GetSignatureCount","_FPDF_GetSignatureObject","_FPDFSignatureObj_GetContents","_FPDFSignatureObj_GetByteRange","_FPDFSignatureObj_GetSubFilter","_FPDFSignatureObj_GetReason","_FPDFSignatureObj_GetTime","_FPDFSignatureObj_GetDocMDPPermission","_FPDF_CreateNewDocument","_FPDF_ImportPagesByIndex","_FPDF_ImportPages","_memory","___indirect_function_table","onRuntimeInitialized"].forEach((prop) => {
   if (!Object.getOwnPropertyDescriptor(readyPromise, prop)) {
     Object.defineProperty(readyPromise, prop, {
       get: () => abort('You are getting ' + prop + ' on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js'),
@@ -835,10 +835,6 @@ function dbg(...args) {
 }
 // end include: runtime_debug.js
 // === Body ===
-
-function debug_log(x) { console.log("size: ", x); }
-function debug_writer(x,y) { console.log("size: ", x, y); }
-
 // end include: preamble.js
 
 
@@ -4890,10 +4886,6 @@ var wasmImports = {
   /** @export */
   _tzset_js: __tzset_js,
   /** @export */
-  debug_log,
-  /** @export */
-  debug_writer,
-  /** @export */
   emscripten_date_now: _emscripten_date_now,
   /** @export */
   emscripten_errn: _emscripten_errn,
@@ -4932,16 +4924,16 @@ var wasmImports = {
 };
 var wasmExports = createWasm();
 var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
-var _PDFium_Init = Module['_PDFium_Init'] = createExportWrapper('PDFium_Init', 0);
-var _PDFium_OpenFileWriter = Module['_PDFium_OpenFileWriter'] = createExportWrapper('PDFium_OpenFileWriter', 0);
-var _PDFium_GetFileWriterSize = Module['_PDFium_GetFileWriterSize'] = createExportWrapper('PDFium_GetFileWriterSize', 1);
-var _PDFium_GetFileWriterData = Module['_PDFium_GetFileWriterData'] = createExportWrapper('PDFium_GetFileWriterData', 3);
-var _PDFium_CloseFileWriter = Module['_PDFium_CloseFileWriter'] = createExportWrapper('PDFium_CloseFileWriter', 1);
-var _PDFium_OpenFormFillInfo = Module['_PDFium_OpenFormFillInfo'] = createExportWrapper('PDFium_OpenFormFillInfo', 0);
-var _PDFium_CloseFormFillInfo = Module['_PDFium_CloseFormFillInfo'] = createExportWrapper('PDFium_CloseFormFillInfo', 1);
-var _PDFium_InitFormFillEnvironment = Module['_PDFium_InitFormFillEnvironment'] = createExportWrapper('PDFium_InitFormFillEnvironment', 2);
-var _PDFium_ExitFormFillEnvironment = Module['_PDFium_ExitFormFillEnvironment'] = createExportWrapper('PDFium_ExitFormFillEnvironment', 1);
-var _PDFium_SaveAsCopy = Module['_PDFium_SaveAsCopy'] = createExportWrapper('PDFium_SaveAsCopy', 2);
+var _PDFiumExt_Init = Module['_PDFiumExt_Init'] = createExportWrapper('PDFiumExt_Init', 0);
+var _PDFiumExt_OpenFileWriter = Module['_PDFiumExt_OpenFileWriter'] = createExportWrapper('PDFiumExt_OpenFileWriter', 0);
+var _PDFiumExt_GetFileWriterSize = Module['_PDFiumExt_GetFileWriterSize'] = createExportWrapper('PDFiumExt_GetFileWriterSize', 1);
+var _PDFiumExt_GetFileWriterData = Module['_PDFiumExt_GetFileWriterData'] = createExportWrapper('PDFiumExt_GetFileWriterData', 3);
+var _PDFiumExt_CloseFileWriter = Module['_PDFiumExt_CloseFileWriter'] = createExportWrapper('PDFiumExt_CloseFileWriter', 1);
+var _PDFiumExt_SaveAsCopy = Module['_PDFiumExt_SaveAsCopy'] = createExportWrapper('PDFiumExt_SaveAsCopy', 2);
+var _PDFiumExt_OpenFormFillInfo = Module['_PDFiumExt_OpenFormFillInfo'] = createExportWrapper('PDFiumExt_OpenFormFillInfo', 0);
+var _PDFiumExt_CloseFormFillInfo = Module['_PDFiumExt_CloseFormFillInfo'] = createExportWrapper('PDFiumExt_CloseFormFillInfo', 1);
+var _PDFiumExt_InitFormFillEnvironment = Module['_PDFiumExt_InitFormFillEnvironment'] = createExportWrapper('PDFiumExt_InitFormFillEnvironment', 2);
+var _PDFiumExt_ExitFormFillEnvironment = Module['_PDFiumExt_ExitFormFillEnvironment'] = createExportWrapper('PDFiumExt_ExitFormFillEnvironment', 1);
 var _FPDFPage_CreateAnnot = Module['_FPDFPage_CreateAnnot'] = createExportWrapper('FPDFPage_CreateAnnot', 2);
 var _FPDFPage_GetAnnotCount = Module['_FPDFPage_GetAnnotCount'] = createExportWrapper('FPDFPage_GetAnnotCount', 1);
 var _FPDFPage_GetAnnot = Module['_FPDFPage_GetAnnot'] = createExportWrapper('FPDFPage_GetAnnot', 2);
@@ -5081,8 +5073,7 @@ var dynCall_jiji = Module['dynCall_jiji'] = createExportWrapper('dynCall_jiji', 
 var dynCall_iiiiij = Module['dynCall_iiiiij'] = createExportWrapper('dynCall_iiiiij', 7);
 var dynCall_iiiiijj = Module['dynCall_iiiiijj'] = createExportWrapper('dynCall_iiiiijj', 9);
 var dynCall_iiiiiijj = Module['dynCall_iiiiiijj'] = createExportWrapper('dynCall_iiiiiijj', 10);
-var ___start_em_js = Module['___start_em_js'] = 1747404;
-var ___stop_em_js = Module['___stop_em_js'] = 1747496;
+
 function invoke_viii(index,a1,a2,a3) {
   var sp = stackSave();
   try {

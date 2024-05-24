@@ -1,4 +1,4 @@
-import { PdfDocumentObject } from '@unionpdf/models';
+import { PdfDocumentObject, PdfFile } from '@unionpdf/models';
 import React, { ReactNode, useContext } from 'react';
 
 /**
@@ -19,6 +19,8 @@ export interface PdfDocumentContextValue {
    * Pdf document
    */
   doc: PdfDocumentObject | null;
+
+  file: PdfFile | null;
 }
 
 /**
@@ -28,6 +30,7 @@ export const PdfDocumentContext = React.createContext<PdfDocumentContextValue>({
   version: 0,
   setVersion: () => {},
   doc: null,
+  file: null,
 });
 
 export interface PdfDocumentContextProviderProps

@@ -103,6 +103,7 @@ export function PdfDocument(props: PdfDocumentProps) {
     <div className="pdf__document" style={themeStyle} {...rest}>
       {doc ? (
         <PdfDocumentContextProvider
+          file={file}
           doc={doc}
           version={version}
           setVersion={setVersion}
