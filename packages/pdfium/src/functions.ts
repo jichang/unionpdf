@@ -307,6 +307,10 @@ export const functions = {
     ['number', 'number', 'number', 'number'] as const,
     'boolean',
   ] as const,
+  FPDFAnnot_SetFocusableSubtypes: [
+    ['number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
   FORM_SetFocusedAnnot: [['number', 'number'] as const, 'boolean'] as const,
   FORM_SetIndexSelected: [
     ['number', 'number', 'number', 'boolean'] as const,

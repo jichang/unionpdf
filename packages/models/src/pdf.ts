@@ -1693,6 +1693,7 @@ export interface PdfEngine {
    */
   setFormFieldValue: (
     doc: PdfDocumentObject,
+    page: PdfPageObject,
     annotation: PdfWidgetAnnoObject,
     value: FormFieldValue,
   ) => Task<boolean, PdfEngineError>;

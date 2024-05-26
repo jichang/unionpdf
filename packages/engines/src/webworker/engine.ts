@@ -817,6 +817,7 @@ export class WebWorkerEngine implements PdfEngine {
    */
   setFormFieldValue(
     doc: PdfDocumentObject,
+    page: PdfPageObject,
     annotation: PdfWidgetAnnoObject,
     value: FormFieldValue,
   ) {
@@ -836,7 +837,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'setFormFieldValue',
-        args: [doc, annotation, value],
+        args: [doc, page, annotation, value],
       },
     };
     this.proxy(task, request);

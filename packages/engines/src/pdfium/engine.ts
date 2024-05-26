@@ -1471,13 +1471,14 @@ export class PdfiumEngine implements PdfEngine {
    */
   setFormFieldValue(
     doc: PdfDocumentObject,
+    page: PdfPageObject,
     annotation: PdfWidgetAnnoObject,
     value: FormFieldValue,
   ): Task<boolean, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
-      'setFormFieldValue',
+      'SetFormFieldValue',
       doc,
       annotation,
       value,
@@ -1485,16 +1486,22 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(
       LOG_SOURCE,
       LOG_CATEGORY,
-      `TransformPageAnnotation`,
+      `SetFormFieldValue`,
       'Begin',
       `${doc.id}-${annotation.id}`,
     );
 
     if (!this.docs[doc.id]) {
+      this.logger.debug(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        'SetFormFieldValue',
+        'document is not opened',
+      );
       this.logger.perf(
         LOG_SOURCE,
         LOG_CATEGORY,
-        `TransformPageAnnotation`,
+        `SetFormFieldValue`,
         'End',
         `${doc.id}-${annotation.id}`,
       );
@@ -1503,43 +1510,149 @@ export class PdfiumEngine implements PdfEngine {
 
     const { docPtr } = this.docs[doc.id];
 
-    const pagePtr = this.pdfiumModule.FPDF_LoadPage(
-      docPtr,
-      annotation.pageIndex,
-    );
-    const annotationPtr = this.pdfiumModule.FPDFPage_GetAnnot(
-      pagePtr,
-      annotation.id,
-    );
-
     const formFillInfoPtr = this.pdfiumModule.PDFiumExt_OpenFormFillInfo();
     const formHandle = this.pdfiumModule.PDFiumExt_InitFormFillEnvironment(
       docPtr,
       formFillInfoPtr,
     );
 
-    this.pdfiumModule.FORM_SetFocusedAnnot(formHandle, annotationPtr);
+    const focusableSubtypes = [PdfAnnotationSubtype.WIDGET];
+
+    const focusableSubtypesPtr = this.malloc(focusableSubtypes.length * 4);
+    for (let index in focusableSubtypes) {
+      const subtype = focusableSubtypes[index];
+      this.pdfiumModule.pdfium.setValue(
+        focusableSubtypesPtr + 4 * Number(index),
+        subtype,
+        'i32',
+      );
+    }
+
+    const pagePtr = this.pdfiumModule.FPDF_LoadPage(docPtr, page.index);
+    const annotationPtr = this.pdfiumModule.FPDFPage_GetAnnot(
+      pagePtr,
+      annotation.id,
+    );
+
+    if (!this.pdfiumModule.FORM_SetFocusedAnnot(formHandle, annotationPtr)) {
+      this.logger.debug(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        'SetFormFieldValue',
+        'failed to set focused annotation',
+      );
+      this.logger.perf(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `SetFormFieldValue`,
+        'End',
+        `${doc.id}-${annotation.id}`,
+      );
+      this.pdfiumModule.FPDFPage_CloseAnnot(annotationPtr);
+      this.pdfiumModule.FPDF_ClosePage(pagePtr);
+      this.free(focusableSubtypesPtr);
+      this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
+      this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
+
+      return TaskBase.reject(
+        new PdfEngineError('failed to set focused annotation'),
+      );
+    }
 
     switch (value.kind) {
       case 'text':
         {
-          this.pdfiumModule.FORM_SelectAllText(formHandle, pagePtr);
-          this.pdfiumModule.FORM_ReplaceSelection(
-            formHandle,
-            pagePtr,
-            value.text,
-          );
+          if (!this.pdfiumModule.FORM_SelectAllText(formHandle, pagePtr)) {
+            this.logger.debug(
+              LOG_SOURCE,
+              LOG_CATEGORY,
+              'SetFormFieldValue',
+              'failed to select all text',
+            );
+            this.logger.perf(
+              LOG_SOURCE,
+              LOG_CATEGORY,
+              `SetFormFieldValue`,
+              'End',
+              `${doc.id}-${annotation.id}`,
+            );
+            this.pdfiumModule.FPDFPage_CloseAnnot(annotationPtr);
+            this.pdfiumModule.FPDF_ClosePage(pagePtr);
+            this.free(focusableSubtypesPtr);
+            this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
+            this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
+
+            return TaskBase.reject(
+              new PdfEngineError('failed to select all text'),
+            );
+          }
+          if (
+            !this.pdfiumModule.FORM_ReplaceSelection(
+              formHandle,
+              pagePtr,
+              value.text,
+            )
+          ) {
+            this.logger.debug(
+              LOG_SOURCE,
+              LOG_CATEGORY,
+              'SetFormFieldValue',
+              'failed to replace selection',
+            );
+            this.logger.perf(
+              LOG_SOURCE,
+              LOG_CATEGORY,
+              `SetFormFieldValue`,
+              'End',
+              `${doc.id}-${annotation.id}`,
+            );
+            this.pdfiumModule.FPDFPage_CloseAnnot(annotationPtr);
+            this.pdfiumModule.FPDF_ClosePage(pagePtr);
+            this.free(focusableSubtypesPtr);
+            this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
+            this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
+
+            return TaskBase.reject(
+              new PdfEngineError('failed to replace selection'),
+            );
+          }
         }
         break;
       case 'selection':
-        this.pdfiumModule.FORM_SetIndexSelected(
-          formHandle,
-          pagePtr,
-          value.index,
-          value.isSelected,
-        );
+        if (
+          !this.pdfiumModule.FORM_SetIndexSelected(
+            formHandle,
+            pagePtr,
+            value.index,
+            value.isSelected,
+          )
+        ) {
+          this.logger.debug(
+            LOG_SOURCE,
+            LOG_CATEGORY,
+            'SetFormFieldValue',
+            'failed to set index selected',
+          );
+          this.logger.perf(
+            LOG_SOURCE,
+            LOG_CATEGORY,
+            `SetFormFieldValue`,
+            'End',
+            `${doc.id}-${annotation.id}`,
+          );
+          this.pdfiumModule.FPDFPage_CloseAnnot(annotationPtr);
+          this.pdfiumModule.FPDF_ClosePage(pagePtr);
+          this.free(focusableSubtypesPtr);
+          this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
+          this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
+
+          return TaskBase.reject(
+            new PdfEngineError('failed to set index selected'),
+          );
+        }
         break;
     }
+    this.free(focusableSubtypesPtr);
 
     this.pdfiumModule.FORM_ForceToKillFocus(formHandle);
 

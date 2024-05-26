@@ -511,7 +511,7 @@ export function PdfEditorContextProvider(props: PdfEditorContextProviderProps) {
             {
               const { params } = operation;
               for (const value of params.values) {
-                engine.setFormFieldValue(doc, annotation, value);
+                engine.setFormFieldValue(doc, page, annotation, value);
               }
             }
             break;

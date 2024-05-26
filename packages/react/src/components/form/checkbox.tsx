@@ -6,7 +6,7 @@ import { FieldCommonProps } from './common';
 /**
  * Properties of form checkbox field
  */
-export interface CheckboxFieldProps extends FieldCommonProps { }
+export interface CheckboxFieldProps extends FieldCommonProps {}
 
 /**
  *

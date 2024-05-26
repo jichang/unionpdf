@@ -205,6 +205,7 @@ exports.functions = {
     'number',
   ],
   FPDFAttachment_GetFile: [['number', 'number', 'number', 'number'], 'boolean'],
+  FPDFAnnot_SetFocusableSubtypes: [['number', 'number', 'number'], 'boolean'],
   FORM_SetFocusedAnnot: [['number', 'number'], 'boolean'],
   FORM_SetIndexSelected: [['number', 'number', 'number', 'boolean'], 'boolean'],
   FORM_SelectAllText: [['number', 'number'], 'boolean'],

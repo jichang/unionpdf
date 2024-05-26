@@ -318,6 +318,7 @@ export function createMockPdfEngine(
     },
     setFormFieldValue: (
       doc: PdfDocumentObject,
+      page: PdfPageObject,
       annotation: PdfWidgetAnnoObject,
       text: FormFieldValue,
     ) => {
