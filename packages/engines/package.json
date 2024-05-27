@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/engines",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -41,7 +41,6 @@
     "Pdfium"
   ],
   "files": [
-    "dist/wasm",
     "dist/cjs",
     "dist/esm",
     "dist/types"

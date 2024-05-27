@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/pdfium",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -41,9 +41,9 @@
     "webassembly"
   ],
   "files": [
-    "src/cjs",
-    "src/esm",
-    "src/types"
+    "dist/cjs",
+    "dist/esm",
+    "dist/types"
   ],
   "author": "Ji Chang",
   "license": "MIT",
