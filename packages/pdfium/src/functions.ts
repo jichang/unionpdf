@@ -307,7 +307,14 @@ export const functions = {
     ['number', 'number', 'number', 'number'] as const,
     'boolean',
   ] as const,
+  FORM_OnAfterLoadPage: [['number', 'number'] as const, null] as const,
+  FORM_OnBeforeClosePage: [['number', 'number'] as const, null] as const,
   FPDFAnnot_SetFocusableSubtypes: [
+    ['number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FPDFAnnot_GetFocusableSubtypesCount: [['number'] as const, 'number'] as const,
+  FPDFAnnot_GetFocusableSubtypes: [
     ['number', 'number', 'number'] as const,
     'boolean',
   ] as const,
@@ -316,10 +323,22 @@ export const functions = {
     ['number', 'number', 'number', 'boolean'] as const,
     'boolean',
   ] as const,
+  FORM_OnKeyDown: [
+    ['number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FORM_OnKeyUp: [
+    ['number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
+  FORM_OnChar: [
+    ['number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
   FORM_SelectAllText: [['number', 'number'] as const, 'boolean'] as const,
   FORM_ReplaceSelection: [
-    ['number', 'number', 'string'] as const,
-    'boolean',
+    ['number', 'number', 'number'] as const,
+    null,
   ] as const,
   FORM_ForceToKillFocus: [['number'] as const, 'boolean'] as const,
   FPDF_GetSignatureCount: [['number'] as const, 'number'] as const,

@@ -63,12 +63,13 @@ void PDFiumExt_CloseFileWriter(void *writer)
 int PDFiumExt_SaveAsCopy(void *document, void *writer)
 {
     PDFiumExtFileWriter *fileWriter = static_cast<PDFiumExtFileWriter *>(writer);
-    return FPDF_SaveAsCopy(static_cast<FPDF_DOCUMENT>(document), static_cast<FPDF_FILEWRITE *>(fileWriter), FPDF_INCREMENTAL);
+    return FPDF_SaveAsCopy(static_cast<FPDF_DOCUMENT>(document), static_cast<FPDF_FILEWRITE *>(fileWriter), 0);
 }
 
 void *PDFiumExt_OpenFormFillInfo()
 {
     FPDF_FORMFILLINFO *form_fill_info = new FPDF_FORMFILLINFO();
+    memset(form_fill_info, 0, sizeof(FPDF_FORMFILLINFO));
     form_fill_info->version = 1;
     form_fill_info->Release = nullptr;
     form_fill_info->m_pJsPlatform = nullptr;
