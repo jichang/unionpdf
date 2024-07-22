@@ -226,7 +226,13 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
 
   useEffect(() => {
     if (!src && engine && doc && page && isVisible) {
-      const task = engine.renderThumbnail(doc, page, scaleFactor, rotation);
+      const task = engine.renderThumbnail(
+        doc,
+        page,
+        scaleFactor,
+        rotation,
+        window.devicePixelRatio,
+      );
       task.wait((imageData) => {
         setSrc(imageDataToDataUrl(imageData));
       }, ignore);

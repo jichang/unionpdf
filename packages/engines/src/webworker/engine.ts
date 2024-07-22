@@ -326,6 +326,7 @@ export class WebWorkerEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
     options: PdfRenderOptions,
   ) {
     this.logger.debug(
@@ -336,6 +337,7 @@ export class WebWorkerEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
+      dpr,
       options,
     );
     const requestId = this.generateRequestId(doc.id);
@@ -346,7 +348,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'renderPage',
-        args: [doc, page, scaleFactor, rotation, options],
+        args: [doc, page, scaleFactor, rotation, dpr, options],
       },
     };
     this.proxy(task, request);
@@ -364,6 +366,7 @@ export class WebWorkerEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
     rect: Rect,
     options: PdfRenderOptions,
   ) {
@@ -375,6 +378,7 @@ export class WebWorkerEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
+      dpr,
       rect,
       options,
     );
@@ -386,7 +390,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'renderPageRect',
-        args: [doc, page, scaleFactor, rotation, rect, options],
+        args: [doc, page, scaleFactor, rotation, dpr, rect, options],
       },
     };
     this.proxy(task, request);
@@ -580,6 +584,7 @@ export class WebWorkerEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
   ) {
     this.logger.debug(
       LOG_SOURCE,
@@ -589,6 +594,7 @@ export class WebWorkerEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
+      dpr,
     );
     const requestId = this.generateRequestId(doc.id);
     const task = new WorkerTask<ImageData>(this.worker, requestId);
@@ -598,7 +604,7 @@ export class WebWorkerEngine implements PdfEngine {
       type: 'ExecuteRequest',
       data: {
         name: 'renderThumbnail',
-        args: [doc, page, scaleFactor, rotation],
+        args: [doc, page, scaleFactor, rotation, dpr],
       },
     };
     this.proxy(task, request);

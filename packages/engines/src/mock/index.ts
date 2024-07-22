@@ -109,6 +109,7 @@ export function createMockPdfEngine(
         page: PdfPageObject,
         scaleFactor: number,
         rotation: Rotation,
+        dpr: number,
         options: PdfRenderOptions,
       ) => {
         const pageSize = rotation % 2 === 0 ? page.size : swap(page.size);
@@ -139,6 +140,7 @@ export function createMockPdfEngine(
         page: PdfPageObject,
         scaleFactor: number,
         rotation: Rotation,
+        dpr: number,
         rect: Rect,
         options: PdfRenderOptions,
       ) => {

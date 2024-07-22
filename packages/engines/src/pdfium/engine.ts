@@ -97,11 +97,6 @@ export enum RenderFlag {
   REVERSE_BYTE_ORDER = 0x10, // Set whether render in a reverse Byte order, this flag only.
 }
 
-/**
- * device pixel ratio
- */
-export const DPR = self.devicePixelRatio || 1;
-
 const LOG_SOURCE = 'PDFiumEngine';
 const LOG_CATEGORY = 'Engine';
 
@@ -501,6 +496,7 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
     options: PdfRenderOptions,
   ): Task<ImageData, PdfEngineError> {
     this.logger.debug(
@@ -511,6 +507,7 @@ export class PdfiumEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
+      dpr,
       options,
     );
     this.logger.perf(
@@ -542,6 +539,7 @@ export class PdfiumEngine implements PdfEngine {
       },
       scaleFactor,
       rotation,
+      dpr,
       options,
     );
     this.logger.perf(
@@ -564,6 +562,7 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
     rect: Rect,
     options: PdfRenderOptions,
   ): Task<ImageData, PdfEngineError> {
@@ -575,6 +574,7 @@ export class PdfiumEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
+      dpr,
       rect,
       options,
     );
@@ -604,6 +604,7 @@ export class PdfiumEngine implements PdfEngine {
       rect,
       scaleFactor,
       rotation,
+      dpr,
       options,
     );
     this.logger.perf(
@@ -1100,6 +1101,7 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
   ): Task<ImageData, PdfEngineError> {
     this.logger.debug(
       LOG_SOURCE,
@@ -1109,6 +1111,7 @@ export class PdfiumEngine implements PdfEngine {
       page,
       scaleFactor,
       rotation,
+      dpr,
     );
     this.logger.perf(
       LOG_SOURCE,
@@ -1130,7 +1133,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     scaleFactor = Math.max(scaleFactor, 0.5);
-    const result = this.renderPage(doc, page, scaleFactor, rotation, {
+    const result = this.renderPage(doc, page, scaleFactor, rotation, dpr, {
       withAnnotations: true,
     });
     this.logger.perf(
@@ -4261,11 +4264,12 @@ export class PdfiumEngine implements PdfEngine {
     rect: Rect,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
     options: PdfRenderOptions,
   ) {
     const format = BitmapFormat.Bitmap_BGRA;
     const bytesPerPixel = 4;
-    const bitmapSize = transformSize(rect.size, rotation, scaleFactor * DPR);
+    const bitmapSize = transformSize(rect.size, rotation, scaleFactor * dpr);
     const bitmapHeapLength =
       bitmapSize.width * bitmapSize.height * bytesPerPixel;
     const bitmapHeapPtr = this.malloc(bitmapHeapLength);

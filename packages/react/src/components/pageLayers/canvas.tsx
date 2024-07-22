@@ -37,9 +37,16 @@ export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
   useEffect(() => {
     const canvasElem = canvasElemRef.current;
     if (canvasElem && engine && doc && (isVisible || inVisibleRange)) {
-      const task = engine.renderPage(doc, page, scaleFactor, rotation, {
-        withAnnotations: mode === PdfApplicationMode.View,
-      });
+      const task = engine.renderPage(
+        doc,
+        page,
+        scaleFactor,
+        rotation,
+        window.devicePixelRatio,
+        {
+          withAnnotations: mode === PdfApplicationMode.View,
+        },
+      );
       task.wait(setImageData, ignore);
 
       return () => {

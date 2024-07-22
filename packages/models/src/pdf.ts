@@ -1514,6 +1514,7 @@ export interface PdfEngine {
    * @param page - pdf page
    * @param scaleFactor - factor of scaling
    * @param rotation - rotated angle
+   * @param dpr - devicePixelRatio
    * @param options - render options
    * @returns task contains the rendered image or error
    */
@@ -1522,6 +1523,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
     options: PdfRenderOptions,
   ) => Task<ImageData, PdfEngineError>;
   /**
@@ -1530,6 +1532,7 @@ export interface PdfEngine {
    * @param page - pdf page
    * @param scaleFactor - factor of scaling
    * @param rotation - rotated angle
+   * @param dpr - devicePixelRatio
    * @param rect - target rect
    * @param options - render options
    * @returns task contains the rendered image or error
@@ -1539,6 +1542,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
     rect: Rect,
     options: PdfRenderOptions,
   ) => Task<ImageData, PdfEngineError>;
@@ -1614,6 +1618,7 @@ export interface PdfEngine {
    * @param page - pdf page
    * @param scaleFactor - factor of scaling
    * @param rotation - rotated angle
+   * @param dpr - devicePixelRatio
    * @param options - render options
    * @returns task contains the rendered image or error
    */
@@ -1622,6 +1627,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
+    dpr: number,
   ) => Task<ImageData, PdfEngineError>;
   /**
    * Start searching with new context
