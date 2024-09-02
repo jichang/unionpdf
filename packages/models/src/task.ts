@@ -88,9 +88,9 @@ export class Task<R, D> {
   rejectedCallbacks: RejectedCallback<D>[] = [];
 
   /**
-   * {@inheritDoc Task.wait}
-   *
-   * @virtual
+   * wait for task to be settled
+   * @param resolvedCallback - callback for resolved value
+   * @param rejectedCallback - callback for rejected value
    */
   wait(
     resolvedCallback: ResolvedCallback<R>,
@@ -120,9 +120,8 @@ export class Task<R, D> {
   }
 
   /**
-   * {@inheritDoc Task.resolve}
-   *
-   * @virtual
+   * resolve task with specific result
+   * @param result - result value
    */
   resolve(result: R) {
     if (this.state.stage === TaskStage.Pending) {
@@ -143,9 +142,9 @@ export class Task<R, D> {
   }
 
   /**
-   * {@inheritDoc Task.reject}
+   * reject task with specific reason
+   * @param reason - abort reason
    *
-   * @virtual
    */
   reject(reason: D) {
     if (this.state.stage === TaskStage.Pending) {
@@ -168,7 +167,10 @@ export class Task<R, D> {
     }
   }
 
-  /** {@inheritDoc Task.abort} */
+  /**
+   * abort task with specific reason
+   * @param reason - abort reason
+   */
   abort(reason: D) {
     if (this.state.stage === TaskStage.Pending) {
       this.state = {
