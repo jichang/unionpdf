@@ -7,7 +7,13 @@ import {
   createMockPdfEngine,
   createMockPdfFile,
 } from '@unionpdf/engines';
-import { PdfDocumentObject, PdfEngineError, TaskBase } from '@unionpdf/models';
+import {
+  PdfDocumentObject,
+  PdfEngineError,
+  PdfErrorReason,
+  PdfTaskHelper,
+  Task,
+} from '@unionpdf/models';
 import { PdfDocumentContextValue, usePdfDocument } from './document.context';
 import { PdfEngineContextProvider } from './engine.context';
 
@@ -21,8 +27,8 @@ describe('PdfDocument', () => {
 
   test('should render pdf document element', () => {
     const doc = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
-    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
+    const openDocumentTask = new Task<PdfDocumentObject, PdfErrorReason>();
+    const closeDocumentTask = PdfTaskHelper.resolve<boolean>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;

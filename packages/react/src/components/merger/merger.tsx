@@ -1,4 +1,4 @@
-import { PdfFile } from '@unionpdf/models';
+import { PdfEngineError, PdfErrorCode, PdfFile } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { usePdfEngine } from '../../core';
 import { useUIComponents, useUIStrings } from '../../adapters';
@@ -148,7 +148,7 @@ export interface PdfMergeTaskProps {
    * @param error - error instance
    * @returns
    */
-  onFailed: (error: Error) => void;
+  onFailed: (error: PdfEngineError) => void;
 }
 
 /**
@@ -166,7 +166,10 @@ export function PdfMergeTask(props: PdfMergeTaskProps) {
       task.wait(onMerged, onFailed);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [files, engine, onMerged, onFailed]);

@@ -1,4 +1,4 @@
-import { ignore } from '@unionpdf/models';
+import { ignore, PdfErrorCode } from '@unionpdf/models';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import {
@@ -70,7 +70,10 @@ export function PdfPrinterContent(props: PdfPrinterProps) {
       task.wait(setBuffer, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [engine, doc]);

@@ -3,45 +3,12 @@ import {
   NoopLogger,
   PdfEngine,
   PdfEngineError,
-  Task,
+  PdfEngineMethodArgs,
+  PdfEngineMethodName,
+  PdfEngineMethodReturnType,
+  PdfErrorCode,
+  TaskReturn,
 } from '@unionpdf/models';
-
-/**
- * Method name of PdfEngine interface
- *
- * @public
- */
-export type PdfEngineMethodName = keyof Required<PdfEngine>;
-/**
- * Arguments of PdfEngine method
- *
- * @public
- */
-export type PdfEngineMethodArgs<P extends PdfEngineMethodName> = Readonly<
-  Parameters<Required<PdfEngine>[P]>
->;
-/**
- * Return type of PdfEngine method
- *
- * @public
- */
-export type PdfEngineMethodReturnType<P extends PdfEngineMethodName> = Readonly<
-  ReturnType<Required<PdfEngine>[P]>
->;
-/**
- * Type of task resolved value
- *
- * @public
- */
-export type TaskResolveValueType<T> =
-  T extends Task<infer R, infer U> ? R : never;
-/**
- * Type of task rejected error
- *
- * @public
- */
-export type TaskRejectErrorType<T> =
-  T extends Task<infer R, infer U> ? U : never;
 
 /**
  * Request body that represent method calls of PdfEngine, it contains the
@@ -55,17 +22,10 @@ export type PdfEngineMethodRequestBody = {
 }[PdfEngineMethodName];
 
 /**
- * Type that represent the result of executing task
- */
-export type TaskResultType<T extends Task<any, any>> =
-  T extends Task<infer R, infer E>
-    ? { type: 'resolve'; result: R } | { type: 'reject'; error: E }
-    : never;
-/**
  * Response body that represent return value of PdfEngine
  */
 export type PdfEngineMethodResponseBody = {
-  [P in PdfEngineMethodName]: TaskResultType<PdfEngineMethodReturnType<P>>;
+  [P in PdfEngineMethodName]: TaskReturn<PdfEngineMethodReturnType<P>>;
 }[PdfEngineMethodName];
 
 /**
@@ -217,12 +177,19 @@ export class EngineRunner {
   execute = (request: ExecuteRequest) => {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'runner start exeucte request');
     if (!this.engine) {
+      const error: PdfEngineError = {
+        type: 'reject',
+        reason: {
+          code: PdfErrorCode.NotReady,
+          message: 'engine has not started yet',
+        },
+      };
       const response: ExecuteResponse = {
         id: request.id,
         type: 'ExecuteResponse',
         data: {
-          type: 'reject',
-          error: new PdfEngineError('engine has not started yet'),
+          type: 'error',
+          value: error,
         },
       };
       this.respond(response);
@@ -232,12 +199,19 @@ export class EngineRunner {
     const engine = this.engine;
     const { name, args } = request.data;
     if (!engine[name]) {
+      const error: PdfEngineError = {
+        type: 'reject',
+        reason: {
+          code: PdfErrorCode.NotSupport,
+          message: 'engine method has not supported yet',
+        },
+      };
       const response: ExecuteResponse = {
         id: request.id,
         type: 'ExecuteResponse',
         data: {
-          type: 'reject',
-          error: new PdfEngineError('engine method has not supported yet'),
+          type: 'error',
+          value: error,
         },
       };
       this.respond(response);
@@ -335,8 +309,8 @@ export class EngineRunner {
           id: request.id,
           type: 'ExecuteResponse',
           data: {
-            type: 'resolve',
-            result,
+            type: 'result',
+            value: result,
           },
         };
         this.respond(response);
@@ -346,8 +320,8 @@ export class EngineRunner {
           id: request.id,
           type: 'ExecuteResponse',
           data: {
-            type: 'reject',
-            error,
+            type: 'error',
+            value: error,
           },
         };
         this.respond(response);

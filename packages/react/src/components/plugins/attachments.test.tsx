@@ -7,7 +7,13 @@ import {
   createMockPdfEngine,
   createMockPdfFile,
 } from '@unionpdf/engines';
-import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
+import {
+  PdfTaskHelper,
+  PdfDocumentObject,
+  PdfEngineError,
+  Task,
+  PdfErrorReason,
+} from '@unionpdf/models';
 import {
   PdfEngineContextProvider,
   PdfDocument,
@@ -21,8 +27,8 @@ import {
 describe('PdfAttachments', () => {
   it('Toolbar should render div with children', () => {
     const pdf = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
-    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
+    const openDocumentTask = new Task<PdfDocumentObject, PdfErrorReason>();
+    const closeDocumentTask = PdfTaskHelper.resolve<boolean>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;

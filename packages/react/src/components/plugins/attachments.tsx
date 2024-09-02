@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ComponentProps } from 'react';
 import './attachments.css';
 import classNames from 'classnames';
-import { ignore, PdfAttachmentObject } from '@unionpdf/models';
+import { ignore, PdfAttachmentObject, PdfErrorCode } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIComponents, useUIStrings } from '../../adapters';
@@ -53,7 +53,10 @@ export function PdfAttachmentsContent(props: PdfAttachmentsProps) {
       task.wait(setAttachments, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [engine, doc]);

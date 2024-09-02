@@ -7,7 +7,6 @@ import {
   PdfWidgetAnnoObject,
   PdfLinkTarget,
   PdfZoomMode,
-  TaskBase,
   Logger,
   NoopLogger,
   SearchResult,
@@ -64,9 +63,9 @@ import {
   PdfStampAnnoObjectContents,
   PdfWidgetAnnoField,
   PdfTransformMatrix,
-  PdfEngineFeature,
-  PdfEngineOperation,
   FormFieldValue,
+  PdfErrorCode,
+  PdfTaskHelper,
 } from '@unionpdf/models';
 import { readArrayBuffer, readString } from './helper';
 import { WrappedPdfiumModule } from '@unionpdf/pdfium';
@@ -158,12 +157,6 @@ export class PdfiumEngine implements PdfEngine {
     private pdfiumModule: WrappedPdfiumModule,
     private logger: Logger = new NoopLogger(),
   ) {}
-  isSupport?:
-    | ((
-        feature: PdfEngineFeature,
-      ) => Task<PdfEngineOperation[], PdfEngineError>)
-    | undefined;
-
   /**
    * {@inheritDoc @unionpdf/models!PdfEngine.initialize}
    *
@@ -180,7 +173,7 @@ export class PdfiumEngine implements PdfEngine {
     );
     this.pdfiumModule.PDFiumExt_Init();
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Initialize`, 'End', 'General');
-    return TaskBase.resolve(true);
+    return PdfTaskHelper.resolve(true);
   }
 
   /**
@@ -193,7 +186,7 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Destroy`, 'Begin', 'General');
     this.pdfiumModule.FPDF_DestroyLibrary();
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Destroy`, 'End', 'General');
-    return TaskBase.resolve(true);
+    return PdfTaskHelper.resolve(true);
   }
 
   /**
@@ -247,9 +240,10 @@ export class PdfiumEngine implements PdfEngine {
         file.id,
       );
 
-      return TaskBase.reject<PdfDocumentObject>(
-        new PdfEngineError(`FPDF_LoadMemDocument failed`, lastError),
-      );
+      return PdfTaskHelper.reject<PdfDocumentObject>({
+        code: lastError,
+        message: `FPDF_LoadMemDocument failed`,
+      });
     }
 
     const pageCount = this.pdfiumModule.FPDF_GetPageCount(docPtr);
@@ -280,9 +274,10 @@ export class PdfiumEngine implements PdfEngine {
           'End',
           file.id,
         );
-        return TaskBase.reject<PdfDocumentObject>(
-          new PdfEngineError(`FPDF_GetPageSizeByIndexF failed`, lastError),
-        );
+        return PdfTaskHelper.reject<PdfDocumentObject>({
+          code: lastError,
+          message: `FPDF_GetPageSizeByIndexF failed`,
+        });
       }
 
       const page = {
@@ -311,7 +306,7 @@ export class PdfiumEngine implements PdfEngine {
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `OpenDocument`, 'End', file.id);
 
-    return TaskBase.resolve(pdfDoc);
+    return PdfTaskHelper.resolve(pdfDoc);
   }
 
   /**
@@ -319,13 +314,16 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  getMetadata(doc: PdfDocumentObject): Task<PdfMetadataObject, PdfEngineError> {
+  getMetadata(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getMetadata', doc);
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -343,7 +341,7 @@ export class PdfiumEngine implements PdfEngine {
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata`, 'End', doc.id);
 
-    return TaskBase.resolve(metadata);
+    return PdfTaskHelper.resolve(metadata);
   }
 
   /**
@@ -351,9 +349,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  getSignatures(
-    doc: PdfDocumentObject,
-  ): Task<PdfSignatureObject[], PdfEngineError> {
+  getSignatures(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getSignatures', doc);
     this.logger.perf(
       LOG_SOURCE,
@@ -371,7 +367,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         doc.id,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -457,7 +456,7 @@ export class PdfiumEngine implements PdfEngine {
     }
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetSignatures`, 'End', doc.id);
 
-    return TaskBase.resolve(signatures);
+    return PdfTaskHelper.resolve(signatures);
   }
 
   /**
@@ -465,15 +464,16 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  getBookmarks(
-    doc: PdfDocumentObject,
-  ): Task<PdfBookmarksObject, PdfEngineError> {
+  getBookmarks(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getBookmarks', doc);
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetBookmarks`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `getBookmarks`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -481,7 +481,7 @@ export class PdfiumEngine implements PdfEngine {
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetBookmarks`, 'End', doc.id);
 
-    return TaskBase.resolve({
+    return PdfTaskHelper.resolve({
       bookmarks,
     });
   }
@@ -498,7 +498,7 @@ export class PdfiumEngine implements PdfEngine {
     rotation: Rotation,
     dpr: number,
     options: PdfRenderOptions,
-  ): Task<ImageData, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -526,7 +526,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -549,7 +552,7 @@ export class PdfiumEngine implements PdfEngine {
       'End',
       `${doc.id}-${page.index}`,
     );
-    return TaskBase.resolve(imageData);
+    return PdfTaskHelper.resolve(imageData);
   }
 
   /**
@@ -565,7 +568,7 @@ export class PdfiumEngine implements PdfEngine {
     dpr: number,
     rect: Rect,
     options: PdfRenderOptions,
-  ): Task<ImageData, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -594,7 +597,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -615,7 +621,7 @@ export class PdfiumEngine implements PdfEngine {
       `${doc.id}-${page.index}`,
     );
 
-    return TaskBase.resolve(imageData);
+    return PdfTaskHelper.resolve(imageData);
   }
 
   /**
@@ -628,7 +634,7 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-  ): Task<PdfAnnotationObject[], PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -654,7 +660,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -688,7 +697,7 @@ export class PdfiumEngine implements PdfEngine {
       annotations,
     );
 
-    return TaskBase.resolve(annotations);
+    return PdfTaskHelper.resolve(annotations);
   }
 
   /**
@@ -700,7 +709,7 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-  ): Task<boolean, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -725,7 +734,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -744,9 +756,10 @@ export class PdfiumEngine implements PdfEngine {
       );
       this.pdfiumModule.FPDF_ClosePage(pagePtr);
 
-      return TaskBase.reject(
-        new PdfEngineError('can not create annotation with specified type'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantCreateAnnot,
+        message: 'can not create annotation with specified type',
+      });
     }
 
     if (!this.setPageAnnoRect(page, pagePtr, annotationPtr, annotation.rect)) {
@@ -759,9 +772,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(
-        new PdfEngineError('can not set the rect of the rect'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantSetAnnotRect,
+        message: 'can not set the rect of the annotation',
+      });
     }
 
     let isSucceed = false;
@@ -797,9 +811,10 @@ export class PdfiumEngine implements PdfEngine {
         `${doc.id}-${page.index}`,
       );
 
-      return TaskBase.reject(
-        new PdfEngineError('can not add content of the annotation'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantSetAnnotContent,
+        message: 'can not add content of the annotation',
+      });
     }
 
     this.pdfiumModule.FPDFPage_GenerateContent(pagePtr);
@@ -814,7 +829,7 @@ export class PdfiumEngine implements PdfEngine {
       `${doc.id}-${page.index}`,
     );
 
-    return TaskBase.resolve(true);
+    return PdfTaskHelper.resolve(true);
   }
 
   /**
@@ -827,7 +842,7 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
     transformation: PdfAnnotationTransformation,
-  ): Task<boolean, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -853,7 +868,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -883,9 +901,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(
-        new PdfEngineError('can not set the rect of the annotation'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantSetAnnotRect,
+        message: 'can not set the rect of the annotation',
+      });
     }
 
     switch (annotation.type) {
@@ -901,9 +920,10 @@ export class PdfiumEngine implements PdfEngine {
               'End',
               `${doc.id}-${page.index}`,
             );
-            return TaskBase.reject(
-              new PdfEngineError('can not remove the ink list of annotation'),
-            );
+            return PdfTaskHelper.reject({
+              code: PdfErrorCode.CantRemoveInkList,
+              message: 'can not set the rect of the annotation',
+            });
           }
           const inkList = annotation.inkList.map((inkStroke) => {
             return {
@@ -931,11 +951,10 @@ export class PdfiumEngine implements PdfEngine {
               'End',
               `${doc.id}-${page.index}`,
             );
-            return TaskBase.reject(
-              new PdfEngineError(
-                'can not add stroke to the ink list of annotation',
-              ),
-            );
+            return PdfTaskHelper.reject({
+              code: PdfErrorCode.CantAddInkStoke,
+              message: 'can not add stroke to the ink list of annotation',
+            });
           }
         }
         break;
@@ -953,7 +972,7 @@ export class PdfiumEngine implements PdfEngine {
       'End',
       `${doc.id}-${page.index}`,
     );
-    return TaskBase.resolve(true);
+    return PdfTaskHelper.resolve(true);
   }
 
   /**
@@ -965,7 +984,7 @@ export class PdfiumEngine implements PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-  ): Task<boolean, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -990,7 +1009,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1025,7 +1047,7 @@ export class PdfiumEngine implements PdfEngine {
       'End',
       `${doc.id}-${page.index}`,
     );
-    return TaskBase.resolve(result);
+    return PdfTaskHelper.resolve(result);
   }
 
   /**
@@ -1038,7 +1060,7 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-  ): Task<PdfTextRectObject[], PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1064,7 +1086,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1088,7 +1113,7 @@ export class PdfiumEngine implements PdfEngine {
       'End',
       `${doc.id}-${page.index}`,
     );
-    return TaskBase.resolve(textRects);
+    return PdfTaskHelper.resolve(textRects);
   }
 
   /**
@@ -1102,7 +1127,7 @@ export class PdfiumEngine implements PdfEngine {
     scaleFactor: number,
     rotation: Rotation,
     dpr: number,
-  ): Task<ImageData, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1129,7 +1154,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${page.index}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     scaleFactor = Math.max(scaleFactor, 0.5);
@@ -1152,20 +1180,20 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  startSearch(
-    doc: PdfDocumentObject,
-    contextId: number,
-  ): Task<boolean, PdfEngineError> {
+  startSearch(doc: PdfDocumentObject, contextId: number) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', doc, contextId);
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StartSearch`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StartSearch`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StartSearch`, 'End', doc.id);
-    return TaskBase.resolve(true);
+    return PdfTaskHelper.resolve(true);
   }
 
   /**
@@ -1173,11 +1201,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  searchNext(
-    doc: PdfDocumentObject,
-    contextId: number,
-    target: SearchTarget,
-  ): Task<SearchResult | undefined, PdfEngineError> {
+  searchNext(doc: PdfDocumentObject, contextId: number, target: SearchTarget) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1190,7 +1214,10 @@ export class PdfiumEngine implements PdfEngine {
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { keyword, flags } = target;
@@ -1203,7 +1230,7 @@ export class PdfiumEngine implements PdfEngine {
 
     if (searchContext.currPageIndex === doc.pageCount) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
-      return TaskBase.resolve<SearchResult | undefined>(undefined);
+      return PdfTaskHelper.resolve<SearchResult | undefined>(undefined);
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1232,7 +1259,7 @@ export class PdfiumEngine implements PdfEngine {
         this.free(keywordPtr);
 
         this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
-        return TaskBase.resolve<SearchResult | undefined>(result);
+        return PdfTaskHelper.resolve<SearchResult | undefined>(result);
       }
 
       pageIndex++;
@@ -1243,7 +1270,7 @@ export class PdfiumEngine implements PdfEngine {
     this.free(keywordPtr);
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchNext`, 'End', doc.id);
-    return TaskBase.resolve<SearchResult | undefined>(undefined);
+    return PdfTaskHelper.resolve<SearchResult | undefined>(undefined);
   }
 
   /**
@@ -1251,11 +1278,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  searchPrev(
-    doc: PdfDocumentObject,
-    contextId: number,
-    target: SearchTarget,
-  ): Task<SearchResult | undefined, PdfEngineError> {
+  searchPrev(doc: PdfDocumentObject, contextId: number, target: SearchTarget) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1268,7 +1291,10 @@ export class PdfiumEngine implements PdfEngine {
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { keyword, flags } = target;
@@ -1281,7 +1307,7 @@ export class PdfiumEngine implements PdfEngine {
 
     if (searchContext.currPageIndex === -1) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
-      return TaskBase.resolve<SearchResult | undefined>(undefined);
+      return PdfTaskHelper.resolve<SearchResult | undefined>(undefined);
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1310,7 +1336,7 @@ export class PdfiumEngine implements PdfEngine {
         this.free(keywordPtr);
 
         this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
-        return TaskBase.resolve<SearchResult | undefined>(result);
+        return PdfTaskHelper.resolve<SearchResult | undefined>(result);
       }
 
       pageIndex--;
@@ -1322,7 +1348,7 @@ export class PdfiumEngine implements PdfEngine {
     this.free(keywordPtr);
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SearchPrev`, 'End', doc.id);
-    return TaskBase.resolve<SearchResult | undefined>(undefined);
+    return PdfTaskHelper.resolve<SearchResult | undefined>(undefined);
   }
 
   /**
@@ -1330,16 +1356,16 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  stopSearch(
-    doc: PdfDocumentObject,
-    contextId: number,
-  ): Task<boolean, PdfEngineError> {
+  stopSearch(doc: PdfDocumentObject, contextId: number) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', doc, contextId);
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { searchContexts } = this.docs[doc.id];
@@ -1348,7 +1374,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `StopSearch`, 'End', doc.id);
-    return TaskBase.resolve(true);
+    return PdfTaskHelper.resolve(true);
   }
 
   /**
@@ -1356,9 +1382,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  getAttachments(
-    doc: PdfDocumentObject,
-  ): Task<PdfAttachmentObject[], PdfEngineError> {
+  getAttachments(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getAttachments', doc);
     this.logger.perf(
       LOG_SOURCE,
@@ -1376,7 +1400,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         doc.id,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const attachments: PdfAttachmentObject[] = [];
@@ -1389,7 +1416,7 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetAttachments`, 'End', doc.id);
-    return TaskBase.resolve(attachments);
+    return PdfTaskHelper.resolve(attachments);
   }
 
   /**
@@ -1400,7 +1427,7 @@ export class PdfiumEngine implements PdfEngine {
   readAttachmentContent(
     doc: PdfDocumentObject,
     attachment: PdfAttachmentObject,
-  ): Task<ArrayBuffer, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1424,7 +1451,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         doc.id,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1444,9 +1474,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         doc.id,
       );
-      return TaskBase.reject(
-        new PdfEngineError('can not read attachment size'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantReadAttachmentSize,
+        message: 'can not read attachment size',
+      });
     }
     const size = this.pdfiumModule.pdfium.getValue(sizePtr, 'i64');
 
@@ -1469,9 +1500,10 @@ export class PdfiumEngine implements PdfEngine {
         doc.id,
       );
 
-      return TaskBase.reject(
-        new PdfEngineError('can not read attachment content'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantReadAttachmentContent,
+        message: 'can not read attachment content',
+      });
     }
 
     const buffer = new ArrayBuffer(size);
@@ -1490,7 +1522,7 @@ export class PdfiumEngine implements PdfEngine {
       doc.id,
     );
 
-    return TaskBase.resolve(buffer);
+    return PdfTaskHelper.resolve(buffer);
   }
 
   /**
@@ -1503,7 +1535,7 @@ export class PdfiumEngine implements PdfEngine {
     page: PdfPageObject,
     annotation: PdfWidgetAnnoObject,
     value: FormFieldValue,
-  ): Task<boolean, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1534,7 +1566,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         `${doc.id}-${annotation.id}`,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1574,9 +1609,10 @@ export class PdfiumEngine implements PdfEngine {
       this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
       this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
 
-      return TaskBase.reject(
-        new PdfEngineError('failed to set focused annotation'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantFocusAnnot,
+        message: 'failed to set focused annotation',
+      });
     }
 
     switch (value.kind) {
@@ -1603,9 +1639,10 @@ export class PdfiumEngine implements PdfEngine {
             this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
             this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
 
-            return TaskBase.reject(
-              new PdfEngineError('failed to select all text'),
-            );
+            return PdfTaskHelper.reject({
+              code: PdfErrorCode.CantSelectText,
+              message: 'failed to select all text',
+            });
           }
           const length = 2 * (value.text.length + 1);
           const textPtr = this.malloc(length);
@@ -1644,9 +1681,10 @@ export class PdfiumEngine implements PdfEngine {
             this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
             this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
 
-            return TaskBase.reject(
-              new PdfEngineError('failed to set index selected'),
-            );
+            return PdfTaskHelper.reject({
+              code: PdfErrorCode.CantSelectOption,
+              message: 'failed to set index selected',
+            });
           }
         }
         break;
@@ -1674,9 +1712,10 @@ export class PdfiumEngine implements PdfEngine {
             this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
             this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
 
-            return TaskBase.reject(
-              new PdfEngineError('failed to set field checked'),
-            );
+            return PdfTaskHelper.reject({
+              code: PdfErrorCode.CantCheckField,
+              message: 'failed to set field checked',
+            });
           }
         }
         break;
@@ -1691,7 +1730,7 @@ export class PdfiumEngine implements PdfEngine {
     this.pdfiumModule.PDFiumExt_ExitFormFillEnvironment(formHandle);
     this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
 
-    return TaskBase.resolve<boolean>(true);
+    return PdfTaskHelper.resolve<boolean>(true);
   }
 
   /**
@@ -1699,10 +1738,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  extractPages(
-    doc: PdfDocumentObject,
-    pageIndexes: number[],
-  ): Task<ArrayBuffer, Error> {
+  extractPages(doc: PdfDocumentObject, pageIndexes: number[]) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1714,7 +1750,10 @@ export class PdfiumEngine implements PdfEngine {
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1722,7 +1761,10 @@ export class PdfiumEngine implements PdfEngine {
     const newDocPtr = this.pdfiumModule.FPDF_CreateNewDocument();
     if (!newDocPtr) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('can not create new document'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantCreateNewDoc,
+        message: 'can not create new document',
+      });
     }
 
     const pageIndexesPtr = this.malloc(pageIndexes.length * 4);
@@ -1745,9 +1787,10 @@ export class PdfiumEngine implements PdfEngine {
     ) {
       this.pdfiumModule.FPDF_CloseDocument(newDocPtr);
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
-      return TaskBase.reject(
-        new PdfEngineError('can not import pages to new document'),
-      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantImportPages,
+        message: 'can not import pages to new document',
+      });
     }
 
     const buffer = this.saveDocument(newDocPtr);
@@ -1755,7 +1798,7 @@ export class PdfiumEngine implements PdfEngine {
     this.pdfiumModule.FPDF_CloseDocument(newDocPtr);
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractPages`, 'End', doc.id);
-    return TaskBase.resolve(buffer);
+    return PdfTaskHelper.resolve(buffer);
   }
 
   /**
@@ -1763,10 +1806,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  extractText(
-    doc: PdfDocumentObject,
-    pageIndexes: number[],
-  ): Task<string, Error> {
+  extractText(doc: PdfDocumentObject, pageIndexes: number[]) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -1778,7 +1818,10 @@ export class PdfiumEngine implements PdfEngine {
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractText`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
@@ -1798,7 +1841,7 @@ export class PdfiumEngine implements PdfEngine {
 
     const text = strings.join('\n\n');
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `ExtractText`, 'End', doc.id);
-    return TaskBase.resolve(text);
+    return PdfTaskHelper.resolve(text);
   }
 
   /**
@@ -1806,7 +1849,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  merge(files: PdfFile[]): Task<PdfFile, Error> {
+  merge(files: PdfFile[]) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'merge', files);
     const fileIds = files.map((file) => file.id).join('.');
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'Begin', fileIds);
@@ -1814,7 +1857,10 @@ export class PdfiumEngine implements PdfEngine {
     const newDocPtr = this.pdfiumModule.FPDF_CreateNewDocument();
     if (!newDocPtr) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
-      return TaskBase.reject(new PdfEngineError('can not create new document'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.CantCreateNewDoc,
+        message: 'can not create new document',
+      });
     }
 
     const ptrs: { docPtr: number; filePtr: number }[] = [];
@@ -1840,9 +1886,10 @@ export class PdfiumEngine implements PdfEngine {
         }
 
         this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
-        return TaskBase.reject<PdfFile>(
-          new PdfEngineError(`FPDF_LoadMemDocument failed`, lastError),
-        );
+        return PdfTaskHelper.reject<PdfFile>({
+          code: lastError,
+          message: `FPDF_LoadMemDocument failed`,
+        });
       }
       ptrs.push({ filePtr, docPtr });
 
@@ -1855,9 +1902,10 @@ export class PdfiumEngine implements PdfEngine {
         }
 
         this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
-        return TaskBase.reject(
-          new PdfEngineError('can not import pages to new document'),
-        );
+        return PdfTaskHelper.reject({
+          code: PdfErrorCode.CantImportPages,
+          message: 'can not import pages to new document',
+        });
       }
     }
     const buffer = this.saveDocument(newDocPtr);
@@ -1875,7 +1923,7 @@ export class PdfiumEngine implements PdfEngine {
       content: buffer,
     };
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `Merge`, 'End', fileIds);
-    return TaskBase.resolve(file);
+    return PdfTaskHelper.resolve(file);
   }
 
   /**
@@ -1883,20 +1931,23 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  saveAsCopy(doc: PdfDocumentObject): Task<ArrayBuffer, PdfEngineError> {
+  saveAsCopy(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'saveAsCopy', doc);
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy`, 'Begin', doc.id);
 
     if (!this.docs[doc.id]) {
       this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy`, 'End', doc.id);
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const { docPtr } = this.docs[doc.id];
     const buffer = this.saveDocument(docPtr);
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `SaveAsCopy`, 'End', doc.id);
-    return TaskBase.resolve(buffer);
+    return PdfTaskHelper.resolve(buffer);
   }
 
   /**
@@ -1904,7 +1955,7 @@ export class PdfiumEngine implements PdfEngine {
    *
    * @public
    */
-  closeDocument(doc: PdfDocumentObject): Task<boolean, PdfEngineError> {
+  closeDocument(doc: PdfDocumentObject) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'closeDocument', doc);
     this.logger.perf(
       LOG_SOURCE,
@@ -1922,7 +1973,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         doc.id,
       );
-      return TaskBase.reject(new PdfEngineError('document does not exist'));
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
     }
 
     const docData = this.docs[doc.id];
@@ -1939,9 +1993,10 @@ export class PdfiumEngine implements PdfEngine {
         'End',
         doc.id,
       );
-      return TaskBase.reject<boolean>(
-        new PdfEngineError(`can not close document ${doc.id}`),
-      );
+      return PdfTaskHelper.reject<boolean>({
+        code: PdfErrorCode.CantCloseDoc,
+        message: `can not close document ${doc.id}`,
+      });
     }
 
     const { docPtr, filePtr } = this.docs[doc.id];
@@ -1949,7 +2004,7 @@ export class PdfiumEngine implements PdfEngine {
     this.free(filePtr);
     delete this.docs[doc.id];
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `CloseDocument`, 'End', doc.id);
-    return TaskBase.resolve(true);
+    return PdfTaskHelper.resolve(true);
   }
 
   /**

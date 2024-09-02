@@ -214,7 +214,9 @@ function App(props: AppProps) {
                 setIsPasswordOpened(false);
               }}
               onOpenFailure={(error: PdfEngineError) => {
-                if (error.code === PdfiumErrorCode.Password) {
+                if (
+                  (error.reason.code as number) === PdfiumErrorCode.Password
+                ) {
                   setIsPasswordOpened(true);
                 }
               }}

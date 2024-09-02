@@ -10,6 +10,7 @@
 export * from './geometry';
 export * from './logger';
 export * from './pdf';
+export * from './task';
 
 /**
  * ignore will do nothing when called.

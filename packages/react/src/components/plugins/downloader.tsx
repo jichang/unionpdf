@@ -1,4 +1,4 @@
-import { ignore } from '@unionpdf/models';
+import { ignore, PdfErrorCode } from '@unionpdf/models';
 import React, { useEffect, useState } from 'react';
 import {
   usePdfEngine,
@@ -54,7 +54,10 @@ export function PdfDownloaderContent(props: PdfDownloaderProps) {
       task.wait(setBuffer, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [engine, doc]);

@@ -8,7 +8,13 @@ import {
 } from '@unionpdf/engines';
 import { PdfPages } from '../plugins/pages';
 import { PdfPageAnnotationsLayer } from './annotations';
-import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
+import {
+  PdfTaskHelper,
+  PdfDocumentObject,
+  PdfEngineError,
+  PdfErrorReason,
+  Task,
+} from '@unionpdf/models';
 import { PdfDocument } from '../../core/document';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { intersectionObserver } from '../../mocks/intersectionObserver';
@@ -22,8 +28,8 @@ describe('PdfPageAnnotationsLayer', () => {
   test('should render pdf annotations', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
-    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
+    const openDocumentTask = new Task<PdfDocumentObject, PdfErrorReason>();
+    const closeDocumentTask = PdfTaskHelper.resolve<boolean>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;

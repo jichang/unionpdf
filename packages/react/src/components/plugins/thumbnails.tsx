@@ -1,6 +1,7 @@
 import {
   ignore,
   PdfDocumentObject,
+  PdfErrorCode,
   PdfPageObject,
   PdfZoomMode,
   Rotation,
@@ -238,7 +239,10 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
       }, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [src, engine, doc, page, scaleFactor, rotation, isVisible]);

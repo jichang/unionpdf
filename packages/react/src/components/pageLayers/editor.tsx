@@ -1,4 +1,4 @@
-import { PdfAnnotationObject, ignore } from '@unionpdf/models';
+import { PdfAnnotationObject, PdfErrorCode, ignore } from '@unionpdf/models';
 import React, { useEffect, useState } from 'react';
 import {
   PdfApplicationMode,
@@ -41,7 +41,10 @@ export function PdfPageEditorLayer(props: PdfPageEditorLayerProps) {
       task.wait(setAnnotations, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [isVisible, mode, engine, version, doc, page, scaleFactor, rotation]);

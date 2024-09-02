@@ -8,7 +8,7 @@ import React, {
 import { ComponentProps } from 'react';
 import './search.css';
 import classNames from 'classnames';
-import { ignore, MatchFlag, PdfZoomMode } from '@unionpdf/models';
+import { ignore, MatchFlag, PdfErrorCode, PdfZoomMode } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIComponents, useUIStrings } from '../../adapters';
@@ -67,7 +67,10 @@ export function PdfSearchContent(props: PdfSearchProps) {
     if (engine && doc) {
       const task = engine.startSearch(doc, contextId);
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
         engine.stopSearch(doc, contextId);
       };
     }

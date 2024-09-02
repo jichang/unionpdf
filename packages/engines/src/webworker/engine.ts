@@ -3,8 +3,6 @@ import {
   PdfAnnotationTransformation,
   PdfAttachmentObject,
   PdfEngineError,
-  PdfEngineFeature,
-  PdfEngineOperation,
   PdfFile,
   PdfMetadataObject,
   PdfSignatureObject,
@@ -13,9 +11,6 @@ import {
   SearchResult,
   SearchTarget,
   Task,
-} from '@unionpdf/models';
-import { PdfRenderOptions } from '@unionpdf/models';
-import {
   Logger,
   NoopLogger,
   PdfAnnotationObject,
@@ -25,8 +20,9 @@ import {
   PdfPageObject,
   Rect,
   Rotation,
-  TaskAbortError,
-  TaskBase,
+  PdfRenderOptions,
+  PdfErrorCode,
+  PdfErrorReason,
 } from '@unionpdf/models';
 import { ExecuteRequest, Response } from './runner';
 
@@ -36,7 +32,7 @@ const LOG_CATEGORY = 'Engine';
 /**
  * Task that executed by webworker
  */
-export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
+export class WorkerTask<R> extends Task<R, PdfErrorReason> {
   /**
    * Create a task that bind to web worker with specified message id
    * @param worker - web worker instance
@@ -52,11 +48,11 @@ export class WorkerTask<R, E = Error> extends TaskBase<R, E> {
   }
 
   /**
-   * {@inheritDoc @unionpdf/models!TaskBase.abort}
+   * {@inheritDoc @unionpdf/models!Task.abort}
    *
    * @override
    */
-  abort(e?: TaskAbortError | Error) {
+  abort(e: PdfErrorReason) {
     super.abort(e);
 
     this.worker.postMessage({
@@ -76,11 +72,11 @@ export class WebWorkerEngine implements PdfEngine {
   /**
    * Task that represent the state of preparation
    */
-  readyTask: WorkerTask<boolean, PdfEngineError>;
+  readyTask: WorkerTask<boolean>;
   /**
    * All the tasks that is executing
    */
-  tasks: Map<string, WorkerTask<any, PdfEngineError>> = new Map();
+  tasks: Map<string, WorkerTask<any>> = new Map();
 
   /**
    * Create an instance of WebWorkerEngine, it will create a worker with
@@ -96,17 +92,12 @@ export class WebWorkerEngine implements PdfEngine {
   ) {
     this.worker.addEventListener('message', this.handle);
 
-    this.readyTask = new WorkerTask<boolean, PdfEngineError>(
+    this.readyTask = new WorkerTask<boolean>(
       this.worker,
       WebWorkerEngine.readyTaskId,
     );
     this.tasks.set(WebWorkerEngine.readyTaskId, this.readyTask);
   }
-  isSupport?:
-    | ((
-        feature: PdfEngineFeature,
-      ) => Task<PdfEngineOperation[], PdfEngineError>)
-    | undefined;
 
   /**
    * Handle event from web worker. There are 2 kinds of event
@@ -138,11 +129,11 @@ export class WebWorkerEngine implements PdfEngine {
         case 'ExecuteResponse':
           {
             switch (response.data.type) {
-              case 'resolve':
-                task.resolve(response.data.result);
+              case 'result':
+                task.resolve(response.data.value);
                 break;
-              case 'reject':
-                task.reject(response.data.error);
+              case 'error':
+                task.reject(response.data.value.reason);
                 break;
             }
             this.tasks.delete(response.id);
@@ -478,7 +469,7 @@ export class WebWorkerEngine implements PdfEngine {
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
     transformation: PdfAnnotationTransformation,
-  ): Task<boolean, PdfEngineError> {
+  ) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -617,10 +608,7 @@ export class WebWorkerEngine implements PdfEngine {
    *
    * @public
    */
-  startSearch(
-    doc: PdfDocumentObject,
-    contextId: number,
-  ): Task<boolean, PdfEngineError> {
+  startSearch(doc: PdfDocumentObject, contextId: number) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'startSearch', doc, contextId);
     const requestId = this.generateRequestId(doc.id);
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -643,11 +631,7 @@ export class WebWorkerEngine implements PdfEngine {
    *
    * @public
    */
-  searchNext(
-    doc: PdfDocumentObject,
-    contextId: number,
-    target: SearchTarget,
-  ): Task<SearchResult | undefined, PdfEngineError> {
+  searchNext(doc: PdfDocumentObject, contextId: number, target: SearchTarget) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -680,11 +664,7 @@ export class WebWorkerEngine implements PdfEngine {
    *
    * @public
    */
-  searchPrev(
-    doc: PdfDocumentObject,
-    contextId: number,
-    target: SearchTarget,
-  ): Task<SearchResult | undefined, PdfEngineError> {
+  searchPrev(doc: PdfDocumentObject, contextId: number, target: SearchTarget) {
     this.logger.debug(
       LOG_SOURCE,
       LOG_CATEGORY,
@@ -717,10 +697,7 @@ export class WebWorkerEngine implements PdfEngine {
    *
    * @public
    */
-  stopSearch(
-    doc: PdfDocumentObject,
-    contextId: number,
-  ): Task<boolean, PdfEngineError> {
+  stopSearch(doc: PdfDocumentObject, contextId: number) {
     this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'stopSearch', doc, contextId);
     const requestId = this.generateRequestId(doc.id);
     const task = new WorkerTask<boolean>(this.worker, requestId);
@@ -1006,7 +983,10 @@ export class WebWorkerEngine implements PdfEngine {
           'End',
           request.id,
         );
-        task.reject(new PdfEngineError('worker initialization failed'));
+        task.reject({
+          code: PdfErrorCode.Initialization,
+          message: 'worker initialization failed',
+        });
       },
     );
   }

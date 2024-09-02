@@ -1,4 +1,9 @@
-import { ignore, PdfTextRectObject, transformRect } from '@unionpdf/models';
+import {
+  ignore,
+  PdfErrorCode,
+  PdfTextRectObject,
+  transformRect,
+} from '@unionpdf/models';
 import React, { useState, useEffect } from 'react';
 import { usePdfEngine, usePdfDocument } from '../../core';
 import { PdfPageLayerComponentProps } from './layer';
@@ -26,7 +31,10 @@ export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
       task.wait(setRects, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [isVisible, engine, doc, page, scaleFactor, rotation]);

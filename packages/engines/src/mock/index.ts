@@ -8,7 +8,6 @@ import {
   swap,
   PdfZoomMode,
   PdfActionType,
-  TaskBase,
   PdfAnnotationObject,
   PdfBookmarkObject,
   PdfTextRectObject,
@@ -22,6 +21,7 @@ import {
   PdfAnnotationObjectStatus,
   PdfWidgetAnnoObject,
   FormFieldValue,
+  PdfTaskHelper,
 } from '@unionpdf/models';
 
 /**
@@ -36,10 +36,10 @@ export function createMockPdfEngine(
 ): PdfEngine {
   const engine: PdfEngine = {
     openDocument: jest.fn((file: PdfFile, password: string) => {
-      return new TaskBase();
+      return PdfTaskHelper.create();
     }),
     getMetadata: () => {
-      return TaskBase.resolve({
+      return PdfTaskHelper.resolve({
         title: 'title',
         author: 'author',
         subject: 'subject',
@@ -52,7 +52,7 @@ export function createMockPdfEngine(
     },
     getSignatures: (doc: PdfDocumentObject) => {
       const signatures: PdfSignatureObject[] = [];
-      return TaskBase.resolve(signatures);
+      return PdfTaskHelper.resolve(signatures);
     },
     getBookmarks: (doc: PdfDocumentObject) => {
       const bookmarks: PdfBookmarkObject[] = [];
@@ -99,7 +99,7 @@ export function createMockPdfEngine(
           ],
         },
       );
-      return TaskBase.resolve({
+      return PdfTaskHelper.resolve({
         bookmarks,
       });
     },
@@ -129,7 +129,7 @@ export function createMockPdfEngine(
           array[i * 4 + 3] = alphaValue;
         }
 
-        return TaskBase.resolve(
+        return PdfTaskHelper.resolve(
           new ImageData(array, imageSize.width, imageSize.height),
         );
       },
@@ -161,7 +161,7 @@ export function createMockPdfEngine(
           array[i * 4 + 3] = alphaValue;
         }
 
-        return TaskBase.resolve(
+        return PdfTaskHelper.resolve(
           new ImageData(array, imageSize.width, imageSize.height),
         );
       },
@@ -181,7 +181,7 @@ export function createMockPdfEngine(
         array[i * 4 + 3] = alphaValue;
       }
 
-      return TaskBase.resolve(
+      return PdfTaskHelper.resolve(
         new ImageData(array, thumbnailWidth, thumbnailHeight),
       );
     }),
@@ -221,17 +221,17 @@ export function createMockPdfEngine(
         };
         const annotations: PdfAnnotationObject[] = [];
         annotations.push(link);
-        return TaskBase.resolve(annotations);
+        return PdfTaskHelper.resolve(annotations);
       },
     ),
     createPageAnnotation: jest.fn(() => {
-      return TaskBase.resolve(true);
+      return PdfTaskHelper.resolve(true);
     }),
     transformPageAnnotation: () => {
-      return TaskBase.resolve(true);
+      return PdfTaskHelper.resolve(true);
     },
     removePageAnnotation: jest.fn(() => {
-      return TaskBase.resolve(true);
+      return PdfTaskHelper.resolve(true);
     }),
     getPageTextRects: jest.fn(
       (
@@ -259,64 +259,64 @@ export function createMockPdfEngine(
             },
           },
         ];
-        return TaskBase.resolve(textRects);
+        return PdfTaskHelper.resolve(textRects);
       },
     ),
     closeDocument: (pdf: PdfDocumentObject) => {
-      return TaskBase.resolve(true);
+      return PdfTaskHelper.resolve(true);
     },
     saveAsCopy: (pdf: PdfDocumentObject) => {
-      return TaskBase.resolve(new ArrayBuffer(0));
+      return PdfTaskHelper.resolve(new ArrayBuffer(0));
     },
     extractPages: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
-      return TaskBase.resolve(new ArrayBuffer(0));
+      return PdfTaskHelper.resolve(new ArrayBuffer(0));
     },
     extractText: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
-      return TaskBase.resolve('');
+      return PdfTaskHelper.resolve('');
     },
     merge: (files: PdfFile[]) => {
-      return TaskBase.resolve({
+      return PdfTaskHelper.resolve({
         id: 'id',
         name: 'name',
         content: new ArrayBuffer(0),
       });
     },
     startSearch: (doc: PdfDocumentObject, contextId: number) => {
-      return TaskBase.resolve(true);
+      return PdfTaskHelper.resolve(true);
     },
     searchNext: (
       doc: PdfDocumentObject,
       contextId: number,
       target: SearchTarget,
     ) => {
-      return TaskBase.resolve<SearchResult | undefined>({
+      return PdfTaskHelper.resolve({
         pageIndex: 0,
         charIndex: 0,
         charCount: 1,
-      });
+      } as SearchResult | undefined);
     },
     searchPrev: (
       doc: PdfDocumentObject,
       contextId: number,
       target: SearchTarget,
     ) => {
-      return TaskBase.resolve<SearchResult | undefined>({
+      return PdfTaskHelper.resolve({
         pageIndex: 0,
         charIndex: 0,
         charCount: 1,
-      });
+      } as SearchResult | undefined);
     },
     stopSearch: (doc: PdfDocumentObject, contextId: number) => {
-      return TaskBase.resolve(true);
+      return PdfTaskHelper.resolve(true);
     },
     getAttachments: (doc: PdfDocumentObject) => {
-      return TaskBase.resolve([] as PdfAttachmentObject[]);
+      return PdfTaskHelper.resolve([] as PdfAttachmentObject[]);
     },
     readAttachmentContent: (
       doc: PdfDocumentObject,
       attachment: PdfAttachmentObject,
     ) => {
-      return TaskBase.resolve(new ArrayBuffer(0));
+      return PdfTaskHelper.resolve(new ArrayBuffer(0));
     },
     setFormFieldValue: (
       doc: PdfDocumentObject,
@@ -324,7 +324,7 @@ export function createMockPdfEngine(
       annotation: PdfWidgetAnnoObject,
       text: FormFieldValue,
     ) => {
-      return TaskBase.resolve(true);
+      return PdfTaskHelper.resolve(true);
     },
     ...partialEngine,
   };

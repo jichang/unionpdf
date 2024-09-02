@@ -1,4 +1,4 @@
-import { ignore } from '@unionpdf/models';
+import { ignore, PdfErrorCode } from '@unionpdf/models';
 import React, { useRef, useEffect, useState } from 'react';
 import {
   PdfApplicationMode,
@@ -50,7 +50,10 @@ export function PdfPageCanvasLayer(props: PdfPageCanvasLayerProps) {
       task.wait(setImageData, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [mode, page, engine, doc, inVisibleRange, scaleFactor, rotation]);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ComponentProps } from 'react';
 import './signatures.css';
 import classNames from 'classnames';
-import { ignore, PdfSignatureObject } from '@unionpdf/models';
+import { ignore, PdfErrorCode, PdfSignatureObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIStrings } from '../../adapters';
@@ -60,7 +60,10 @@ export function PdfSignaturesContent(props: PdfSignaturesProps) {
       }, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [engine, doc, onSignaturesLoaded]);

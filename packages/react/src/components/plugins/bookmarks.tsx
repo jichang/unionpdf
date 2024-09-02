@@ -3,6 +3,7 @@ import {
   PdfBookmarkObject,
   PdfActionType,
   ignore,
+  PdfErrorCode,
 } from '@unionpdf/models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { PdfApplicatinPluginKey, PdfPlugin, PdfPluginPanel } from '../../core';
@@ -57,7 +58,10 @@ export function PdfBookmarksContent(props: PdfBookmarksProps) {
       task.wait(setBookmarks, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [engine, doc]);

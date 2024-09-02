@@ -8,7 +8,12 @@ import {
   useState,
 } from 'react';
 import { usePdfEngine } from './engine.context';
-import { PdfDocumentObject, PdfEngineError, PdfFile } from '@unionpdf/models';
+import {
+  PdfDocumentObject,
+  PdfEngineError,
+  PdfErrorCode,
+  PdfFile,
+} from '@unionpdf/models';
 import { useTheme } from './theme.context';
 import { PdfDocumentContextProvider } from './document.context';
 import './document.css';
@@ -74,13 +79,16 @@ export function PdfDocument(props: PdfDocumentProps) {
             setDoc(doc);
             onOpenSuccessRef.current?.(doc);
           },
-          (error: Error) => {
+          (error) => {
             onOpenFailureRef.current?.(error);
           },
         );
 
         return () => {
-          task.abort();
+          task.abort({
+            code: PdfErrorCode.Cancelled,
+            message: '',
+          });
 
           if (doc) {
             engine.closeDocument(doc);

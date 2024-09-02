@@ -8,7 +8,13 @@ import {
 } from '@unionpdf/engines';
 import { PdfPages } from '../plugins/pages';
 import { PdfPageCanvasLayer } from './canvas';
-import { TaskBase, PdfDocumentObject, PdfEngineError } from '@unionpdf/models';
+import {
+  PdfTaskHelper,
+  PdfDocumentObject,
+  PdfEngineError,
+  PdfErrorReason,
+  Task,
+} from '@unionpdf/models';
 import { PdfEngineContextProvider } from '../../core/engine.context';
 import { PdfDocument } from '../../core/document';
 import { intersectionObserver } from '../../mocks/intersectionObserver';
@@ -17,8 +23,8 @@ describe('PdfPageCanvasLayer', () => {
   test('should render pdf canvas', async () => {
     intersectionObserver.mock();
     const pdf = createMockPdfDocument();
-    const openDocumentTask = new TaskBase<PdfDocumentObject, PdfEngineError>();
-    const closeDocumentTask = TaskBase.resolve<boolean, PdfEngineError>(true);
+    const openDocumentTask = new Task<PdfDocumentObject, PdfErrorReason>();
+    const closeDocumentTask = PdfTaskHelper.resolve<boolean>(true);
     const engine = createMockPdfEngine({
       openDocument: jest.fn(() => {
         return openDocumentTask;

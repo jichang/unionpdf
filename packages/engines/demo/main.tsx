@@ -2,7 +2,8 @@ import {
   ConsoleLogger,
   ignore,
   PdfDocumentObject,
-  TaskBase,
+  PdfEngineError,
+  PdfTaskHelper,
 } from '@unionpdf/models';
 import { WebWorkerEngine } from '../src/index';
 import pdfiumWasm from 'url:@unionpdf/pdfium/pdfium.wasm';
@@ -24,7 +25,7 @@ async function readFile(file: File): Promise<ArrayBuffer> {
   });
 }
 
-function logError(error: Error) {
+function logError(error: PdfEngineError) {
   console.error(error);
 }
 
@@ -50,7 +51,7 @@ async function run() {
   inputElem?.addEventListener('input', async (evt) => {
     const closeTask = currDoc
       ? engine.closeDocument(currDoc)
-      : TaskBase.resolve(true);
+      : PdfTaskHelper.resolve(true);
     currDoc = null;
 
     closeTask.wait(async () => {

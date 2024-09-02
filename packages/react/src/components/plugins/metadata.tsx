@@ -1,5 +1,5 @@
 import React, { ComponentProps, useEffect, useState } from 'react';
-import { ignore, PdfMetadataObject } from '@unionpdf/models';
+import { ignore, PdfErrorCode, PdfMetadataObject } from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIStrings } from '../../adapters';
@@ -50,7 +50,10 @@ export function PdfMetadataContent(props: PdfMetadataProps) {
       task.wait(setMetadata, ignore);
 
       return () => {
-        task.abort();
+        task.abort({
+          code: PdfErrorCode.Cancelled,
+          message: '',
+        });
       };
     }
   }, [engine, doc]);

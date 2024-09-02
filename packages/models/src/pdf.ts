@@ -1,4 +1,5 @@
 import { Size, Rect, Position, Rotation } from './geometry';
+import { Task, TaskError } from './task';
 
 /**
  * Representation of pdf page
@@ -1132,248 +1133,6 @@ export type FormFieldValue =
   | { kind: 'checked'; isChecked: boolean };
 
 /**
- * Stage of task
- *
- * @public
- */
-export enum TaskStage {
-  /**
-   * Task is pending, means it just start executing
-   */
-  Pending = 0,
-  /**
-   * Task is succeed
-   */
-  Resolved = 1,
-  /**
-   * Task is failed
-   */
-  Rejected = 2,
-  /**
-   * Task is aborted
-   */
-  Aborted = 3,
-}
-
-/**
- * callback that will be called when task is resolved
- *
- * @public
- */
-export type ResolvedCallback<R> = (r: R) => void;
-
-/**
- * callback that will be called when task is rejected
- *
- * @public
- */
-export type RejectedCallback<E> = (e: E | TaskAbortError) => void;
-
-/**
- * Error that indicate task is failed
- *
- * @public
- */
-export class TaskAbortError extends Error {}
-
-/**
- * Task state in different stage
- *
- * @public
- */
-export type TaskState<R, E> =
-  | {
-      stage: TaskStage.Pending;
-    }
-  | {
-      stage: TaskStage.Resolved;
-      result: R;
-    }
-  | {
-      stage: TaskStage.Rejected;
-      error: E;
-    }
-  | {
-      stage: TaskStage.Aborted;
-      error: TaskAbortError | E;
-    };
-
-/**
- * Task for doing some work, it can be sync or async
- *
- * @public
- */
-export interface Task<R, E = Error> {
-  /**
-   * state of task
-   */
-  state: TaskState<R, E>;
-
-  /**
-   * Wait for task is finalized
-   * @param resolvedCallback - callback when task is succeed
-   * @param rejectedCallback - callback when task is failed
-   * @returns
-   */
-  wait: (
-    resolvedCallback: ResolvedCallback<R>,
-    rejectedCallback: RejectedCallback<E>,
-  ) => void;
-  /**
-   * Resolve the task with value
-   * @param r - resolved value
-   * @returns
-   */
-  resolve: (r: R) => void;
-  /**
-   * Reject the task with error
-   * @param e - rejected error
-   * @returns
-   */
-  reject: (e: E) => void;
-  /**
-   * Abort the task with error
-   * @param error - aborted error
-   * @returns
-   */
-  abort: (error?: E | TaskAbortError) => void;
-}
-
-/**
- * Base class of task
- *
- * @public
- */
-export class TaskBase<R, E = Error> implements Task<R, E> {
-  state: TaskState<R, E> = {
-    stage: TaskStage.Pending,
-  };
-  /**
-   * callbacks that will be executed when task is resolved
-   */
-  resolvedCallbacks: ResolvedCallback<R>[] = [];
-  /**
-   * callbacks that will be executed when task is rejected
-   */
-  rejectedCallbacks: RejectedCallback<E>[] = [];
-
-  /**
-   * Create a task that has been resolved with value
-   * @param result - resolved value
-   * @returns resolved task
-   */
-  static resolve<R, E = Error>(result: R): TaskBase<R, E> {
-    const task = new TaskBase<R, E>();
-    task.resolve(result);
-
-    return task;
-  }
-
-  /**
-   * Create a task that has been rejected with error
-   * @param error - rejected error
-   * @returns rejected task
-   */
-  static reject<R, E = Error>(error: E): TaskBase<R, E> {
-    const task = new TaskBase<R, E>();
-    task.reject(error);
-
-    return task;
-  }
-
-  /**
-   * {@inheritDoc Task.wait}
-   *
-   * @virtual
-   */
-  wait(
-    resolvedCallback: ResolvedCallback<R>,
-    rejectedCallback: RejectedCallback<E>,
-  ) {
-    switch (this.state.stage) {
-      case TaskStage.Pending:
-        this.resolvedCallbacks.push(resolvedCallback);
-        this.rejectedCallbacks.push(rejectedCallback);
-        break;
-      case TaskStage.Resolved:
-        resolvedCallback(this.state.result);
-        break;
-      case TaskStage.Rejected:
-        rejectedCallback(this.state.error);
-        break;
-      case TaskStage.Aborted:
-        rejectedCallback(this.state.error);
-        break;
-    }
-  }
-
-  /**
-   * {@inheritDoc Task.resolve}
-   *
-   * @virtual
-   */
-  resolve(result: R) {
-    if (this.state.stage === TaskStage.Pending) {
-      this.state = {
-        stage: TaskStage.Resolved,
-        result,
-      };
-      for (const resolvedCallback of this.resolvedCallbacks) {
-        try {
-          resolvedCallback(result);
-        } catch (e) {
-          /* ignore */
-        }
-      }
-      this.resolvedCallbacks = [];
-      this.rejectedCallbacks = [];
-    }
-  }
-
-  /**
-   * {@inheritDoc Task.reject}
-   *
-   * @virtual
-   */
-  reject(error: E) {
-    if (this.state.stage === TaskStage.Pending) {
-      this.state = {
-        stage: TaskStage.Rejected,
-        error,
-      };
-      for (const rejectedCallback of this.rejectedCallbacks) {
-        try {
-          rejectedCallback(error);
-        } catch (e) {
-          /*ignore */
-        }
-      }
-      this.resolvedCallbacks = [];
-      this.rejectedCallbacks = [];
-    }
-  }
-
-  /** {@inheritDoc Task.abort} */
-  abort(error?: E | TaskAbortError) {
-    if (this.state.stage === TaskStage.Pending) {
-      this.state = {
-        stage: TaskStage.Aborted,
-        error: error || new TaskAbortError(),
-      };
-      for (const rejectedCallback of this.rejectedCallbacks) {
-        try {
-          rejectedCallback(this.state.error);
-        } catch (e) {
-          /* ignore */
-        }
-      }
-      this.resolvedCallbacks = [];
-      this.rejectedCallbacks = [];
-    }
-  }
-}
-
-/**
  * Transformation that will be applied to annotation
  *
  * @public
@@ -1399,28 +1158,6 @@ export interface PdfRenderOptions {
    * Whether needs to render the page with annotations
    */
   withAnnotations: boolean;
-}
-
-/**
- * Error that Pdf engine will emit
- *
- * @public
- */
-export class PdfEngineError extends Error {
-  /**
-   * Error code
-   */
-  code?: number;
-
-  /**
-   *
-   * @param message - error message
-   * @param code - error code
-   */
-  constructor(message: string, code?: number) {
-    super(message);
-    this.code = code;
-  }
 }
 
 /**
@@ -1450,6 +1187,85 @@ export interface PdfFile {
   content: PdfFileContent;
 }
 
+export enum PdfErrorCode {
+  Unknown,
+  Cancelled,
+  Initialization,
+  NotReady,
+  NotSupport,
+  LoadDoc,
+  DocNotOpen,
+  CantCloseDoc,
+  CantCreateNewDoc,
+  CantImportPages,
+  CantCreateAnnot,
+  CantSetAnnotRect,
+  CantSetAnnotContent,
+  CantRemoveInkList,
+  CantAddInkStoke,
+  CantReadAttachmentSize,
+  CantReadAttachmentContent,
+  CantFocusAnnot,
+  CantSelectText,
+  CantSelectOption,
+  CantCheckField,
+}
+
+export interface PdfErrorReason {
+  code: PdfErrorCode;
+  message: string;
+}
+
+export type PdfEngineError = TaskError<PdfErrorReason>;
+
+export type PdfTask<R> = Task<R, PdfErrorReason>;
+
+export class PdfTaskHelper {
+  /**
+   * Create a task
+   * @returns new task
+   */
+  static create<R>(): Task<R, PdfErrorReason> {
+    return new Task<R, PdfErrorReason>();
+  }
+
+  /**
+   * Create a task that has been resolved with value
+   * @param result - resolved value
+   * @returns resolved task
+   */
+  static resolve<R>(result: R): Task<R, PdfErrorReason> {
+    const task = new Task<R, PdfErrorReason>();
+    task.resolve(result);
+
+    return task;
+  }
+
+  /**
+   * Create a task that has been rejected with error
+   * @param reason - rejected error
+   * @returns rejected task
+   */
+  static reject<T = any>(reason: PdfErrorReason): Task<T, PdfErrorReason> {
+    const task = new Task<T, PdfErrorReason>();
+    task.reject(reason);
+
+    return task;
+  }
+
+  /**
+   * Create a task that has been aborted with error
+   * @param reason - aborted error
+   * @returns aborted task
+   */
+  static abort<T = any>(reason: PdfErrorReason): Task<T, PdfErrorReason> {
+    const task = new Task<T, PdfErrorReason>();
+    task.reject(reason);
+
+    return task;
+  }
+}
+
 /**
  * Pdf engine
  *
@@ -1461,53 +1277,42 @@ export interface PdfEngine {
    * @param feature - which feature want to check
    * @returns support or not
    */
-  isSupport?: (
-    feature: PdfEngineFeature,
-  ) => Task<PdfEngineOperation[], PdfEngineError>;
+  isSupport?: (feature: PdfEngineFeature) => PdfTask<PdfEngineOperation[]>;
   /**
    * Initialize the engine
    * @returns task that indicate whether initialization is successful
    */
-  initialize?: () => Task<boolean, PdfEngineError>;
+  initialize?: () => PdfTask<boolean>;
   /**
    * Destroy the engine
    * @returns task that indicate whether destroy is successful
    */
-  destroy?: () => Task<boolean, PdfEngineError>;
+  destroy?: () => PdfTask<boolean>;
   /**
    * Open pdf document
    * @param file - pdf file
    * @param password - protected password for this file
    * @returns task that contains the file or error
    */
-  openDocument: (
-    file: PdfFile,
-    password: string,
-  ) => Task<PdfDocumentObject, PdfEngineError>;
+  openDocument: (file: PdfFile, password: string) => PdfTask<PdfDocumentObject>;
   /**
    * Get the metadata of the file
    * @param doc - pdf document
    * @returns task that contains the metadata or error
    */
-  getMetadata: (
-    doc: PdfDocumentObject,
-  ) => Task<PdfMetadataObject, PdfEngineError>;
+  getMetadata: (doc: PdfDocumentObject) => PdfTask<PdfMetadataObject>;
   /**
    * Get the signatures of the file
    * @param doc - pdf document
    * @returns task that contains the signatures or error
    */
-  getSignatures: (
-    doc: PdfDocumentObject,
-  ) => Task<PdfSignatureObject[], PdfEngineError>;
+  getSignatures: (doc: PdfDocumentObject) => PdfTask<PdfSignatureObject[]>;
   /**
    * Get the bookmarks of the file
    * @param doc - pdf document
    * @returns task that contains the bookmarks or error
    */
-  getBookmarks: (
-    doc: PdfDocumentObject,
-  ) => Task<PdfBookmarksObject, PdfEngineError>;
+  getBookmarks: (doc: PdfDocumentObject) => PdfTask<PdfBookmarksObject>;
   /**
    * Render the specified pdf page
    * @param doc - pdf document
@@ -1525,7 +1330,7 @@ export interface PdfEngine {
     rotation: Rotation,
     dpr: number,
     options: PdfRenderOptions,
-  ) => Task<ImageData, PdfEngineError>;
+  ) => PdfTask<ImageData>;
   /**
    * Render the specified rect of pdf page
    * @param doc - pdf document
@@ -1545,7 +1350,7 @@ export interface PdfEngine {
     dpr: number,
     rect: Rect,
     options: PdfRenderOptions,
-  ) => Task<ImageData, PdfEngineError>;
+  ) => PdfTask<ImageData>;
   /**
    * Get annotations of pdf page
    * @param doc - pdf document
@@ -1559,7 +1364,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-  ) => Task<PdfAnnotationObject[], PdfEngineError>;
+  ) => PdfTask<PdfAnnotationObject[]>;
   /**
    * Create a annotation on specified page
    * @param doc - pdf document
@@ -1571,7 +1376,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-  ) => Task<boolean, PdfEngineError>;
+  ) => PdfTask<boolean>;
   /**
    * Transform the annotation
    * @param doc - pdf document
@@ -1585,7 +1390,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
     transformation: PdfAnnotationTransformation,
-  ) => Task<boolean, PdfEngineError>;
+  ) => PdfTask<boolean>;
   /**
    * Remove a annotation on specified page
    * @param doc - pdf document
@@ -1597,7 +1402,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     page: PdfPageObject,
     annotation: PdfAnnotationObject,
-  ) => Task<boolean, PdfEngineError>;
+  ) => PdfTask<boolean>;
   /**
    * get all text rects in pdf page
    * @param doc - pdf document
@@ -1611,7 +1416,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     scaleFactor: number,
     rotation: Rotation,
-  ) => Task<PdfTextRectObject[], PdfEngineError>;
+  ) => PdfTask<PdfTextRectObject[]>;
   /**
    * Render the thumbnail of specified pdf page
    * @param doc - pdf document
@@ -1628,17 +1433,14 @@ export interface PdfEngine {
     scaleFactor: number,
     rotation: Rotation,
     dpr: number,
-  ) => Task<ImageData, PdfEngineError>;
+  ) => PdfTask<ImageData>;
   /**
    * Start searching with new context
    * @param doc - pdf document
    * @param contextId - id of context
    * @returns Task contains whether search has started
    */
-  startSearch: (
-    doc: PdfDocumentObject,
-    contextId: number,
-  ) => Task<boolean, PdfEngineError>;
+  startSearch: (doc: PdfDocumentObject, contextId: number) => PdfTask<boolean>;
   /**
    * Search next target
    * @param doc - pdf document
@@ -1650,7 +1452,7 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget,
-  ) => Task<SearchResult | undefined, PdfEngineError>;
+  ) => PdfTask<SearchResult | undefined>;
   /**
    * Search the previous targets
    * @param doc - pdf document
@@ -1662,25 +1464,20 @@ export interface PdfEngine {
     doc: PdfDocumentObject,
     contextId: number,
     target: SearchTarget,
-  ) => Task<SearchResult | undefined, PdfEngineError>;
+  ) => PdfTask<SearchResult | undefined>;
   /**
    * Stop searching with new context
    * @param doc - pdf document
    * @param contextId - id of context
    * @returns Task contains whether search has stopped
    */
-  stopSearch: (
-    doc: PdfDocumentObject,
-    contextId: number,
-  ) => Task<boolean, PdfEngineError>;
+  stopSearch: (doc: PdfDocumentObject, contextId: number) => PdfTask<boolean>;
   /**
    * Get all attachments in this file
    * @param doc - pdf document
    * @returns task that contains the attachments or error
    */
-  getAttachments: (
-    doc: PdfDocumentObject,
-  ) => Task<PdfAttachmentObject[], PdfEngineError>;
+  getAttachments: (doc: PdfDocumentObject) => PdfTask<PdfAttachmentObject[]>;
   /**
    * Read content of pdf attachment
    * @param doc - pdf document
@@ -1690,7 +1487,7 @@ export interface PdfEngine {
   readAttachmentContent: (
     doc: PdfDocumentObject,
     attachment: PdfAttachmentObject,
-  ) => Task<ArrayBuffer, PdfEngineError>;
+  ) => PdfTask<ArrayBuffer>;
   /**
    * Set form field value
    * @param doc - pdf document
@@ -1702,7 +1499,7 @@ export interface PdfEngine {
     page: PdfPageObject,
     annotation: PdfWidgetAnnoObject,
     value: FormFieldValue,
-  ) => Task<boolean, PdfEngineError>;
+  ) => PdfTask<boolean>;
   /**
    * Extract pdf pages to a new file
    * @param doc - pdf document
@@ -1712,30 +1509,58 @@ export interface PdfEngine {
   extractPages: (
     doc: PdfDocumentObject,
     pageIndexes: number[],
-  ) => Task<ArrayBuffer>;
+  ) => PdfTask<ArrayBuffer>;
   /**
    * Extract text on specified pdf pages
    * @param doc - pdf document
    * @param pageIndexes - indexes of pdf pages
    * @returns task contains the text
    */
-  extractText: (doc: PdfDocumentObject, pageIndexes: number[]) => Task<string>;
+  extractText: (
+    doc: PdfDocumentObject,
+    pageIndexes: number[],
+  ) => PdfTask<string>;
   /**
    * Merge multiple pdf documents
    * @param files - all the pdf files
    * @returns task contains the merged pdf file
    */
-  merge: (files: PdfFile[]) => Task<PdfFile>;
+  merge: (files: PdfFile[]) => PdfTask<PdfFile>;
   /**
    * Save a copy of pdf document
    * @param doc - pdf document
    * @returns task contains the new pdf file content
    */
-  saveAsCopy: (doc: PdfDocumentObject) => Task<ArrayBuffer, PdfEngineError>;
+  saveAsCopy: (doc: PdfDocumentObject) => PdfTask<ArrayBuffer>;
   /**
    * Close pdf document
    * @param doc - pdf document
    * @returns task that file is closed or not
    */
-  closeDocument: (doc: PdfDocumentObject) => Task<boolean, PdfEngineError>;
+  closeDocument: (doc: PdfDocumentObject) => PdfTask<boolean>;
 }
+
+/**
+ * Method name of PdfEngine interface
+ *
+ * @public
+ */
+export type PdfEngineMethodName = keyof Required<PdfEngine>;
+
+/**
+ * Arguments of PdfEngine method
+ *
+ * @public
+ */
+export type PdfEngineMethodArgs<P extends PdfEngineMethodName> = Readonly<
+  Parameters<Required<PdfEngine>[P]>
+>;
+
+/**
+ * Return type of PdfEngine method
+ *
+ * @public
+ */
+export type PdfEngineMethodReturnType<P extends PdfEngineMethodName> = Readonly<
+  ReturnType<Required<PdfEngine>[P]>
+>;
