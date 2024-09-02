@@ -1188,7 +1188,15 @@ export interface PdfFile {
 }
 
 export enum PdfErrorCode {
-  Unknown,
+  Ok, //  #define FPDF_ERR_SUCCESS 0    // No error.
+  Unknown, // #define FPDF_ERR_UNKNOWN 1    // Unknown error.
+  NotFound, // #define FPDF_ERR_FILE 2       // File not found or could not be opened.
+  WrongFormat, // #define FPDF_ERR_FORMAT 3     // File not in PDF format or corrupted.
+  Password, // #define FPDF_ERR_PASSWORD 4   // Password required or incorrect password.
+  Security, // #define FPDF_ERR_SECURITY 5   // Unsupported security scheme.
+  PageError, // #define FPDF_ERR_PAGE 6       // Page not found or content error.
+  XFALoad, // #ifdef PDF_ENABLE_XFA
+  XFALayout, //
   Cancelled,
   Initialization,
   NotReady,
