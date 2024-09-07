@@ -1,0 +1,33 @@
+name: Artifact
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm install
+      - run: npm run wasm --workspace=packages/pdfium
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm
+          path: |
+            packages/pdfium/src/wasm.js
+            packages/pdfium/src/wasm.wasm
