@@ -16,8 +16,8 @@
       "require": "./dist/cjs/index.js"
     },
     "./pdfium.wasm": {
-      "import": "./dist/esm/pdfium.8a380e0b.wasm",
-      "require": "./dist/cjs/pdfium.8a380e0b.wasm"
+      "import": "./dist/esm/pdfium.2bbe07c7.wasm",
+      "require": "./dist/cjs/pdfium.2bbe07c7.wasm"
     }
   },
   "scripts": {

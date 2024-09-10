@@ -232,6 +232,12 @@ export class EngineRunner {
       case 'openDocument':
         task = this.engine[name]!(...args);
         break;
+      case 'getDocPermissions':
+        task = this.engine[name]!(...args);
+        break;
+      case 'getDocUserPermissions':
+        task = this.engine[name]!(...args);
+        break;
       case 'getMetadata':
         task = this.engine[name]!(...args);
         break;

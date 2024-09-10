@@ -2,6 +2,9 @@
 
 # Base emsdk image with environment variables.
 FROM emscripten/emsdk:3.1.59 AS emsdk-base
+
+ARG DEBIAN_FRONTEND=noninteractive
+
 ARG EXTRA_CFLAGS
 ARG EXTRA_LDFLAGS
 ENV INSTALL_DIR=/opt
@@ -14,6 +17,10 @@ ENV EM_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscript
 ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$EM_PKG_CONFIG_PATH
 RUN apt-get update && \
       apt-get install -y pkg-config autoconf automake libtool ragel git yasm subversion lsb-release
+
+RUN echo "America/Sao_Paulo" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
+RUN /bin/echo -e "LANG=\"en_US.UTF-8\"" > /etc/default/local
 
 FROM emsdk-base AS node-setup
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -

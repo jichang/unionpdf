@@ -50,6 +50,12 @@ export function createMockPdfEngine(
         modificationDate: 'modificationDate',
       });
     },
+    getDocPermissions: (doc: PdfDocumentObject) => {
+      return PdfTaskHelper.resolve(0xffffffff);
+    },
+    getDocUserPermissions: (doc: PdfDocumentObject) => {
+      return PdfTaskHelper.resolve(0xffffffff);
+    },
     getSignatures: (doc: PdfDocumentObject) => {
       const signatures: PdfSignatureObject[] = [];
       return PdfTaskHelper.resolve(signatures);

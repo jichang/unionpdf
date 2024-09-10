@@ -262,6 +262,52 @@ export class WebWorkerEngine implements PdfEngine {
   }
 
   /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getDocPermissions}
+   *
+   * @public
+   */
+  getDocPermissions(doc: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getDocPermissions', doc);
+    const requestId = this.generateRequestId(doc.id);
+    const task = new WorkerTask<number>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'getDocPermissions',
+        args: [doc],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getDocUserPermissions}
+   *
+   * @public
+   */
+  getDocUserPermissions(doc: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getDocUserPermissions', doc);
+    const requestId = this.generateRequestId(doc.id);
+    const task = new WorkerTask<number>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'getDocUserPermissions',
+        args: [doc],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  /**
    * {@inheritDoc @unionpdf/models!PdfEngine.getBookmarks}
    *
    * @public

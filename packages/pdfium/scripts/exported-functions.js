@@ -14,6 +14,8 @@ exports.functions = {
   FPDF_GetLastError: [[], 'number'],
   FPDF_GetPageCount: [['number'], 'number'],
   FPDF_CloseDocument: [['number'], null],
+  FPDF_GetDocPermissions: [['number'], 'number'],
+  FPDF_GetDocUserPermissions: [['number'], 'number'],
   FPDF_DestroyLibrary: [[], null],
   FPDF_GetMetaText: [['number', 'string', 'number', 'number'], 'number'],
   FPDFBitmap_FillRect: [

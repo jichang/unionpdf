@@ -26,6 +26,8 @@ export const functions = {
   FPDF_GetLastError: [[] as const, 'number'] as const,
   FPDF_GetPageCount: [['number'] as const, 'number'] as const,
   FPDF_CloseDocument: [['number'] as const, null] as const,
+  FPDF_GetDocPermissions: [['number'] as const, 'number'] as const,
+  FPDF_GetDocUserPermissions: [['number'] as const, 'number'] as const,
   FPDF_DestroyLibrary: [[] as const, null] as const,
   FPDF_GetMetaText: [
     ['number', 'string', 'number', 'number'] as const,

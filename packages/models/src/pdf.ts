@@ -1310,6 +1310,18 @@ export interface PdfEngine {
    */
   getMetadata: (doc: PdfDocumentObject) => PdfTask<PdfMetadataObject>;
   /**
+   * Get permissions of the file
+   * @param doc - pdf document
+   * @returns task that contains a 32-bit integer indicating permission flags
+   */
+  getDocPermissions: (doc: PdfDocumentObject) => PdfTask<number>;
+  /**
+   * Get the user permissions of the file
+   * @param doc - pdf document
+   * @returns task that contains a 32-bit integer indicating permission flags
+   */
+  getDocUserPermissions: (doc: PdfDocumentObject) => PdfTask<number>;
+  /**
    * Get the signatures of the file
    * @param doc - pdf document
    * @returns task that contains the signatures or error

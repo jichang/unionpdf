@@ -11,7 +11,6 @@ import {
   NoopLogger,
   SearchResult,
   SearchTarget,
-  Task,
   MatchFlag,
   compareSearchTarget,
   PdfDestinationObject,
@@ -30,10 +29,7 @@ import {
   PdfUnsupportedAnnoObject,
   PdfTextAnnoObject,
   PdfPopupAnnoObject,
-  PdfEngineError,
   PdfSignatureObject,
-  PdfMetadataObject,
-  PdfBookmarksObject,
   PdfRenderOptions,
   PdfInkAnnoObject,
   PdfInkListObject,
@@ -342,6 +338,78 @@ export class PdfiumEngine implements PdfEngine {
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `GetMetadata`, 'End', doc.id);
 
     return PdfTaskHelper.resolve(metadata);
+  }
+
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getDocPermissions}
+   *
+   * @public
+   */
+  getDocPermissions(doc: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getDocPermissions', doc);
+    this.logger.perf(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      `getDocPermissions`,
+      'Begin',
+      doc.id,
+    );
+
+    if (!this.docs[doc.id]) {
+      this.logger.perf(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `getDocPermissions`,
+        'End',
+        doc.id,
+      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
+    }
+
+    const { docPtr } = this.docs[doc.id];
+
+    const permissions = this.pdfiumModule.FPDF_GetDocPermissions(docPtr);
+
+    return PdfTaskHelper.resolve(permissions);
+  }
+
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.getDocUserPermissions}
+   *
+   * @public
+   */
+  getDocUserPermissions(doc: PdfDocumentObject) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'getDocUserPermissions', doc);
+    this.logger.perf(
+      LOG_SOURCE,
+      LOG_CATEGORY,
+      `getDocUserPermissions`,
+      'Begin',
+      doc.id,
+    );
+
+    if (!this.docs[doc.id]) {
+      this.logger.perf(
+        LOG_SOURCE,
+        LOG_CATEGORY,
+        `getDocUserPermissions`,
+        'End',
+        doc.id,
+      );
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
+    }
+
+    const { docPtr } = this.docs[doc.id];
+
+    const permissions = this.pdfiumModule.FPDF_GetDocUserPermissions(docPtr);
+
+    return PdfTaskHelper.resolve(permissions);
   }
 
   /**
