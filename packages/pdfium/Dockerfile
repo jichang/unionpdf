@@ -16,7 +16,7 @@ ENV EM_PKG_CONFIG_PATH=$INSTALL_DIR/lib/pkgconfig:/emsdk/upstream/emscripten/sys
 ENV EM_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$EM_PKG_CONFIG_PATH
 RUN apt-get update && \
-      apt-get install -y pkg-config autoconf automake libtool ragel git yasm subversion lsb-release
+      apt-get install -y pkg-config autoconf automake libtool ragel git yasm subversion lsb-release tzdata
 
 RUN echo "America/Sao_Paulo" > /etc/timezone
 RUN dpkg-reconfigure -f noninteractive tzdata
