@@ -1167,6 +1167,17 @@ export interface PdfRenderOptions {
  */
 export type PdfFileContent = ArrayBuffer;
 
+export enum PdfPermission {
+  PrintDocument = 2 ** 3,
+  ModifyContent = 2 ** 4,
+  CopyOrExtract = 2 ** 5,
+  AddOrModifyTextAnnot = 2 ** 6,
+  FillInExistingForm = 2 ** 9,
+  ExtractTextOrGraphics = 2 ** 10,
+  AssembleDocument = 2 ** 11,
+  PrintHighQuality = 2 ** 12,
+}
+
 /**
  * Pdf File
  *

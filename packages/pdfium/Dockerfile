@@ -22,6 +22,8 @@ RUN echo "America/Sao_Paulo" > /etc/timezone
 RUN dpkg-reconfigure -f noninteractive tzdata
 RUN /bin/echo -e "LANG=\"en_US.UTF-8\"" > /etc/default/local
 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y keyboard-configuration
+
 FROM emsdk-base AS node-setup
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
