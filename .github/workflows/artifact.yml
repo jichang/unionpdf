@@ -27,7 +27,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: wasm
+          name: pdfium-wasm
           path: |
-            packages/pdfium/src/wasm.js
-            packages/pdfium/src/wasm.wasm
+            packages/pdfium/src/pdfium.js
+            packages/pdfium/src/pdfium.wasm
