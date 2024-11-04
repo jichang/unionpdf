@@ -1,19 +1,21 @@
 # Copyright 2018 The PDFium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-
 import("//build/config/freetype/freetype.gni")
 import("../../pdfium.gni")
 import("../../testing/test.gni")
-
 source_set("fxge") {
   sources = [
-    "agg/fx_agg_driver.cpp",
-    "agg/fx_agg_driver.h",
+    "agg/cfx_agg_bitmapcomposer.cpp",
+    "agg/cfx_agg_bitmapcomposer.h",
+    "agg/cfx_agg_cliprgn.cpp",
+    "agg/cfx_agg_cliprgn.h",
+    "agg/cfx_agg_devicedriver.cpp",
+    "agg/cfx_agg_devicedriver.h",
+    "agg/cfx_agg_imagerenderer.cpp",
+    "agg/cfx_agg_imagerenderer.h",
     "calculate_pitch.cpp",
     "calculate_pitch.h",
-    "cfx_cliprgn.cpp",
-    "cfx_cliprgn.h",
     "cfx_color.cpp",
     "cfx_color.h",
     "cfx_defaultrenderdevice.cpp",
@@ -54,8 +56,6 @@ source_set("fxge") {
     "cfx_unicodeencoding.h",
     "dib/blend.cpp",
     "dib/blend.h",
-    "dib/cfx_bitmapcomposer.cpp",
-    "dib/cfx_bitmapcomposer.h",
     "dib/cfx_bitmapstorer.cpp",
     "dib/cfx_bitmapstorer.h",
     "dib/cfx_cmyk_to_srgb.cpp",
@@ -64,8 +64,6 @@ source_set("fxge") {
     "dib/cfx_dibbase.h",
     "dib/cfx_dibitmap.cpp",
     "dib/cfx_dibitmap.h",
-    "dib/cfx_imagerenderer.cpp",
-    "dib/cfx_imagerenderer.h",
     "dib/cfx_imagestretcher.cpp",
     "dib/cfx_imagestretcher.h",
     "dib/cfx_imagetransformer.cpp",
@@ -110,32 +108,26 @@ source_set("fxge") {
     "text_glyph_pos.cpp",
     "text_glyph_pos.h",
   ]
-
   configs += [
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
-
   deps = [
     "../../third_party:fx_agg",
     "../fxcrt",
   ]
-
   public_deps = []
-
   if (is_component_build || use_system_freetype) {
     # ft_adobe_glyph_list is not exported from the Freetype shared library so we
     # need it defined in component builds and builds using system freetype.
     defines = [ "DEFINE_PS_TABLES_DATA" ]
   }
-
   if (pdf_enable_xfa) {
     sources += [
       "cfx_unicodeencodingex.cpp",
       "cfx_unicodeencodingex.h",
     ]
   }
-
   if (pdf_use_skia) {
     sources += [
       "skia/cfx_dibbase_skia.cpp",
@@ -143,7 +135,6 @@ source_set("fxge") {
     ]
     public_deps += [ "//skia" ]
   }
-
   if (is_android) {
     sources += [
       "android/cfpf_skiadevicemodule.cpp",
@@ -159,11 +150,9 @@ source_set("fxge") {
       "android/fx_android_impl.cpp",
     ]
   }
-
   if (is_linux || is_chromeos || is_wasm) {
     sources += [ "linux/fx_linux_impl.cpp" ]
   }
-
   if (is_mac) {
     sources += [
       "apple/fx_apple_impl.cpp",
@@ -174,7 +163,6 @@ source_set("fxge") {
     ]
     frameworks = [ "CoreGraphics.framework" ]
   }
-
   if (is_win) {
     sources += [
       "cfx_windowsrenderdevice.cpp",
@@ -202,10 +190,8 @@ source_set("fxge") {
     ]
     configs -= [ "//build/config/win:lean_and_mean" ]
   }
-
   visibility = [ "../../*" ]
 }
-
 pdfium_unittest_source_set("unittests") {
   sources = [
     "cfx_defaultrenderdevice_unittest.cpp",
@@ -216,7 +202,9 @@ pdfium_unittest_source_set("unittests") {
     "dib/cfx_cmyk_to_srgb_unittest.cpp",
     "dib/cfx_dibbase_unittest.cpp",
     "dib/cfx_dibitmap_unittest.cpp",
+    "dib/cfx_scanlinecompositor_unittest.cpp",
     "dib/cstretchengine_unittest.cpp",
+    "dib/fx_dib_unittest.cpp",
     "fx_font_unittest.cpp",
   ]
   deps = [
@@ -225,17 +213,14 @@ pdfium_unittest_source_set("unittests") {
     "../fpdfapi/parser",
   ]
   pdfium_root_dir = "../../"
-
   if (is_win) {
     sources += [ "win32/cfx_psrenderer_unittest.cpp" ]
   }
 }
-
 pdfium_embeddertest_source_set("embeddertests") {
   sources = [ "fx_ge_text_embeddertest.cpp" ]
   deps = []
   pdfium_root_dir = "../../"
-
   if (pdf_use_skia) {
     sources += [ "skia/fx_skia_device_embeddertest.cpp" ]
     deps += [
@@ -246,7 +231,6 @@ pdfium_embeddertest_source_set("embeddertests") {
       "//skia",
     ]
   }
-
   if (is_win) {
     sources += [ "cfx_windowsrenderdevice_embeddertest.cpp" ]
     deps += [
