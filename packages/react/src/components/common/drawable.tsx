@@ -70,38 +70,34 @@ export function Drawable(props: DrawableProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [paths, setPaths] = useState<DrawablePath[]>([]);
 
-  useImperativeHandle(
-    componentRef,
-    () => {
-      return {
-        clearCanvas: () => {
-          const canvasElem = canvasRef.current;
-          if (canvasElem) {
-            const ctx = canvasElem.getContext('2d');
-            if (ctx) {
-              ctx.clearRect(0, 0, Number(width), Number(height));
-            }
-          }
-        },
-        queryPaths: () => {
-          return paths;
-        },
-        queryImage: () => {
-          const ctx = canvasRef.current?.getContext('2d');
+  useImperativeHandle(componentRef, () => {
+    return {
+      clearCanvas: () => {
+        const canvasElem = canvasRef.current;
+        if (canvasElem) {
+          const ctx = canvasElem.getContext('2d');
           if (ctx) {
-            const { origin, size } = calculateBoundingRect(paths);
-            return ctx.getImageData(
-              origin.x,
-              origin.y,
-              Number(size.width),
-              Number(size.height),
-            );
+            ctx.clearRect(0, 0, Number(width), Number(height));
           }
-        },
-      };
-    },
-    [width, height, paths],
-  );
+        }
+      },
+      queryPaths: () => {
+        return paths;
+      },
+      queryImage: () => {
+        const ctx = canvasRef.current?.getContext('2d');
+        if (ctx) {
+          const { origin, size } = calculateBoundingRect(paths);
+          return ctx.getImageData(
+            origin.x,
+            origin.y,
+            Number(size.width),
+            Number(size.height),
+          );
+        }
+      },
+    };
+  }, [width, height, paths]);
 
   useEffect(() => {
     const canvasElem = canvasRef.current;
