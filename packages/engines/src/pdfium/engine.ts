@@ -4429,17 +4429,9 @@ export class PdfiumEngine implements PdfEngine {
     this.pdfiumModule.FPDFBitmap_Destroy(bitmapPtr);
     this.pdfiumModule.FPDF_ClosePage(pagePtr);
 
-    const array = new Uint8ClampedArray(bitmapHeapLength);
-    const dataView = new DataView(array.buffer);
-    for (let i = 0; i < bitmapHeapLength; i++) {
-      dataView.setInt8(
-        i,
-        this.pdfiumModule.pdfium.getValue(bitmapHeapPtr + i, 'i8'),
-      );
-    }
+    const data = this.pdfiumModule.pdfium.HEAPU8.subarray(bitmapHeapPtr, bitmapHeapPtr + bitmapHeapLength);
+    const imageData = new ImageData(new Uint8ClampedArray(data), bitmapSize.width, bitmapSize.height);
     this.free(bitmapHeapPtr);
-
-    const imageData = new ImageData(array, bitmapSize.width, bitmapSize.height);
 
     return imageData;
   }
