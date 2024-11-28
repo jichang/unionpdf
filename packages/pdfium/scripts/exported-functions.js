@@ -198,6 +198,10 @@ exports.functions = {
   FPDFText_FindClose: [['number'], null],
   FPDFText_ClosePage: [['number'], null],
   FPDFText_GetText: [['number', 'number', 'number', 'number'], 'number'],
+  FPDFText_GetCharBox: [
+    ['number', 'number', 'number', 'number', 'number', 'number'],
+    'boolean',
+  ],
   FPDFPage_CloseAnnot: [['number'], null],
   FPDFDoc_GetAttachmentCount: [['number'], 'number'],
   FPDFDoc_GetAttachment: [['number', 'number'], 'number'],

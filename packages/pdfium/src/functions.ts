@@ -294,6 +294,10 @@ export const functions = {
     ['number', 'number', 'number', 'number'] as const,
     'number',
   ] as const,
+  FPDFText_GetCharBox: [
+    ['number', 'number', 'number', 'number', 'number', 'number'] as const,
+    'boolean',
+  ] as const,
   FPDFPage_CloseAnnot: [['number'] as const, null] as const,
   FPDFDoc_GetAttachmentCount: [['number'] as const, 'number'] as const,
   FPDFDoc_GetAttachment: [['number', 'number'] as const, 'number'] as const,

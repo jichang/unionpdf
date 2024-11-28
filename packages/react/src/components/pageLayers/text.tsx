@@ -54,15 +54,17 @@ export function PdfPageTextLayer(props: PdfPageTextLayerProps) {
               left: rect.origin.x,
               width: rect.size.width,
               height: rect.size.height,
-              fontSize: Math.ceil(textRect.font.size),
-              fontFamily: textRect.font.family,
             };
 
             return (
               <span className="pdf__text__rect" key={index} style={style}>
-                <svg viewBox={`0 0 ${style.width} ${style.height}`}>
+                <svg
+                  width={style.width}
+                  height={style.height}
+                  viewBox={`0 0 ${style.width} ${style.height}`}
+                >
                   <text
-                    y="75%"
+                    y={style.height}
                     fontSize={style.height}
                     textLength={style.width}
                     lengthAdjust="spacingAndGlyphs"

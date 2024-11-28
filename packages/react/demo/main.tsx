@@ -39,6 +39,7 @@ import {
   PdfPageTextLayer,
   PdfPageDefaultAnnotation,
   PdfPageEditorLayer,
+  PdfPageDecorationsLayer,
   PdfEditorStampsContextProvider,
   Stamp,
   PdfApplicationContextProvider,
@@ -241,6 +242,7 @@ function App(props: AppProps) {
                         PdfPageTextLayer,
                         PdfPageAnnotationsLayer,
                         PdfPageEditorLayer,
+                        PdfPageDecorationsLayer,
                       ]}
                     />
                   </PdfLinkAnnoContextProvider>

@@ -299,6 +299,28 @@ export function createMockPdfEngine(
         pageIndex: 0,
         charIndex: 0,
         charCount: 1,
+        region: {
+          start: {
+            origin: {
+              x: 0,
+              y: 0,
+            },
+            size: {
+              width: 0,
+              height: 0,
+            },
+          },
+          end: {
+            origin: {
+              x: 0,
+              y: 0,
+            },
+            size: {
+              width: 0,
+              height: 0,
+            },
+          },
+        },
       } as SearchResult | undefined);
     },
     searchPrev: (
@@ -310,6 +332,28 @@ export function createMockPdfEngine(
         pageIndex: 0,
         charIndex: 0,
         charCount: 1,
+        region: {
+          start: {
+            origin: {
+              x: 0,
+              y: 0,
+            },
+            size: {
+              width: 0,
+              height: 0,
+            },
+          },
+          end: {
+            origin: {
+              x: 0,
+              y: 0,
+            },
+            size: {
+              width: 0,
+              height: 0,
+            },
+          },
+        },
       } as SearchResult | undefined);
     },
     stopSearch: (doc: PdfDocumentObject, contextId: number) => {

@@ -171,6 +171,9 @@ For the full code you can check the [demo app](./packages/app/src/main.tsx)
 
    Also, it has build in support for undo/redo.
 
+5. Decoration Layer
+   This laywer is for showing dynamic decoration on pdf page, which won't save to pdf file
+
 ### How to write a pdf plugin
 
 A PDF Plugin is a component that can add specific functionalty to PDF document. In the [plugins folder](./src/plugins), there are several buildin plugins.

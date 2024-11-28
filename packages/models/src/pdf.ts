@@ -1122,6 +1122,19 @@ export interface SearchResult {
    * count of the characters
    */
   charCount: number;
+  /**
+   * region of the search result
+   */
+  region: {
+    /**
+     * the rect of the first character
+     */
+    start: Rect;
+    /**
+     * the rect of the end character
+     */
+    end: Rect;
+  };
 }
 /**
  * form field value

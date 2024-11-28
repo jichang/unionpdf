@@ -1316,6 +1316,7 @@ export class PdfiumEngine implements PdfEngine {
     while (pageIndex < doc.pageCount) {
       const result = this.searchTextInPage(
         docPtr,
+        doc.pages[pageIndex],
         pageIndex,
         startIndex,
         keywordPtr,
@@ -1393,6 +1394,7 @@ export class PdfiumEngine implements PdfEngine {
     while (pageIndex < doc.pageCount) {
       const result = this.searchTextInPage(
         docPtr,
+        doc.pages[pageIndex],
         pageIndex,
         startIndex,
         keywordPtr,
@@ -2418,6 +2420,7 @@ export class PdfiumEngine implements PdfEngine {
    */
   searchTextInPage(
     docPtr: number,
+    page: PdfPageObject,
     pageIndex: number,
     startIndex: number,
     keywordPtr: number,
@@ -2439,10 +2442,22 @@ export class PdfiumEngine implements PdfEngine {
         this.pdfiumModule.FPDFText_GetSchResultIndex(searchHandle);
       const charCount = this.pdfiumModule.FPDFText_GetSchCount(searchHandle);
 
+      const start = this.readCharBox(page, pagePtr, textPagePtr, charIndex);
+      const end = this.readCharBox(
+        page,
+        pagePtr,
+        textPagePtr,
+        charIndex + charCount,
+      );
+
       result = {
         pageIndex,
         charIndex,
         charCount,
+        region: {
+          start,
+          end,
+        },
       };
     }
 
@@ -2684,6 +2699,74 @@ export class PdfiumEngine implements PdfEngine {
     }
 
     return textRects;
+  }
+
+  private readCharBox(
+    page: PdfPageObject,
+    pagePtr: number,
+    textPagePtr: number,
+    charIndex: number,
+  ): Rect {
+    const topPtr = this.malloc(8);
+    const leftPtr = this.malloc(8);
+    const bottomPtr = this.malloc(8);
+    const rightPtr = this.malloc(8);
+    let x = 0;
+    let y = 0;
+    let width = 0;
+    let height = 0;
+    if (
+      this.pdfiumModule.FPDFText_GetCharBox(
+        textPagePtr,
+        charIndex,
+        leftPtr,
+        rightPtr,
+        bottomPtr,
+        topPtr,
+      )
+    ) {
+      const top = this.pdfiumModule.pdfium.getValue(topPtr, 'double');
+      const left = this.pdfiumModule.pdfium.getValue(leftPtr, 'double');
+      const bottom = this.pdfiumModule.pdfium.getValue(bottomPtr, 'double');
+      const right = this.pdfiumModule.pdfium.getValue(rightPtr, 'double');
+
+      const deviceXPtr = this.malloc(4);
+      const deviceYPtr = this.malloc(4);
+      this.pdfiumModule.FPDF_PageToDevice(
+        pagePtr,
+        0,
+        0,
+        page.size.width,
+        page.size.height,
+        0,
+        left,
+        top,
+        deviceXPtr,
+        deviceYPtr,
+      );
+      x = this.pdfiumModule.pdfium.getValue(deviceXPtr, 'i32');
+      y = this.pdfiumModule.pdfium.getValue(deviceYPtr, 'i32');
+      this.free(deviceXPtr);
+      this.free(deviceYPtr);
+
+      width = Math.ceil(Math.abs(right - left));
+      height = Math.ceil(Math.abs(top - bottom));
+    }
+    this.free(topPtr);
+    this.free(leftPtr);
+    this.free(bottomPtr);
+    this.free(rightPtr);
+
+    return {
+      origin: {
+        x,
+        y,
+      },
+      size: {
+        width,
+        height,
+      },
+    };
   }
 
   /**
@@ -4429,8 +4512,15 @@ export class PdfiumEngine implements PdfEngine {
     this.pdfiumModule.FPDFBitmap_Destroy(bitmapPtr);
     this.pdfiumModule.FPDF_ClosePage(pagePtr);
 
-    const data = this.pdfiumModule.pdfium.HEAPU8.subarray(bitmapHeapPtr, bitmapHeapPtr + bitmapHeapLength);
-    const imageData = new ImageData(new Uint8ClampedArray(data), bitmapSize.width, bitmapSize.height);
+    const data = this.pdfiumModule.pdfium.HEAPU8.subarray(
+      bitmapHeapPtr,
+      bitmapHeapPtr + bitmapHeapLength,
+    );
+    const imageData = new ImageData(
+      new Uint8ClampedArray(data),
+      bitmapSize.width,
+      bitmapSize.height,
+    );
     this.free(bitmapHeapPtr);
 
     return imageData;

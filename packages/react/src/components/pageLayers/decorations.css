@@ -1,0 +1,12 @@
+.pdf__page__layer--decorations {
+  pointer-events: none;
+}
+
+.pdf__decoration__rect {
+  position: absolute;
+}
+
+.pdf__decoration__rect--highlight {
+  background-color: blue;
+  opacity: 0.5;
+}

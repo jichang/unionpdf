@@ -1,5 +1,9 @@
 import { PdfDocumentObject, PdfFile } from '@unionpdf/models';
 import React, { ReactNode, useContext } from 'react';
+import {
+  PdfDecorationsContext,
+  PdfDecorationsContextProvider,
+} from './decorations.context';
 
 /**
  * Type of value in document context
@@ -19,7 +23,9 @@ export interface PdfDocumentContextValue {
    * Pdf document
    */
   doc: PdfDocumentObject | null;
-
+  /**
+   * Pdf file
+   */
   file: PdfFile | null;
 }
 
@@ -49,7 +55,7 @@ export function PdfDocumentContextProvider(
 
   return (
     <PdfDocumentContext.Provider value={rest}>
-      {children}
+      <PdfDecorationsContextProvider>{children}</PdfDecorationsContextProvider>
     </PdfDocumentContext.Provider>
   );
 }

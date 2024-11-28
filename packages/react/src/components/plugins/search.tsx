@@ -3,12 +3,19 @@ import React, {
   FormEvent,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { ComponentProps } from 'react';
 import './search.css';
 import classNames from 'classnames';
-import { ignore, MatchFlag, PdfErrorCode, PdfZoomMode } from '@unionpdf/models';
+import {
+  ignore,
+  MatchFlag,
+  PdfErrorCode,
+  PdfZoomMode,
+  SearchResult,
+} from '@unionpdf/models';
 import { usePdfDocument } from '../../core/document.context';
 import { usePdfEngine } from '../../core/engine.context';
 import { useUIComponents, useUIStrings } from '../../adapters';
@@ -18,6 +25,7 @@ import {
   PdfPluginPanel,
   usePdfNavigator,
 } from '../../core';
+import { usePdfDocumentDecorations } from '../../core/decorations.context';
 
 /**
  * Properties of PdfSearch
@@ -25,6 +33,8 @@ import {
 export interface PdfSearchProps extends ComponentProps<'div'> {}
 
 export const PDF_NAVIGATOR_SOURCE_SEARCH = 'PdfSearch';
+
+export const PDF_PAGE_DECORATION_TYPE_SEARCH = 'highlight';
 
 /**
  * Plugin used to searching in pdf
@@ -58,10 +68,12 @@ export function PdfSearchContent(props: PdfSearchProps) {
 
   const engine = usePdfEngine();
   const { doc } = usePdfDocument();
+  const { addDecoration, removeDecoration } = usePdfDocumentDecorations();
   const { gotoPage } = usePdfNavigator();
   const [contextId] = useState(() => {
     return Date.now();
   });
+  const currentResultRef = useRef<SearchResult | undefined>(undefined);
 
   useEffect(() => {
     if (engine && doc) {
@@ -72,6 +84,17 @@ export function PdfSearchContent(props: PdfSearchProps) {
           message: '',
         });
         engine.stopSearch(doc, contextId);
+
+        if (currentResultRef.current) {
+          removeDecoration({
+            index: 0,
+            pageIndex: currentResultRef.current.pageIndex,
+            type: PDF_PAGE_DECORATION_TYPE_SEARCH,
+            source: PDF_NAVIGATOR_SOURCE_SEARCH,
+            payload: currentResultRef.current.region,
+          });
+          currentResultRef.current = undefined;
+        }
       };
     }
   }, [engine, doc, contextId]);
@@ -107,10 +130,29 @@ export function PdfSearchContent(props: PdfSearchProps) {
       if (engine && doc) {
         engine.searchNext(doc, contextId, { keyword, flags }).wait((result) => {
           if (result) {
+            if (currentResultRef.current) {
+              removeDecoration({
+                index: 0,
+                pageIndex: currentResultRef.current.pageIndex,
+                type: PDF_PAGE_DECORATION_TYPE_SEARCH,
+                source: PDF_NAVIGATOR_SOURCE_SEARCH,
+                payload: currentResultRef.current.region,
+              });
+            }
+
+            currentResultRef.current = result;
+            addDecoration({
+              index: 0,
+              pageIndex: currentResultRef.current.pageIndex,
+              type: PDF_PAGE_DECORATION_TYPE_SEARCH,
+              source: PDF_NAVIGATOR_SOURCE_SEARCH,
+              payload: currentResultRef.current.region,
+            });
+
             gotoPage(
               {
                 destination: {
-                  pageIndex: result?.pageIndex,
+                  pageIndex: result.pageIndex,
                   zoom: {
                     mode: PdfZoomMode.Unknown,
                   },
@@ -123,7 +165,7 @@ export function PdfSearchContent(props: PdfSearchProps) {
         }, ignore);
       }
     },
-    [engine, doc, contextId, gotoPage],
+    [engine, doc, contextId, gotoPage, addDecoration, removeDecoration],
   );
 
   const searchPrev = useCallback(
@@ -131,10 +173,29 @@ export function PdfSearchContent(props: PdfSearchProps) {
       if (engine && doc) {
         engine.searchPrev(doc, contextId, { keyword, flags }).wait((result) => {
           if (result) {
+            if (currentResultRef.current) {
+              removeDecoration({
+                index: 0,
+                pageIndex: currentResultRef.current.pageIndex,
+                type: PDF_PAGE_DECORATION_TYPE_SEARCH,
+                source: PDF_NAVIGATOR_SOURCE_SEARCH,
+                payload: currentResultRef.current.region,
+              });
+            }
+
+            currentResultRef.current = result;
+            addDecoration({
+              index: 0,
+              pageIndex: currentResultRef.current.pageIndex,
+              type: PDF_PAGE_DECORATION_TYPE_SEARCH,
+              source: PDF_NAVIGATOR_SOURCE_SEARCH,
+              payload: currentResultRef.current.region,
+            });
+
             gotoPage(
               {
                 destination: {
-                  pageIndex: result?.pageIndex,
+                  pageIndex: result.pageIndex,
                   zoom: {
                     mode: PdfZoomMode.Unknown,
                   },
@@ -147,7 +208,7 @@ export function PdfSearchContent(props: PdfSearchProps) {
         }, ignore);
       }
     },
-    [engine, doc, contextId, gotoPage],
+    [engine, doc, contextId, gotoPage, addDecoration, removeDecoration],
   );
 
   const startSearchPrevious = useCallback(
