@@ -1,4 +1,12 @@
 .pdf__page__layer--text {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
 }
 
 .pdf__text__rect {
@@ -10,4 +18,16 @@
   line-height: 1;
 
   overflow: hidden;
+
+  pointer-events: auto;
+}
+
+.pdf__text__rect__content {
+  display: inline-block;
+  transform-origin: top left;
+}
+
+.pdf__text__rect__content::selection {
+  color: transparent;
+  background-color: rgba(0, 0, 255, 0.15);
 }
