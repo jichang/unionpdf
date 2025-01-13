@@ -36,7 +36,7 @@ export function TextField(props: TextFieldProps) {
   );
 
   const isDisabled = !isEditable || !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
-  const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.READONLY);
+  const isRequired = !!(flag & PDF_FORM_FIELD_FLAG.REQUIRED);
   const isPassword = !!(flag & PDF_FORM_FIELD_FLAG.TEXT_PASSWORD);
   const isMultipleLine = !!(flag & PDF_FORM_FIELD_FLAG.TEXT_MULTIPLINE);
 
