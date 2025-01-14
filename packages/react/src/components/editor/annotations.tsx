@@ -147,6 +147,8 @@ export function PdfPageEditorAnnotations(props: PdfPageEditorAnnotationsProps) {
             rect,
             appearances: {
               normal: '',
+              rollover: '',
+              down: '',
             },
           },
         });

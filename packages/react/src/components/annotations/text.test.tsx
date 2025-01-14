@@ -43,6 +43,8 @@ describe('PdfPageTextAnnotation', () => {
       },
       appearances: {
         normal: '',
+        rollover: '',
+        down: '',
       },
     };
     const result = render(

@@ -37,6 +37,8 @@ describe('PdfPageFreeText', () => {
       },
       appearances: {
         normal: '',
+        rollover: '',
+        down: '',
       },
     };
     const result = render(

@@ -38,6 +38,8 @@ describe('PdfPageWidget', () => {
       },
       appearances: {
         normal: '',
+        rollover: '',
+        down: '',
       },
       field: {
         flag: 0,

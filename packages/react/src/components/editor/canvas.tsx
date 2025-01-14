@@ -82,6 +82,8 @@ export function PdfPageEditorCanvas(props: PdfPageEditorCanvasProps) {
           ],
           appearances: {
             normal: '',
+            rollover: '',
+            down: '',
           },
         },
       });

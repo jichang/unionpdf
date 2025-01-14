@@ -36,6 +36,8 @@ describe('PdfPagePopup', () => {
       },
       appearances: {
         normal: '',
+        rollover: '',
+        down: '',
       },
       open: false,
     };

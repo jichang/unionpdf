@@ -410,6 +410,8 @@ export enum PdfAnnotationObjectStatus {
  */
 export enum AppearanceMode {
   Normal = 0,
+  Rollover = 1,
+  Down = 2,
 }
 
 /**
@@ -453,6 +455,8 @@ export interface PdfAnnotationObjectBase {
    */
   appearances: {
     normal: string;
+    rollover: string;
+    down: string;
   };
 }
 

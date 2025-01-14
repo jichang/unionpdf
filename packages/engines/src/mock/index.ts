@@ -223,6 +223,8 @@ export function createMockPdfEngine(
           },
           appearances: {
             normal: '',
+            rollover: '',
+            down: '',
           },
         };
         const annotations: PdfAnnotationObject[] = [];

@@ -58,6 +58,8 @@ describe('PdfPageLink', () => {
       },
       appearances: {
         normal: '',
+        rollover: '',
+        down: '',
       },
     };
     const onClick = jest.fn();
