@@ -298,6 +298,9 @@ export class EngineRunner {
       case 'setFormFieldValue':
         task = this.engine[name]!(...args);
         break;
+      case 'flattenPage':
+        task = this.engine[name]!(...args);
+        break;
       case 'extractPages':
         task = this.engine[name]!(...args);
         break;

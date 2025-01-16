@@ -119,6 +119,7 @@ exports.functions = {
   FPDFPage_InsertObject: [['number', 'number'], 'boolean'],
   FPDFPage_RemoveAnnot: [['number', 'number'], 'boolean'],
   FPDFPage_GenerateContent: [['number'], 'boolean'],
+  FPDFPage_Flatten: [['number', 'number'], 'number'],
   FPDF_ClosePage: [['number'], null],
   FPDFAnnot_GetSubtype: [['number'], 'number'],
   FPDFAnnot_GetAP: [['number', 'number', 'number', 'number'], 'number'],

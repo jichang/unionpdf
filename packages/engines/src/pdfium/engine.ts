@@ -62,6 +62,9 @@ import {
   FormFieldValue,
   PdfErrorCode,
   PdfTaskHelper,
+  PdfPageFlattenFlag,
+  PdfPageFlattenResult,
+  PdfTask,
 } from '@unionpdf/models';
 import { readArrayBuffer, readString } from './helper';
 import { WrappedPdfiumModule } from '@unionpdf/pdfium';
@@ -1801,6 +1804,36 @@ export class PdfiumEngine implements PdfEngine {
     this.pdfiumModule.PDFiumExt_CloseFormFillInfo(formFillInfoPtr);
 
     return PdfTaskHelper.resolve<boolean>(true);
+  }
+
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.flattenPage}
+   *
+   * @public
+   */
+  flattenPage(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    flag: PdfPageFlattenFlag,
+  ): PdfTask<PdfPageFlattenResult> {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'flattenPage', doc, page, flag);
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `flattenPage`, 'Begin', doc.id);
+
+    if (!this.docs[doc.id]) {
+      this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `flattenPage`, 'End', doc.id);
+      return PdfTaskHelper.reject({
+        code: PdfErrorCode.DocNotOpen,
+        message: 'document does not open',
+      });
+    }
+
+    const { docPtr } = this.docs[doc.id];
+    const pagePtr = this.pdfiumModule.FPDF_LoadPage(docPtr, page.index);
+    const result = this.pdfiumModule.FPDFPage_Flatten(pagePtr, flag);
+
+    this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `flattenPage`, 'End', doc.id);
+
+    return PdfTaskHelper.resolve(result);
   }
 
   /**

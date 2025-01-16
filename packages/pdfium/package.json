@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/pdfium",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -16,8 +16,8 @@
       "require": "./dist/cjs/index.js"
     },
     "./pdfium.wasm": {
-      "import": "./dist/esm/pdfium.21d26120.wasm",
-      "require": "./dist/cjs/pdfium.21d26120.wasm"
+      "import": "./dist/esm/pdfium.a0e42955.wasm",
+      "require": "./dist/cjs/pdfium.a0e42955.wasm"
     }
   },
   "scripts": {

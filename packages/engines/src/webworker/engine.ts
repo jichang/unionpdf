@@ -23,6 +23,8 @@ import {
   PdfRenderOptions,
   PdfErrorCode,
   PdfErrorReason,
+  PdfPageFlattenFlag,
+  PdfPageFlattenResult,
 } from '@unionpdf/models';
 import { ExecuteRequest, Response } from './runner';
 
@@ -867,6 +869,33 @@ export class WebWorkerEngine implements PdfEngine {
       data: {
         name: 'setFormFieldValue',
         args: [doc, page, annotation, value],
+      },
+    };
+    this.proxy(task, request);
+
+    return task;
+  }
+
+  /**
+   * {@inheritDoc @unionpdf/models!PdfEngine.flattenPage}
+   *
+   * @public
+   */
+  flattenPage(
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    flag: PdfPageFlattenFlag,
+  ) {
+    this.logger.debug(LOG_SOURCE, LOG_CATEGORY, 'flattenPage', doc, page, flag);
+    const requestId = this.generateRequestId(doc.id);
+    const task = new WorkerTask<PdfPageFlattenResult>(this.worker, requestId);
+
+    const request: ExecuteRequest = {
+      id: requestId,
+      type: 'ExecuteRequest',
+      data: {
+        name: 'flattenPage',
+        args: [doc, page, flag],
       },
     };
     this.proxy(task, request);

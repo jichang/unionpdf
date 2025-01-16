@@ -1195,6 +1195,17 @@ export enum PdfPermission {
   PrintHighQuality = 2 ** 12,
 }
 
+export enum PdfPageFlattenFlag {
+  Display = 0,
+  Print = 1,
+}
+
+export enum PdfPageFlattenResult {
+  Fail = 0,
+  Success = 1,
+  NothingToDo = 2,
+}
+
 /**
  * Pdf File
  *
@@ -1539,6 +1550,7 @@ export interface PdfEngine {
   /**
    * Set form field value
    * @param doc - pdf document
+   * @param page - pdf page
    * @param annotation - pdf annotation
    * @param text - text value
    */
@@ -1548,6 +1560,17 @@ export interface PdfEngine {
     annotation: PdfWidgetAnnoObject,
     value: FormFieldValue,
   ) => PdfTask<boolean>;
+  /**
+   * Flatten annotations and form fields into the page contents.
+   * @param doc - pdf document
+   * @param page - pdf page
+   * @param flag - flatten flag
+   */
+  flattenPage: (
+    doc: PdfDocumentObject,
+    page: PdfPageObject,
+    flag: PdfPageFlattenFlag,
+  ) => PdfTask<PdfPageFlattenResult>;
   /**
    * Extract pdf pages to a new file
    * @param doc - pdf document

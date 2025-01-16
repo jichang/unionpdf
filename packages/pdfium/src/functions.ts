@@ -177,6 +177,7 @@ export const functions = {
   FPDFPage_InsertObject: [['number', 'number'] as const, 'boolean'] as const,
   FPDFPage_RemoveAnnot: [['number', 'number'] as const, 'boolean'] as const,
   FPDFPage_GenerateContent: [['number'] as const, 'boolean'] as const,
+  FPDFPage_Flatten: [['number', 'number'] as const, 'number'] as const,
   FPDF_ClosePage: [['number'] as const, null] as const,
   FPDFAnnot_GetSubtype: [['number'] as const, 'number'] as const,
   FPDFAnnot_GetAP: [

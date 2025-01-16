@@ -22,6 +22,8 @@ import {
   PdfWidgetAnnoObject,
   FormFieldValue,
   PdfTaskHelper,
+  PdfPageFlattenFlag,
+  PdfPageFlattenResult,
 } from '@unionpdf/models';
 
 /**
@@ -275,6 +277,15 @@ export function createMockPdfEngine(
     },
     saveAsCopy: (pdf: PdfDocumentObject) => {
       return PdfTaskHelper.resolve(new ArrayBuffer(0));
+    },
+    flattenPage: (
+      pdf: PdfDocumentObject,
+      page: PdfPageObject,
+      flag: PdfPageFlattenFlag,
+    ) => {
+      return PdfTaskHelper.resolve<PdfPageFlattenResult>(
+        PdfPageFlattenResult.Success,
+      );
     },
     extractPages: (pdf: PdfDocumentObject, pageIndexes: number[]) => {
       return PdfTaskHelper.resolve(new ArrayBuffer(0));
