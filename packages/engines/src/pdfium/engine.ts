@@ -1830,6 +1830,7 @@ export class PdfiumEngine implements PdfEngine {
     const { docPtr } = this.docs[doc.id];
     const pagePtr = this.pdfiumModule.FPDF_LoadPage(docPtr, page.index);
     const result = this.pdfiumModule.FPDFPage_Flatten(pagePtr, flag);
+    this.pdfiumModule.FPDF_ClosePage(pagePtr);
 
     this.logger.perf(LOG_SOURCE, LOG_CATEGORY, `flattenPage`, 'End', doc.id);
 
