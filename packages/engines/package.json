@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/engines",
-  "version": "0.32.0",
+  "version": "0.32.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -66,8 +66,8 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@unionpdf/models": "0.32.0",
-    "@unionpdf/pdfium": "0.32.0",
+    "@unionpdf/models": "0.32.1",
+    "@unionpdf/pdfium": "0.32.1",
     "buffer": "^6.0.3",
     "process": "^0.11.10"
   },
