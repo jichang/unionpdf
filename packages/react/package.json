@@ -48,14 +48,14 @@
   },
   "homepage": "https://github.com/jichang/unionpdf#readme",
   "devDependencies": {
-    "@playwright/test": "^1.49.0",
+    "@playwright/test": "^1.50.1",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.0.1",
-    "@testing-library/user-event": "^14.5.2",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/node": "^22.13.1",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
     "@unionpdf/engines": "0.32.1",
     "cpy-cli": "^5.0.0",
     "jest": "^29.7.0",
@@ -63,12 +63,12 @@
     "jest-css-modules-transform": "^4.4.2",
     "jest-environment-jsdom": "^29.7.0",
     "node-fetch": "^3.3.2",
-    "parcel": "2.13.2",
-    "playwright": "^1.49.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "parcel": "2.13.3",
+    "playwright": "^1.50.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@types/classnames": "^2.3.4",
@@ -76,8 +76,8 @@
     "classnames": "^2.5.1"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "overrides": {
     "lmdb": "2.6.0"

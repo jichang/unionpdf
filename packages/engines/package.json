@@ -59,11 +59,11 @@
     "events": "^3.3.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "parcel": "2.13.2",
+    "parcel": "2.13.3",
     "path-browserify": "^1.0.1",
     "stream-browserify": "^3.0.0",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@unionpdf/models": "0.32.1",
