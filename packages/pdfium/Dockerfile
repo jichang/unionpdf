@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile-upstream:master-labs
 
 # Base emsdk image with environment variables.
-FROM emscripten/emsdk:3.1.70 AS emsdk-base
+FROM emscripten/emsdk:4.0.10 AS emsdk-base
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -34,7 +34,7 @@ ENV PATH=${PATH}:/opt/depot-tools
 FROM depot-tools AS pdfium-src
 WORKDIR /build
 RUN gclient config --unmanaged https://pdfium.googlesource.com/pdfium.git
-RUN gclient sync -r origin/chromium/6815 --no-history --shallow
+RUN gclient sync -r origin/chromium/7267 --no-history --shallow
 
 FROM pdfium-src AS pdfium-deps
 RUN bash -x ./pdfium/build/install-build-deps.sh --no-prompt
@@ -42,14 +42,18 @@ RUN bash -x ./pdfium/build/install-build-deps.sh --no-prompt
 FROM pdfium-deps AS pdfium-patch
 COPY build/patch/BUILD.gn /build/pdfium/BUILD.gn
 COPY build/patch/build/config/BUILDCONFIG.gn /build/pdfium/build/config/BUILDCONFIG.gn
-COPY build/patch/build/toolchain/wasm/BUILD.gn /build/pdfium/build/toolchain/wasm/BUILD.gn
+# Update the emscripten_path in pdfium/build/toolchain/wasm/BUILD.gn
+RUN sed -i "s|emscripten_path = \"//third_party/emsdk/upstream/emscripten/\"|emscripten_path = \"$EMSDK/upstream/emscripten/\"|g" /build/pdfium/build/toolchain/wasm/BUILD.gn
+# Add extra compiler flags right before toolchain_args
+RUN sed -i '/toolchain_args = {/i\  extra_cflags = "-fno-stack-protector -Wno-unknown-warning-option -D_POSIX_C_SOURCE=200112"\n  extra_cxxflags = "-fno-stack-protector -Wno-unknown-warning-option -D_POSIX_C_SOURCE=200112"' /build/pdfium/build/toolchain/wasm/BUILD.gn
+
 COPY build/patch/core/fxge/BUILD.gn /build/pdfium/core/fxge/BUILD.gn
 
 FROM pdfium-patch AS pdfium-compile
 WORKDIR /build/pdfium
 RUN rm -rf out/prod
 RUN gn gen out/prod --args='is_debug=false treat_warnings_as_errors=false pdf_use_skia=false pdf_enable_xfa=false pdf_enable_v8=false is_component_build=false clang_use_chrome_plugins=false pdf_is_standalone=true use_debug_fission=false use_custom_libcxx=false use_sysroot=false pdf_is_complete_lib=true pdf_use_partition_alloc=false is_clang=false symbol_level=0'
-RUN echo 'target_os="wasm"' >> out/prod/args.gn
+RUN echo 'target_os="emscripten"' >> out/prod/args.gn
 RUN echo 'target_cpu="wasm"' >> out/prod/args.gn
 RUN ninja -C out/prod pdfium -v
 
