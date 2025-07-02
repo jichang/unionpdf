@@ -1,3 +1,4 @@
+
 /// <reference types="emscripten" />
 
 export interface WasmExports {
@@ -15,4 +16,6 @@ export interface PdfiumRuntimeMethods {
   UTF16ToString: typeof UTF16ToString;
   stringToUTF8: typeof stringToUTF8;
   stringToUTF16: typeof stringToUTF16;
+  HEAP8: Int8Array;
+  HEAPU8: Uint8Array;
 }
