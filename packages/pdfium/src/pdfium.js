@@ -1,9 +1,7 @@
-
 var createPdfium = (() => {
-  var _scriptName = import.meta.url;
   
   return (
-function(moduleArg = {}) {
+async function(moduleArg = {}) {
   var moduleRtn;
 
 // include: shell.js
@@ -22,21 +20,6 @@ function(moduleArg = {}) {
 // can continue to use Module afterwards as well.
 var Module = moduleArg;
 
-// Set up the promise that indicates the Module is initialized
-var readyPromiseResolve, readyPromiseReject;
-var readyPromise = new Promise((resolve, reject) => {
-  readyPromiseResolve = resolve;
-  readyPromiseReject = reject;
-});
-["_malloc","_free","_PDFiumExt_Init","_PDFiumExt_OpenFileWriter","_PDFiumExt_CloseFileWriter","_PDFiumExt_GetFileWriterSize","_PDFiumExt_GetFileWriterData","_PDFiumExt_OpenFormFillInfo","_PDFiumExt_CloseFormFillInfo","_PDFiumExt_InitFormFillEnvironment","_PDFiumExt_ExitFormFillEnvironment","_PDFiumExt_SaveAsCopy","_FPDF_LoadMemDocument","_FPDF_GetPageSizeByIndexF","_FPDF_GetLastError","_FPDF_GetPageCount","_FPDF_CloseDocument","_FPDF_GetDocPermissions","_FPDF_GetDocUserPermissions","_FPDF_DestroyLibrary","_FPDF_GetMetaText","_FPDFBitmap_FillRect","_FPDFBitmap_Create","_FPDFBitmap_CreateEx","_FPDFBitmap_GetBuffer","_FPDFBitmap_GetWidth","_FPDFBitmap_GetHeight","_FPDFBitmap_GetFormat","_FPDFBitmap_Destroy","_FPDFPageObj_Destroy","_FPDFPageObj_NewImageObj","_FPDFPageObj_GetMatrix","_FPDFPageObj_SetMatrix","_FPDFPageObj_GetBounds","_FPDFPageObj_Transform","_FPDFImageObj_SetBitmap","_FPDFImageObj_GetBitmap","_FPDFPath_CountSegments","_FPDFPath_GetPathSegment","_FPDFPathSegment_GetType","_FPDFPathSegment_GetPoint","_FPDFPathSegment_GetClose","_FPDFFormObj_CountObjects","_FPDFFormObj_GetObject","_FPDFBookmark_GetFirstChild","_FPDFBookmark_GetNextSibling","_FPDFBookmark_Find","_FPDFBookmark_GetTitle","_FPDFBookmark_GetAction","_FPDFBookmark_GetDest","_FPDFAction_GetType","_FPDFAction_GetFilePath","_FPDFAction_GetDest","_FPDFAction_GetURIPath","_FPDFDest_GetDestPageIndex","_FPDFDest_GetView","_FPDFDest_GetLocationInPage","_FPDF_LoadPage","_FPDF_RenderPageBitmap","_FPDF_PageToDevice","_FPDF_DeviceToPage","_FPDFPage_GetAnnotCount","_FPDFPage_GetAnnot","_FPDFPage_CreateAnnot","_FPDFPage_InsertObject","_FPDFPage_RemoveAnnot","_FPDFPage_GenerateContent","_FPDFPage_Flatten","_FPDF_ClosePage","_FPDFAnnot_GetSubtype","_FPDFAnnot_GetAP","_FPDFAnnot_GetObjectCount","_FPDFAnnot_GetObject","_FPDFAnnot_AppendObject","_FPDFAnnot_GetRect","_FPDFAnnot_SetRect","_FPDFAnnot_GetLink","_FPDFAnnot_GetFormFieldType","_FPDFAnnot_GetFormFieldFlags","_FPDFAnnot_GetFormFieldName","_FPDFAnnot_GetFormFieldAlternateName","_FPDFAnnot_GetFormFieldValue","_FPDFAnnot_GetOptionCount","_FPDFAnnot_GetOptionLabel","_FPDFAnnot_IsOptionSelected","_FPDFAnnot_IsChecked","_FPDFAnnot_GetStringValue","_FPDFAnnot_GetColor","_FPDFAnnot_GetLinkedAnnot","_FPDFAnnot_GetInkListCount","_FPDFAnnot_GetInkListPath","_FPDFAnnot_AddInkStroke","_FPDFAnnot_RemoveInkList","_FPDFAnnot_GetVertices","_FPDFAnnot_GetLine","_FPDFPageObj_GetType","_FPDFLink_GetDest","_FPDFLink_GetAction","_FPDFText_LoadPage","_FPDFText_CountChars","_FPDFText_CountRects","_FPDFText_GetRect","_FPDFText_GetCharIndexAtPos","_FPDFText_GetFontSize","_FPDFText_GetFontInfo","_FPDFText_GetBoundedText","_FPDFText_FindStart","_FPDFText_FindNext","_FPDFText_FindPrev","_FPDFText_GetSchResultIndex","_FPDFText_GetSchCount","_FPDFText_FindClose","_FPDFText_ClosePage","_FPDFText_GetText","_FPDFText_GetCharBox","_FPDFPage_CloseAnnot","_FPDFDoc_GetAttachmentCount","_FPDFDoc_GetAttachment","_FPDFAttachment_GetName","_FPDFAttachment_GetStringValue","_FPDFAttachment_GetFile","_FORM_OnAfterLoadPage","_FORM_OnBeforeClosePage","_FPDFAnnot_SetFocusableSubtypes","_FPDFAnnot_GetFocusableSubtypesCount","_FPDFAnnot_GetFocusableSubtypes","_FORM_SetFocusedAnnot","_FORM_SetIndexSelected","_FORM_OnKeyDown","_FORM_OnKeyUp","_FORM_OnChar","_FORM_SelectAllText","_FORM_ReplaceSelection","_FORM_ForceToKillFocus","_FPDF_GetSignatureCount","_FPDF_GetSignatureObject","_FPDFSignatureObj_GetContents","_FPDFSignatureObj_GetByteRange","_FPDFSignatureObj_GetSubFilter","_FPDFSignatureObj_GetReason","_FPDFSignatureObj_GetTime","_FPDFSignatureObj_GetDocMDPPermission","_FPDF_CreateNewDocument","_FPDF_ImportPagesByIndex","_FPDF_ImportPages","_memory","___indirect_function_table","onRuntimeInitialized"].forEach((prop) => {
-  if (!Object.getOwnPropertyDescriptor(readyPromise, prop)) {
-    Object.defineProperty(readyPromise, prop, {
-      get: () => abort('You are getting ' + prop + ' on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js'),
-      set: () => abort('You are setting ' + prop + ' on the Promise object, instead of the instance. Use .then() to get called back with the instance, see the MODULARIZE docs in src/settings.js'),
-    });
-  }
-});
-
 // Determine the runtime environment we are in. You can customize this by
 // setting the ENVIRONMENT setting at compile time (see settings.js).
 
@@ -49,18 +32,13 @@ var ENVIRONMENT_IS_SHELL = false;
 // refer to Module (if they choose; they can also define Module)
 
 
-// Sometimes an existing Module object exists with properties
-// meant to overwrite the default module functionality. Here
-// we collect those properties and reapply _after_ we configure
-// the current environment's defaults to avoid having to be so
-// defensive during initialization.
-var moduleOverrides = Object.assign({}, Module);
-
 var arguments_ = [];
 var thisProgram = './this.program';
 var quit_ = (status, toThrow) => {
   throw toThrow;
 };
+
+var _scriptName = import.meta.url;
 
 // `/` should be present at the end if `scriptDirectory` is not empty
 var scriptDirectory = '';
@@ -76,7 +54,8 @@ var readAsync, readBinary;
 
 if (ENVIRONMENT_IS_SHELL) {
 
-  if ((typeof process == 'object' && typeof require === 'function') || typeof window == 'object' || typeof importScripts == 'function') throw new Error('not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)');
+  const isNode = typeof process == 'object' && process.versions?.node && process.type != 'renderer';
+  if (isNode || typeof window == 'object' || typeof WorkerGlobalScope != 'undefined') throw new Error('not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)');
 
 } else
 
@@ -84,29 +63,14 @@ if (ENVIRONMENT_IS_SHELL) {
 // Node.js workers are detected as a combination of ENVIRONMENT_IS_WORKER and
 // ENVIRONMENT_IS_NODE.
 if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
-  if (ENVIRONMENT_IS_WORKER) { // Check worker, not web, since window could be polyfilled
-    scriptDirectory = self.location.href;
-  } else if (typeof document != 'undefined' && document.currentScript) { // web
-    scriptDirectory = document.currentScript.src;
-  }
-  // When MODULARIZE, this JS may be executed later, after document.currentScript
-  // is gone, so we saved it, and we use it here instead of any other info.
-  if (_scriptName) {
-    scriptDirectory = _scriptName;
-  }
-  // blob urls look like blob:http://site.com/etc/etc and we cannot infer anything from them.
-  // otherwise, slice off the final part of the url to find the script directory.
-  // if scriptDirectory does not contain a slash, lastIndexOf will return -1,
-  // and scriptDirectory will correctly be replaced with an empty string.
-  // If scriptDirectory contains a query (starting with ?) or a fragment (starting with #),
-  // they are removed because they could contain a slash.
-  if (scriptDirectory.startsWith('blob:')) {
-    scriptDirectory = '';
-  } else {
-    scriptDirectory = scriptDirectory.substr(0, scriptDirectory.replace(/[?#].*/, '').lastIndexOf('/')+1);
+  try {
+    scriptDirectory = new URL('.', _scriptName).href; // includes trailing slash
+  } catch {
+    // Must be a `blob:` or `data:` URL (e.g. `blob:http://site.com/etc/etc`), we cannot
+    // infer anything from them.
   }
 
-  if (!(typeof window == 'object' || typeof importScripts == 'function')) throw new Error('not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)');
+  if (!(typeof window == 'object' || typeof WorkerGlobalScope != 'undefined')) throw new Error('not compiled for this environment (did you build to HTML and try to run it not on the web, or set ENVIRONMENT to something - like node - and run it someplace else - like on the web?)');
 
   {
 // include: web_or_worker_shell_read.js
@@ -120,15 +84,13 @@ if (ENVIRONMENT_IS_WORKER) {
     };
   }
 
-  readAsync = (url) => {
+  readAsync = async (url) => {
     assert(!isFileURI(url), "readAsync does not work with file:// URLs");
-    return fetch(url, { credentials: 'same-origin' })
-      .then((response) => {
-        if (response.ok) {
-          return response.arrayBuffer();
-        }
-        return Promise.reject(new Error(response.status + ' : ' + response.url));
-      })
+    var response = await fetch(url, { credentials: 'same-origin' });
+    if (response.ok) {
+      return response.arrayBuffer();
+    }
+    throw new Error(response.status + ' : ' + response.url);
   };
 // end include: web_or_worker_shell_read.js
   }
@@ -137,40 +99,9 @@ if (ENVIRONMENT_IS_WORKER) {
   throw new Error('environment detection error');
 }
 
-var out = Module['print'] || console.log.bind(console);
-var err = Module['printErr'] || console.error.bind(console);
+var out = console.log.bind(console);
+var err = console.error.bind(console);
 
-// Merge back in the overrides
-Object.assign(Module, moduleOverrides);
-// Free the object hierarchy contained in the overrides, this lets the GC
-// reclaim data used.
-moduleOverrides = null;
-checkIncomingModuleAPI();
-
-// Emit code to handle expected values on the Module object. This applies Module.x
-// to the proper local x. This has two benefits: first, we only emit it if it is
-// expected to arrive, and second, by using a local everywhere else that can be
-// minified.
-
-if (Module['arguments']) arguments_ = Module['arguments'];legacyModuleProp('arguments', 'arguments_');
-
-if (Module['thisProgram']) thisProgram = Module['thisProgram'];legacyModuleProp('thisProgram', 'thisProgram');
-
-// perform assertions in shell.js after we set up out() and err(), as otherwise if an assertion fails it cannot print the message
-// Assertions on removed incoming Module JS APIs.
-assert(typeof Module['memoryInitializerPrefixURL'] == 'undefined', 'Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead');
-assert(typeof Module['pthreadMainPrefixURL'] == 'undefined', 'Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead');
-assert(typeof Module['cdInitializerPrefixURL'] == 'undefined', 'Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead');
-assert(typeof Module['filePackagePrefixURL'] == 'undefined', 'Module.filePackagePrefixURL option was removed, use Module.locateFile instead');
-assert(typeof Module['read'] == 'undefined', 'Module.read option was removed');
-assert(typeof Module['readAsync'] == 'undefined', 'Module.readAsync option was removed (modify readAsync in JS)');
-assert(typeof Module['readBinary'] == 'undefined', 'Module.readBinary option was removed (modify readBinary in JS)');
-assert(typeof Module['setWindowTitle'] == 'undefined', 'Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)');
-assert(typeof Module['TOTAL_MEMORY'] == 'undefined', 'Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY');
-legacyModuleProp('asm', 'wasmExports');
-legacyModuleProp('readAsync', 'readAsync');
-legacyModuleProp('readBinary', 'readBinary');
-legacyModuleProp('setWindowTitle', 'setWindowTitle');
 var IDBFS = 'IDBFS is no longer included by default; build with -lidbfs.js';
 var PROXYFS = 'PROXYFS is no longer included by default; build with -lproxyfs.js';
 var WORKERFS = 'WORKERFS is no longer included by default; build with -lworkerfs.js';
@@ -180,6 +111,9 @@ var JSFILEFS = 'JSFILEFS is no longer included by default; build with -ljsfilefs
 var OPFS = 'OPFS is no longer included by default; build with -lopfs.js';
 
 var NODEFS = 'NODEFS is no longer included by default; build with -lnodefs.js';
+
+// perform assertions in shell.js after we set up out() and err(), as otherwise
+// if an assertion fails it cannot print the message
 
 assert(!ENVIRONMENT_IS_WEB, 'web environment detected but not enabled at build time.  Add `web` to `-sENVIRONMENT` to enable.');
 
@@ -200,15 +134,13 @@ assert(!ENVIRONMENT_IS_SHELL, 'shell environment detected but not enabled at bui
 // An online HTML version (which may be of a different version of Emscripten)
 //    is up at http://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html
 
-var wasmBinary = Module['wasmBinary'];legacyModuleProp('wasmBinary', 'wasmBinary');
+var wasmBinary;
 
 if (typeof WebAssembly != 'object') {
   err('no native wasm support detected');
 }
 
 // Wasm globals
-
-var wasmMemory;
 
 //========================================
 // Runtime essentials
@@ -237,49 +169,13 @@ function assert(condition, text) {
 // We used to include malloc/free by default in the past. Show a helpful error in
 // builds with assertions.
 
-// Memory management
+/**
+ * Indicates whether filename is delivered via file protocol (as opposed to http/https)
+ * @noinline
+ */
+var isFileURI = (filename) => filename.startsWith('file://');
 
-var HEAP,
-/** @type {!Int8Array} */
-  HEAP8,
-/** @type {!Uint8Array} */
-  HEAPU8,
-/** @type {!Int16Array} */
-  HEAP16,
-/** @type {!Uint16Array} */
-  HEAPU16,
-/** @type {!Int32Array} */
-  HEAP32,
-/** @type {!Uint32Array} */
-  HEAPU32,
-/** @type {!Float32Array} */
-  HEAPF32,
-/** @type {!Float64Array} */
-  HEAPF64;
-
-// include: runtime_shared.js
-function updateMemoryViews() {
-  var b = wasmMemory.buffer;
-  Module['HEAP8'] = HEAP8 = new Int8Array(b);
-  Module['HEAP16'] = HEAP16 = new Int16Array(b);
-  Module['HEAPU8'] = HEAPU8 = new Uint8Array(b);
-  Module['HEAPU16'] = HEAPU16 = new Uint16Array(b);
-  Module['HEAP32'] = HEAP32 = new Int32Array(b);
-  Module['HEAPU32'] = HEAPU32 = new Uint32Array(b);
-  Module['HEAPF32'] = HEAPF32 = new Float32Array(b);
-  Module['HEAPF64'] = HEAPF64 = new Float64Array(b);
-}
-
-// end include: runtime_shared.js
-assert(!Module['STACK_SIZE'], 'STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time')
-
-assert(typeof Int32Array != 'undefined' && typeof Float64Array !== 'undefined' && Int32Array.prototype.subarray != undefined && Int32Array.prototype.set != undefined,
-       'JS engine does not provide full typed array support');
-
-// If memory is defined in wasm, the user can't provide it, or set INITIAL_MEMORY
-assert(!Module['wasmMemory'], 'Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally');
-assert(!Module['INITIAL_MEMORY'], 'Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically');
-
+// include: runtime_common.js
 // include: runtime_stack_check.js
 // Initializes the stack cookie. Called at the startup of main and at the startup of each thread in pthreads mode.
 function writeStackCookie() {
@@ -318,383 +214,19 @@ function checkStackCookie() {
   }
 }
 // end include: runtime_stack_check.js
-var __ATPRERUN__  = []; // functions called before the runtime is initialized
-var __ATINIT__    = []; // functions called during startup
-var __ATEXIT__    = []; // functions called during shutdown
-var __ATPOSTRUN__ = []; // functions called after the main() is called
-
-var runtimeInitialized = false;
-
-function preRun() {
-  var preRuns = Module['preRun'];
-  if (preRuns) {
-    if (typeof preRuns == 'function') preRuns = [preRuns];
-    preRuns.forEach(addOnPreRun);
-  }
-  callRuntimeCallbacks(__ATPRERUN__);
-}
-
-function initRuntime() {
-  assert(!runtimeInitialized);
-  runtimeInitialized = true;
-
-  checkStackCookie();
-
-  
-if (!Module['noFSInit'] && !FS.initialized)
-  FS.init();
-FS.ignorePermissions = false;
-
-TTY.init();
-  callRuntimeCallbacks(__ATINIT__);
-}
-
-function postRun() {
-  checkStackCookie();
-
-  var postRuns = Module['postRun'];
-  if (postRuns) {
-    if (typeof postRuns == 'function') postRuns = [postRuns];
-    postRuns.forEach(addOnPostRun);
-  }
-
-  callRuntimeCallbacks(__ATPOSTRUN__);
-}
-
-function addOnPreRun(cb) {
-  __ATPRERUN__.unshift(cb);
-}
-
-function addOnInit(cb) {
-  __ATINIT__.unshift(cb);
-}
-
-function addOnExit(cb) {
-}
-
-function addOnPostRun(cb) {
-  __ATPOSTRUN__.unshift(cb);
-}
-
-// include: runtime_math.js
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/imul
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/fround
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/clz32
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc
-
-assert(Math.imul, 'This browser does not support Math.imul(), build with LEGACY_VM_SUPPORT or POLYFILL_OLD_MATH_FUNCTIONS to add in a polyfill');
-assert(Math.fround, 'This browser does not support Math.fround(), build with LEGACY_VM_SUPPORT or POLYFILL_OLD_MATH_FUNCTIONS to add in a polyfill');
-assert(Math.clz32, 'This browser does not support Math.clz32(), build with LEGACY_VM_SUPPORT or POLYFILL_OLD_MATH_FUNCTIONS to add in a polyfill');
-assert(Math.trunc, 'This browser does not support Math.trunc(), build with LEGACY_VM_SUPPORT or POLYFILL_OLD_MATH_FUNCTIONS to add in a polyfill');
-// end include: runtime_math.js
-// A counter of dependencies for calling run(). If we need to
-// do asynchronous work before running, increment this and
-// decrement it. Incrementing must happen in a place like
-// Module.preRun (used by emcc to add file preloading).
-// Note that you can add dependencies in preRun, even though
-// it happens right before run - run will be postponed until
-// the dependencies are met.
-var runDependencies = 0;
-var runDependencyWatcher = null;
-var dependenciesFulfilled = null; // overridden to take different actions when all run dependencies are fulfilled
-var runDependencyTracking = {};
-
-function getUniqueRunDependency(id) {
-  var orig = id;
-  while (1) {
-    if (!runDependencyTracking[id]) return id;
-    id = orig + Math.random();
-  }
-}
-
-function addRunDependency(id) {
-  runDependencies++;
-
-  Module['monitorRunDependencies']?.(runDependencies);
-
-  if (id) {
-    assert(!runDependencyTracking[id]);
-    runDependencyTracking[id] = 1;
-    if (runDependencyWatcher === null && typeof setInterval != 'undefined') {
-      // Check for missing dependencies every few seconds
-      runDependencyWatcher = setInterval(() => {
-        if (ABORT) {
-          clearInterval(runDependencyWatcher);
-          runDependencyWatcher = null;
-          return;
-        }
-        var shown = false;
-        for (var dep in runDependencyTracking) {
-          if (!shown) {
-            shown = true;
-            err('still waiting on run dependencies:');
-          }
-          err(`dependency: ${dep}`);
-        }
-        if (shown) {
-          err('(end of list)');
-        }
-      }, 10000);
-    }
-  } else {
-    err('warning: run dependency added without ID');
-  }
-}
-
-function removeRunDependency(id) {
-  runDependencies--;
-
-  Module['monitorRunDependencies']?.(runDependencies);
-
-  if (id) {
-    assert(runDependencyTracking[id]);
-    delete runDependencyTracking[id];
-  } else {
-    err('warning: run dependency removed without ID');
-  }
-  if (runDependencies == 0) {
-    if (runDependencyWatcher !== null) {
-      clearInterval(runDependencyWatcher);
-      runDependencyWatcher = null;
-    }
-    if (dependenciesFulfilled) {
-      var callback = dependenciesFulfilled;
-      dependenciesFulfilled = null;
-      callback(); // can add another dependenciesFulfilled
-    }
-  }
-}
-
-/** @param {string|number=} what */
-function abort(what) {
-  Module['onAbort']?.(what);
-
-  what = 'Aborted(' + what + ')';
-  // TODO(sbc): Should we remove printing and leave it up to whoever
-  // catches the exception?
-  err(what);
-
-  ABORT = true;
-
-  // Use a wasm runtime error, because a JS error might be seen as a foreign
-  // exception, which means we'd run destructors on it. We need the error to
-  // simply make the program stop.
-  // FIXME This approach does not work in Wasm EH because it currently does not assume
-  // all RuntimeErrors are from traps; it decides whether a RuntimeError is from
-  // a trap or not based on a hidden field within the object. So at the moment
-  // we don't have a way of throwing a wasm trap from JS. TODO Make a JS API that
-  // allows this in the wasm spec.
-
-  // Suppress closure compiler warning here. Closure compiler's builtin extern
-  // definition for WebAssembly.RuntimeError claims it takes no arguments even
-  // though it can.
-  // TODO(https://github.com/google/closure-compiler/pull/3913): Remove if/when upstream closure gets fixed.
-  /** @suppress {checkTypes} */
-  var e = new WebAssembly.RuntimeError(what);
-
-  readyPromiseReject(e);
-  // Throw the error whether or not MODULARIZE is set because abort is used
-  // in code paths apart from instantiation where an exception is expected
-  // to be thrown when abort is called.
-  throw e;
-}
-
-// include: memoryprofiler.js
-// end include: memoryprofiler.js
-// include: URIUtils.js
-// Prefix of data URIs emitted by SINGLE_FILE and related options.
-var dataURIPrefix = 'data:application/octet-stream;base64,';
-
-/**
- * Indicates whether filename is a base64 data URI.
- * @noinline
- */
-var isDataURI = (filename) => filename.startsWith(dataURIPrefix);
-
-/**
- * Indicates whether filename is delivered via file protocol (as opposed to http/https)
- * @noinline
- */
-var isFileURI = (filename) => filename.startsWith('file://');
-// end include: URIUtils.js
-function createExportWrapper(name, nargs) {
-  return (...args) => {
-    assert(runtimeInitialized, `native function \`${name}\` called before runtime initialization`);
-    var f = wasmExports[name];
-    assert(f, `exported native function \`${name}\` not found`);
-    // Only assert for too many arguments. Too few can be valid since the missing arguments will be zero filled.
-    assert(args.length <= nargs, `native function \`${name}\` called with ${args.length} args but expects ${nargs}`);
-    return f(...args);
-  };
-}
-
 // include: runtime_exceptions.js
 // end include: runtime_exceptions.js
-function findWasmBinary() {
-  if (Module['locateFile']) {
-    var f = 'pdfium.wasm';
-    if (!isDataURI(f)) {
-      return locateFile(f);
-    }
-    return f;
-  }
-  // Use bundler-friendly `new URL(..., import.meta.url)` pattern; works in browsers too.
-  return new URL('pdfium.wasm', import.meta.url).href;
-}
-
-var wasmBinaryFile;
-
-function getBinarySync(file) {
-  if (file == wasmBinaryFile && wasmBinary) {
-    return new Uint8Array(wasmBinary);
-  }
-  if (readBinary) {
-    return readBinary(file);
-  }
-  throw 'both async and sync fetching of the wasm failed';
-}
-
-function getBinaryPromise(binaryFile) {
-  // If we don't have the binary yet, load it asynchronously using readAsync.
-  if (!wasmBinary
-      ) {
-    // Fetch the binary using readAsync
-    return readAsync(binaryFile).then(
-      (response) => new Uint8Array(/** @type{!ArrayBuffer} */(response)),
-      // Fall back to getBinarySync if readAsync fails
-      () => getBinarySync(binaryFile)
-    );
-  }
-
-  // Otherwise, getBinarySync should be able to get it synchronously
-  return Promise.resolve().then(() => getBinarySync(binaryFile));
-}
-
-function instantiateArrayBuffer(binaryFile, imports, receiver) {
-  return getBinaryPromise(binaryFile).then((binary) => {
-    return WebAssembly.instantiate(binary, imports);
-  }).then(receiver, (reason) => {
-    err(`failed to asynchronously prepare wasm: ${reason}`);
-
-    // Warn on some common problems.
-    if (isFileURI(wasmBinaryFile)) {
-      err(`warning: Loading from a file URI (${wasmBinaryFile}) is not supported in most browsers. See https://emscripten.org/docs/getting_started/FAQ.html#how-do-i-run-a-local-webserver-for-testing-why-does-my-program-stall-in-downloading-or-preparing`);
-    }
-    abort(reason);
-  });
-}
-
-function instantiateAsync(binary, binaryFile, imports, callback) {
-  if (!binary &&
-      typeof WebAssembly.instantiateStreaming == 'function' &&
-      !isDataURI(binaryFile) &&
-      typeof fetch == 'function') {
-    return fetch(binaryFile, { credentials: 'same-origin' }).then((response) => {
-      // Suppress closure warning here since the upstream definition for
-      // instantiateStreaming only allows Promise<Repsponse> rather than
-      // an actual Response.
-      // TODO(https://github.com/google/closure-compiler/pull/3913): Remove if/when upstream closure is fixed.
-      /** @suppress {checkTypes} */
-      var result = WebAssembly.instantiateStreaming(response, imports);
-
-      return result.then(
-        callback,
-        function(reason) {
-          // We expect the most common failure cause to be a bad MIME type for the binary,
-          // in which case falling back to ArrayBuffer instantiation should work.
-          err(`wasm streaming compile failed: ${reason}`);
-          err('falling back to ArrayBuffer instantiation');
-          return instantiateArrayBuffer(binaryFile, imports, callback);
-        });
-    });
-  }
-  return instantiateArrayBuffer(binaryFile, imports, callback);
-}
-
-function getWasmImports() {
-  // prepare imports
-  return {
-    'env': wasmImports,
-    'wasi_snapshot_preview1': wasmImports,
-  }
-}
-
-// Create the wasm instance.
-// Receives the wasm imports, returns the exports.
-function createWasm() {
-  var info = getWasmImports();
-  // Load the wasm module and create an instance of using native support in the JS engine.
-  // handle a generated wasm instance, receiving its exports and
-  // performing other necessary setup
-  /** @param {WebAssembly.Module=} module*/
-  function receiveInstance(instance, module) {
-    wasmExports = instance.exports;
-
-    Module['wasmExports'] = wasmExports;
-
-    wasmMemory = wasmExports['memory'];
-    
-    assert(wasmMemory, 'memory not found in wasm exports');
-    updateMemoryViews();
-
-    wasmTable = wasmExports['__indirect_function_table'];
-    
-    assert(wasmTable, 'table not found in wasm exports');
-
-    addOnInit(wasmExports['__wasm_call_ctors']);
-
-    removeRunDependency('wasm-instantiate');
-    return wasmExports;
-  }
-  // wait for the pthread pool (if any)
-  addRunDependency('wasm-instantiate');
-
-  // Prefer streaming instantiation if available.
-  // Async compilation can be confusing when an error on the page overwrites Module
-  // (for example, if the order of elements is wrong, and the one defining Module is
-  // later), so we save Module and check it later.
-  var trueModule = Module;
-  function receiveInstantiationResult(result) {
-    // 'result' is a ResultObject object which has both the module and instance.
-    // receiveInstance() will swap in the exports (to Module.asm) so they can be called
-    assert(Module === trueModule, 'the Module object should not be replaced during async compilation - perhaps the order of HTML elements is wrong?');
-    trueModule = null;
-    // TODO: Due to Closure regression https://github.com/google/closure-compiler/issues/3193, the above line no longer optimizes out down to the following line.
-    // When the regression is fixed, can restore the above PTHREADS-enabled path.
-    receiveInstance(result['instance']);
-  }
-
-  // User shell pages can write their own Module.instantiateWasm = function(imports, successCallback) callback
-  // to manually instantiate the Wasm module themselves. This allows pages to
-  // run the instantiation parallel to any other async startup actions they are
-  // performing.
-  // Also pthreads and wasm workers initialize the wasm instance through this
-  // path.
-  if (Module['instantiateWasm']) {
-    try {
-      return Module['instantiateWasm'](info, receiveInstance);
-    } catch(e) {
-      err(`Module.instantiateWasm callback failed with error: ${e}`);
-        // If instantiation fails, reject the module ready promise.
-        readyPromiseReject(e);
-    }
-  }
-
-  wasmBinaryFile ??= findWasmBinary();
-
-  // If instantiation fails, reject the module ready promise.
-  instantiateAsync(wasmBinary, wasmBinaryFile, info, receiveInstantiationResult).catch(readyPromiseReject);
-  return {}; // no exports yet; we'll fill them in later
-}
-
-// Globals used by JS i64 conversions (see makeSetValue)
-var tempDouble;
-var tempI64;
-
 // include: runtime_debug.js
+var runtimeDebug = true; // Switch to false at runtime to disable logging at the right times
+
+// Used by XXXXX_DEBUG settings to output debug messages.
+function dbg(...args) {
+  if (!runtimeDebug && typeof runtimeDebug != 'undefined') return;
+  // TODO(sbc): Make this configurable somehow.  Its not always convenient for
+  // logging to show up as warnings.
+  console.warn(...args);
+}
+
 // Endianness check
 (() => {
   var h16 = new Int16Array(1);
@@ -703,21 +235,21 @@ var tempI64;
   if (h8[0] !== 0x73 || h8[1] !== 0x63) throw 'Runtime error: expected the system to be little-endian! (Run with -sSUPPORT_BIG_ENDIAN to bypass)';
 })();
 
-if (Module['ENVIRONMENT']) {
-  throw new Error('Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)');
-}
-
-function legacyModuleProp(prop, newName, incoming=true) {
+function consumedModuleProp(prop) {
   if (!Object.getOwnPropertyDescriptor(Module, prop)) {
     Object.defineProperty(Module, prop, {
       configurable: true,
-      get() {
-        let extra = incoming ? ' (the initial value can be provided on Module, but after startup the value is only looked for on a local variable of that name)' : '';
-        abort(`\`Module.${prop}\` has been replaced by \`${newName}\`` + extra);
+      set() {
+        abort(`Attempt to set \`Module.${prop}\` after it has already been processed.  This can happen, for example, when code is injected via '--post-js' rather than '--pre-js'`);
 
       }
     });
   }
+}
+
+function makeInvalidEarlyAccess(name) {
+  return () => assert(false, `call to '${name}' via reference taken before Wasm module initialization`);
+
 }
 
 function ignoredModuleProp(prop) {
@@ -804,28 +336,399 @@ function unexportedRuntimeSymbol(sym) {
   }
 }
 
-// Used by XXXXX_DEBUG settings to output debug messages.
-function dbg(...args) {
-  // TODO(sbc): Make this configurable somehow.  Its not always convenient for
-  // logging to show up as warnings.
-  console.warn(...args);
-}
 // end include: runtime_debug.js
-// === Body ===
+var readyPromiseResolve, readyPromiseReject;
+
+// Memory management
+
+var wasmMemory;
+
+var
+/** @type {!Int8Array} */
+  HEAP8,
+/** @type {!Uint8Array} */
+  HEAPU8,
+/** @type {!Int16Array} */
+  HEAP16,
+/** @type {!Uint16Array} */
+  HEAPU16,
+/** @type {!Int32Array} */
+  HEAP32,
+/** @type {!Uint32Array} */
+  HEAPU32,
+/** @type {!Float32Array} */
+  HEAPF32,
+/** @type {!Float64Array} */
+  HEAPF64;
+
+// BigInt64Array type is not correctly defined in closure
+var
+/** not-@type {!BigInt64Array} */
+  HEAP64,
+/* BigUint64Array type is not correctly defined in closure
+/** not-@type {!BigUint64Array} */
+  HEAPU64;
+
+var runtimeInitialized = false;
+
+
+
+function updateMemoryViews() {
+  var b = wasmMemory.buffer;
+  Module['HEAP8'] = HEAP8 = new Int8Array(b);
+  HEAP16 = new Int16Array(b);
+  Module['HEAPU8'] = HEAPU8 = new Uint8Array(b);
+  HEAPU16 = new Uint16Array(b);
+  HEAP32 = new Int32Array(b);
+  HEAPU32 = new Uint32Array(b);
+  HEAPF32 = new Float32Array(b);
+  HEAPF64 = new Float64Array(b);
+  HEAP64 = new BigInt64Array(b);
+  HEAPU64 = new BigUint64Array(b);
+}
+
+// include: memoryprofiler.js
+// end include: memoryprofiler.js
+// end include: runtime_common.js
+assert(typeof Int32Array != 'undefined' && typeof Float64Array !== 'undefined' && Int32Array.prototype.subarray != undefined && Int32Array.prototype.set != undefined,
+       'JS engine does not provide full typed array support');
+
+function preRun() {
+  if (Module['preRun']) {
+    if (typeof Module['preRun'] == 'function') Module['preRun'] = [Module['preRun']];
+    while (Module['preRun'].length) {
+      addOnPreRun(Module['preRun'].shift());
+    }
+  }
+  consumedModuleProp('preRun');
+  // Begin ATPRERUNS hooks
+  callRuntimeCallbacks(onPreRuns);
+  // End ATPRERUNS hooks
+}
+
+function initRuntime() {
+  assert(!runtimeInitialized);
+  runtimeInitialized = true;
+
+  checkStackCookie();
+
+  // Begin ATINITS hooks
+  if (!Module['noFSInit'] && !FS.initialized) FS.init();
+TTY.init();
+  // End ATINITS hooks
+
+  wasmExports['__wasm_call_ctors']();
+
+  // Begin ATPOSTCTORS hooks
+  FS.ignorePermissions = false;
+  // End ATPOSTCTORS hooks
+}
+
+function postRun() {
+  checkStackCookie();
+   // PThreads reuse the runtime from the main thread.
+
+  if (Module['postRun']) {
+    if (typeof Module['postRun'] == 'function') Module['postRun'] = [Module['postRun']];
+    while (Module['postRun'].length) {
+      addOnPostRun(Module['postRun'].shift());
+    }
+  }
+  consumedModuleProp('postRun');
+
+  // Begin ATPOSTRUNS hooks
+  callRuntimeCallbacks(onPostRuns);
+  // End ATPOSTRUNS hooks
+}
+
+// A counter of dependencies for calling run(). If we need to
+// do asynchronous work before running, increment this and
+// decrement it. Incrementing must happen in a place like
+// Module.preRun (used by emcc to add file preloading).
+// Note that you can add dependencies in preRun, even though
+// it happens right before run - run will be postponed until
+// the dependencies are met.
+var runDependencies = 0;
+var dependenciesFulfilled = null; // overridden to take different actions when all run dependencies are fulfilled
+var runDependencyTracking = {};
+var runDependencyWatcher = null;
+
+function addRunDependency(id) {
+  runDependencies++;
+
+  Module['monitorRunDependencies']?.(runDependencies);
+
+  if (id) {
+    assert(!runDependencyTracking[id]);
+    runDependencyTracking[id] = 1;
+    if (runDependencyWatcher === null && typeof setInterval != 'undefined') {
+      // Check for missing dependencies every few seconds
+      runDependencyWatcher = setInterval(() => {
+        if (ABORT) {
+          clearInterval(runDependencyWatcher);
+          runDependencyWatcher = null;
+          return;
+        }
+        var shown = false;
+        for (var dep in runDependencyTracking) {
+          if (!shown) {
+            shown = true;
+            err('still waiting on run dependencies:');
+          }
+          err(`dependency: ${dep}`);
+        }
+        if (shown) {
+          err('(end of list)');
+        }
+      }, 10000);
+    }
+  } else {
+    err('warning: run dependency added without ID');
+  }
+}
+
+function removeRunDependency(id) {
+  runDependencies--;
+
+  Module['monitorRunDependencies']?.(runDependencies);
+
+  if (id) {
+    assert(runDependencyTracking[id]);
+    delete runDependencyTracking[id];
+  } else {
+    err('warning: run dependency removed without ID');
+  }
+  if (runDependencies == 0) {
+    if (runDependencyWatcher !== null) {
+      clearInterval(runDependencyWatcher);
+      runDependencyWatcher = null;
+    }
+    if (dependenciesFulfilled) {
+      var callback = dependenciesFulfilled;
+      dependenciesFulfilled = null;
+      callback(); // can add another dependenciesFulfilled
+    }
+  }
+}
+
+/** @param {string|number=} what */
+function abort(what) {
+  Module['onAbort']?.(what);
+
+  what = 'Aborted(' + what + ')';
+  // TODO(sbc): Should we remove printing and leave it up to whoever
+  // catches the exception?
+  err(what);
+
+  ABORT = true;
+
+  // Use a wasm runtime error, because a JS error might be seen as a foreign
+  // exception, which means we'd run destructors on it. We need the error to
+  // simply make the program stop.
+  // FIXME This approach does not work in Wasm EH because it currently does not assume
+  // all RuntimeErrors are from traps; it decides whether a RuntimeError is from
+  // a trap or not based on a hidden field within the object. So at the moment
+  // we don't have a way of throwing a wasm trap from JS. TODO Make a JS API that
+  // allows this in the wasm spec.
+
+  // Suppress closure compiler warning here. Closure compiler's builtin extern
+  // definition for WebAssembly.RuntimeError claims it takes no arguments even
+  // though it can.
+  // TODO(https://github.com/google/closure-compiler/pull/3913): Remove if/when upstream closure gets fixed.
+  /** @suppress {checkTypes} */
+  var e = new WebAssembly.RuntimeError(what);
+
+  readyPromiseReject?.(e);
+  // Throw the error whether or not MODULARIZE is set because abort is used
+  // in code paths apart from instantiation where an exception is expected
+  // to be thrown when abort is called.
+  throw e;
+}
+
+function createExportWrapper(name, nargs) {
+  return (...args) => {
+    assert(runtimeInitialized, `native function \`${name}\` called before runtime initialization`);
+    var f = wasmExports[name];
+    assert(f, `exported native function \`${name}\` not found`);
+    // Only assert for too many arguments. Too few can be valid since the missing arguments will be zero filled.
+    assert(args.length <= nargs, `native function \`${name}\` called with ${args.length} args but expects ${nargs}`);
+    return f(...args);
+  };
+}
+
+var wasmBinaryFile;
+
+function findWasmBinary() {
+  if (Module['locateFile']) {
+    return locateFile('pdfium.wasm');
+  }
+  // Use bundler-friendly `new URL(..., import.meta.url)` pattern; works in browsers too.
+  return new URL('pdfium.wasm', import.meta.url).href;
+}
+
+function getBinarySync(file) {
+  if (file == wasmBinaryFile && wasmBinary) {
+    return new Uint8Array(wasmBinary);
+  }
+  if (readBinary) {
+    return readBinary(file);
+  }
+  throw 'both async and sync fetching of the wasm failed';
+}
+
+async function getWasmBinary(binaryFile) {
+  // If we don't have the binary yet, load it asynchronously using readAsync.
+  if (!wasmBinary) {
+    // Fetch the binary using readAsync
+    try {
+      var response = await readAsync(binaryFile);
+      return new Uint8Array(response);
+    } catch {
+      // Fall back to getBinarySync below;
+    }
+  }
+
+  // Otherwise, getBinarySync should be able to get it synchronously
+  return getBinarySync(binaryFile);
+}
+
+async function instantiateArrayBuffer(binaryFile, imports) {
+  try {
+    var binary = await getWasmBinary(binaryFile);
+    var instance = await WebAssembly.instantiate(binary, imports);
+    return instance;
+  } catch (reason) {
+    err(`failed to asynchronously prepare wasm: ${reason}`);
+
+    // Warn on some common problems.
+    if (isFileURI(wasmBinaryFile)) {
+      err(`warning: Loading from a file URI (${wasmBinaryFile}) is not supported in most browsers. See https://emscripten.org/docs/getting_started/FAQ.html#how-do-i-run-a-local-webserver-for-testing-why-does-my-program-stall-in-downloading-or-preparing`);
+    }
+    abort(reason);
+  }
+}
+
+async function instantiateAsync(binary, binaryFile, imports) {
+  if (!binary && typeof WebAssembly.instantiateStreaming == 'function'
+     ) {
+    try {
+      var response = fetch(binaryFile, { credentials: 'same-origin' });
+      var instantiationResult = await WebAssembly.instantiateStreaming(response, imports);
+      return instantiationResult;
+    } catch (reason) {
+      // We expect the most common failure cause to be a bad MIME type for the binary,
+      // in which case falling back to ArrayBuffer instantiation should work.
+      err(`wasm streaming compile failed: ${reason}`);
+      err('falling back to ArrayBuffer instantiation');
+      // fall back of instantiateArrayBuffer below
+    };
+  }
+  return instantiateArrayBuffer(binaryFile, imports);
+}
+
+function getWasmImports() {
+  // prepare imports
+  return {
+    'env': wasmImports,
+    'wasi_snapshot_preview1': wasmImports,
+  }
+}
+
+// Create the wasm instance.
+// Receives the wasm imports, returns the exports.
+async function createWasm() {
+  // Load the wasm module and create an instance of using native support in the JS engine.
+  // handle a generated wasm instance, receiving its exports and
+  // performing other necessary setup
+  /** @param {WebAssembly.Module=} module*/
+  function receiveInstance(instance, module) {
+    wasmExports = instance.exports;
+
+    Module['wasmExports'] = wasmExports;
+
+    wasmMemory = wasmExports['memory'];
+    
+    assert(wasmMemory, 'memory not found in wasm exports');
+    updateMemoryViews();
+
+    wasmTable = wasmExports['__indirect_function_table'];
+    
+    assert(wasmTable, 'table not found in wasm exports');
+
+    assignWasmExports(wasmExports);
+    removeRunDependency('wasm-instantiate');
+    return wasmExports;
+  }
+  // wait for the pthread pool (if any)
+  addRunDependency('wasm-instantiate');
+
+  // Prefer streaming instantiation if available.
+  // Async compilation can be confusing when an error on the page overwrites Module
+  // (for example, if the order of elements is wrong, and the one defining Module is
+  // later), so we save Module and check it later.
+  var trueModule = Module;
+  function receiveInstantiationResult(result) {
+    // 'result' is a ResultObject object which has both the module and instance.
+    // receiveInstance() will swap in the exports (to Module.asm) so they can be called
+    assert(Module === trueModule, 'the Module object should not be replaced during async compilation - perhaps the order of HTML elements is wrong?');
+    trueModule = null;
+    // TODO: Due to Closure regression https://github.com/google/closure-compiler/issues/3193, the above line no longer optimizes out down to the following line.
+    // When the regression is fixed, can restore the above PTHREADS-enabled path.
+    return receiveInstance(result['instance']);
+  }
+
+  var info = getWasmImports();
+
+  // User shell pages can write their own Module.instantiateWasm = function(imports, successCallback) callback
+  // to manually instantiate the Wasm module themselves. This allows pages to
+  // run the instantiation parallel to any other async startup actions they are
+  // performing.
+  // Also pthreads and wasm workers initialize the wasm instance through this
+  // path.
+  if (Module['instantiateWasm']) {
+    return new Promise((resolve, reject) => {
+      try {
+        Module['instantiateWasm'](info, (mod, inst) => {
+          resolve(receiveInstance(mod, inst));
+        });
+      } catch(e) {
+        err(`Module.instantiateWasm callback failed with error: ${e}`);
+        reject(e);
+      }
+    });
+  }
+
+  wasmBinaryFile ??= findWasmBinary();
+  var result = await instantiateAsync(wasmBinary, wasmBinaryFile, info);
+  var exports = receiveInstantiationResult(result);
+  return exports;
+}
+
 // end include: preamble.js
 
+// Begin JS library code
 
-  /** @constructor */
-  function ExitStatus(status) {
-      this.name = 'ExitStatus';
-      this.message = `Program terminated with exit(${status})`;
-      this.status = status;
+
+  class ExitStatus {
+      name = 'ExitStatus';
+      constructor(status) {
+        this.message = `Program terminated with exit(${status})`;
+        this.status = status;
+      }
     }
 
   var callRuntimeCallbacks = (callbacks) => {
-      // Pass the module as the first argument.
-      callbacks.forEach((f) => f(Module));
+      while (callbacks.length > 0) {
+        // Pass the module as the first argument.
+        callbacks.shift()(Module);
+      }
     };
+  var onPostRuns = [];
+  var addOnPostRun = (cb) => onPostRuns.push(cb);
+
+  var onPreRuns = [];
+  var addOnPreRun = (cb) => onPreRuns.push(cb);
+
 
   
     /**
@@ -839,7 +742,7 @@ function dbg(...args) {
       case 'i8': return HEAP8[ptr];
       case 'i16': return HEAP16[((ptr)>>1)];
       case 'i32': return HEAP32[((ptr)>>2)];
-      case 'i64': abort('to do getValue(i64) use WASM_BIGINT');
+      case 'i64': return HEAP64[((ptr)>>3)];
       case 'float': return HEAPF32[((ptr)>>2)];
       case 'double': return HEAPF64[((ptr)>>3)];
       case '*': return HEAPU32[((ptr)>>2)];
@@ -847,7 +750,7 @@ function dbg(...args) {
     }
   }
 
-  var noExitRuntime = Module['noExitRuntime'] || true;
+  var noExitRuntime = true;
 
   var ptrToString = (ptr) => {
       assert(typeof ptr === 'number');
@@ -869,7 +772,7 @@ function dbg(...args) {
       case 'i8': HEAP8[ptr] = value; break;
       case 'i16': HEAP16[((ptr)>>1)] = value; break;
       case 'i32': HEAP32[((ptr)>>2)] = value; break;
-      case 'i64': abort('to do setValue(i64) use WASM_BIGINT');
+      case 'i64': HEAP64[((ptr)>>3)] = BigInt(value); break;
       case 'float': HEAPF32[((ptr)>>2)] = value; break;
       case 'double': HEAPF64[((ptr)>>3)] = value; break;
       case '*': HEAPU32[((ptr)>>2)] = value; break;
@@ -889,91 +792,14 @@ function dbg(...args) {
       }
     };
 
-  var UTF8Decoder = typeof TextDecoder != 'undefined' ? new TextDecoder() : undefined;
-  
-    /**
-     * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
-     * array that contains uint8 values, returns a copy of that string as a
-     * Javascript String object.
-     * heapOrArray is either a regular array, or a JavaScript typed array view.
-     * @param {number=} idx
-     * @param {number=} maxBytesToRead
-     * @return {string}
-     */
-  var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
-      var endIdx = idx + maxBytesToRead;
-      var endPtr = idx;
-      // TextDecoder needs to know the byte length in advance, it doesn't stop on
-      // null terminator by itself.  Also, use the length info to avoid running tiny
-      // strings through TextDecoder, since .subarray() allocates garbage.
-      // (As a tiny code save trick, compare endPtr against endIdx using a negation,
-      // so that undefined/NaN means Infinity)
-      while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
-  
-      if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
-        return UTF8Decoder.decode(heapOrArray.subarray(idx, endPtr));
-      }
-      var str = '';
-      // If building with TextDecoder, we have already computed the string length
-      // above, so test loop end condition against that
-      while (idx < endPtr) {
-        // For UTF8 byte structure, see:
-        // http://en.wikipedia.org/wiki/UTF-8#Description
-        // https://www.ietf.org/rfc/rfc2279.txt
-        // https://tools.ietf.org/html/rfc3629
-        var u0 = heapOrArray[idx++];
-        if (!(u0 & 0x80)) { str += String.fromCharCode(u0); continue; }
-        var u1 = heapOrArray[idx++] & 63;
-        if ((u0 & 0xE0) == 0xC0) { str += String.fromCharCode(((u0 & 31) << 6) | u1); continue; }
-        var u2 = heapOrArray[idx++] & 63;
-        if ((u0 & 0xF0) == 0xE0) {
-          u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
-        } else {
-          if ((u0 & 0xF8) != 0xF0) warnOnce('Invalid UTF-8 leading byte ' + ptrToString(u0) + ' encountered when deserializing a UTF-8 string in wasm memory to a JS string!');
-          u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
-        }
-  
-        if (u0 < 0x10000) {
-          str += String.fromCharCode(u0);
-        } else {
-          var ch = u0 - 0x10000;
-          str += String.fromCharCode(0xD800 | (ch >> 10), 0xDC00 | (ch & 0x3FF));
-        }
-      }
-      return str;
-    };
-  
-    /**
-     * Given a pointer 'ptr' to a null-terminated UTF8-encoded string in the
-     * emscripten HEAP, returns a copy of that string as a Javascript String object.
-     *
-     * @param {number} ptr
-     * @param {number=} maxBytesToRead - An optional length that specifies the
-     *   maximum number of bytes to read. You can omit this parameter to scan the
-     *   string until the first 0 byte. If maxBytesToRead is passed, and the string
-     *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
-     *   string will cut short at that byte index (i.e. maxBytesToRead will not
-     *   produce a string of exact length [ptr, ptr+maxBytesToRead[) N.B. mixing
-     *   frequent uses of UTF8ToString() with and without maxBytesToRead may throw
-     *   JS JIT optimizations off, so it is worth to consider consistently using one
-     * @return {string}
-     */
-  var UTF8ToString = (ptr, maxBytesToRead) => {
-      assert(typeof ptr == 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
-      return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead) : '';
-    };
-  var ___assert_fail = (condition, filename, line, func) => {
-      abort(`Assertion failed: ${UTF8ToString(condition)}, at: ` + [filename ? UTF8ToString(filename) : 'unknown filename', line, func ? UTF8ToString(func) : 'unknown function']);
-    };
-
   /** @suppress {duplicate } */
-  function syscallGetVarargI() {
+  var syscallGetVarargI = () => {
       assert(SYSCALLS.varargs != undefined);
       // the `+` prepended here is necessary to convince the JSCompiler that varargs is indeed a number.
       var ret = HEAP32[((+SYSCALLS.varargs)>>2)];
       SYSCALLS.varargs += 4;
       return ret;
-    }
+    };
   var syscallGetVarargP = syscallGetVarargI;
   
   
@@ -1008,7 +834,7 @@ function dbg(...args) {
       },
   normalize:(path) => {
         var isAbsolute = PATH.isAbs(path),
-            trailingSlash = path.substr(-1) === '/';
+            trailingSlash = path.slice(-1) === '/';
         // Normalize the path
         path = PATH.normalizeArray(path.split('/').filter((p) => !!p), !isAbsolute).join('/');
         if (!path && !isAbsolute) {
@@ -1029,34 +855,22 @@ function dbg(...args) {
         }
         if (dir) {
           // It has a dirname, strip trailing slash
-          dir = dir.substr(0, dir.length - 1);
+          dir = dir.slice(0, -1);
         }
         return root + dir;
       },
-  basename:(path) => {
-        // EMSCRIPTEN return '/'' for '/', not an empty string
-        if (path === '/') return '/';
-        path = PATH.normalize(path);
-        path = path.replace(/\/$/, "");
-        var lastSlash = path.lastIndexOf('/');
-        if (lastSlash === -1) return path;
-        return path.substr(lastSlash+1);
-      },
+  basename:(path) => path && path.match(/([^\/]+|\/)\/*$/)[1],
   join:(...paths) => PATH.normalize(paths.join('/')),
   join2:(l, r) => PATH.normalize(l + '/' + r),
   };
   
   var initRandomFill = () => {
-      if (typeof crypto == 'object' && typeof crypto['getRandomValues'] == 'function') {
-        // for modern web browsers
-        return (view) => crypto.getRandomValues(view);
-      } else
-      // we couldn't find a proper implementation, as Math.random() is not suitable for /dev/random, see emscripten-core/emscripten/pull/7096
-      abort('no cryptographic support found for randomDevice. consider polyfilling it if you want to use something insecure like Math.random(), e.g. put this in a --pre-js: var crypto = { getRandomValues: (array) => { for (var i = 0; i < array.length; i++) array[i] = (Math.random()*256)|0 } };');
+  
+      return (view) => crypto.getRandomValues(view);
     };
   var randomFill = (view) => {
       // Lazily init on the first invocation.
-      return (randomFill = initRandomFill())(view);
+      (randomFill = initRandomFill())(view);
     };
   
   
@@ -1082,8 +896,8 @@ function dbg(...args) {
         return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
       },
   relative:(from, to) => {
-        from = PATH_FS.resolve(from).substr(1);
-        to = PATH_FS.resolve(to).substr(1);
+        from = PATH_FS.resolve(from).slice(1);
+        to = PATH_FS.resolve(to).slice(1);
         function trim(arr) {
           var start = 0;
           for (; start < arr.length; start++) {
@@ -1116,6 +930,60 @@ function dbg(...args) {
   };
   
   
+  var UTF8Decoder = typeof TextDecoder != 'undefined' ? new TextDecoder() : undefined;
+  
+    /**
+     * Given a pointer 'idx' to a null-terminated UTF8-encoded string in the given
+     * array that contains uint8 values, returns a copy of that string as a
+     * Javascript String object.
+     * heapOrArray is either a regular array, or a JavaScript typed array view.
+     * @param {number=} idx
+     * @param {number=} maxBytesToRead
+     * @return {string}
+     */
+  var UTF8ArrayToString = (heapOrArray, idx = 0, maxBytesToRead = NaN) => {
+      var endIdx = idx + maxBytesToRead;
+      var endPtr = idx;
+      // TextDecoder needs to know the byte length in advance, it doesn't stop on
+      // null terminator by itself.  Also, use the length info to avoid running tiny
+      // strings through TextDecoder, since .subarray() allocates garbage.
+      // (As a tiny code save trick, compare endPtr against endIdx using a negation,
+      // so that undefined/NaN means Infinity)
+      while (heapOrArray[endPtr] && !(endPtr >= endIdx)) ++endPtr;
+  
+      // When using conditional TextDecoder, skip it for short strings as the overhead of the native call is not worth it.
+      if (endPtr - idx > 16 && heapOrArray.buffer && UTF8Decoder) {
+        return UTF8Decoder.decode(heapOrArray.subarray(idx, endPtr));
+      }
+      var str = '';
+      // If building with TextDecoder, we have already computed the string length
+      // above, so test loop end condition against that
+      while (idx < endPtr) {
+        // For UTF8 byte structure, see:
+        // http://en.wikipedia.org/wiki/UTF-8#Description
+        // https://www.ietf.org/rfc/rfc2279.txt
+        // https://tools.ietf.org/html/rfc3629
+        var u0 = heapOrArray[idx++];
+        if (!(u0 & 0x80)) { str += String.fromCharCode(u0); continue; }
+        var u1 = heapOrArray[idx++] & 63;
+        if ((u0 & 0xE0) == 0xC0) { str += String.fromCharCode(((u0 & 31) << 6) | u1); continue; }
+        var u2 = heapOrArray[idx++] & 63;
+        if ((u0 & 0xF0) == 0xE0) {
+          u0 = ((u0 & 15) << 12) | (u1 << 6) | u2;
+        } else {
+          if ((u0 & 0xF8) != 0xF0) warnOnce('Invalid UTF-8 leading byte ' + ptrToString(u0) + ' encountered when deserializing a UTF-8 string in wasm memory to a JS string!');
+          u0 = ((u0 & 7) << 18) | (u1 << 12) | (u2 << 6) | (heapOrArray[idx++] & 63);
+        }
+  
+        if (u0 < 0x10000) {
+          str += String.fromCharCode(u0);
+        } else {
+          var ch = u0 - 0x10000;
+          str += String.fromCharCode(0xD800 | (ch >> 10), 0xDC00 | (ch & 0x3FF));
+        }
+      }
+      return str;
+    };
   
   var FS_stdin_getChar_buffer = [];
   
@@ -1150,18 +1018,10 @@ function dbg(...args) {
       var startIdx = outIdx;
       var endIdx = outIdx + maxBytesToWrite - 1; // -1 for string null terminator.
       for (var i = 0; i < str.length; ++i) {
-        // Gotcha: charCodeAt returns a 16-bit word that is a UTF-16 encoded code
-        // unit, not a Unicode code point of the character! So decode
-        // UTF16->UTF32->UTF8.
-        // See http://unicode.org/faq/utf_bom.html#utf16-3
         // For UTF8 byte structure, see http://en.wikipedia.org/wiki/UTF-8#Description
         // and https://www.ietf.org/rfc/rfc2279.txt
         // and https://tools.ietf.org/html/rfc3629
-        var u = str.charCodeAt(i); // possibly a lead surrogate
-        if (u >= 0xD800 && u <= 0xDFFF) {
-          var u1 = str.charCodeAt(++i);
-          u = 0x10000 + ((u & 0x3FF) << 10) | (u1 & 0x3FF);
-        }
+        var u = str.codePointAt(i);
         if (u <= 0x7F) {
           if (outIdx >= endIdx) break;
           heap[outIdx++] = u;
@@ -1181,6 +1041,9 @@ function dbg(...args) {
           heap[outIdx++] = 0x80 | ((u >> 12) & 63);
           heap[outIdx++] = 0x80 | ((u >> 6) & 63);
           heap[outIdx++] = 0x80 | (u & 63);
+          // Gotcha: if codePoint is over 0xFFFF, it is represented as a surrogate pair in UTF-16.
+          // We need to manually skip over the second code unit for correct iteration.
+          i++;
         }
       }
       // Null-terminate the pointer to the buffer.
@@ -1188,13 +1051,13 @@ function dbg(...args) {
       return outIdx - startIdx;
     };
   /** @type {function(string, boolean=, number=)} */
-  function intArrayFromString(stringy, dontAddNull, length) {
-    var len = length > 0 ? length : lengthBytesUTF8(stringy)+1;
-    var u8array = new Array(len);
-    var numBytesWritten = stringToUTF8Array(stringy, u8array, 0, u8array.length);
-    if (dontAddNull) u8array.length = numBytesWritten;
-    return u8array;
-  }
+  var intArrayFromString = (stringy, dontAddNull, length) => {
+      var len = length > 0 ? length : lengthBytesUTF8(stringy)+1;
+      var u8array = new Array(len);
+      var numBytesWritten = stringToUTF8Array(stringy, u8array, 0, u8array.length);
+      if (dontAddNull) u8array.length = numBytesWritten;
+      return u8array;
+    };
   var FS_stdin_getChar = () => {
       if (!FS_stdin_getChar_buffer.length) {
         var result = null;
@@ -1269,7 +1132,7 @@ function dbg(...args) {
             buffer[offset+i] = result;
           }
           if (bytesRead) {
-            stream.node.timestamp = Date.now();
+            stream.node.atime = Date.now();
           }
           return bytesRead;
         },
@@ -1285,7 +1148,7 @@ function dbg(...args) {
             throw new FS.ErrnoError(29);
           }
           if (length) {
-            stream.node.timestamp = Date.now();
+            stream.node.mtime = stream.node.ctime = Date.now();
           }
           return i;
         },
@@ -1303,7 +1166,7 @@ function dbg(...args) {
           }
         },
   fsync(tty) {
-          if (tty.output && tty.output.length > 0) {
+          if (tty.output?.length > 0) {
             out(UTF8ArrayToString(tty.output));
             tty.output = [];
           }
@@ -1340,7 +1203,7 @@ function dbg(...args) {
           }
         },
   fsync(tty) {
-          if (tty.output && tty.output.length > 0) {
+          if (tty.output?.length > 0) {
             err(UTF8ArrayToString(tty.output));
             tty.output = [];
           }
@@ -1349,21 +1212,22 @@ function dbg(...args) {
   };
   
   
-  var zeroMemory = (address, size) => {
-      HEAPU8.fill(0, address, address + size);
-    };
+  var zeroMemory = (ptr, size) => HEAPU8.fill(0, ptr, ptr + size);
   
   var alignMemory = (size, alignment) => {
       assert(alignment, "alignment argument is required");
       return Math.ceil(size / alignment) * alignment;
     };
   var mmapAlloc = (size) => {
-      abort('internal error: mmapAlloc called but `emscripten_builtin_memalign` native symbol not exported');
+      size = alignMemory(size, 65536);
+      var ptr = _emscripten_builtin_memalign(65536, size);
+      if (ptr) zeroMemory(ptr, size);
+      return ptr;
     };
   var MEMFS = {
   ops_table:null,
   mount(mount) {
-        return MEMFS.createNode(null, '/', 16384 | 511 /* 0777 */, 0);
+        return MEMFS.createNode(null, '/', 16895, 0);
       },
   createNode(parent, name, mode, dev) {
         if (FS.isBlkdev(mode) || FS.isFIFO(mode)) {
@@ -1396,7 +1260,6 @@ function dbg(...args) {
               llseek: MEMFS.stream_ops.llseek,
               read: MEMFS.stream_ops.read,
               write: MEMFS.stream_ops.write,
-              allocate: MEMFS.stream_ops.allocate,
               mmap: MEMFS.stream_ops.mmap,
               msync: MEMFS.stream_ops.msync
             }
@@ -1437,11 +1300,11 @@ function dbg(...args) {
           node.node_ops = MEMFS.ops_table.chrdev.node;
           node.stream_ops = MEMFS.ops_table.chrdev.stream;
         }
-        node.timestamp = Date.now();
+        node.atime = node.mtime = node.ctime = Date.now();
         // add the new node to the parent
         if (parent) {
           parent.contents[name] = node;
-          parent.timestamp = node.timestamp;
+          parent.atime = parent.mtime = parent.ctime = node.atime;
         }
         return node;
       },
@@ -1497,9 +1360,9 @@ function dbg(...args) {
           } else {
             attr.size = 0;
           }
-          attr.atime = new Date(node.timestamp);
-          attr.mtime = new Date(node.timestamp);
-          attr.ctime = new Date(node.timestamp);
+          attr.atime = new Date(node.atime);
+          attr.mtime = new Date(node.mtime);
+          attr.ctime = new Date(node.ctime);
           // NOTE: In our implementation, st_blocks = Math.ceil(st_size/st_blksize),
           //       but this is not required by the standard.
           attr.blksize = 4096;
@@ -1507,46 +1370,44 @@ function dbg(...args) {
           return attr;
         },
   setattr(node, attr) {
-          if (attr.mode !== undefined) {
-            node.mode = attr.mode;
-          }
-          if (attr.timestamp !== undefined) {
-            node.timestamp = attr.timestamp;
+          for (const key of ["mode", "atime", "mtime", "ctime"]) {
+            if (attr[key] != null) {
+              node[key] = attr[key];
+            }
           }
           if (attr.size !== undefined) {
             MEMFS.resizeFileStorage(node, attr.size);
           }
         },
   lookup(parent, name) {
-          throw FS.genericErrors[44];
+          throw new FS.ErrnoError(44);
         },
   mknod(parent, name, mode, dev) {
           return MEMFS.createNode(parent, name, mode, dev);
         },
   rename(old_node, new_dir, new_name) {
-          // if we're overwriting a directory at new_name, make sure it's empty.
-          if (FS.isDir(old_node.mode)) {
-            var new_node;
-            try {
-              new_node = FS.lookupNode(new_dir, new_name);
-            } catch (e) {
-            }
-            if (new_node) {
+          var new_node;
+          try {
+            new_node = FS.lookupNode(new_dir, new_name);
+          } catch (e) {}
+          if (new_node) {
+            if (FS.isDir(old_node.mode)) {
+              // if we're overwriting a directory at new_name, make sure it's empty.
               for (var i in new_node.contents) {
                 throw new FS.ErrnoError(55);
               }
             }
+            FS.hashRemoveNode(new_node);
           }
           // do the internal rewiring
           delete old_node.parent.contents[old_node.name];
-          old_node.parent.timestamp = Date.now()
-          old_node.name = new_name;
           new_dir.contents[new_name] = old_node;
-          new_dir.timestamp = old_node.parent.timestamp;
+          old_node.name = new_name;
+          new_dir.ctime = new_dir.mtime = old_node.parent.ctime = old_node.parent.mtime = Date.now();
         },
   unlink(parent, name) {
           delete parent.contents[name];
-          parent.timestamp = Date.now();
+          parent.ctime = parent.mtime = Date.now();
         },
   rmdir(parent, name) {
           var node = FS.lookupNode(parent, name);
@@ -1554,17 +1415,13 @@ function dbg(...args) {
             throw new FS.ErrnoError(55);
           }
           delete parent.contents[name];
-          parent.timestamp = Date.now();
+          parent.ctime = parent.mtime = Date.now();
         },
   readdir(node) {
-          var entries = ['.', '..'];
-          for (var key of Object.keys(node.contents)) {
-            entries.push(key);
-          }
-          return entries;
+          return ['.', '..', ...Object.keys(node.contents)];
         },
   symlink(parent, newname, oldpath) {
-          var node = MEMFS.createNode(parent, newname, 511 /* 0777 */ | 40960, 0);
+          var node = MEMFS.createNode(parent, newname, 0o777 | 40960, 0);
           node.link = oldpath;
           return node;
         },
@@ -1601,7 +1458,7 @@ function dbg(...args) {
   
           if (!length) return 0;
           var node = stream.node;
-          node.timestamp = Date.now();
+          node.mtime = node.ctime = Date.now();
   
           if (buffer.subarray && (!node.contents || node.contents.subarray)) { // This write is from a typed array to a typed array?
             if (canOwn) {
@@ -1646,10 +1503,6 @@ function dbg(...args) {
           }
           return position;
         },
-  allocate(stream, offset, length) {
-          MEMFS.expandFileStorage(stream.node, offset + length);
-          stream.node.usedBytes = Math.max(stream.node.usedBytes, offset + length);
-        },
   mmap(stream, length, position, prot, flags) {
           if (!FS.isFile(stream.node.mode)) {
             throw new FS.ErrnoError(43);
@@ -1691,32 +1544,24 @@ function dbg(...args) {
   },
   };
   
-  /** @param {boolean=} noRunDep */
-  var asyncLoad = (url, onload, onerror, noRunDep) => {
-      var dep = !noRunDep ? getUniqueRunDependency(`al ${url}`) : '';
-      readAsync(url).then(
-        (arrayBuffer) => {
-          assert(arrayBuffer, `Loading data file "${url}" failed (no arrayBuffer).`);
-          onload(new Uint8Array(arrayBuffer));
-          if (dep) removeRunDependency(dep);
-        },
-        (err) => {
-          if (onerror) {
-            onerror();
-          } else {
-            throw `Loading data file "${url}" failed.`;
-          }
-        }
-      );
-      if (dep) addRunDependency(dep);
+  var asyncLoad = async (url) => {
+      var arrayBuffer = await readAsync(url);
+      assert(arrayBuffer, `Loading data file "${url}" failed (no arrayBuffer).`);
+      return new Uint8Array(arrayBuffer);
     };
   
   
-  var FS_createDataFile = (parent, name, fileData, canRead, canWrite, canOwn) => {
-      FS.createDataFile(parent, name, fileData, canRead, canWrite, canOwn);
+  var FS_createDataFile = (...args) => FS.createDataFile(...args);
+  
+  var getUniqueRunDependency = (id) => {
+      var orig = id;
+      while (1) {
+        if (!runDependencyTracking[id]) return id;
+        id = orig + Math.random();
+      }
     };
   
-  var preloadPlugins = Module['preloadPlugins'] || [];
+  var preloadPlugins = [];
   var FS_handledByPreloadPlugin = (byteArray, fullname, finish, onerror) => {
       // Ensure plugins are ready.
       if (typeof Browser != 'undefined') Browser.init();
@@ -1755,7 +1600,7 @@ function dbg(...args) {
       }
       addRunDependency(dep);
       if (typeof url == 'string') {
-        asyncLoad(url, processData, onerror);
+        asyncLoad(url).then(processData, onerror);
       } else {
         processData(url);
       }
@@ -1787,11 +1632,27 @@ function dbg(...args) {
   
   
   
-  
-  
-  var strError = (errno) => {
-      return UTF8ToString(_strerror(errno));
+    /**
+     * Given a pointer 'ptr' to a null-terminated UTF8-encoded string in the
+     * emscripten HEAP, returns a copy of that string as a Javascript String object.
+     *
+     * @param {number} ptr
+     * @param {number=} maxBytesToRead - An optional length that specifies the
+     *   maximum number of bytes to read. You can omit this parameter to scan the
+     *   string until the first 0 byte. If maxBytesToRead is passed, and the string
+     *   at [ptr, ptr+maxBytesToReadr[ contains a null byte in the middle, then the
+     *   string will cut short at that byte index (i.e. maxBytesToRead will not
+     *   produce a string of exact length [ptr, ptr+maxBytesToRead[) N.B. mixing
+     *   frequent uses of UTF8ToString() with and without maxBytesToRead may throw
+     *   JS JIT optimizations off, so it is worth to consider consistently using one
+     * @return {string}
+     */
+  var UTF8ToString = (ptr, maxBytesToRead) => {
+      assert(typeof ptr == 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
+      return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead) : '';
     };
+  
+  var strError = (errno) => UTF8ToString(_strerror(errno));
   
   var ERRNO_CODES = {
       'EPERM': 63,
@@ -1927,7 +1788,12 @@ function dbg(...args) {
   currentPath:"/",
   initialized:false,
   ignorePermissions:true,
+  filesystems:null,
+  syncFSRequests:0,
+  readFiles:{
+  },
   ErrnoError:class extends Error {
+        name = 'ErrnoError';
         // We set the `name` property to be able to identify `FS.ErrnoError`
         // - the `name` is a standard ECMA-262 property of error objects. Kind of good to have it anyway.
         // - when using PROXYFS, an error can come from an underlying FS
@@ -1936,9 +1802,6 @@ function dbg(...args) {
         // we'll use the reliable test `err.name == "ErrnoError"` instead
         constructor(errno) {
           super(runtimeInitialized ? strError(errno) : '');
-          // TODO(sbc): Use the inline member declaration syntax once we
-          // support it in acorn and closure.
-          this.name = 'ErrnoError';
           this.errno = errno;
           for (var key in ERRNO_CODES) {
             if (ERRNO_CODES[key] === errno) {
@@ -1948,18 +1811,8 @@ function dbg(...args) {
           }
         }
       },
-  genericErrors:{
-  },
-  filesystems:null,
-  syncFSRequests:0,
-  readFiles:{
-  },
   FSStream:class {
-        constructor() {
-          // TODO(https://github.com/emscripten-core/emscripten/issues/21414):
-          // Use inline field declarations.
-          this.shared = {};
-        }
+        shared = {};
         get object() {
           return this.node;
         }
@@ -1989,21 +1842,22 @@ function dbg(...args) {
         }
       },
   FSNode:class {
+        node_ops = {};
+        stream_ops = {};
+        readMode = 292 | 73;
+        writeMode = 146;
+        mounted = null;
         constructor(parent, name, mode, rdev) {
           if (!parent) {
             parent = this;  // root node sets parent to itself
           }
           this.parent = parent;
           this.mount = parent.mount;
-          this.mounted = null;
           this.id = FS.nextInode++;
           this.name = name;
           this.mode = mode;
-          this.node_ops = {};
-          this.stream_ops = {};
           this.rdev = rdev;
-          this.readMode = 292 | 73;
-          this.writeMode = 146;
+          this.atime = this.mtime = this.ctime = Date.now();
         }
         get read() {
           return (this.mode & this.readMode) === this.readMode;
@@ -2025,63 +1879,81 @@ function dbg(...args) {
         }
       },
   lookupPath(path, opts = {}) {
-        path = PATH_FS.resolve(path);
+        if (!path) {
+          throw new FS.ErrnoError(44);
+        }
+        opts.follow_mount ??= true
   
-        if (!path) return { path: '', node: null };
-  
-        var defaults = {
-          follow_mount: true,
-          recurse_count: 0
-        };
-        opts = Object.assign(defaults, opts)
-  
-        if (opts.recurse_count > 8) {  // max recursive lookup of 8
-          throw new FS.ErrnoError(32);
+        if (!PATH.isAbs(path)) {
+          path = FS.cwd() + '/' + path;
         }
   
-        // split the absolute path
-        var parts = path.split('/').filter((p) => !!p);
+        // limit max consecutive symlinks to 40 (SYMLOOP_MAX).
+        linkloop: for (var nlinks = 0; nlinks < 40; nlinks++) {
+          // split the absolute path
+          var parts = path.split('/').filter((p) => !!p);
   
-        // start at the root
-        var current = FS.root;
-        var current_path = '/';
+          // start at the root
+          var current = FS.root;
+          var current_path = '/';
   
-        for (var i = 0; i < parts.length; i++) {
-          var islast = (i === parts.length-1);
-          if (islast && opts.parent) {
-            // stop resolving
-            break;
-          }
+          for (var i = 0; i < parts.length; i++) {
+            var islast = (i === parts.length-1);
+            if (islast && opts.parent) {
+              // stop resolving
+              break;
+            }
   
-          current = FS.lookupNode(current, parts[i]);
-          current_path = PATH.join2(current_path, parts[i]);
+            if (parts[i] === '.') {
+              continue;
+            }
   
-          // jump to the mount's root node if this is a mountpoint
-          if (FS.isMountpoint(current)) {
-            if (!islast || (islast && opts.follow_mount)) {
+            if (parts[i] === '..') {
+              current_path = PATH.dirname(current_path);
+              if (FS.isRoot(current)) {
+                path = current_path + '/' + parts.slice(i + 1).join('/');
+                continue linkloop;
+              } else {
+                current = current.parent;
+              }
+              continue;
+            }
+  
+            current_path = PATH.join2(current_path, parts[i]);
+            try {
+              current = FS.lookupNode(current, parts[i]);
+            } catch (e) {
+              // if noent_okay is true, suppress a ENOENT in the last component
+              // and return an object with an undefined node. This is needed for
+              // resolving symlinks in the path when creating a file.
+              if ((e?.errno === 44) && islast && opts.noent_okay) {
+                return { path: current_path };
+              }
+              throw e;
+            }
+  
+            // jump to the mount's root node if this is a mountpoint
+            if (FS.isMountpoint(current) && (!islast || opts.follow_mount)) {
               current = current.mounted.root;
             }
-          }
   
-          // by default, lookupPath will not follow a symlink if it is the final path component.
-          // setting opts.follow = true will override this behavior.
-          if (!islast || opts.follow) {
-            var count = 0;
-            while (FS.isLink(current.mode)) {
-              var link = FS.readlink(current_path);
-              current_path = PATH_FS.resolve(PATH.dirname(current_path), link);
-  
-              var lookup = FS.lookupPath(current_path, { recurse_count: opts.recurse_count + 1 });
-              current = lookup.node;
-  
-              if (count++ > 40) {  // limit max consecutive symlinks to 40 (SYMLOOP_MAX).
-                throw new FS.ErrnoError(32);
+            // by default, lookupPath will not follow a symlink if it is the final path component.
+            // setting opts.follow = true will override this behavior.
+            if (FS.isLink(current.mode) && (!islast || opts.follow)) {
+              if (!current.node_ops.readlink) {
+                throw new FS.ErrnoError(52);
               }
+              var link = current.node_ops.readlink(current);
+              if (!PATH.isAbs(link)) {
+                link = PATH.dirname(current_path) + '/' + link;
+              }
+              path = link + '/' + parts.slice(i + 1).join('/');
+              continue linkloop;
             }
           }
+          return { path: current_path, node: current };
         }
-  
-        return { path: current_path, node: current };
+        throw new FS.ErrnoError(32);
       },
   getPath(node) {
         var path;
@@ -2205,6 +2077,9 @@ function dbg(...args) {
         return 0;
       },
   mayCreate(dir, name) {
+        if (!FS.isDir(dir.mode)) {
+          return 54;
+        }
         try {
           var node = FS.lookupNode(dir, name);
           return 20;
@@ -2244,12 +2119,18 @@ function dbg(...args) {
         if (FS.isLink(node.mode)) {
           return 32;
         } else if (FS.isDir(node.mode)) {
-          if (FS.flagsToPermissionString(flags) !== 'r' || // opening for write
-              (flags & 512)) { // TODO: check for O_SEARCH? (== search for dir only)
+          if (FS.flagsToPermissionString(flags) !== 'r' // opening for write
+              || (flags & (512 | 64))) { // TODO: check for O_SEARCH? (== search for dir only)
             return 31;
           }
         }
         return FS.nodePermissions(node, FS.flagsToPermissionString(flags));
+      },
+  checkOpExists(op, err) {
+        if (!op) {
+          throw new FS.ErrnoError(err);
+        }
+        return op;
       },
   MAX_OPEN_FDS:4096,
   nextfd() {
@@ -2287,6 +2168,13 @@ function dbg(...args) {
         var stream = FS.createStream(origStream, fd);
         stream.stream_ops?.dup?.(stream);
         return stream;
+      },
+  doSetAttr(stream, node, attr) {
+        var setattr = stream?.stream_ops.setattr;
+        var arg = setattr ? stream : node;
+        setattr ??= node.node_ops.setattr;
+        FS.checkOpExists(setattr, 63)
+        setattr(arg, attr);
       },
   chrdev_stream_ops:{
   open(stream) {
@@ -2457,8 +2345,11 @@ function dbg(...args) {
         var lookup = FS.lookupPath(path, { parent: true });
         var parent = lookup.node;
         var name = PATH.basename(path);
-        if (!name || name === '.' || name === '..') {
+        if (!name) {
           throw new FS.ErrnoError(28);
+        }
+        if (name === '.' || name === '..') {
+          throw new FS.ErrnoError(20);
         }
         var errCode = FS.mayCreate(parent, name);
         if (errCode) {
@@ -2469,14 +2360,43 @@ function dbg(...args) {
         }
         return parent.node_ops.mknod(parent, name, mode, dev);
       },
-  create(path, mode) {
-        mode = mode !== undefined ? mode : 438 /* 0666 */;
+  statfs(path) {
+        return FS.statfsNode(FS.lookupPath(path, {follow: true}).node);
+      },
+  statfsStream(stream) {
+        // We keep a separate statfsStream function because noderawfs overrides
+        // it. In noderawfs, stream.node is sometimes null. Instead, we need to
+        // look at stream.path.
+        return FS.statfsNode(stream.node);
+      },
+  statfsNode(node) {
+        // NOTE: None of the defaults here are true. We're just returning safe and
+        //       sane values. Currently nodefs and rawfs replace these defaults,
+        //       other file systems leave them alone.
+        var rtn = {
+          bsize: 4096,
+          frsize: 4096,
+          blocks: 1e6,
+          bfree: 5e5,
+          bavail: 5e5,
+          files: FS.nextInode,
+          ffree: FS.nextInode - 1,
+          fsid: 42,
+          flags: 2,
+          namelen: 255,
+        };
+  
+        if (node.node_ops.statfs) {
+          Object.assign(rtn, node.node_ops.statfs(node.mount.opts.root));
+        }
+        return rtn;
+      },
+  create(path, mode = 0o666) {
         mode &= 4095;
         mode |= 32768;
         return FS.mknod(path, mode, 0);
       },
-  mkdir(path, mode) {
-        mode = mode !== undefined ? mode : 511 /* 0777 */;
+  mkdir(path, mode = 0o777) {
         mode &= 511 | 512;
         mode |= 16384;
         return FS.mknod(path, mode, 0);
@@ -2484,9 +2404,10 @@ function dbg(...args) {
   mkdirTree(path, mode) {
         var dirs = path.split('/');
         var d = '';
-        for (var i = 0; i < dirs.length; ++i) {
-          if (!dirs[i]) continue;
-          d += '/' + dirs[i];
+        for (var dir of dirs) {
+          if (!dir) continue;
+          if (d || PATH.isAbs(path)) d += '/';
+          d += dir;
           try {
             FS.mkdir(d, mode);
           } catch(e) {
@@ -2497,7 +2418,7 @@ function dbg(...args) {
   mkdev(path, mode, dev) {
         if (typeof dev == 'undefined') {
           dev = mode;
-          mode = 438 /* 0666 */;
+          mode = 0o666;
         }
         mode |= 8192;
         return FS.mknod(path, mode, dev);
@@ -2595,7 +2516,7 @@ function dbg(...args) {
         // do the underlying fs rename
         try {
           old_dir.node_ops.rename(old_node, new_dir, new_name);
-          // update old node (we do this here to avoid each backend 
+          // update old node (we do this here to avoid each backend
           // needing to)
           old_node.parent = new_dir;
         } catch (e) {
@@ -2627,10 +2548,8 @@ function dbg(...args) {
   readdir(path) {
         var lookup = FS.lookupPath(path, { follow: true });
         var node = lookup.node;
-        if (!node.node_ops.readdir) {
-          throw new FS.ErrnoError(54);
-        }
-        return node.node_ops.readdir(node);
+        var readdir = FS.checkOpExists(node.node_ops.readdir, 54);
+        return readdir(node);
       },
   unlink(path) {
         var lookup = FS.lookupPath(path, { parent: true });
@@ -2665,21 +2584,32 @@ function dbg(...args) {
         if (!link.node_ops.readlink) {
           throw new FS.ErrnoError(28);
         }
-        return PATH_FS.resolve(FS.getPath(link.parent), link.node_ops.readlink(link));
+        return link.node_ops.readlink(link);
       },
   stat(path, dontFollow) {
         var lookup = FS.lookupPath(path, { follow: !dontFollow });
         var node = lookup.node;
-        if (!node) {
-          throw new FS.ErrnoError(44);
-        }
-        if (!node.node_ops.getattr) {
-          throw new FS.ErrnoError(63);
-        }
-        return node.node_ops.getattr(node);
+        var getattr = FS.checkOpExists(node.node_ops.getattr, 63);
+        return getattr(node);
+      },
+  fstat(fd) {
+        var stream = FS.getStreamChecked(fd);
+        var node = stream.node;
+        var getattr = stream.stream_ops.getattr;
+        var arg = getattr ? stream : node;
+        getattr ??= node.node_ops.getattr;
+        FS.checkOpExists(getattr, 63)
+        return getattr(arg);
       },
   lstat(path) {
         return FS.stat(path, true);
+      },
+  doChmod(stream, node, mode, dontFollow) {
+        FS.doSetAttr(stream, node, {
+          mode: (mode & 4095) | (node.mode & ~4095),
+          ctime: Date.now(),
+          dontFollow
+        });
       },
   chmod(path, mode, dontFollow) {
         var node;
@@ -2689,20 +2619,21 @@ function dbg(...args) {
         } else {
           node = path;
         }
-        if (!node.node_ops.setattr) {
-          throw new FS.ErrnoError(63);
-        }
-        node.node_ops.setattr(node, {
-          mode: (mode & 4095) | (node.mode & ~4095),
-          timestamp: Date.now()
-        });
+        FS.doChmod(null, node, mode, dontFollow);
       },
   lchmod(path, mode) {
         FS.chmod(path, mode, true);
       },
   fchmod(fd, mode) {
         var stream = FS.getStreamChecked(fd);
-        FS.chmod(stream.node, mode);
+        FS.doChmod(stream, stream.node, mode, false);
+      },
+  doChown(stream, node, dontFollow) {
+        FS.doSetAttr(stream, node, {
+          timestamp: Date.now(),
+          dontFollow
+          // we ignore the uid / gid for now
+        });
       },
   chown(path, uid, gid, dontFollow) {
         var node;
@@ -2712,20 +2643,30 @@ function dbg(...args) {
         } else {
           node = path;
         }
-        if (!node.node_ops.setattr) {
-          throw new FS.ErrnoError(63);
-        }
-        node.node_ops.setattr(node, {
-          timestamp: Date.now()
-          // we ignore the uid / gid for now
-        });
+        FS.doChown(null, node, dontFollow);
       },
   lchown(path, uid, gid) {
         FS.chown(path, uid, gid, true);
       },
   fchown(fd, uid, gid) {
         var stream = FS.getStreamChecked(fd);
-        FS.chown(stream.node, uid, gid);
+        FS.doChown(stream, stream.node, false);
+      },
+  doTruncate(stream, node, len) {
+        if (FS.isDir(node.mode)) {
+          throw new FS.ErrnoError(31);
+        }
+        if (!FS.isFile(node.mode)) {
+          throw new FS.ErrnoError(28);
+        }
+        var errCode = FS.nodePermissions(node, 'w');
+        if (errCode) {
+          throw new FS.ErrnoError(errCode);
+        }
+        FS.doSetAttr(stream, node, {
+          size: len,
+          timestamp: Date.now()
+        });
       },
   truncate(path, len) {
         if (len < 0) {
@@ -2738,62 +2679,49 @@ function dbg(...args) {
         } else {
           node = path;
         }
-        if (!node.node_ops.setattr) {
-          throw new FS.ErrnoError(63);
-        }
-        if (FS.isDir(node.mode)) {
-          throw new FS.ErrnoError(31);
-        }
-        if (!FS.isFile(node.mode)) {
-          throw new FS.ErrnoError(28);
-        }
-        var errCode = FS.nodePermissions(node, 'w');
-        if (errCode) {
-          throw new FS.ErrnoError(errCode);
-        }
-        node.node_ops.setattr(node, {
-          size: len,
-          timestamp: Date.now()
-        });
+        FS.doTruncate(null, node, len);
       },
   ftruncate(fd, len) {
         var stream = FS.getStreamChecked(fd);
-        if ((stream.flags & 2097155) === 0) {
+        if (len < 0 || (stream.flags & 2097155) === 0) {
           throw new FS.ErrnoError(28);
         }
-        FS.truncate(stream.node, len);
+        FS.doTruncate(stream, stream.node, len);
       },
   utime(path, atime, mtime) {
         var lookup = FS.lookupPath(path, { follow: true });
         var node = lookup.node;
-        node.node_ops.setattr(node, {
-          timestamp: Math.max(atime, mtime)
+        var setattr = FS.checkOpExists(node.node_ops.setattr, 63);
+        setattr(node, {
+          atime: atime,
+          mtime: mtime
         });
       },
-  open(path, flags, mode) {
+  open(path, flags, mode = 0o666) {
         if (path === "") {
           throw new FS.ErrnoError(44);
         }
         flags = typeof flags == 'string' ? FS_modeStringToFlags(flags) : flags;
         if ((flags & 64)) {
-          mode = typeof mode == 'undefined' ? 438 /* 0666 */ : mode;
           mode = (mode & 4095) | 32768;
         } else {
           mode = 0;
         }
         var node;
+        var isDirPath;
         if (typeof path == 'object') {
           node = path;
         } else {
-          path = PATH.normalize(path);
-          try {
-            var lookup = FS.lookupPath(path, {
-              follow: !(flags & 131072)
-            });
-            node = lookup.node;
-          } catch (e) {
-            // ignore
-          }
+          isDirPath = path.endsWith("/");
+          // noent_okay makes it so that if the final component of the path
+          // doesn't exist, lookupPath returns `node: undefined`. `path` will be
+          // updated to point to the target of all symlinks.
+          var lookup = FS.lookupPath(path, {
+            follow: !(flags & 131072),
+            noent_okay: true
+          });
+          node = lookup.node;
+          path = lookup.path;
         }
         // perhaps we need to create the node
         var created = false;
@@ -2803,9 +2731,14 @@ function dbg(...args) {
             if ((flags & 128)) {
               throw new FS.ErrnoError(20);
             }
+          } else if (isDirPath) {
+            throw new FS.ErrnoError(31);
           } else {
             // node doesn't exist, try to create it
-            node = FS.mknod(path, mode, 0);
+            // Ignore the permission bits here to ensure we can `open` this new
+            // file below. We use chmod below the apply the permissions once the
+            // file is open.
+            node = FS.mknod(path, mode | 0o777, 0);
             created = true;
           }
         }
@@ -2851,6 +2784,9 @@ function dbg(...args) {
         // call the new stream's open function
         if (stream.stream_ops.open) {
           stream.stream_ops.open(stream);
+        }
+        if (created) {
+          FS.chmod(node, mode & 0o777);
         }
         if (Module['logReadFiles'] && !(flags & 1)) {
           if (!(path in FS.readFiles)) {
@@ -2950,24 +2886,6 @@ function dbg(...args) {
         if (!seeking) stream.position += bytesWritten;
         return bytesWritten;
       },
-  allocate(stream, offset, length) {
-        if (FS.isClosed(stream)) {
-          throw new FS.ErrnoError(8);
-        }
-        if (offset < 0 || length <= 0) {
-          throw new FS.ErrnoError(28);
-        }
-        if ((stream.flags & 2097155) === 0) {
-          throw new FS.ErrnoError(8);
-        }
-        if (!FS.isFile(stream.node.mode) && !FS.isDir(stream.node.mode)) {
-          throw new FS.ErrnoError(43);
-        }
-        if (!stream.stream_ops.allocate) {
-          throw new FS.ErrnoError(138);
-        }
-        stream.stream_ops.allocate(stream, offset, length);
-      },
   mmap(stream, length, position, prot, flags) {
         // User requests writing to file (prot & PROT_WRITE != 0).
         // Checking if we have permissions to write to the file unless
@@ -3010,28 +2928,24 @@ function dbg(...args) {
         if (opts.encoding !== 'utf8' && opts.encoding !== 'binary') {
           throw new Error(`Invalid encoding type "${opts.encoding}"`);
         }
-        var ret;
         var stream = FS.open(path, opts.flags);
         var stat = FS.stat(path);
         var length = stat.size;
         var buf = new Uint8Array(length);
         FS.read(stream, buf, 0, length, 0);
         if (opts.encoding === 'utf8') {
-          ret = UTF8ArrayToString(buf);
-        } else if (opts.encoding === 'binary') {
-          ret = buf;
+          buf = UTF8ArrayToString(buf);
         }
         FS.close(stream);
-        return ret;
+        return buf;
       },
   writeFile(path, data, opts = {}) {
         opts.flags = opts.flags || 577;
         var stream = FS.open(path, opts.flags, opts.mode);
         if (typeof data == 'string') {
-          var buf = new Uint8Array(lengthBytesUTF8(data)+1);
-          var actualNumBytes = stringToUTF8Array(data, buf, 0, buf.length);
-          FS.write(stream, buf, 0, actualNumBytes, undefined, opts.canOwn);
-        } else if (ArrayBuffer.isView(data)) {
+          data = new Uint8Array(intArrayFromString(data, true));
+        }
+        if (ArrayBuffer.isView(data)) {
           FS.write(stream, data, 0, data.byteLength, undefined, opts.canOwn);
         } else {
           throw new Error('Unsupported data type');
@@ -3065,6 +2979,7 @@ function dbg(...args) {
         FS.registerDevice(FS.makedev(1, 3), {
           read: () => 0,
           write: (stream, buffer, offset, length, pos) => length,
+          llseek: () => 0,
         });
         FS.mkdev('/dev/null', FS.makedev(1, 3));
         // setup /dev/tty and /dev/tty1
@@ -3079,7 +2994,8 @@ function dbg(...args) {
         var randomBuffer = new Uint8Array(1024), randomLeft = 0;
         var randomByte = () => {
           if (randomLeft === 0) {
-            randomLeft = randomFill(randomBuffer).byteLength;
+            randomFill(randomBuffer);
+            randomLeft = randomBuffer.byteLength;
           }
           return randomBuffer[--randomLeft];
         };
@@ -3098,7 +3014,10 @@ function dbg(...args) {
         FS.mkdir('/proc/self/fd');
         FS.mount({
           mount() {
-            var node = FS.createNode(proc_self, 'fd', 16384 | 511 /* 0777 */, 73);
+            var node = FS.createNode(proc_self, 'fd', 16895, 73);
+            node.stream_ops = {
+              llseek: MEMFS.stream_ops.llseek,
+            };
             node.node_ops = {
               lookup(parent, name) {
                 var fd = +name;
@@ -3107,9 +3026,15 @@ function dbg(...args) {
                   parent: null,
                   mount: { mountpoint: 'fake' },
                   node_ops: { readlink: () => stream.path },
+                  id: fd + 1,
                 };
                 ret.parent = ret; // make it look like a simple root node
                 return ret;
+              },
+              readdir() {
+                return Array.from(FS.streams.entries())
+                  .filter(([k, v]) => v)
+                  .map(([k, v]) => k.toString());
               }
             };
             return node;
@@ -3150,12 +3075,6 @@ function dbg(...args) {
         assert(stderr.fd === 2, `invalid handle for stderr (${stderr.fd})`);
       },
   staticInit() {
-        // Some errors may happen quite a bit, to avoid overhead we reuse them (and suffer a lack of stack info)
-        [44].forEach((code) => {
-          FS.genericErrors[code] = new FS.ErrnoError(code);
-          FS.genericErrors[code].stack = '<generic error, no stack>';
-        });
-  
         FS.nameTable = new Array(4096);
   
         FS.mount(MEMFS, {}, '/');
@@ -3184,12 +3103,10 @@ function dbg(...args) {
         // force-flush all streams, so we get musl std streams printed out
         _fflush(0);
         // close all of our streams
-        for (var i = 0; i < FS.streams.length; i++) {
-          var stream = FS.streams[i];
-          if (!stream) {
-            continue;
+        for (var stream of FS.streams) {
+          if (stream) {
+            FS.close(stream);
           }
-          FS.close(stream);
         }
       },
   findObject(path, dontResolveLastLink) {
@@ -3237,7 +3154,7 @@ function dbg(...args) {
           try {
             FS.mkdir(current);
           } catch (e) {
-            // ignore EEXIST
+            if (e.errno != 20) throw e;
           }
           parent = current;
         }
@@ -3304,7 +3221,7 @@ function dbg(...args) {
               buffer[offset+i] = result;
             }
             if (bytesRead) {
-              stream.node.timestamp = Date.now();
+              stream.node.atime = Date.now();
             }
             return bytesRead;
           },
@@ -3317,7 +3234,7 @@ function dbg(...args) {
               }
             }
             if (length) {
-              stream.node.timestamp = Date.now();
+              stream.node.mtime = stream.node.ctime = Date.now();
             }
             return i;
           }
@@ -3341,10 +3258,8 @@ function dbg(...args) {
         // Lazy chunked Uint8Array (implements get and length from Uint8Array).
         // Actual getting is abstracted away for eventual reuse.
         class LazyUint8Array {
-          constructor() {
-            this.lengthKnown = false;
-            this.chunks = []; // Loaded chunks. Index is the chunk number
-          }
+          lengthKnown = false;
+          chunks = []; // Loaded chunks. Index is the chunk number
           get(idx) {
             if (idx > this.length-1 || idx < 0) {
               return undefined;
@@ -3541,30 +3456,41 @@ function dbg(...args) {
           }
           return dir;
         }
-        return PATH.join2(dir, path);
+        return dir + '/' + path;
       },
-  doStat(func, path, buf) {
-        var stat = func(path);
+  writeStat(buf, stat) {
         HEAP32[((buf)>>2)] = stat.dev;
         HEAP32[(((buf)+(4))>>2)] = stat.mode;
         HEAPU32[(((buf)+(8))>>2)] = stat.nlink;
         HEAP32[(((buf)+(12))>>2)] = stat.uid;
         HEAP32[(((buf)+(16))>>2)] = stat.gid;
         HEAP32[(((buf)+(20))>>2)] = stat.rdev;
-        (tempI64 = [stat.size>>>0,(tempDouble = stat.size,(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[(((buf)+(24))>>2)] = tempI64[0],HEAP32[(((buf)+(28))>>2)] = tempI64[1]);
+        HEAP64[(((buf)+(24))>>3)] = BigInt(stat.size);
         HEAP32[(((buf)+(32))>>2)] = 4096;
         HEAP32[(((buf)+(36))>>2)] = stat.blocks;
         var atime = stat.atime.getTime();
         var mtime = stat.mtime.getTime();
         var ctime = stat.ctime.getTime();
-        (tempI64 = [Math.floor(atime / 1000)>>>0,(tempDouble = Math.floor(atime / 1000),(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[(((buf)+(40))>>2)] = tempI64[0],HEAP32[(((buf)+(44))>>2)] = tempI64[1]);
+        HEAP64[(((buf)+(40))>>3)] = BigInt(Math.floor(atime / 1000));
         HEAPU32[(((buf)+(48))>>2)] = (atime % 1000) * 1000 * 1000;
-        (tempI64 = [Math.floor(mtime / 1000)>>>0,(tempDouble = Math.floor(mtime / 1000),(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[(((buf)+(56))>>2)] = tempI64[0],HEAP32[(((buf)+(60))>>2)] = tempI64[1]);
+        HEAP64[(((buf)+(56))>>3)] = BigInt(Math.floor(mtime / 1000));
         HEAPU32[(((buf)+(64))>>2)] = (mtime % 1000) * 1000 * 1000;
-        (tempI64 = [Math.floor(ctime / 1000)>>>0,(tempDouble = Math.floor(ctime / 1000),(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[(((buf)+(72))>>2)] = tempI64[0],HEAP32[(((buf)+(76))>>2)] = tempI64[1]);
+        HEAP64[(((buf)+(72))>>3)] = BigInt(Math.floor(ctime / 1000));
         HEAPU32[(((buf)+(80))>>2)] = (ctime % 1000) * 1000 * 1000;
-        (tempI64 = [stat.ino>>>0,(tempDouble = stat.ino,(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[(((buf)+(88))>>2)] = tempI64[0],HEAP32[(((buf)+(92))>>2)] = tempI64[1]);
+        HEAP64[(((buf)+(88))>>3)] = BigInt(stat.ino);
         return 0;
+      },
+  writeStatFs(buf, stats) {
+        HEAP32[(((buf)+(4))>>2)] = stats.bsize;
+        HEAP32[(((buf)+(40))>>2)] = stats.bsize;
+        HEAP32[(((buf)+(8))>>2)] = stats.blocks;
+        HEAP32[(((buf)+(12))>>2)] = stats.bfree;
+        HEAP32[(((buf)+(16))>>2)] = stats.bavail;
+        HEAP32[(((buf)+(20))>>2)] = stats.files;
+        HEAP32[(((buf)+(24))>>2)] = stats.ffree;
+        HEAP32[(((buf)+(28))>>2)] = stats.fsid;
+        HEAP32[(((buf)+(44))>>2)] = stats.flags;  // ST_NOSUID
+        HEAP32[(((buf)+(36))>>2)] = stats.namelen;
       },
   doMsync(addr, stream, len, flags, offset) {
         if (!FS.isFile(stream.node.mode)) {
@@ -3624,7 +3550,11 @@ function dbg(...args) {
         }
         case 13:
         case 14:
-          return 0; // Pretend that the locking is successful.
+          // Pretend that the locking is successful. These are process-level locks,
+          // and Emscripten programs are a single process. If we supported linking a
+          // filesystem between programs, we'd need to do more here.
+          // See https://github.com/emscripten-core/emscripten/issues/23697
+          return 0;
       }
       return -28;
     } catch (e) {
@@ -3636,8 +3566,7 @@ function dbg(...args) {
   function ___syscall_fstat64(fd, buf) {
   try {
   
-      var stream = SYSCALLS.getStreamFromFD(fd);
-      return SYSCALLS.doStat(FS.stat, stream.path, buf);
+      return SYSCALLS.writeStat(buf, FS.fstat(fd));
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
     return -e.errno;
@@ -3659,9 +3588,9 @@ function dbg(...args) {
       var pos = 0;
       var off = FS.llseek(stream, 0, 1);
   
-      var idx = Math.floor(off / struct_size);
-  
-      while (idx < stream.getdents.length && pos + struct_size <= count) {
+      var startIdx = Math.floor(off / struct_size);
+      var endIdx = Math.min(stream.getdents.length, startIdx + Math.floor(count/struct_size))
+      for (var idx = startIdx; idx < endIdx; idx++) {
         var id;
         var type;
         var name = stream.getdents[idx];
@@ -3675,7 +3604,17 @@ function dbg(...args) {
           type = 4; // DT_DIR
         }
         else {
-          var child = FS.lookupNode(stream.node, name);
+          var child;
+          try {
+            child = FS.lookupNode(stream.node, name);
+          } catch (e) {
+            // If the entry is not a directory, file, or symlink, nodefs
+            // lookupNode will raise EINVAL. Skip these and continue.
+            if (e?.errno === 28) {
+              continue;
+            }
+            throw e;
+          }
           id = child.id;
           type = FS.isChrdev(child.mode) ? 2 :  // DT_CHR, character device.
                  FS.isDir(child.mode) ? 4 :     // DT_DIR, directory.
@@ -3683,13 +3622,12 @@ function dbg(...args) {
                  8;                             // DT_REG, regular file.
         }
         assert(id);
-        (tempI64 = [id>>>0,(tempDouble = id,(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[((dirp + pos)>>2)] = tempI64[0],HEAP32[(((dirp + pos)+(4))>>2)] = tempI64[1]);
-        (tempI64 = [(idx + 1) * struct_size>>>0,(tempDouble = (idx + 1) * struct_size,(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[(((dirp + pos)+(8))>>2)] = tempI64[0],HEAP32[(((dirp + pos)+(12))>>2)] = tempI64[1]);
+        HEAP64[((dirp + pos)>>3)] = BigInt(id);
+        HEAP64[(((dirp + pos)+(8))>>3)] = BigInt((idx + 1) * struct_size);
         HEAP16[(((dirp + pos)+(16))>>1)] = 280;
         HEAP8[(dirp + pos)+(18)] = type;
         stringToUTF8(name, dirp + pos + 19, 256);
         pos += struct_size;
-        idx += 1;
       }
       FS.llseek(stream, idx * struct_size, 0);
       return pos;
@@ -3799,7 +3737,7 @@ function dbg(...args) {
   try {
   
       path = SYSCALLS.getStr(path);
-      return SYSCALLS.doStat(FS.lstat, path, buf);
+      return SYSCALLS.writeStat(buf, FS.lstat(path));
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
     return -e.errno;
@@ -3815,7 +3753,7 @@ function dbg(...args) {
       flags = flags & (~6400);
       assert(!flags, `unknown flags in __syscall_newfstatat: ${flags}`);
       path = SYSCALLS.calculateAt(dirfd, path, allowEmpty);
-      return SYSCALLS.doStat(nofollow ? FS.lstat : FS.stat, path, buf);
+      return SYSCALLS.writeStat(buf, nofollow ? FS.lstat(path) : FS.stat(path));
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
     return -e.errno;
@@ -3853,7 +3791,7 @@ function dbg(...args) {
   try {
   
       path = SYSCALLS.getStr(path);
-      return SYSCALLS.doStat(FS.stat, path, buf);
+      return SYSCALLS.writeStat(buf, FS.stat(path));
     } catch (e) {
     if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
     return -e.errno;
@@ -3865,12 +3803,12 @@ function dbg(...args) {
   
       path = SYSCALLS.getStr(path);
       path = SYSCALLS.calculateAt(dirfd, path);
-      if (flags === 0) {
+      if (!flags) {
         FS.unlink(path);
       } else if (flags === 512) {
         FS.rmdir(path);
       } else {
-        abort('Invalid flags passed to unlinkat');
+        return -28;
       }
       return 0;
     } catch (e) {
@@ -3879,25 +3817,21 @@ function dbg(...args) {
   }
   }
 
-  var __abort_js = () => {
+  var __abort_js = () =>
       abort('native code called abort()');
-    };
-
-  var __emscripten_memcpy_js = (dest, src, num) => HEAPU8.copyWithin(dest, src, src + num);
 
   var __emscripten_throw_longjmp = () => {
       throw Infinity;
     };
 
-  var convertI32PairToI53Checked = (lo, hi) => {
-      assert(lo == (lo >>> 0) || lo == (lo|0)); // lo should either be a i32 or a u32
-      assert(hi === (hi|0));                    // hi should be a i32
-      return ((hi + 0x200000) >>> 0 < 0x400001 - !!lo) ? (lo >>> 0) + hi * 4294967296 : NaN;
-    };
-  function __gmtime_js(time_low, time_high,tmPtr) {
-    var time = convertI32PairToI53Checked(time_low, time_high);
+  var INT53_MAX = 9007199254740992;
   
-    
+  var INT53_MIN = -9007199254740992;
+  var bigintToI53Checked = (num) => (num < INT53_MIN || num > INT53_MAX) ? NaN : Number(num);
+  function __gmtime_js(time, tmPtr) {
+    time = bigintToI53Checked(time);
+  
+  
       var date = new Date(time * 1000);
       HEAP32[((tmPtr)>>2)] = date.getUTCSeconds();
       HEAP32[(((tmPtr)+(4))>>2)] = date.getUTCMinutes();
@@ -3925,10 +3859,10 @@ function dbg(...args) {
       return yday;
     };
   
-  function __localtime_js(time_low, time_high,tmPtr) {
-    var time = convertI32PairToI53Checked(time_low, time_high);
+  function __localtime_js(time, tmPtr) {
+    time = bigintToI53Checked(time);
   
-    
+  
       var date = new Date(time*1000);
       HEAP32[((tmPtr)>>2)] = date.getSeconds();
       HEAP32[(((tmPtr)+(4))>>2)] = date.getMinutes();
@@ -4006,8 +3940,6 @@ function dbg(...args) {
     };
 
   var _emscripten_date_now = () => Date.now();
-
-  var _emscripten_errn = (str, len) => err(UTF8ToString(str, len));
 
   var getHeapMax = () =>
       // Stay one Wasm page short of 4GB: while e.g. Chrome is able to allocate
@@ -4087,14 +4019,12 @@ function dbg(...args) {
   var ENV = {
   };
   
-  var getExecutableName = () => {
-      return thisProgram || './this.program';
-    };
+  var getExecutableName = () => thisProgram || './this.program';
   var getEnvStrings = () => {
       if (!getEnvStrings.strings) {
         // Default values.
         // Browser language detection #8751
-        var lang = ((typeof navigator == 'object' && navigator.languages && navigator.languages[0]) || 'C').replace('-', '_') + '.UTF-8';
+        var lang = ((typeof navigator == 'object' && navigator.language) || 'C').replace('-', '_') + '.UTF-8';
         var env = {
           'USER': 'web_user',
           'LOGNAME': 'web_user',
@@ -4121,30 +4051,26 @@ function dbg(...args) {
       return getEnvStrings.strings;
     };
   
-  var stringToAscii = (str, buffer) => {
-      for (var i = 0; i < str.length; ++i) {
-        assert(str.charCodeAt(i) === (str.charCodeAt(i) & 0xff));
-        HEAP8[buffer++] = str.charCodeAt(i);
-      }
-      // Null-terminate the string
-      HEAP8[buffer] = 0;
-    };
   var _environ_get = (__environ, environ_buf) => {
       var bufSize = 0;
-      getEnvStrings().forEach((string, i) => {
+      var envp = 0;
+      for (var string of getEnvStrings()) {
         var ptr = environ_buf + bufSize;
-        HEAPU32[(((__environ)+(i*4))>>2)] = ptr;
-        stringToAscii(string, ptr);
-        bufSize += string.length + 1;
-      });
+        HEAPU32[(((__environ)+(envp))>>2)] = ptr;
+        bufSize += stringToUTF8(string, ptr, Infinity) + 1;
+        envp += 4;
+      }
       return 0;
     };
 
+  
   var _environ_sizes_get = (penviron_count, penviron_buf_size) => {
       var strings = getEnvStrings();
       HEAPU32[((penviron_count)>>2)] = strings.length;
       var bufSize = 0;
-      strings.forEach((string) => bufSize += string.length + 1);
+      for (var string of strings) {
+        bufSize += lengthBytesUTF8(string) + 1;
+      }
       HEAPU32[((penviron_buf_size)>>2)] = bufSize;
       return 0;
     };
@@ -4193,16 +4119,16 @@ function dbg(...args) {
   }
 
   
-  function _fd_seek(fd,offset_low, offset_high,whence,newOffset) {
-    var offset = convertI32PairToI53Checked(offset_low, offset_high);
+  function _fd_seek(fd, offset, whence, newOffset) {
+    offset = bigintToI53Checked(offset);
   
-    
+  
   try {
   
       if (isNaN(offset)) return 61;
       var stream = SYSCALLS.getStreamFromFD(fd);
       FS.llseek(stream, offset, whence);
-      (tempI64 = [stream.position>>>0,(tempDouble = stream.position,(+(Math.abs(tempDouble))) >= 1.0 ? (tempDouble > 0.0 ? (+(Math.floor((tempDouble)/4294967296.0)))>>>0 : (~~((+(Math.ceil((tempDouble - +(((~~(tempDouble)))>>>0))/4294967296.0)))))>>>0) : 0)], HEAP32[((newOffset)>>2)] = tempI64[0],HEAP32[(((newOffset)+(4))>>2)] = tempI64[1]);
+      HEAP64[((newOffset)>>3)] = BigInt(stream.position);
       if (stream.getdents && offset === 0 && whence === 0) stream.getdents = null; // reset readdir state
       return 0;
     } catch (e) {
@@ -4253,9 +4179,10 @@ function dbg(...args) {
   var getWasmTableEntry = (funcPtr) => {
       var func = wasmTableMirror[funcPtr];
       if (!func) {
-        if (funcPtr >= wasmTableMirror.length) wasmTableMirror.length = funcPtr + 1;
+        /** @suppress {checkTypes} */
         wasmTableMirror[funcPtr] = func = wasmTable.get(funcPtr);
       }
+      /** @suppress {checkTypes} */
       assert(wasmTable.get(funcPtr) == func, 'JavaScript-side Wasm function table mirror is out of date!');
       return func;
     };
@@ -4265,7 +4192,6 @@ function dbg(...args) {
       assert(func, 'Cannot call unknown function ' + ident + ', make sure it is exported');
       return func;
     };
-  
   
   var writeArrayToMemory = (array, buffer) => {
       assert(array.length >= 0, 'writeArrayToMemory array must have a length (should be an array or typed array)')
@@ -4358,20 +4284,19 @@ function dbg(...args) {
   var UTF16Decoder = typeof TextDecoder != 'undefined' ? new TextDecoder('utf-16le') : undefined;;
   var UTF16ToString = (ptr, maxBytesToRead) => {
       assert(ptr % 2 == 0, 'Pointer passed to UTF16ToString must be aligned to two bytes!');
-      var endPtr = ptr;
+      var idx = ((ptr)>>1);
+      var maxIdx = idx + maxBytesToRead / 2;
       // TextDecoder needs to know the byte length in advance, it doesn't stop on
       // null terminator by itself.
       // Also, use the length info to avoid running tiny strings through
       // TextDecoder, since .subarray() allocates garbage.
-      var idx = endPtr >> 1;
-      var maxIdx = idx + maxBytesToRead / 2;
+      var endIdx = idx;
       // If maxBytesToRead is not passed explicitly, it will be undefined, and this
       // will always evaluate to true. This saves on code size.
-      while (!(idx >= maxIdx) && HEAPU16[idx]) ++idx;
-      endPtr = idx << 1;
+      while (!(endIdx >= maxIdx) && HEAPU16[endIdx]) ++endIdx;
   
-      if (endPtr - ptr > 32 && UTF16Decoder)
-        return UTF16Decoder.decode(HEAPU8.subarray(ptr, endPtr));
+      if (endIdx - idx > 16 && UTF16Decoder)
+        return UTF16Decoder.decode(HEAPU16.subarray(idx, endIdx));
   
       // Fallback: decode without UTF16Decoder
       var str = '';
@@ -4379,8 +4304,8 @@ function dbg(...args) {
       // If maxBytesToRead is not passed explicitly, it will be undefined, and the
       // for-loop's condition will always evaluate to true. The loop is then
       // terminated on the first null char.
-      for (var i = 0; !(i >= maxBytesToRead / 2); ++i) {
-        var codeUnit = HEAP16[(((ptr)+(i*2))>>1)];
+      for (var i = idx; !(i >= maxIdx); ++i) {
+        var codeUnit = HEAPU16[i];
         if (codeUnit == 0) break;
         // fromCharCode constructs a character from a UTF-16 code unit, so we can
         // pass the UTF16 string right through.
@@ -4412,15 +4337,786 @@ function dbg(...args) {
     };
 
   FS.createPreloadedFile = FS_createPreloadedFile;
-  FS.staticInit();
-  // Set module methods based on EXPORTED_RUNTIME_METHODS
-  ;
+  FS.staticInit();;
+// End JS library code
+
+// include: postlibrary.js
+// This file is included after the automatically-generated JS library code
+// but before the wasm module is created.
+
+{
+
+  // Begin ATMODULES hooks
+  if (Module['noExitRuntime']) noExitRuntime = Module['noExitRuntime'];
+if (Module['preloadPlugins']) preloadPlugins = Module['preloadPlugins'];
+if (Module['print']) out = Module['print'];
+if (Module['printErr']) err = Module['printErr'];
+if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
+  // End ATMODULES hooks
+
+  checkIncomingModuleAPI();
+
+  if (Module['arguments']) arguments_ = Module['arguments'];
+  if (Module['thisProgram']) thisProgram = Module['thisProgram'];
+
+  // Assertions on removed incoming Module JS APIs.
+  assert(typeof Module['memoryInitializerPrefixURL'] == 'undefined', 'Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['pthreadMainPrefixURL'] == 'undefined', 'Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['cdInitializerPrefixURL'] == 'undefined', 'Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['filePackagePrefixURL'] == 'undefined', 'Module.filePackagePrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['read'] == 'undefined', 'Module.read option was removed');
+  assert(typeof Module['readAsync'] == 'undefined', 'Module.readAsync option was removed (modify readAsync in JS)');
+  assert(typeof Module['readBinary'] == 'undefined', 'Module.readBinary option was removed (modify readBinary in JS)');
+  assert(typeof Module['setWindowTitle'] == 'undefined', 'Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)');
+  assert(typeof Module['TOTAL_MEMORY'] == 'undefined', 'Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY');
+  assert(typeof Module['ENVIRONMENT'] == 'undefined', 'Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)');
+  assert(typeof Module['STACK_SIZE'] == 'undefined', 'STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time')
+  // If memory is defined in wasm, the user can't provide it, or set INITIAL_MEMORY
+  assert(typeof Module['wasmMemory'] == 'undefined', 'Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally');
+  assert(typeof Module['INITIAL_MEMORY'] == 'undefined', 'Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically');
+
+}
+
+// Begin runtime exports
+  Module['wasmExports'] = wasmExports;
+  Module['ccall'] = ccall;
+  Module['cwrap'] = cwrap;
+  Module['setValue'] = setValue;
+  Module['getValue'] = getValue;
+  Module['UTF8ToString'] = UTF8ToString;
+  Module['stringToUTF8'] = stringToUTF8;
+  Module['UTF16ToString'] = UTF16ToString;
+  Module['stringToUTF16'] = stringToUTF16;
+  var missingLibrarySymbols = [
+  'writeI53ToI64',
+  'writeI53ToI64Clamped',
+  'writeI53ToI64Signaling',
+  'writeI53ToU64Clamped',
+  'writeI53ToU64Signaling',
+  'readI53FromI64',
+  'readI53FromU64',
+  'convertI32PairToI53',
+  'convertI32PairToI53Checked',
+  'convertU32PairToI53',
+  'getTempRet0',
+  'setTempRet0',
+  'exitJS',
+  'withStackSave',
+  'inetPton4',
+  'inetNtop4',
+  'inetPton6',
+  'inetNtop6',
+  'readSockaddr',
+  'writeSockaddr',
+  'emscriptenLog',
+  'readEmAsmArgs',
+  'jstoi_q',
+  'autoResumeAudioContext',
+  'getDynCaller',
+  'dynCall',
+  'handleException',
+  'keepRuntimeAlive',
+  'runtimeKeepalivePush',
+  'runtimeKeepalivePop',
+  'callUserCallback',
+  'maybeExit',
+  'asmjsMangle',
+  'HandleAllocator',
+  'getNativeTypeSize',
+  'addOnInit',
+  'addOnPostCtor',
+  'addOnPreMain',
+  'addOnExit',
+  'STACK_SIZE',
+  'STACK_ALIGN',
+  'POINTER_SIZE',
+  'ASSERTIONS',
+  'uleb128Encode',
+  'sigToWasmTypes',
+  'generateFuncType',
+  'convertJsFunctionToWasm',
+  'getEmptyTableSlot',
+  'updateTableMap',
+  'getFunctionAddress',
+  'addFunction',
+  'removeFunction',
+  'reallyNegative',
+  'unSign',
+  'strLen',
+  'reSign',
+  'formatString',
+  'intArrayToString',
+  'AsciiToString',
+  'stringToAscii',
+  'lengthBytesUTF16',
+  'UTF32ToString',
+  'stringToUTF32',
+  'lengthBytesUTF32',
+  'stringToNewUTF8',
+  'registerKeyEventCallback',
+  'maybeCStringToJsString',
+  'findEventTarget',
+  'getBoundingClientRect',
+  'fillMouseEventData',
+  'registerMouseEventCallback',
+  'registerWheelEventCallback',
+  'registerUiEventCallback',
+  'registerFocusEventCallback',
+  'fillDeviceOrientationEventData',
+  'registerDeviceOrientationEventCallback',
+  'fillDeviceMotionEventData',
+  'registerDeviceMotionEventCallback',
+  'screenOrientation',
+  'fillOrientationChangeEventData',
+  'registerOrientationChangeEventCallback',
+  'fillFullscreenChangeEventData',
+  'registerFullscreenChangeEventCallback',
+  'JSEvents_requestFullscreen',
+  'JSEvents_resizeCanvasForFullscreen',
+  'registerRestoreOldStyle',
+  'hideEverythingExceptGivenElement',
+  'restoreHiddenElements',
+  'setLetterbox',
+  'softFullscreenResizeWebGLRenderTarget',
+  'doRequestFullscreen',
+  'fillPointerlockChangeEventData',
+  'registerPointerlockChangeEventCallback',
+  'registerPointerlockErrorEventCallback',
+  'requestPointerLock',
+  'fillVisibilityChangeEventData',
+  'registerVisibilityChangeEventCallback',
+  'registerTouchEventCallback',
+  'fillGamepadEventData',
+  'registerGamepadEventCallback',
+  'registerBeforeUnloadEventCallback',
+  'fillBatteryEventData',
+  'battery',
+  'registerBatteryEventCallback',
+  'setCanvasElementSize',
+  'getCanvasElementSize',
+  'jsStackTrace',
+  'getCallstack',
+  'convertPCtoSourceLocation',
+  'checkWasiClock',
+  'wasiRightsToMuslOFlags',
+  'wasiOFlagsToMuslOFlags',
+  'safeSetTimeout',
+  'setImmediateWrapped',
+  'safeRequestAnimationFrame',
+  'clearImmediateWrapped',
+  'registerPostMainLoop',
+  'registerPreMainLoop',
+  'getPromise',
+  'makePromise',
+  'idsToPromises',
+  'makePromiseCallback',
+  'ExceptionInfo',
+  'findMatchingCatch',
+  'Browser_asyncPrepareDataCounter',
+  'arraySum',
+  'addDays',
+  'getSocketFromFD',
+  'getSocketAddress',
+  'FS_mkdirTree',
+  '_setNetworkCallback',
+  'heapObjectForWebGLType',
+  'toTypedArrayIndex',
+  'webgl_enable_ANGLE_instanced_arrays',
+  'webgl_enable_OES_vertex_array_object',
+  'webgl_enable_WEBGL_draw_buffers',
+  'webgl_enable_WEBGL_multi_draw',
+  'webgl_enable_EXT_polygon_offset_clamp',
+  'webgl_enable_EXT_clip_control',
+  'webgl_enable_WEBGL_polygon_mode',
+  'emscriptenWebGLGet',
+  'computeUnpackAlignedImageSize',
+  'colorChannelsInGlTextureFormat',
+  'emscriptenWebGLGetTexPixelData',
+  'emscriptenWebGLGetUniform',
+  'webglGetUniformLocation',
+  'webglPrepareUniformLocationsBeforeFirstUse',
+  'webglGetLeftBracePos',
+  'emscriptenWebGLGetVertexAttrib',
+  '__glGetActiveAttribOrUniform',
+  'writeGLArray',
+  'registerWebGlEventCallback',
+  'runAndAbortIfError',
+  'ALLOC_NORMAL',
+  'ALLOC_STACK',
+  'allocate',
+  'writeStringToMemory',
+  'writeAsciiToMemory',
+  'demangle',
+  'stackTrace',
+];
+missingLibrarySymbols.forEach(missingLibrarySymbol)
+
+  var unexportedSymbols = [
+  'run',
+  'addRunDependency',
+  'removeRunDependency',
+  'out',
+  'err',
+  'callMain',
+  'abort',
+  'wasmMemory',
+  'HEAPF32',
+  'HEAPF64',
+  'HEAP16',
+  'HEAPU16',
+  'HEAP32',
+  'HEAPU32',
+  'HEAP64',
+  'HEAPU64',
+  'writeStackCookie',
+  'checkStackCookie',
+  'INT53_MAX',
+  'INT53_MIN',
+  'bigintToI53Checked',
+  'stackSave',
+  'stackRestore',
+  'stackAlloc',
+  'ptrToString',
+  'zeroMemory',
+  'getHeapMax',
+  'growMemory',
+  'ENV',
+  'ERRNO_CODES',
+  'strError',
+  'DNS',
+  'Protocols',
+  'Sockets',
+  'timers',
+  'warnOnce',
+  'readEmAsmArgsArray',
+  'getExecutableName',
+  'asyncLoad',
+  'alignMemory',
+  'mmapAlloc',
+  'wasmTable',
+  'getUniqueRunDependency',
+  'noExitRuntime',
+  'addOnPreRun',
+  'addOnPostRun',
+  'freeTableIndexes',
+  'functionsInTableMap',
+  'PATH',
+  'PATH_FS',
+  'UTF8Decoder',
+  'UTF8ArrayToString',
+  'stringToUTF8Array',
+  'lengthBytesUTF8',
+  'intArrayFromString',
+  'UTF16Decoder',
+  'stringToUTF8OnStack',
+  'writeArrayToMemory',
+  'JSEvents',
+  'specialHTMLTargets',
+  'findCanvasEventTarget',
+  'currentFullscreenStrategy',
+  'restoreOldWindowedStyle',
+  'UNWIND_CACHE',
+  'ExitStatus',
+  'getEnvStrings',
+  'doReadv',
+  'doWritev',
+  'initRandomFill',
+  'randomFill',
+  'emSetImmediate',
+  'emClearImmediate_deps',
+  'emClearImmediate',
+  'promiseMap',
+  'uncaughtExceptionCount',
+  'exceptionLast',
+  'exceptionCaught',
+  'Browser',
+  'requestFullscreen',
+  'requestFullScreen',
+  'setCanvasSize',
+  'getUserMedia',
+  'createContext',
+  'getPreloadedImageData__data',
+  'wget',
+  'MONTH_DAYS_REGULAR',
+  'MONTH_DAYS_LEAP',
+  'MONTH_DAYS_REGULAR_CUMULATIVE',
+  'MONTH_DAYS_LEAP_CUMULATIVE',
+  'isLeapYear',
+  'ydayFromDate',
+  'SYSCALLS',
+  'preloadPlugins',
+  'FS_createPreloadedFile',
+  'FS_modeStringToFlags',
+  'FS_getMode',
+  'FS_stdin_getChar_buffer',
+  'FS_stdin_getChar',
+  'FS_unlink',
+  'FS_createPath',
+  'FS_createDevice',
+  'FS_readFile',
+  'FS',
+  'FS_root',
+  'FS_mounts',
+  'FS_devices',
+  'FS_streams',
+  'FS_nextInode',
+  'FS_nameTable',
+  'FS_currentPath',
+  'FS_initialized',
+  'FS_ignorePermissions',
+  'FS_filesystems',
+  'FS_syncFSRequests',
+  'FS_readFiles',
+  'FS_lookupPath',
+  'FS_getPath',
+  'FS_hashName',
+  'FS_hashAddNode',
+  'FS_hashRemoveNode',
+  'FS_lookupNode',
+  'FS_createNode',
+  'FS_destroyNode',
+  'FS_isRoot',
+  'FS_isMountpoint',
+  'FS_isFile',
+  'FS_isDir',
+  'FS_isLink',
+  'FS_isChrdev',
+  'FS_isBlkdev',
+  'FS_isFIFO',
+  'FS_isSocket',
+  'FS_flagsToPermissionString',
+  'FS_nodePermissions',
+  'FS_mayLookup',
+  'FS_mayCreate',
+  'FS_mayDelete',
+  'FS_mayOpen',
+  'FS_checkOpExists',
+  'FS_nextfd',
+  'FS_getStreamChecked',
+  'FS_getStream',
+  'FS_createStream',
+  'FS_closeStream',
+  'FS_dupStream',
+  'FS_doSetAttr',
+  'FS_chrdev_stream_ops',
+  'FS_major',
+  'FS_minor',
+  'FS_makedev',
+  'FS_registerDevice',
+  'FS_getDevice',
+  'FS_getMounts',
+  'FS_syncfs',
+  'FS_mount',
+  'FS_unmount',
+  'FS_lookup',
+  'FS_mknod',
+  'FS_statfs',
+  'FS_statfsStream',
+  'FS_statfsNode',
+  'FS_create',
+  'FS_mkdir',
+  'FS_mkdev',
+  'FS_symlink',
+  'FS_rename',
+  'FS_rmdir',
+  'FS_readdir',
+  'FS_readlink',
+  'FS_stat',
+  'FS_fstat',
+  'FS_lstat',
+  'FS_doChmod',
+  'FS_chmod',
+  'FS_lchmod',
+  'FS_fchmod',
+  'FS_doChown',
+  'FS_chown',
+  'FS_lchown',
+  'FS_fchown',
+  'FS_doTruncate',
+  'FS_truncate',
+  'FS_ftruncate',
+  'FS_utime',
+  'FS_open',
+  'FS_close',
+  'FS_isClosed',
+  'FS_llseek',
+  'FS_read',
+  'FS_write',
+  'FS_mmap',
+  'FS_msync',
+  'FS_ioctl',
+  'FS_writeFile',
+  'FS_cwd',
+  'FS_chdir',
+  'FS_createDefaultDirectories',
+  'FS_createDefaultDevices',
+  'FS_createSpecialDirectories',
+  'FS_createStandardStreams',
+  'FS_staticInit',
+  'FS_init',
+  'FS_quit',
+  'FS_findObject',
+  'FS_analyzePath',
+  'FS_createFile',
+  'FS_createDataFile',
+  'FS_forceLoadFile',
+  'FS_createLazyFile',
+  'FS_absolutePath',
+  'FS_createFolder',
+  'FS_createLink',
+  'FS_joinPath',
+  'FS_mmapAlloc',
+  'FS_standardizePath',
+  'MEMFS',
+  'TTY',
+  'PIPEFS',
+  'SOCKFS',
+  'tempFixedLengthArray',
+  'miniTempWebGLFloatBuffers',
+  'miniTempWebGLIntBuffers',
+  'GL',
+  'AL',
+  'GLUT',
+  'EGL',
+  'GLEW',
+  'IDBStore',
+  'SDL',
+  'SDL_gfx',
+  'allocateUTF8',
+  'allocateUTF8OnStack',
+  'print',
+  'printErr',
+  'jstoi_s',
+];
+unexportedSymbols.forEach(unexportedRuntimeSymbol);
+
+  // End runtime exports
+  // Begin JS library exports
+  // End JS library exports
+
+// end include: postlibrary.js
+
 function checkIncomingModuleAPI() {
   ignoredModuleProp('fetchSettings');
 }
+
+// Imports from the Wasm binary.
+var _PDFiumExt_Init = Module['_PDFiumExt_Init'] = makeInvalidEarlyAccess('_PDFiumExt_Init');
+var _PDFiumExt_OpenFileWriter = Module['_PDFiumExt_OpenFileWriter'] = makeInvalidEarlyAccess('_PDFiumExt_OpenFileWriter');
+var _PDFiumExt_GetFileWriterSize = Module['_PDFiumExt_GetFileWriterSize'] = makeInvalidEarlyAccess('_PDFiumExt_GetFileWriterSize');
+var _PDFiumExt_GetFileWriterData = Module['_PDFiumExt_GetFileWriterData'] = makeInvalidEarlyAccess('_PDFiumExt_GetFileWriterData');
+var _PDFiumExt_CloseFileWriter = Module['_PDFiumExt_CloseFileWriter'] = makeInvalidEarlyAccess('_PDFiumExt_CloseFileWriter');
+var _PDFiumExt_SaveAsCopy = Module['_PDFiumExt_SaveAsCopy'] = makeInvalidEarlyAccess('_PDFiumExt_SaveAsCopy');
+var _PDFiumExt_OpenFormFillInfo = Module['_PDFiumExt_OpenFormFillInfo'] = makeInvalidEarlyAccess('_PDFiumExt_OpenFormFillInfo');
+var _PDFiumExt_CloseFormFillInfo = Module['_PDFiumExt_CloseFormFillInfo'] = makeInvalidEarlyAccess('_PDFiumExt_CloseFormFillInfo');
+var _PDFiumExt_InitFormFillEnvironment = Module['_PDFiumExt_InitFormFillEnvironment'] = makeInvalidEarlyAccess('_PDFiumExt_InitFormFillEnvironment');
+var _PDFiumExt_ExitFormFillEnvironment = Module['_PDFiumExt_ExitFormFillEnvironment'] = makeInvalidEarlyAccess('_PDFiumExt_ExitFormFillEnvironment');
+var _FPDFPage_CreateAnnot = Module['_FPDFPage_CreateAnnot'] = makeInvalidEarlyAccess('_FPDFPage_CreateAnnot');
+var _FPDFPage_GetAnnotCount = Module['_FPDFPage_GetAnnotCount'] = makeInvalidEarlyAccess('_FPDFPage_GetAnnotCount');
+var _FPDFPage_GetAnnot = Module['_FPDFPage_GetAnnot'] = makeInvalidEarlyAccess('_FPDFPage_GetAnnot');
+var _FPDFPage_CloseAnnot = Module['_FPDFPage_CloseAnnot'] = makeInvalidEarlyAccess('_FPDFPage_CloseAnnot');
+var _FPDFPage_RemoveAnnot = Module['_FPDFPage_RemoveAnnot'] = makeInvalidEarlyAccess('_FPDFPage_RemoveAnnot');
+var _FPDFAnnot_GetSubtype = Module['_FPDFAnnot_GetSubtype'] = makeInvalidEarlyAccess('_FPDFAnnot_GetSubtype');
+var _FPDFAnnot_AddInkStroke = Module['_FPDFAnnot_AddInkStroke'] = makeInvalidEarlyAccess('_FPDFAnnot_AddInkStroke');
+var _FPDFAnnot_RemoveInkList = Module['_FPDFAnnot_RemoveInkList'] = makeInvalidEarlyAccess('_FPDFAnnot_RemoveInkList');
+var _FPDFAnnot_AppendObject = Module['_FPDFAnnot_AppendObject'] = makeInvalidEarlyAccess('_FPDFAnnot_AppendObject');
+var _FPDFAnnot_GetObjectCount = Module['_FPDFAnnot_GetObjectCount'] = makeInvalidEarlyAccess('_FPDFAnnot_GetObjectCount');
+var _FPDFAnnot_GetObject = Module['_FPDFAnnot_GetObject'] = makeInvalidEarlyAccess('_FPDFAnnot_GetObject');
+var _FPDFAnnot_GetColor = Module['_FPDFAnnot_GetColor'] = makeInvalidEarlyAccess('_FPDFAnnot_GetColor');
+var _FPDFAnnot_SetRect = Module['_FPDFAnnot_SetRect'] = makeInvalidEarlyAccess('_FPDFAnnot_SetRect');
+var _FPDFAnnot_GetRect = Module['_FPDFAnnot_GetRect'] = makeInvalidEarlyAccess('_FPDFAnnot_GetRect');
+var _FPDFAnnot_GetVertices = Module['_FPDFAnnot_GetVertices'] = makeInvalidEarlyAccess('_FPDFAnnot_GetVertices');
+var _FPDFAnnot_GetInkListCount = Module['_FPDFAnnot_GetInkListCount'] = makeInvalidEarlyAccess('_FPDFAnnot_GetInkListCount');
+var _FPDFAnnot_GetInkListPath = Module['_FPDFAnnot_GetInkListPath'] = makeInvalidEarlyAccess('_FPDFAnnot_GetInkListPath');
+var _FPDFAnnot_GetLine = Module['_FPDFAnnot_GetLine'] = makeInvalidEarlyAccess('_FPDFAnnot_GetLine');
+var _FPDFAnnot_GetStringValue = Module['_FPDFAnnot_GetStringValue'] = makeInvalidEarlyAccess('_FPDFAnnot_GetStringValue');
+var _FPDFAnnot_GetAP = Module['_FPDFAnnot_GetAP'] = makeInvalidEarlyAccess('_FPDFAnnot_GetAP');
+var _FPDFAnnot_GetLinkedAnnot = Module['_FPDFAnnot_GetLinkedAnnot'] = makeInvalidEarlyAccess('_FPDFAnnot_GetLinkedAnnot');
+var _FPDFAnnot_GetFormFieldFlags = Module['_FPDFAnnot_GetFormFieldFlags'] = makeInvalidEarlyAccess('_FPDFAnnot_GetFormFieldFlags');
+var _FPDFAnnot_GetFormFieldName = Module['_FPDFAnnot_GetFormFieldName'] = makeInvalidEarlyAccess('_FPDFAnnot_GetFormFieldName');
+var _FPDFAnnot_GetFormFieldType = Module['_FPDFAnnot_GetFormFieldType'] = makeInvalidEarlyAccess('_FPDFAnnot_GetFormFieldType');
+var _FPDFAnnot_GetFormFieldAlternateName = Module['_FPDFAnnot_GetFormFieldAlternateName'] = makeInvalidEarlyAccess('_FPDFAnnot_GetFormFieldAlternateName');
+var _FPDFAnnot_GetFormFieldValue = Module['_FPDFAnnot_GetFormFieldValue'] = makeInvalidEarlyAccess('_FPDFAnnot_GetFormFieldValue');
+var _FPDFAnnot_GetOptionCount = Module['_FPDFAnnot_GetOptionCount'] = makeInvalidEarlyAccess('_FPDFAnnot_GetOptionCount');
+var _FPDFAnnot_GetOptionLabel = Module['_FPDFAnnot_GetOptionLabel'] = makeInvalidEarlyAccess('_FPDFAnnot_GetOptionLabel');
+var _FPDFAnnot_IsOptionSelected = Module['_FPDFAnnot_IsOptionSelected'] = makeInvalidEarlyAccess('_FPDFAnnot_IsOptionSelected');
+var _FPDFAnnot_IsChecked = Module['_FPDFAnnot_IsChecked'] = makeInvalidEarlyAccess('_FPDFAnnot_IsChecked');
+var _FPDFAnnot_SetFocusableSubtypes = Module['_FPDFAnnot_SetFocusableSubtypes'] = makeInvalidEarlyAccess('_FPDFAnnot_SetFocusableSubtypes');
+var _FPDFAnnot_GetFocusableSubtypesCount = Module['_FPDFAnnot_GetFocusableSubtypesCount'] = makeInvalidEarlyAccess('_FPDFAnnot_GetFocusableSubtypesCount');
+var _FPDFAnnot_GetFocusableSubtypes = Module['_FPDFAnnot_GetFocusableSubtypes'] = makeInvalidEarlyAccess('_FPDFAnnot_GetFocusableSubtypes');
+var _FPDFAnnot_GetLink = Module['_FPDFAnnot_GetLink'] = makeInvalidEarlyAccess('_FPDFAnnot_GetLink');
+var _FPDFDoc_GetAttachmentCount = Module['_FPDFDoc_GetAttachmentCount'] = makeInvalidEarlyAccess('_FPDFDoc_GetAttachmentCount');
+var _FPDFDoc_GetAttachment = Module['_FPDFDoc_GetAttachment'] = makeInvalidEarlyAccess('_FPDFDoc_GetAttachment');
+var _FPDFAttachment_GetName = Module['_FPDFAttachment_GetName'] = makeInvalidEarlyAccess('_FPDFAttachment_GetName');
+var _FPDFAttachment_GetStringValue = Module['_FPDFAttachment_GetStringValue'] = makeInvalidEarlyAccess('_FPDFAttachment_GetStringValue');
+var _FPDFAttachment_GetFile = Module['_FPDFAttachment_GetFile'] = makeInvalidEarlyAccess('_FPDFAttachment_GetFile');
+var _FPDFBookmark_GetFirstChild = Module['_FPDFBookmark_GetFirstChild'] = makeInvalidEarlyAccess('_FPDFBookmark_GetFirstChild');
+var _FPDFBookmark_GetNextSibling = Module['_FPDFBookmark_GetNextSibling'] = makeInvalidEarlyAccess('_FPDFBookmark_GetNextSibling');
+var _FPDFBookmark_GetTitle = Module['_FPDFBookmark_GetTitle'] = makeInvalidEarlyAccess('_FPDFBookmark_GetTitle');
+var _FPDFBookmark_Find = Module['_FPDFBookmark_Find'] = makeInvalidEarlyAccess('_FPDFBookmark_Find');
+var _FPDFBookmark_GetDest = Module['_FPDFBookmark_GetDest'] = makeInvalidEarlyAccess('_FPDFBookmark_GetDest');
+var _FPDFBookmark_GetAction = Module['_FPDFBookmark_GetAction'] = makeInvalidEarlyAccess('_FPDFBookmark_GetAction');
+var _FPDFAction_GetType = Module['_FPDFAction_GetType'] = makeInvalidEarlyAccess('_FPDFAction_GetType');
+var _FPDFAction_GetDest = Module['_FPDFAction_GetDest'] = makeInvalidEarlyAccess('_FPDFAction_GetDest');
+var _FPDFAction_GetFilePath = Module['_FPDFAction_GetFilePath'] = makeInvalidEarlyAccess('_FPDFAction_GetFilePath');
+var _FPDFAction_GetURIPath = Module['_FPDFAction_GetURIPath'] = makeInvalidEarlyAccess('_FPDFAction_GetURIPath');
+var _FPDFDest_GetDestPageIndex = Module['_FPDFDest_GetDestPageIndex'] = makeInvalidEarlyAccess('_FPDFDest_GetDestPageIndex');
+var _FPDFDest_GetView = Module['_FPDFDest_GetView'] = makeInvalidEarlyAccess('_FPDFDest_GetView');
+var _FPDFDest_GetLocationInPage = Module['_FPDFDest_GetLocationInPage'] = makeInvalidEarlyAccess('_FPDFDest_GetLocationInPage');
+var _FPDFLink_GetDest = Module['_FPDFLink_GetDest'] = makeInvalidEarlyAccess('_FPDFLink_GetDest');
+var _FPDFLink_GetAction = Module['_FPDFLink_GetAction'] = makeInvalidEarlyAccess('_FPDFLink_GetAction');
+var _FPDF_GetMetaText = Module['_FPDF_GetMetaText'] = makeInvalidEarlyAccess('_FPDF_GetMetaText');
+var _FPDFPageObj_NewImageObj = Module['_FPDFPageObj_NewImageObj'] = makeInvalidEarlyAccess('_FPDFPageObj_NewImageObj');
+var _FPDFImageObj_SetBitmap = Module['_FPDFImageObj_SetBitmap'] = makeInvalidEarlyAccess('_FPDFImageObj_SetBitmap');
+var _FPDFImageObj_GetBitmap = Module['_FPDFImageObj_GetBitmap'] = makeInvalidEarlyAccess('_FPDFImageObj_GetBitmap');
+var _FPDF_CreateNewDocument = Module['_FPDF_CreateNewDocument'] = makeInvalidEarlyAccess('_FPDF_CreateNewDocument');
+var _FPDFPage_InsertObject = Module['_FPDFPage_InsertObject'] = makeInvalidEarlyAccess('_FPDFPage_InsertObject');
+var _FPDFPageObj_Destroy = Module['_FPDFPageObj_Destroy'] = makeInvalidEarlyAccess('_FPDFPageObj_Destroy');
+var _FPDFPageObj_GetType = Module['_FPDFPageObj_GetType'] = makeInvalidEarlyAccess('_FPDFPageObj_GetType');
+var _FPDFPage_GenerateContent = Module['_FPDFPage_GenerateContent'] = makeInvalidEarlyAccess('_FPDFPage_GenerateContent');
+var _FPDFPageObj_Transform = Module['_FPDFPageObj_Transform'] = makeInvalidEarlyAccess('_FPDFPageObj_Transform');
+var _FPDFPageObj_GetMatrix = Module['_FPDFPageObj_GetMatrix'] = makeInvalidEarlyAccess('_FPDFPageObj_GetMatrix');
+var _FPDFPageObj_SetMatrix = Module['_FPDFPageObj_SetMatrix'] = makeInvalidEarlyAccess('_FPDFPageObj_SetMatrix');
+var _FPDFPageObj_GetBounds = Module['_FPDFPageObj_GetBounds'] = makeInvalidEarlyAccess('_FPDFPageObj_GetBounds');
+var _FPDFFormObj_CountObjects = Module['_FPDFFormObj_CountObjects'] = makeInvalidEarlyAccess('_FPDFFormObj_CountObjects');
+var _FPDFFormObj_GetObject = Module['_FPDFFormObj_GetObject'] = makeInvalidEarlyAccess('_FPDFFormObj_GetObject');
+var _FPDFPath_CountSegments = Module['_FPDFPath_CountSegments'] = makeInvalidEarlyAccess('_FPDFPath_CountSegments');
+var _FPDFPath_GetPathSegment = Module['_FPDFPath_GetPathSegment'] = makeInvalidEarlyAccess('_FPDFPath_GetPathSegment');
+var _FPDFPathSegment_GetPoint = Module['_FPDFPathSegment_GetPoint'] = makeInvalidEarlyAccess('_FPDFPathSegment_GetPoint');
+var _FPDFPathSegment_GetType = Module['_FPDFPathSegment_GetType'] = makeInvalidEarlyAccess('_FPDFPathSegment_GetType');
+var _FPDFPathSegment_GetClose = Module['_FPDFPathSegment_GetClose'] = makeInvalidEarlyAccess('_FPDFPathSegment_GetClose');
+var _FPDFPage_Flatten = Module['_FPDFPage_Flatten'] = makeInvalidEarlyAccess('_FPDFPage_Flatten');
+var _malloc = Module['_malloc'] = makeInvalidEarlyAccess('_malloc');
+var _free = Module['_free'] = makeInvalidEarlyAccess('_free');
+var _FORM_OnKeyDown = Module['_FORM_OnKeyDown'] = makeInvalidEarlyAccess('_FORM_OnKeyDown');
+var _FORM_OnKeyUp = Module['_FORM_OnKeyUp'] = makeInvalidEarlyAccess('_FORM_OnKeyUp');
+var _FORM_OnChar = Module['_FORM_OnChar'] = makeInvalidEarlyAccess('_FORM_OnChar');
+var _FORM_ReplaceSelection = Module['_FORM_ReplaceSelection'] = makeInvalidEarlyAccess('_FORM_ReplaceSelection');
+var _FORM_SelectAllText = Module['_FORM_SelectAllText'] = makeInvalidEarlyAccess('_FORM_SelectAllText');
+var _FORM_ForceToKillFocus = Module['_FORM_ForceToKillFocus'] = makeInvalidEarlyAccess('_FORM_ForceToKillFocus');
+var _FORM_SetFocusedAnnot = Module['_FORM_SetFocusedAnnot'] = makeInvalidEarlyAccess('_FORM_SetFocusedAnnot');
+var _FORM_OnAfterLoadPage = Module['_FORM_OnAfterLoadPage'] = makeInvalidEarlyAccess('_FORM_OnAfterLoadPage');
+var _FORM_OnBeforeClosePage = Module['_FORM_OnBeforeClosePage'] = makeInvalidEarlyAccess('_FORM_OnBeforeClosePage');
+var _FORM_SetIndexSelected = Module['_FORM_SetIndexSelected'] = makeInvalidEarlyAccess('_FORM_SetIndexSelected');
+var _FPDF_ImportPagesByIndex = Module['_FPDF_ImportPagesByIndex'] = makeInvalidEarlyAccess('_FPDF_ImportPagesByIndex');
+var _FPDF_ImportPages = Module['_FPDF_ImportPages'] = makeInvalidEarlyAccess('_FPDF_ImportPages');
+var _FPDF_GetSignatureCount = Module['_FPDF_GetSignatureCount'] = makeInvalidEarlyAccess('_FPDF_GetSignatureCount');
+var _FPDF_GetSignatureObject = Module['_FPDF_GetSignatureObject'] = makeInvalidEarlyAccess('_FPDF_GetSignatureObject');
+var _FPDFSignatureObj_GetContents = Module['_FPDFSignatureObj_GetContents'] = makeInvalidEarlyAccess('_FPDFSignatureObj_GetContents');
+var _FPDFSignatureObj_GetByteRange = Module['_FPDFSignatureObj_GetByteRange'] = makeInvalidEarlyAccess('_FPDFSignatureObj_GetByteRange');
+var _FPDFSignatureObj_GetSubFilter = Module['_FPDFSignatureObj_GetSubFilter'] = makeInvalidEarlyAccess('_FPDFSignatureObj_GetSubFilter');
+var _FPDFSignatureObj_GetReason = Module['_FPDFSignatureObj_GetReason'] = makeInvalidEarlyAccess('_FPDFSignatureObj_GetReason');
+var _FPDFSignatureObj_GetTime = Module['_FPDFSignatureObj_GetTime'] = makeInvalidEarlyAccess('_FPDFSignatureObj_GetTime');
+var _FPDFSignatureObj_GetDocMDPPermission = Module['_FPDFSignatureObj_GetDocMDPPermission'] = makeInvalidEarlyAccess('_FPDFSignatureObj_GetDocMDPPermission');
+var _FPDFText_LoadPage = Module['_FPDFText_LoadPage'] = makeInvalidEarlyAccess('_FPDFText_LoadPage');
+var _FPDFText_ClosePage = Module['_FPDFText_ClosePage'] = makeInvalidEarlyAccess('_FPDFText_ClosePage');
+var _FPDFText_CountChars = Module['_FPDFText_CountChars'] = makeInvalidEarlyAccess('_FPDFText_CountChars');
+var _FPDFText_GetFontSize = Module['_FPDFText_GetFontSize'] = makeInvalidEarlyAccess('_FPDFText_GetFontSize');
+var _FPDFText_GetFontInfo = Module['_FPDFText_GetFontInfo'] = makeInvalidEarlyAccess('_FPDFText_GetFontInfo');
+var _FPDFText_GetCharBox = Module['_FPDFText_GetCharBox'] = makeInvalidEarlyAccess('_FPDFText_GetCharBox');
+var _FPDFText_GetCharIndexAtPos = Module['_FPDFText_GetCharIndexAtPos'] = makeInvalidEarlyAccess('_FPDFText_GetCharIndexAtPos');
+var _FPDFText_GetText = Module['_FPDFText_GetText'] = makeInvalidEarlyAccess('_FPDFText_GetText');
+var _FPDFText_CountRects = Module['_FPDFText_CountRects'] = makeInvalidEarlyAccess('_FPDFText_CountRects');
+var _FPDFText_GetRect = Module['_FPDFText_GetRect'] = makeInvalidEarlyAccess('_FPDFText_GetRect');
+var _FPDFText_GetBoundedText = Module['_FPDFText_GetBoundedText'] = makeInvalidEarlyAccess('_FPDFText_GetBoundedText');
+var _FPDFText_FindStart = Module['_FPDFText_FindStart'] = makeInvalidEarlyAccess('_FPDFText_FindStart');
+var _FPDFText_FindNext = Module['_FPDFText_FindNext'] = makeInvalidEarlyAccess('_FPDFText_FindNext');
+var _FPDFText_FindPrev = Module['_FPDFText_FindPrev'] = makeInvalidEarlyAccess('_FPDFText_FindPrev');
+var _FPDFText_GetSchResultIndex = Module['_FPDFText_GetSchResultIndex'] = makeInvalidEarlyAccess('_FPDFText_GetSchResultIndex');
+var _FPDFText_GetSchCount = Module['_FPDFText_GetSchCount'] = makeInvalidEarlyAccess('_FPDFText_GetSchCount');
+var _FPDFText_FindClose = Module['_FPDFText_FindClose'] = makeInvalidEarlyAccess('_FPDFText_FindClose');
+var _FPDF_DestroyLibrary = Module['_FPDF_DestroyLibrary'] = makeInvalidEarlyAccess('_FPDF_DestroyLibrary');
+var _FPDF_LoadMemDocument = Module['_FPDF_LoadMemDocument'] = makeInvalidEarlyAccess('_FPDF_LoadMemDocument');
+var _FPDF_GetDocPermissions = Module['_FPDF_GetDocPermissions'] = makeInvalidEarlyAccess('_FPDF_GetDocPermissions');
+var _FPDF_GetDocUserPermissions = Module['_FPDF_GetDocUserPermissions'] = makeInvalidEarlyAccess('_FPDF_GetDocUserPermissions');
+var _FPDF_GetPageCount = Module['_FPDF_GetPageCount'] = makeInvalidEarlyAccess('_FPDF_GetPageCount');
+var _FPDF_LoadPage = Module['_FPDF_LoadPage'] = makeInvalidEarlyAccess('_FPDF_LoadPage');
+var _FPDF_RenderPageBitmap = Module['_FPDF_RenderPageBitmap'] = makeInvalidEarlyAccess('_FPDF_RenderPageBitmap');
+var _FPDF_ClosePage = Module['_FPDF_ClosePage'] = makeInvalidEarlyAccess('_FPDF_ClosePage');
+var _FPDF_CloseDocument = Module['_FPDF_CloseDocument'] = makeInvalidEarlyAccess('_FPDF_CloseDocument');
+var _FPDF_GetLastError = Module['_FPDF_GetLastError'] = makeInvalidEarlyAccess('_FPDF_GetLastError');
+var _FPDF_DeviceToPage = Module['_FPDF_DeviceToPage'] = makeInvalidEarlyAccess('_FPDF_DeviceToPage');
+var _FPDF_PageToDevice = Module['_FPDF_PageToDevice'] = makeInvalidEarlyAccess('_FPDF_PageToDevice');
+var _FPDFBitmap_Create = Module['_FPDFBitmap_Create'] = makeInvalidEarlyAccess('_FPDFBitmap_Create');
+var _FPDFBitmap_CreateEx = Module['_FPDFBitmap_CreateEx'] = makeInvalidEarlyAccess('_FPDFBitmap_CreateEx');
+var _FPDFBitmap_GetFormat = Module['_FPDFBitmap_GetFormat'] = makeInvalidEarlyAccess('_FPDFBitmap_GetFormat');
+var _FPDFBitmap_FillRect = Module['_FPDFBitmap_FillRect'] = makeInvalidEarlyAccess('_FPDFBitmap_FillRect');
+var _FPDFBitmap_GetBuffer = Module['_FPDFBitmap_GetBuffer'] = makeInvalidEarlyAccess('_FPDFBitmap_GetBuffer');
+var _FPDFBitmap_GetWidth = Module['_FPDFBitmap_GetWidth'] = makeInvalidEarlyAccess('_FPDFBitmap_GetWidth');
+var _FPDFBitmap_GetHeight = Module['_FPDFBitmap_GetHeight'] = makeInvalidEarlyAccess('_FPDFBitmap_GetHeight');
+var _FPDFBitmap_Destroy = Module['_FPDFBitmap_Destroy'] = makeInvalidEarlyAccess('_FPDFBitmap_Destroy');
+var _FPDF_GetPageSizeByIndexF = Module['_FPDF_GetPageSizeByIndexF'] = makeInvalidEarlyAccess('_FPDF_GetPageSizeByIndexF');
+var _fflush = makeInvalidEarlyAccess('_fflush');
+var _emscripten_stack_get_end = makeInvalidEarlyAccess('_emscripten_stack_get_end');
+var _emscripten_stack_get_base = makeInvalidEarlyAccess('_emscripten_stack_get_base');
+var _emscripten_builtin_memalign = makeInvalidEarlyAccess('_emscripten_builtin_memalign');
+var _strerror = makeInvalidEarlyAccess('_strerror');
+var _setThrew = makeInvalidEarlyAccess('_setThrew');
+var _emscripten_stack_init = makeInvalidEarlyAccess('_emscripten_stack_init');
+var _emscripten_stack_get_free = makeInvalidEarlyAccess('_emscripten_stack_get_free');
+var __emscripten_stack_restore = makeInvalidEarlyAccess('__emscripten_stack_restore');
+var __emscripten_stack_alloc = makeInvalidEarlyAccess('__emscripten_stack_alloc');
+var _emscripten_stack_get_current = makeInvalidEarlyAccess('_emscripten_stack_get_current');
+
+function assignWasmExports(wasmExports) {
+  Module['_PDFiumExt_Init'] = _PDFiumExt_Init = createExportWrapper('PDFiumExt_Init', 0);
+  Module['_PDFiumExt_OpenFileWriter'] = _PDFiumExt_OpenFileWriter = createExportWrapper('PDFiumExt_OpenFileWriter', 0);
+  Module['_PDFiumExt_GetFileWriterSize'] = _PDFiumExt_GetFileWriterSize = createExportWrapper('PDFiumExt_GetFileWriterSize', 1);
+  Module['_PDFiumExt_GetFileWriterData'] = _PDFiumExt_GetFileWriterData = createExportWrapper('PDFiumExt_GetFileWriterData', 3);
+  Module['_PDFiumExt_CloseFileWriter'] = _PDFiumExt_CloseFileWriter = createExportWrapper('PDFiumExt_CloseFileWriter', 1);
+  Module['_PDFiumExt_SaveAsCopy'] = _PDFiumExt_SaveAsCopy = createExportWrapper('PDFiumExt_SaveAsCopy', 2);
+  Module['_PDFiumExt_OpenFormFillInfo'] = _PDFiumExt_OpenFormFillInfo = createExportWrapper('PDFiumExt_OpenFormFillInfo', 0);
+  Module['_PDFiumExt_CloseFormFillInfo'] = _PDFiumExt_CloseFormFillInfo = createExportWrapper('PDFiumExt_CloseFormFillInfo', 1);
+  Module['_PDFiumExt_InitFormFillEnvironment'] = _PDFiumExt_InitFormFillEnvironment = createExportWrapper('PDFiumExt_InitFormFillEnvironment', 2);
+  Module['_PDFiumExt_ExitFormFillEnvironment'] = _PDFiumExt_ExitFormFillEnvironment = createExportWrapper('PDFiumExt_ExitFormFillEnvironment', 1);
+  Module['_FPDFPage_CreateAnnot'] = _FPDFPage_CreateAnnot = createExportWrapper('FPDFPage_CreateAnnot', 2);
+  Module['_FPDFPage_GetAnnotCount'] = _FPDFPage_GetAnnotCount = createExportWrapper('FPDFPage_GetAnnotCount', 1);
+  Module['_FPDFPage_GetAnnot'] = _FPDFPage_GetAnnot = createExportWrapper('FPDFPage_GetAnnot', 2);
+  Module['_FPDFPage_CloseAnnot'] = _FPDFPage_CloseAnnot = createExportWrapper('FPDFPage_CloseAnnot', 1);
+  Module['_FPDFPage_RemoveAnnot'] = _FPDFPage_RemoveAnnot = createExportWrapper('FPDFPage_RemoveAnnot', 2);
+  Module['_FPDFAnnot_GetSubtype'] = _FPDFAnnot_GetSubtype = createExportWrapper('FPDFAnnot_GetSubtype', 1);
+  Module['_FPDFAnnot_AddInkStroke'] = _FPDFAnnot_AddInkStroke = createExportWrapper('FPDFAnnot_AddInkStroke', 3);
+  Module['_FPDFAnnot_RemoveInkList'] = _FPDFAnnot_RemoveInkList = createExportWrapper('FPDFAnnot_RemoveInkList', 1);
+  Module['_FPDFAnnot_AppendObject'] = _FPDFAnnot_AppendObject = createExportWrapper('FPDFAnnot_AppendObject', 2);
+  Module['_FPDFAnnot_GetObjectCount'] = _FPDFAnnot_GetObjectCount = createExportWrapper('FPDFAnnot_GetObjectCount', 1);
+  Module['_FPDFAnnot_GetObject'] = _FPDFAnnot_GetObject = createExportWrapper('FPDFAnnot_GetObject', 2);
+  Module['_FPDFAnnot_GetColor'] = _FPDFAnnot_GetColor = createExportWrapper('FPDFAnnot_GetColor', 6);
+  Module['_FPDFAnnot_SetRect'] = _FPDFAnnot_SetRect = createExportWrapper('FPDFAnnot_SetRect', 2);
+  Module['_FPDFAnnot_GetRect'] = _FPDFAnnot_GetRect = createExportWrapper('FPDFAnnot_GetRect', 2);
+  Module['_FPDFAnnot_GetVertices'] = _FPDFAnnot_GetVertices = createExportWrapper('FPDFAnnot_GetVertices', 3);
+  Module['_FPDFAnnot_GetInkListCount'] = _FPDFAnnot_GetInkListCount = createExportWrapper('FPDFAnnot_GetInkListCount', 1);
+  Module['_FPDFAnnot_GetInkListPath'] = _FPDFAnnot_GetInkListPath = createExportWrapper('FPDFAnnot_GetInkListPath', 4);
+  Module['_FPDFAnnot_GetLine'] = _FPDFAnnot_GetLine = createExportWrapper('FPDFAnnot_GetLine', 3);
+  Module['_FPDFAnnot_GetStringValue'] = _FPDFAnnot_GetStringValue = createExportWrapper('FPDFAnnot_GetStringValue', 4);
+  Module['_FPDFAnnot_GetAP'] = _FPDFAnnot_GetAP = createExportWrapper('FPDFAnnot_GetAP', 4);
+  Module['_FPDFAnnot_GetLinkedAnnot'] = _FPDFAnnot_GetLinkedAnnot = createExportWrapper('FPDFAnnot_GetLinkedAnnot', 2);
+  Module['_FPDFAnnot_GetFormFieldFlags'] = _FPDFAnnot_GetFormFieldFlags = createExportWrapper('FPDFAnnot_GetFormFieldFlags', 2);
+  Module['_FPDFAnnot_GetFormFieldName'] = _FPDFAnnot_GetFormFieldName = createExportWrapper('FPDFAnnot_GetFormFieldName', 4);
+  Module['_FPDFAnnot_GetFormFieldType'] = _FPDFAnnot_GetFormFieldType = createExportWrapper('FPDFAnnot_GetFormFieldType', 2);
+  Module['_FPDFAnnot_GetFormFieldAlternateName'] = _FPDFAnnot_GetFormFieldAlternateName = createExportWrapper('FPDFAnnot_GetFormFieldAlternateName', 4);
+  Module['_FPDFAnnot_GetFormFieldValue'] = _FPDFAnnot_GetFormFieldValue = createExportWrapper('FPDFAnnot_GetFormFieldValue', 4);
+  Module['_FPDFAnnot_GetOptionCount'] = _FPDFAnnot_GetOptionCount = createExportWrapper('FPDFAnnot_GetOptionCount', 2);
+  Module['_FPDFAnnot_GetOptionLabel'] = _FPDFAnnot_GetOptionLabel = createExportWrapper('FPDFAnnot_GetOptionLabel', 5);
+  Module['_FPDFAnnot_IsOptionSelected'] = _FPDFAnnot_IsOptionSelected = createExportWrapper('FPDFAnnot_IsOptionSelected', 3);
+  Module['_FPDFAnnot_IsChecked'] = _FPDFAnnot_IsChecked = createExportWrapper('FPDFAnnot_IsChecked', 2);
+  Module['_FPDFAnnot_SetFocusableSubtypes'] = _FPDFAnnot_SetFocusableSubtypes = createExportWrapper('FPDFAnnot_SetFocusableSubtypes', 3);
+  Module['_FPDFAnnot_GetFocusableSubtypesCount'] = _FPDFAnnot_GetFocusableSubtypesCount = createExportWrapper('FPDFAnnot_GetFocusableSubtypesCount', 1);
+  Module['_FPDFAnnot_GetFocusableSubtypes'] = _FPDFAnnot_GetFocusableSubtypes = createExportWrapper('FPDFAnnot_GetFocusableSubtypes', 3);
+  Module['_FPDFAnnot_GetLink'] = _FPDFAnnot_GetLink = createExportWrapper('FPDFAnnot_GetLink', 1);
+  Module['_FPDFDoc_GetAttachmentCount'] = _FPDFDoc_GetAttachmentCount = createExportWrapper('FPDFDoc_GetAttachmentCount', 1);
+  Module['_FPDFDoc_GetAttachment'] = _FPDFDoc_GetAttachment = createExportWrapper('FPDFDoc_GetAttachment', 2);
+  Module['_FPDFAttachment_GetName'] = _FPDFAttachment_GetName = createExportWrapper('FPDFAttachment_GetName', 3);
+  Module['_FPDFAttachment_GetStringValue'] = _FPDFAttachment_GetStringValue = createExportWrapper('FPDFAttachment_GetStringValue', 4);
+  Module['_FPDFAttachment_GetFile'] = _FPDFAttachment_GetFile = createExportWrapper('FPDFAttachment_GetFile', 4);
+  Module['_FPDFBookmark_GetFirstChild'] = _FPDFBookmark_GetFirstChild = createExportWrapper('FPDFBookmark_GetFirstChild', 2);
+  Module['_FPDFBookmark_GetNextSibling'] = _FPDFBookmark_GetNextSibling = createExportWrapper('FPDFBookmark_GetNextSibling', 2);
+  Module['_FPDFBookmark_GetTitle'] = _FPDFBookmark_GetTitle = createExportWrapper('FPDFBookmark_GetTitle', 3);
+  Module['_FPDFBookmark_Find'] = _FPDFBookmark_Find = createExportWrapper('FPDFBookmark_Find', 2);
+  Module['_FPDFBookmark_GetDest'] = _FPDFBookmark_GetDest = createExportWrapper('FPDFBookmark_GetDest', 2);
+  Module['_FPDFBookmark_GetAction'] = _FPDFBookmark_GetAction = createExportWrapper('FPDFBookmark_GetAction', 1);
+  Module['_FPDFAction_GetType'] = _FPDFAction_GetType = createExportWrapper('FPDFAction_GetType', 1);
+  Module['_FPDFAction_GetDest'] = _FPDFAction_GetDest = createExportWrapper('FPDFAction_GetDest', 2);
+  Module['_FPDFAction_GetFilePath'] = _FPDFAction_GetFilePath = createExportWrapper('FPDFAction_GetFilePath', 3);
+  Module['_FPDFAction_GetURIPath'] = _FPDFAction_GetURIPath = createExportWrapper('FPDFAction_GetURIPath', 4);
+  Module['_FPDFDest_GetDestPageIndex'] = _FPDFDest_GetDestPageIndex = createExportWrapper('FPDFDest_GetDestPageIndex', 2);
+  Module['_FPDFDest_GetView'] = _FPDFDest_GetView = createExportWrapper('FPDFDest_GetView', 3);
+  Module['_FPDFDest_GetLocationInPage'] = _FPDFDest_GetLocationInPage = createExportWrapper('FPDFDest_GetLocationInPage', 7);
+  Module['_FPDFLink_GetDest'] = _FPDFLink_GetDest = createExportWrapper('FPDFLink_GetDest', 2);
+  Module['_FPDFLink_GetAction'] = _FPDFLink_GetAction = createExportWrapper('FPDFLink_GetAction', 1);
+  Module['_FPDF_GetMetaText'] = _FPDF_GetMetaText = createExportWrapper('FPDF_GetMetaText', 4);
+  Module['_FPDFPageObj_NewImageObj'] = _FPDFPageObj_NewImageObj = createExportWrapper('FPDFPageObj_NewImageObj', 1);
+  Module['_FPDFImageObj_SetBitmap'] = _FPDFImageObj_SetBitmap = createExportWrapper('FPDFImageObj_SetBitmap', 4);
+  Module['_FPDFImageObj_GetBitmap'] = _FPDFImageObj_GetBitmap = createExportWrapper('FPDFImageObj_GetBitmap', 1);
+  Module['_FPDF_CreateNewDocument'] = _FPDF_CreateNewDocument = createExportWrapper('FPDF_CreateNewDocument', 0);
+  Module['_FPDFPage_InsertObject'] = _FPDFPage_InsertObject = createExportWrapper('FPDFPage_InsertObject', 2);
+  Module['_FPDFPageObj_Destroy'] = _FPDFPageObj_Destroy = createExportWrapper('FPDFPageObj_Destroy', 1);
+  Module['_FPDFPageObj_GetType'] = _FPDFPageObj_GetType = createExportWrapper('FPDFPageObj_GetType', 1);
+  Module['_FPDFPage_GenerateContent'] = _FPDFPage_GenerateContent = createExportWrapper('FPDFPage_GenerateContent', 1);
+  Module['_FPDFPageObj_Transform'] = _FPDFPageObj_Transform = createExportWrapper('FPDFPageObj_Transform', 7);
+  Module['_FPDFPageObj_GetMatrix'] = _FPDFPageObj_GetMatrix = createExportWrapper('FPDFPageObj_GetMatrix', 2);
+  Module['_FPDFPageObj_SetMatrix'] = _FPDFPageObj_SetMatrix = createExportWrapper('FPDFPageObj_SetMatrix', 2);
+  Module['_FPDFPageObj_GetBounds'] = _FPDFPageObj_GetBounds = createExportWrapper('FPDFPageObj_GetBounds', 5);
+  Module['_FPDFFormObj_CountObjects'] = _FPDFFormObj_CountObjects = createExportWrapper('FPDFFormObj_CountObjects', 1);
+  Module['_FPDFFormObj_GetObject'] = _FPDFFormObj_GetObject = createExportWrapper('FPDFFormObj_GetObject', 2);
+  Module['_FPDFPath_CountSegments'] = _FPDFPath_CountSegments = createExportWrapper('FPDFPath_CountSegments', 1);
+  Module['_FPDFPath_GetPathSegment'] = _FPDFPath_GetPathSegment = createExportWrapper('FPDFPath_GetPathSegment', 2);
+  Module['_FPDFPathSegment_GetPoint'] = _FPDFPathSegment_GetPoint = createExportWrapper('FPDFPathSegment_GetPoint', 3);
+  Module['_FPDFPathSegment_GetType'] = _FPDFPathSegment_GetType = createExportWrapper('FPDFPathSegment_GetType', 1);
+  Module['_FPDFPathSegment_GetClose'] = _FPDFPathSegment_GetClose = createExportWrapper('FPDFPathSegment_GetClose', 1);
+  Module['_FPDFPage_Flatten'] = _FPDFPage_Flatten = createExportWrapper('FPDFPage_Flatten', 2);
+  Module['_malloc'] = _malloc = createExportWrapper('malloc', 1);
+  Module['_free'] = _free = createExportWrapper('free', 1);
+  Module['_FORM_OnKeyDown'] = _FORM_OnKeyDown = createExportWrapper('FORM_OnKeyDown', 4);
+  Module['_FORM_OnKeyUp'] = _FORM_OnKeyUp = createExportWrapper('FORM_OnKeyUp', 4);
+  Module['_FORM_OnChar'] = _FORM_OnChar = createExportWrapper('FORM_OnChar', 4);
+  Module['_FORM_ReplaceSelection'] = _FORM_ReplaceSelection = createExportWrapper('FORM_ReplaceSelection', 3);
+  Module['_FORM_SelectAllText'] = _FORM_SelectAllText = createExportWrapper('FORM_SelectAllText', 2);
+  Module['_FORM_ForceToKillFocus'] = _FORM_ForceToKillFocus = createExportWrapper('FORM_ForceToKillFocus', 1);
+  Module['_FORM_SetFocusedAnnot'] = _FORM_SetFocusedAnnot = createExportWrapper('FORM_SetFocusedAnnot', 2);
+  Module['_FORM_OnAfterLoadPage'] = _FORM_OnAfterLoadPage = createExportWrapper('FORM_OnAfterLoadPage', 2);
+  Module['_FORM_OnBeforeClosePage'] = _FORM_OnBeforeClosePage = createExportWrapper('FORM_OnBeforeClosePage', 2);
+  Module['_FORM_SetIndexSelected'] = _FORM_SetIndexSelected = createExportWrapper('FORM_SetIndexSelected', 4);
+  Module['_FPDF_ImportPagesByIndex'] = _FPDF_ImportPagesByIndex = createExportWrapper('FPDF_ImportPagesByIndex', 5);
+  Module['_FPDF_ImportPages'] = _FPDF_ImportPages = createExportWrapper('FPDF_ImportPages', 4);
+  Module['_FPDF_GetSignatureCount'] = _FPDF_GetSignatureCount = createExportWrapper('FPDF_GetSignatureCount', 1);
+  Module['_FPDF_GetSignatureObject'] = _FPDF_GetSignatureObject = createExportWrapper('FPDF_GetSignatureObject', 2);
+  Module['_FPDFSignatureObj_GetContents'] = _FPDFSignatureObj_GetContents = createExportWrapper('FPDFSignatureObj_GetContents', 3);
+  Module['_FPDFSignatureObj_GetByteRange'] = _FPDFSignatureObj_GetByteRange = createExportWrapper('FPDFSignatureObj_GetByteRange', 3);
+  Module['_FPDFSignatureObj_GetSubFilter'] = _FPDFSignatureObj_GetSubFilter = createExportWrapper('FPDFSignatureObj_GetSubFilter', 3);
+  Module['_FPDFSignatureObj_GetReason'] = _FPDFSignatureObj_GetReason = createExportWrapper('FPDFSignatureObj_GetReason', 3);
+  Module['_FPDFSignatureObj_GetTime'] = _FPDFSignatureObj_GetTime = createExportWrapper('FPDFSignatureObj_GetTime', 3);
+  Module['_FPDFSignatureObj_GetDocMDPPermission'] = _FPDFSignatureObj_GetDocMDPPermission = createExportWrapper('FPDFSignatureObj_GetDocMDPPermission', 1);
+  Module['_FPDFText_LoadPage'] = _FPDFText_LoadPage = createExportWrapper('FPDFText_LoadPage', 1);
+  Module['_FPDFText_ClosePage'] = _FPDFText_ClosePage = createExportWrapper('FPDFText_ClosePage', 1);
+  Module['_FPDFText_CountChars'] = _FPDFText_CountChars = createExportWrapper('FPDFText_CountChars', 1);
+  Module['_FPDFText_GetFontSize'] = _FPDFText_GetFontSize = createExportWrapper('FPDFText_GetFontSize', 2);
+  Module['_FPDFText_GetFontInfo'] = _FPDFText_GetFontInfo = createExportWrapper('FPDFText_GetFontInfo', 5);
+  Module['_FPDFText_GetCharBox'] = _FPDFText_GetCharBox = createExportWrapper('FPDFText_GetCharBox', 6);
+  Module['_FPDFText_GetCharIndexAtPos'] = _FPDFText_GetCharIndexAtPos = createExportWrapper('FPDFText_GetCharIndexAtPos', 5);
+  Module['_FPDFText_GetText'] = _FPDFText_GetText = createExportWrapper('FPDFText_GetText', 4);
+  Module['_FPDFText_CountRects'] = _FPDFText_CountRects = createExportWrapper('FPDFText_CountRects', 3);
+  Module['_FPDFText_GetRect'] = _FPDFText_GetRect = createExportWrapper('FPDFText_GetRect', 6);
+  Module['_FPDFText_GetBoundedText'] = _FPDFText_GetBoundedText = createExportWrapper('FPDFText_GetBoundedText', 7);
+  Module['_FPDFText_FindStart'] = _FPDFText_FindStart = createExportWrapper('FPDFText_FindStart', 4);
+  Module['_FPDFText_FindNext'] = _FPDFText_FindNext = createExportWrapper('FPDFText_FindNext', 1);
+  Module['_FPDFText_FindPrev'] = _FPDFText_FindPrev = createExportWrapper('FPDFText_FindPrev', 1);
+  Module['_FPDFText_GetSchResultIndex'] = _FPDFText_GetSchResultIndex = createExportWrapper('FPDFText_GetSchResultIndex', 1);
+  Module['_FPDFText_GetSchCount'] = _FPDFText_GetSchCount = createExportWrapper('FPDFText_GetSchCount', 1);
+  Module['_FPDFText_FindClose'] = _FPDFText_FindClose = createExportWrapper('FPDFText_FindClose', 1);
+  Module['_FPDF_DestroyLibrary'] = _FPDF_DestroyLibrary = createExportWrapper('FPDF_DestroyLibrary', 0);
+  Module['_FPDF_LoadMemDocument'] = _FPDF_LoadMemDocument = createExportWrapper('FPDF_LoadMemDocument', 3);
+  Module['_FPDF_GetDocPermissions'] = _FPDF_GetDocPermissions = createExportWrapper('FPDF_GetDocPermissions', 1);
+  Module['_FPDF_GetDocUserPermissions'] = _FPDF_GetDocUserPermissions = createExportWrapper('FPDF_GetDocUserPermissions', 1);
+  Module['_FPDF_GetPageCount'] = _FPDF_GetPageCount = createExportWrapper('FPDF_GetPageCount', 1);
+  Module['_FPDF_LoadPage'] = _FPDF_LoadPage = createExportWrapper('FPDF_LoadPage', 2);
+  Module['_FPDF_RenderPageBitmap'] = _FPDF_RenderPageBitmap = createExportWrapper('FPDF_RenderPageBitmap', 8);
+  Module['_FPDF_ClosePage'] = _FPDF_ClosePage = createExportWrapper('FPDF_ClosePage', 1);
+  Module['_FPDF_CloseDocument'] = _FPDF_CloseDocument = createExportWrapper('FPDF_CloseDocument', 1);
+  Module['_FPDF_GetLastError'] = _FPDF_GetLastError = createExportWrapper('FPDF_GetLastError', 0);
+  Module['_FPDF_DeviceToPage'] = _FPDF_DeviceToPage = createExportWrapper('FPDF_DeviceToPage', 10);
+  Module['_FPDF_PageToDevice'] = _FPDF_PageToDevice = createExportWrapper('FPDF_PageToDevice', 10);
+  Module['_FPDFBitmap_Create'] = _FPDFBitmap_Create = createExportWrapper('FPDFBitmap_Create', 3);
+  Module['_FPDFBitmap_CreateEx'] = _FPDFBitmap_CreateEx = createExportWrapper('FPDFBitmap_CreateEx', 5);
+  Module['_FPDFBitmap_GetFormat'] = _FPDFBitmap_GetFormat = createExportWrapper('FPDFBitmap_GetFormat', 1);
+  Module['_FPDFBitmap_FillRect'] = _FPDFBitmap_FillRect = createExportWrapper('FPDFBitmap_FillRect', 6);
+  Module['_FPDFBitmap_GetBuffer'] = _FPDFBitmap_GetBuffer = createExportWrapper('FPDFBitmap_GetBuffer', 1);
+  Module['_FPDFBitmap_GetWidth'] = _FPDFBitmap_GetWidth = createExportWrapper('FPDFBitmap_GetWidth', 1);
+  Module['_FPDFBitmap_GetHeight'] = _FPDFBitmap_GetHeight = createExportWrapper('FPDFBitmap_GetHeight', 1);
+  Module['_FPDFBitmap_Destroy'] = _FPDFBitmap_Destroy = createExportWrapper('FPDFBitmap_Destroy', 1);
+  Module['_FPDF_GetPageSizeByIndexF'] = _FPDF_GetPageSizeByIndexF = createExportWrapper('FPDF_GetPageSizeByIndexF', 3);
+  _fflush = createExportWrapper('fflush', 1);
+  _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end'];
+  _emscripten_stack_get_base = wasmExports['emscripten_stack_get_base'];
+  _emscripten_builtin_memalign = createExportWrapper('emscripten_builtin_memalign', 2);
+  _strerror = createExportWrapper('strerror', 1);
+  _setThrew = createExportWrapper('setThrew', 2);
+  _emscripten_stack_init = wasmExports['emscripten_stack_init'];
+  _emscripten_stack_get_free = wasmExports['emscripten_stack_get_free'];
+  __emscripten_stack_restore = wasmExports['_emscripten_stack_restore'];
+  __emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc'];
+  _emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'];
+}
 var wasmImports = {
-  /** @export */
-  __assert_fail: ___assert_fail,
   /** @export */
   __syscall_fcntl64: ___syscall_fcntl64,
   /** @export */
@@ -4444,8 +5140,6 @@ var wasmImports = {
   /** @export */
   _abort_js: __abort_js,
   /** @export */
-  _emscripten_memcpy_js: __emscripten_memcpy_js,
-  /** @export */
   _emscripten_throw_longjmp: __emscripten_throw_longjmp,
   /** @export */
   _gmtime_js: __gmtime_js,
@@ -4455,8 +5149,6 @@ var wasmImports = {
   _tzset_js: __tzset_js,
   /** @export */
   emscripten_date_now: _emscripten_date_now,
-  /** @export */
-  emscripten_errn: _emscripten_errn,
   /** @export */
   emscripten_resize_heap: _emscripten_resize_heap,
   /** @export */
@@ -4482,181 +5174,11 @@ var wasmImports = {
   /** @export */
   invoke_v,
   /** @export */
-  invoke_vi,
-  /** @export */
   invoke_viii,
   /** @export */
   invoke_viiii
 };
-var wasmExports = createWasm();
-var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
-var _PDFiumExt_Init = Module['_PDFiumExt_Init'] = createExportWrapper('PDFiumExt_Init', 0);
-var _PDFiumExt_OpenFileWriter = Module['_PDFiumExt_OpenFileWriter'] = createExportWrapper('PDFiumExt_OpenFileWriter', 0);
-var _PDFiumExt_GetFileWriterSize = Module['_PDFiumExt_GetFileWriterSize'] = createExportWrapper('PDFiumExt_GetFileWriterSize', 1);
-var _PDFiumExt_GetFileWriterData = Module['_PDFiumExt_GetFileWriterData'] = createExportWrapper('PDFiumExt_GetFileWriterData', 3);
-var _PDFiumExt_CloseFileWriter = Module['_PDFiumExt_CloseFileWriter'] = createExportWrapper('PDFiumExt_CloseFileWriter', 1);
-var _PDFiumExt_SaveAsCopy = Module['_PDFiumExt_SaveAsCopy'] = createExportWrapper('PDFiumExt_SaveAsCopy', 2);
-var _PDFiumExt_OpenFormFillInfo = Module['_PDFiumExt_OpenFormFillInfo'] = createExportWrapper('PDFiumExt_OpenFormFillInfo', 0);
-var _PDFiumExt_CloseFormFillInfo = Module['_PDFiumExt_CloseFormFillInfo'] = createExportWrapper('PDFiumExt_CloseFormFillInfo', 1);
-var _PDFiumExt_InitFormFillEnvironment = Module['_PDFiumExt_InitFormFillEnvironment'] = createExportWrapper('PDFiumExt_InitFormFillEnvironment', 2);
-var _PDFiumExt_ExitFormFillEnvironment = Module['_PDFiumExt_ExitFormFillEnvironment'] = createExportWrapper('PDFiumExt_ExitFormFillEnvironment', 1);
-var _FPDFPage_CreateAnnot = Module['_FPDFPage_CreateAnnot'] = createExportWrapper('FPDFPage_CreateAnnot', 2);
-var _FPDFPage_GetAnnotCount = Module['_FPDFPage_GetAnnotCount'] = createExportWrapper('FPDFPage_GetAnnotCount', 1);
-var _FPDFPage_GetAnnot = Module['_FPDFPage_GetAnnot'] = createExportWrapper('FPDFPage_GetAnnot', 2);
-var _FPDFPage_CloseAnnot = Module['_FPDFPage_CloseAnnot'] = createExportWrapper('FPDFPage_CloseAnnot', 1);
-var _FPDFPage_RemoveAnnot = Module['_FPDFPage_RemoveAnnot'] = createExportWrapper('FPDFPage_RemoveAnnot', 2);
-var _FPDFAnnot_GetSubtype = Module['_FPDFAnnot_GetSubtype'] = createExportWrapper('FPDFAnnot_GetSubtype', 1);
-var _FPDFAnnot_AddInkStroke = Module['_FPDFAnnot_AddInkStroke'] = createExportWrapper('FPDFAnnot_AddInkStroke', 3);
-var _FPDFAnnot_RemoveInkList = Module['_FPDFAnnot_RemoveInkList'] = createExportWrapper('FPDFAnnot_RemoveInkList', 1);
-var _FPDFAnnot_AppendObject = Module['_FPDFAnnot_AppendObject'] = createExportWrapper('FPDFAnnot_AppendObject', 2);
-var _FPDFAnnot_GetObjectCount = Module['_FPDFAnnot_GetObjectCount'] = createExportWrapper('FPDFAnnot_GetObjectCount', 1);
-var _FPDFAnnot_GetObject = Module['_FPDFAnnot_GetObject'] = createExportWrapper('FPDFAnnot_GetObject', 2);
-var _FPDFAnnot_GetColor = Module['_FPDFAnnot_GetColor'] = createExportWrapper('FPDFAnnot_GetColor', 6);
-var _FPDFAnnot_SetRect = Module['_FPDFAnnot_SetRect'] = createExportWrapper('FPDFAnnot_SetRect', 2);
-var _FPDFAnnot_GetRect = Module['_FPDFAnnot_GetRect'] = createExportWrapper('FPDFAnnot_GetRect', 2);
-var _FPDFAnnot_GetVertices = Module['_FPDFAnnot_GetVertices'] = createExportWrapper('FPDFAnnot_GetVertices', 3);
-var _FPDFAnnot_GetInkListCount = Module['_FPDFAnnot_GetInkListCount'] = createExportWrapper('FPDFAnnot_GetInkListCount', 1);
-var _FPDFAnnot_GetInkListPath = Module['_FPDFAnnot_GetInkListPath'] = createExportWrapper('FPDFAnnot_GetInkListPath', 4);
-var _FPDFAnnot_GetLine = Module['_FPDFAnnot_GetLine'] = createExportWrapper('FPDFAnnot_GetLine', 3);
-var _FPDFAnnot_GetStringValue = Module['_FPDFAnnot_GetStringValue'] = createExportWrapper('FPDFAnnot_GetStringValue', 4);
-var _FPDFAnnot_GetAP = Module['_FPDFAnnot_GetAP'] = createExportWrapper('FPDFAnnot_GetAP', 4);
-var _FPDFAnnot_GetLinkedAnnot = Module['_FPDFAnnot_GetLinkedAnnot'] = createExportWrapper('FPDFAnnot_GetLinkedAnnot', 2);
-var _FPDFAnnot_GetFormFieldFlags = Module['_FPDFAnnot_GetFormFieldFlags'] = createExportWrapper('FPDFAnnot_GetFormFieldFlags', 2);
-var _FPDFAnnot_GetFormFieldName = Module['_FPDFAnnot_GetFormFieldName'] = createExportWrapper('FPDFAnnot_GetFormFieldName', 4);
-var _FPDFAnnot_GetFormFieldType = Module['_FPDFAnnot_GetFormFieldType'] = createExportWrapper('FPDFAnnot_GetFormFieldType', 2);
-var _FPDFAnnot_GetFormFieldAlternateName = Module['_FPDFAnnot_GetFormFieldAlternateName'] = createExportWrapper('FPDFAnnot_GetFormFieldAlternateName', 4);
-var _FPDFAnnot_GetFormFieldValue = Module['_FPDFAnnot_GetFormFieldValue'] = createExportWrapper('FPDFAnnot_GetFormFieldValue', 4);
-var _FPDFAnnot_GetOptionCount = Module['_FPDFAnnot_GetOptionCount'] = createExportWrapper('FPDFAnnot_GetOptionCount', 2);
-var _FPDFAnnot_GetOptionLabel = Module['_FPDFAnnot_GetOptionLabel'] = createExportWrapper('FPDFAnnot_GetOptionLabel', 5);
-var _FPDFAnnot_IsOptionSelected = Module['_FPDFAnnot_IsOptionSelected'] = createExportWrapper('FPDFAnnot_IsOptionSelected', 3);
-var _FPDFAnnot_IsChecked = Module['_FPDFAnnot_IsChecked'] = createExportWrapper('FPDFAnnot_IsChecked', 2);
-var _FPDFAnnot_SetFocusableSubtypes = Module['_FPDFAnnot_SetFocusableSubtypes'] = createExportWrapper('FPDFAnnot_SetFocusableSubtypes', 3);
-var _FPDFAnnot_GetFocusableSubtypesCount = Module['_FPDFAnnot_GetFocusableSubtypesCount'] = createExportWrapper('FPDFAnnot_GetFocusableSubtypesCount', 1);
-var _FPDFAnnot_GetFocusableSubtypes = Module['_FPDFAnnot_GetFocusableSubtypes'] = createExportWrapper('FPDFAnnot_GetFocusableSubtypes', 3);
-var _FPDFAnnot_GetLink = Module['_FPDFAnnot_GetLink'] = createExportWrapper('FPDFAnnot_GetLink', 1);
-var _FPDFDoc_GetAttachmentCount = Module['_FPDFDoc_GetAttachmentCount'] = createExportWrapper('FPDFDoc_GetAttachmentCount', 1);
-var _FPDFDoc_GetAttachment = Module['_FPDFDoc_GetAttachment'] = createExportWrapper('FPDFDoc_GetAttachment', 2);
-var _FPDFAttachment_GetName = Module['_FPDFAttachment_GetName'] = createExportWrapper('FPDFAttachment_GetName', 3);
-var _FPDFAttachment_GetStringValue = Module['_FPDFAttachment_GetStringValue'] = createExportWrapper('FPDFAttachment_GetStringValue', 4);
-var _FPDFAttachment_GetFile = Module['_FPDFAttachment_GetFile'] = createExportWrapper('FPDFAttachment_GetFile', 4);
-var _FPDFBookmark_GetFirstChild = Module['_FPDFBookmark_GetFirstChild'] = createExportWrapper('FPDFBookmark_GetFirstChild', 2);
-var _FPDFBookmark_GetNextSibling = Module['_FPDFBookmark_GetNextSibling'] = createExportWrapper('FPDFBookmark_GetNextSibling', 2);
-var _FPDFBookmark_GetTitle = Module['_FPDFBookmark_GetTitle'] = createExportWrapper('FPDFBookmark_GetTitle', 3);
-var _FPDFBookmark_Find = Module['_FPDFBookmark_Find'] = createExportWrapper('FPDFBookmark_Find', 2);
-var _FPDFBookmark_GetDest = Module['_FPDFBookmark_GetDest'] = createExportWrapper('FPDFBookmark_GetDest', 2);
-var _FPDFBookmark_GetAction = Module['_FPDFBookmark_GetAction'] = createExportWrapper('FPDFBookmark_GetAction', 1);
-var _FPDFAction_GetType = Module['_FPDFAction_GetType'] = createExportWrapper('FPDFAction_GetType', 1);
-var _FPDFAction_GetDest = Module['_FPDFAction_GetDest'] = createExportWrapper('FPDFAction_GetDest', 2);
-var _FPDFAction_GetFilePath = Module['_FPDFAction_GetFilePath'] = createExportWrapper('FPDFAction_GetFilePath', 3);
-var _FPDFAction_GetURIPath = Module['_FPDFAction_GetURIPath'] = createExportWrapper('FPDFAction_GetURIPath', 4);
-var _FPDFDest_GetDestPageIndex = Module['_FPDFDest_GetDestPageIndex'] = createExportWrapper('FPDFDest_GetDestPageIndex', 2);
-var _FPDFDest_GetView = Module['_FPDFDest_GetView'] = createExportWrapper('FPDFDest_GetView', 3);
-var _FPDFDest_GetLocationInPage = Module['_FPDFDest_GetLocationInPage'] = createExportWrapper('FPDFDest_GetLocationInPage', 7);
-var _FPDFLink_GetDest = Module['_FPDFLink_GetDest'] = createExportWrapper('FPDFLink_GetDest', 2);
-var _FPDFLink_GetAction = Module['_FPDFLink_GetAction'] = createExportWrapper('FPDFLink_GetAction', 1);
-var _FPDF_GetMetaText = Module['_FPDF_GetMetaText'] = createExportWrapper('FPDF_GetMetaText', 4);
-var _FPDFPageObj_NewImageObj = Module['_FPDFPageObj_NewImageObj'] = createExportWrapper('FPDFPageObj_NewImageObj', 1);
-var _FPDFImageObj_SetBitmap = Module['_FPDFImageObj_SetBitmap'] = createExportWrapper('FPDFImageObj_SetBitmap', 4);
-var _FPDFImageObj_GetBitmap = Module['_FPDFImageObj_GetBitmap'] = createExportWrapper('FPDFImageObj_GetBitmap', 1);
-var _FPDF_CreateNewDocument = Module['_FPDF_CreateNewDocument'] = createExportWrapper('FPDF_CreateNewDocument', 0);
-var _FPDFPage_InsertObject = Module['_FPDFPage_InsertObject'] = createExportWrapper('FPDFPage_InsertObject', 2);
-var _FPDFPageObj_Destroy = Module['_FPDFPageObj_Destroy'] = createExportWrapper('FPDFPageObj_Destroy', 1);
-var _FPDFPageObj_GetType = Module['_FPDFPageObj_GetType'] = createExportWrapper('FPDFPageObj_GetType', 1);
-var _FPDFPage_GenerateContent = Module['_FPDFPage_GenerateContent'] = createExportWrapper('FPDFPage_GenerateContent', 1);
-var _FPDFPageObj_Transform = Module['_FPDFPageObj_Transform'] = createExportWrapper('FPDFPageObj_Transform', 7);
-var _FPDFPageObj_GetMatrix = Module['_FPDFPageObj_GetMatrix'] = createExportWrapper('FPDFPageObj_GetMatrix', 2);
-var _FPDFPageObj_SetMatrix = Module['_FPDFPageObj_SetMatrix'] = createExportWrapper('FPDFPageObj_SetMatrix', 2);
-var _FPDFPageObj_GetBounds = Module['_FPDFPageObj_GetBounds'] = createExportWrapper('FPDFPageObj_GetBounds', 5);
-var _FPDFFormObj_CountObjects = Module['_FPDFFormObj_CountObjects'] = createExportWrapper('FPDFFormObj_CountObjects', 1);
-var _FPDFFormObj_GetObject = Module['_FPDFFormObj_GetObject'] = createExportWrapper('FPDFFormObj_GetObject', 2);
-var _FPDFPath_CountSegments = Module['_FPDFPath_CountSegments'] = createExportWrapper('FPDFPath_CountSegments', 1);
-var _FPDFPath_GetPathSegment = Module['_FPDFPath_GetPathSegment'] = createExportWrapper('FPDFPath_GetPathSegment', 2);
-var _FPDFPathSegment_GetPoint = Module['_FPDFPathSegment_GetPoint'] = createExportWrapper('FPDFPathSegment_GetPoint', 3);
-var _FPDFPathSegment_GetType = Module['_FPDFPathSegment_GetType'] = createExportWrapper('FPDFPathSegment_GetType', 1);
-var _FPDFPathSegment_GetClose = Module['_FPDFPathSegment_GetClose'] = createExportWrapper('FPDFPathSegment_GetClose', 1);
-var _FPDFPage_Flatten = Module['_FPDFPage_Flatten'] = createExportWrapper('FPDFPage_Flatten', 2);
-var _malloc = Module['_malloc'] = createExportWrapper('malloc', 1);
-var _free = Module['_free'] = createExportWrapper('free', 1);
-var _FORM_OnKeyDown = Module['_FORM_OnKeyDown'] = createExportWrapper('FORM_OnKeyDown', 4);
-var _FORM_OnKeyUp = Module['_FORM_OnKeyUp'] = createExportWrapper('FORM_OnKeyUp', 4);
-var _FORM_OnChar = Module['_FORM_OnChar'] = createExportWrapper('FORM_OnChar', 4);
-var _FORM_ReplaceSelection = Module['_FORM_ReplaceSelection'] = createExportWrapper('FORM_ReplaceSelection', 3);
-var _FORM_SelectAllText = Module['_FORM_SelectAllText'] = createExportWrapper('FORM_SelectAllText', 2);
-var _FORM_ForceToKillFocus = Module['_FORM_ForceToKillFocus'] = createExportWrapper('FORM_ForceToKillFocus', 1);
-var _FORM_SetFocusedAnnot = Module['_FORM_SetFocusedAnnot'] = createExportWrapper('FORM_SetFocusedAnnot', 2);
-var _FORM_OnAfterLoadPage = Module['_FORM_OnAfterLoadPage'] = createExportWrapper('FORM_OnAfterLoadPage', 2);
-var _FORM_OnBeforeClosePage = Module['_FORM_OnBeforeClosePage'] = createExportWrapper('FORM_OnBeforeClosePage', 2);
-var _FORM_SetIndexSelected = Module['_FORM_SetIndexSelected'] = createExportWrapper('FORM_SetIndexSelected', 4);
-var _FPDF_ImportPagesByIndex = Module['_FPDF_ImportPagesByIndex'] = createExportWrapper('FPDF_ImportPagesByIndex', 5);
-var _FPDF_ImportPages = Module['_FPDF_ImportPages'] = createExportWrapper('FPDF_ImportPages', 4);
-var _FPDF_GetSignatureCount = Module['_FPDF_GetSignatureCount'] = createExportWrapper('FPDF_GetSignatureCount', 1);
-var _FPDF_GetSignatureObject = Module['_FPDF_GetSignatureObject'] = createExportWrapper('FPDF_GetSignatureObject', 2);
-var _FPDFSignatureObj_GetContents = Module['_FPDFSignatureObj_GetContents'] = createExportWrapper('FPDFSignatureObj_GetContents', 3);
-var _FPDFSignatureObj_GetByteRange = Module['_FPDFSignatureObj_GetByteRange'] = createExportWrapper('FPDFSignatureObj_GetByteRange', 3);
-var _FPDFSignatureObj_GetSubFilter = Module['_FPDFSignatureObj_GetSubFilter'] = createExportWrapper('FPDFSignatureObj_GetSubFilter', 3);
-var _FPDFSignatureObj_GetReason = Module['_FPDFSignatureObj_GetReason'] = createExportWrapper('FPDFSignatureObj_GetReason', 3);
-var _FPDFSignatureObj_GetTime = Module['_FPDFSignatureObj_GetTime'] = createExportWrapper('FPDFSignatureObj_GetTime', 3);
-var _FPDFSignatureObj_GetDocMDPPermission = Module['_FPDFSignatureObj_GetDocMDPPermission'] = createExportWrapper('FPDFSignatureObj_GetDocMDPPermission', 1);
-var _FPDFText_LoadPage = Module['_FPDFText_LoadPage'] = createExportWrapper('FPDFText_LoadPage', 1);
-var _FPDFText_ClosePage = Module['_FPDFText_ClosePage'] = createExportWrapper('FPDFText_ClosePage', 1);
-var _FPDFText_CountChars = Module['_FPDFText_CountChars'] = createExportWrapper('FPDFText_CountChars', 1);
-var _FPDFText_GetFontSize = Module['_FPDFText_GetFontSize'] = createExportWrapper('FPDFText_GetFontSize', 2);
-var _FPDFText_GetFontInfo = Module['_FPDFText_GetFontInfo'] = createExportWrapper('FPDFText_GetFontInfo', 5);
-var _FPDFText_GetCharBox = Module['_FPDFText_GetCharBox'] = createExportWrapper('FPDFText_GetCharBox', 6);
-var _FPDFText_GetCharIndexAtPos = Module['_FPDFText_GetCharIndexAtPos'] = createExportWrapper('FPDFText_GetCharIndexAtPos', 5);
-var _FPDFText_GetText = Module['_FPDFText_GetText'] = createExportWrapper('FPDFText_GetText', 4);
-var _FPDFText_CountRects = Module['_FPDFText_CountRects'] = createExportWrapper('FPDFText_CountRects', 3);
-var _FPDFText_GetRect = Module['_FPDFText_GetRect'] = createExportWrapper('FPDFText_GetRect', 6);
-var _FPDFText_GetBoundedText = Module['_FPDFText_GetBoundedText'] = createExportWrapper('FPDFText_GetBoundedText', 7);
-var _FPDFText_FindStart = Module['_FPDFText_FindStart'] = createExportWrapper('FPDFText_FindStart', 4);
-var _FPDFText_FindNext = Module['_FPDFText_FindNext'] = createExportWrapper('FPDFText_FindNext', 1);
-var _FPDFText_FindPrev = Module['_FPDFText_FindPrev'] = createExportWrapper('FPDFText_FindPrev', 1);
-var _FPDFText_GetSchResultIndex = Module['_FPDFText_GetSchResultIndex'] = createExportWrapper('FPDFText_GetSchResultIndex', 1);
-var _FPDFText_GetSchCount = Module['_FPDFText_GetSchCount'] = createExportWrapper('FPDFText_GetSchCount', 1);
-var _FPDFText_FindClose = Module['_FPDFText_FindClose'] = createExportWrapper('FPDFText_FindClose', 1);
-var _FPDF_DestroyLibrary = Module['_FPDF_DestroyLibrary'] = createExportWrapper('FPDF_DestroyLibrary', 0);
-var _FPDF_LoadMemDocument = Module['_FPDF_LoadMemDocument'] = createExportWrapper('FPDF_LoadMemDocument', 3);
-var _FPDF_GetDocPermissions = Module['_FPDF_GetDocPermissions'] = createExportWrapper('FPDF_GetDocPermissions', 1);
-var _FPDF_GetDocUserPermissions = Module['_FPDF_GetDocUserPermissions'] = createExportWrapper('FPDF_GetDocUserPermissions', 1);
-var _FPDF_GetPageCount = Module['_FPDF_GetPageCount'] = createExportWrapper('FPDF_GetPageCount', 1);
-var _FPDF_LoadPage = Module['_FPDF_LoadPage'] = createExportWrapper('FPDF_LoadPage', 2);
-var _FPDF_RenderPageBitmap = Module['_FPDF_RenderPageBitmap'] = createExportWrapper('FPDF_RenderPageBitmap', 8);
-var _FPDF_ClosePage = Module['_FPDF_ClosePage'] = createExportWrapper('FPDF_ClosePage', 1);
-var _FPDF_CloseDocument = Module['_FPDF_CloseDocument'] = createExportWrapper('FPDF_CloseDocument', 1);
-var _FPDF_GetLastError = Module['_FPDF_GetLastError'] = createExportWrapper('FPDF_GetLastError', 0);
-var _FPDF_DeviceToPage = Module['_FPDF_DeviceToPage'] = createExportWrapper('FPDF_DeviceToPage', 10);
-var _FPDF_PageToDevice = Module['_FPDF_PageToDevice'] = createExportWrapper('FPDF_PageToDevice', 10);
-var _FPDFBitmap_Create = Module['_FPDFBitmap_Create'] = createExportWrapper('FPDFBitmap_Create', 3);
-var _FPDFBitmap_CreateEx = Module['_FPDFBitmap_CreateEx'] = createExportWrapper('FPDFBitmap_CreateEx', 5);
-var _FPDFBitmap_GetFormat = Module['_FPDFBitmap_GetFormat'] = createExportWrapper('FPDFBitmap_GetFormat', 1);
-var _FPDFBitmap_FillRect = Module['_FPDFBitmap_FillRect'] = createExportWrapper('FPDFBitmap_FillRect', 6);
-var _FPDFBitmap_GetBuffer = Module['_FPDFBitmap_GetBuffer'] = createExportWrapper('FPDFBitmap_GetBuffer', 1);
-var _FPDFBitmap_GetWidth = Module['_FPDFBitmap_GetWidth'] = createExportWrapper('FPDFBitmap_GetWidth', 1);
-var _FPDFBitmap_GetHeight = Module['_FPDFBitmap_GetHeight'] = createExportWrapper('FPDFBitmap_GetHeight', 1);
-var _FPDFBitmap_Destroy = Module['_FPDFBitmap_Destroy'] = createExportWrapper('FPDFBitmap_Destroy', 1);
-var _FPDF_GetPageSizeByIndexF = Module['_FPDF_GetPageSizeByIndexF'] = createExportWrapper('FPDF_GetPageSizeByIndexF', 3);
-var _fflush = createExportWrapper('fflush', 1);
-var _strerror = createExportWrapper('strerror', 1);
-var _setThrew = createExportWrapper('setThrew', 2);
-var __emscripten_tempret_set = createExportWrapper('_emscripten_tempret_set', 1);
-var _emscripten_stack_init = () => (_emscripten_stack_init = wasmExports['emscripten_stack_init'])();
-var _emscripten_stack_get_free = () => (_emscripten_stack_get_free = wasmExports['emscripten_stack_get_free'])();
-var _emscripten_stack_get_base = () => (_emscripten_stack_get_base = wasmExports['emscripten_stack_get_base'])();
-var _emscripten_stack_get_end = () => (_emscripten_stack_get_end = wasmExports['emscripten_stack_get_end'])();
-var __emscripten_stack_restore = (a0) => (__emscripten_stack_restore = wasmExports['_emscripten_stack_restore'])(a0);
-var __emscripten_stack_alloc = (a0) => (__emscripten_stack_alloc = wasmExports['_emscripten_stack_alloc'])(a0);
-var _emscripten_stack_get_current = () => (_emscripten_stack_get_current = wasmExports['emscripten_stack_get_current'])();
-var dynCall_j = Module['dynCall_j'] = createExportWrapper('dynCall_j', 1);
-var dynCall_ji = Module['dynCall_ji'] = createExportWrapper('dynCall_ji', 2);
-var dynCall_iiij = Module['dynCall_iiij'] = createExportWrapper('dynCall_iiij', 5);
-var dynCall_jji = Module['dynCall_jji'] = createExportWrapper('dynCall_jji', 4);
-var dynCall_iji = Module['dynCall_iji'] = createExportWrapper('dynCall_iji', 4);
-var dynCall_viijii = Module['dynCall_viijii'] = createExportWrapper('dynCall_viijii', 7);
-var dynCall_iiji = Module['dynCall_iiji'] = createExportWrapper('dynCall_iiji', 5);
-var dynCall_jiji = Module['dynCall_jiji'] = createExportWrapper('dynCall_jiji', 5);
-var dynCall_iiiiij = Module['dynCall_iiiiij'] = createExportWrapper('dynCall_iiiiij', 7);
-var dynCall_iiiiijj = Module['dynCall_iiiiijj'] = createExportWrapper('dynCall_iiiiijj', 9);
-var dynCall_iiiiiijj = Module['dynCall_iiiiiijj'] = createExportWrapper('dynCall_iiiiiijj', 10);
+var wasmExports = await createWasm();
 
 function invoke_viii(index,a1,a2,a3) {
   var sp = stackSave();
@@ -4669,32 +5191,21 @@ function invoke_viii(index,a1,a2,a3) {
   }
 }
 
-function invoke_iii(index,a1,a2) {
-  var sp = stackSave();
-  try {
-    return getWasmTableEntry(index)(a1,a2);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0) throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_vi(index,a1) {
-  var sp = stackSave();
-  try {
-    getWasmTableEntry(index)(a1);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0) throw e;
-    _setThrew(1, 0);
-  }
-}
-
 function invoke_ii(index,a1) {
   var sp = stackSave();
   try {
     return getWasmTableEntry(index)(a1);
+  } catch(e) {
+    stackRestore(sp);
+    if (e !== e+0) throw e;
+    _setThrew(1, 0);
+  }
+}
+
+function invoke_iii(index,a1,a2) {
+  var sp = stackSave();
+  try {
+    return getWasmTableEntry(index)(a1,a2);
   } catch(e) {
     stackRestore(sp);
     if (e !== e+0) throw e;
@@ -4750,302 +5261,7 @@ function invoke_v(index) {
 // include: postamble.js
 // === Auto-generated postamble setup entry stuff ===
 
-Module['wasmExports'] = wasmExports;
-Module['ccall'] = ccall;
-Module['cwrap'] = cwrap;
-Module['setValue'] = setValue;
-Module['getValue'] = getValue;
-Module['UTF8ToString'] = UTF8ToString;
-Module['stringToUTF8'] = stringToUTF8;
-Module['UTF16ToString'] = UTF16ToString;
-Module['stringToUTF16'] = stringToUTF16;
-var missingLibrarySymbols = [
-  'writeI53ToI64',
-  'writeI53ToI64Clamped',
-  'writeI53ToI64Signaling',
-  'writeI53ToU64Clamped',
-  'writeI53ToU64Signaling',
-  'readI53FromI64',
-  'readI53FromU64',
-  'convertI32PairToI53',
-  'convertU32PairToI53',
-  'getTempRet0',
-  'setTempRet0',
-  'exitJS',
-  'inetPton4',
-  'inetNtop4',
-  'inetPton6',
-  'inetNtop6',
-  'readSockaddr',
-  'writeSockaddr',
-  'emscriptenLog',
-  'readEmAsmArgs',
-  'jstoi_q',
-  'listenOnce',
-  'autoResumeAudioContext',
-  'dynCallLegacy',
-  'getDynCaller',
-  'dynCall',
-  'handleException',
-  'keepRuntimeAlive',
-  'runtimeKeepalivePush',
-  'runtimeKeepalivePop',
-  'callUserCallback',
-  'maybeExit',
-  'asmjsMangle',
-  'HandleAllocator',
-  'getNativeTypeSize',
-  'STACK_SIZE',
-  'STACK_ALIGN',
-  'POINTER_SIZE',
-  'ASSERTIONS',
-  'uleb128Encode',
-  'sigToWasmTypes',
-  'generateFuncType',
-  'convertJsFunctionToWasm',
-  'getEmptyTableSlot',
-  'updateTableMap',
-  'getFunctionAddress',
-  'addFunction',
-  'removeFunction',
-  'reallyNegative',
-  'unSign',
-  'strLen',
-  'reSign',
-  'formatString',
-  'intArrayToString',
-  'AsciiToString',
-  'lengthBytesUTF16',
-  'UTF32ToString',
-  'stringToUTF32',
-  'lengthBytesUTF32',
-  'stringToNewUTF8',
-  'registerKeyEventCallback',
-  'maybeCStringToJsString',
-  'findEventTarget',
-  'getBoundingClientRect',
-  'fillMouseEventData',
-  'registerMouseEventCallback',
-  'registerWheelEventCallback',
-  'registerUiEventCallback',
-  'registerFocusEventCallback',
-  'fillDeviceOrientationEventData',
-  'registerDeviceOrientationEventCallback',
-  'fillDeviceMotionEventData',
-  'registerDeviceMotionEventCallback',
-  'screenOrientation',
-  'fillOrientationChangeEventData',
-  'registerOrientationChangeEventCallback',
-  'fillFullscreenChangeEventData',
-  'registerFullscreenChangeEventCallback',
-  'JSEvents_requestFullscreen',
-  'JSEvents_resizeCanvasForFullscreen',
-  'registerRestoreOldStyle',
-  'hideEverythingExceptGivenElement',
-  'restoreHiddenElements',
-  'setLetterbox',
-  'softFullscreenResizeWebGLRenderTarget',
-  'doRequestFullscreen',
-  'fillPointerlockChangeEventData',
-  'registerPointerlockChangeEventCallback',
-  'registerPointerlockErrorEventCallback',
-  'requestPointerLock',
-  'fillVisibilityChangeEventData',
-  'registerVisibilityChangeEventCallback',
-  'registerTouchEventCallback',
-  'fillGamepadEventData',
-  'registerGamepadEventCallback',
-  'registerBeforeUnloadEventCallback',
-  'fillBatteryEventData',
-  'battery',
-  'registerBatteryEventCallback',
-  'setCanvasElementSize',
-  'getCanvasElementSize',
-  'jsStackTrace',
-  'getCallstack',
-  'convertPCtoSourceLocation',
-  'checkWasiClock',
-  'wasiRightsToMuslOFlags',
-  'wasiOFlagsToMuslOFlags',
-  'createDyncallWrapper',
-  'safeSetTimeout',
-  'setImmediateWrapped',
-  'clearImmediateWrapped',
-  'polyfillSetImmediate',
-  'registerPostMainLoop',
-  'registerPreMainLoop',
-  'getPromise',
-  'makePromise',
-  'idsToPromises',
-  'makePromiseCallback',
-  'ExceptionInfo',
-  'findMatchingCatch',
-  'Browser_asyncPrepareDataCounter',
-  'safeRequestAnimationFrame',
-  'arraySum',
-  'addDays',
-  'getSocketFromFD',
-  'getSocketAddress',
-  'FS_unlink',
-  'FS_mkdirTree',
-  '_setNetworkCallback',
-  'heapObjectForWebGLType',
-  'toTypedArrayIndex',
-  'webgl_enable_ANGLE_instanced_arrays',
-  'webgl_enable_OES_vertex_array_object',
-  'webgl_enable_WEBGL_draw_buffers',
-  'webgl_enable_WEBGL_multi_draw',
-  'webgl_enable_EXT_polygon_offset_clamp',
-  'webgl_enable_EXT_clip_control',
-  'webgl_enable_WEBGL_polygon_mode',
-  'emscriptenWebGLGet',
-  'computeUnpackAlignedImageSize',
-  'colorChannelsInGlTextureFormat',
-  'emscriptenWebGLGetTexPixelData',
-  'emscriptenWebGLGetUniform',
-  'webglGetUniformLocation',
-  'webglPrepareUniformLocationsBeforeFirstUse',
-  'webglGetLeftBracePos',
-  'emscriptenWebGLGetVertexAttrib',
-  '__glGetActiveAttribOrUniform',
-  'writeGLArray',
-  'registerWebGlEventCallback',
-  'runAndAbortIfError',
-  'ALLOC_NORMAL',
-  'ALLOC_STACK',
-  'allocate',
-  'writeStringToMemory',
-  'writeAsciiToMemory',
-  'setErrNo',
-  'demangle',
-  'stackTrace',
-];
-missingLibrarySymbols.forEach(missingLibrarySymbol)
-
-var unexportedSymbols = [
-  'run',
-  'addOnPreRun',
-  'addOnInit',
-  'addOnPreMain',
-  'addOnExit',
-  'addOnPostRun',
-  'addRunDependency',
-  'removeRunDependency',
-  'out',
-  'err',
-  'callMain',
-  'abort',
-  'wasmMemory',
-  'writeStackCookie',
-  'checkStackCookie',
-  'convertI32PairToI53Checked',
-  'stackSave',
-  'stackRestore',
-  'stackAlloc',
-  'ptrToString',
-  'zeroMemory',
-  'getHeapMax',
-  'growMemory',
-  'ENV',
-  'ERRNO_CODES',
-  'strError',
-  'DNS',
-  'Protocols',
-  'Sockets',
-  'initRandomFill',
-  'randomFill',
-  'timers',
-  'warnOnce',
-  'readEmAsmArgsArray',
-  'jstoi_s',
-  'getExecutableName',
-  'asyncLoad',
-  'alignMemory',
-  'mmapAlloc',
-  'wasmTable',
-  'noExitRuntime',
-  'getCFunc',
-  'freeTableIndexes',
-  'functionsInTableMap',
-  'PATH',
-  'PATH_FS',
-  'UTF8Decoder',
-  'UTF8ArrayToString',
-  'stringToUTF8Array',
-  'lengthBytesUTF8',
-  'intArrayFromString',
-  'stringToAscii',
-  'UTF16Decoder',
-  'stringToUTF8OnStack',
-  'writeArrayToMemory',
-  'JSEvents',
-  'specialHTMLTargets',
-  'findCanvasEventTarget',
-  'currentFullscreenStrategy',
-  'restoreOldWindowedStyle',
-  'UNWIND_CACHE',
-  'ExitStatus',
-  'getEnvStrings',
-  'doReadv',
-  'doWritev',
-  'promiseMap',
-  'uncaughtExceptionCount',
-  'exceptionLast',
-  'exceptionCaught',
-  'Browser',
-  'getPreloadedImageData__data',
-  'wget',
-  'MONTH_DAYS_REGULAR',
-  'MONTH_DAYS_LEAP',
-  'MONTH_DAYS_REGULAR_CUMULATIVE',
-  'MONTH_DAYS_LEAP_CUMULATIVE',
-  'isLeapYear',
-  'ydayFromDate',
-  'SYSCALLS',
-  'preloadPlugins',
-  'FS_createPreloadedFile',
-  'FS_modeStringToFlags',
-  'FS_getMode',
-  'FS_stdin_getChar_buffer',
-  'FS_stdin_getChar',
-  'FS_createPath',
-  'FS_createDevice',
-  'FS_readFile',
-  'FS',
-  'FS_createDataFile',
-  'FS_createLazyFile',
-  'MEMFS',
-  'TTY',
-  'PIPEFS',
-  'SOCKFS',
-  'tempFixedLengthArray',
-  'miniTempWebGLFloatBuffers',
-  'miniTempWebGLIntBuffers',
-  'GL',
-  'AL',
-  'GLUT',
-  'EGL',
-  'GLEW',
-  'IDBStore',
-  'SDL',
-  'SDL_gfx',
-  'allocateUTF8',
-  'allocateUTF8OnStack',
-  'print',
-  'printErr',
-];
-unexportedSymbols.forEach(unexportedRuntimeSymbol);
-
-
-
 var calledRun;
-var calledPrerun;
-
-dependenciesFulfilled = function runCaller() {
-  // If run has never been called, and we should call run (INVOKE_RUN is true, and Module.noInitialRun is not false)
-  if (!calledRun) run();
-  if (!calledRun) dependenciesFulfilled = runCaller; // try this again later, after new deps are fulfilled
-};
 
 function stackCheckInit() {
   // This is normally called automatically during __wasm_call_ctors but need to
@@ -5059,34 +5275,34 @@ function stackCheckInit() {
 function run() {
 
   if (runDependencies > 0) {
+    dependenciesFulfilled = run;
     return;
   }
 
   stackCheckInit();
 
-  if (!calledPrerun) {
-    calledPrerun = 1;
-    preRun();
+  preRun();
 
-    // a preRun added a dependency, run will be called later
-    if (runDependencies > 0) {
-      return;
-    }
+  // a preRun added a dependency, run will be called later
+  if (runDependencies > 0) {
+    dependenciesFulfilled = run;
+    return;
   }
 
   function doRun() {
     // run may have just been called through dependencies being fulfilled just in this very frame,
     // or while the async setStatus time below was happening
-    if (calledRun) return;
-    calledRun = 1;
-    Module['calledRun'] = 1;
+    assert(!calledRun);
+    calledRun = true;
+    Module['calledRun'] = true;
 
     if (ABORT) return;
 
     initRuntime();
 
-    readyPromiseResolve(Module);
+    readyPromiseResolve?.(Module);
     Module['onRuntimeInitialized']?.();
+    consumedModuleProp('onRuntimeInitialized');
 
     assert(!Module['_main'], 'compiled without a main, but one is present. if you added it from JS, use Module["onRuntimeInitialized"]');
 
@@ -5145,13 +5361,17 @@ function checkUnflushedContent() {
   }
 }
 
-if (Module['preInit']) {
-  if (typeof Module['preInit'] == 'function') Module['preInit'] = [Module['preInit']];
-  while (Module['preInit'].length > 0) {
-    Module['preInit'].pop()();
+function preInit() {
+  if (Module['preInit']) {
+    if (typeof Module['preInit'] == 'function') Module['preInit'] = [Module['preInit']];
+    while (Module['preInit'].length > 0) {
+      Module['preInit'].shift()();
+    }
   }
+  consumedModuleProp('preInit');
 }
 
+preInit();
 run();
 
 // end include: postamble.js
@@ -5163,7 +5383,15 @@ run();
 // We assign to the `moduleRtn` global here and configure closure to see
 // this as and extern so it won't get minified.
 
-moduleRtn = readyPromise;
+if (runtimeInitialized)  {
+  moduleRtn = Module;
+} else {
+  // Set up the promise that indicates the Module is initialized
+  moduleRtn = new Promise((resolve, reject) => {
+    readyPromiseResolve = resolve;
+    readyPromiseReject = reject;
+  });
+}
 
 // Assertion for attempting to access module properties on the incoming
 // moduleArg.  In the past we used this object as the prototype of the module
