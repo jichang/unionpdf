@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "rootDirs": ["./src"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": ["es2020", "dom", "dom.iterable"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "demo", "tests"]
+}

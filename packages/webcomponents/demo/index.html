@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@unionpdf/webcomponents Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #controls {
+        padding: 8px;
+        background: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      #controls input[type='file'] {
+        flex: 1;
+      }
+
+      pdf-application {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .app-layout {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .sidebar {
+        width: 260px;
+        overflow: auto;
+        border-right: 1px solid #ddd;
+        background: #fafafa;
+      }
+
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      pdf-pages {
+        flex: 1;
+        overflow: auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="controls">
+      <input type="file" id="fileInput" accept=".pdf" />
+      <span id="status">Select a PDF file</span>
+    </div>
+
+    <pdf-application id="app">
+      <pdf-toolbar></pdf-toolbar>
+      <div class="app-layout">
+        <div class="sidebar">
+          <pdf-thumbnails columns="1"></pdf-thumbnails>
+          <pdf-bookmarks></pdf-bookmarks>
+          <pdf-search></pdf-search>
+          <pdf-metadata></pdf-metadata>
+          <pdf-attachments></pdf-attachments>
+          <pdf-signatures></pdf-signatures>
+        </div>
+        <div class="main-content">
+          <pdf-pages
+            layers="canvas,text,annotations,decorations"
+            prerender-range="-1,1"
+            cache-range="-2,2"
+          ></pdf-pages>
+        </div>
+      </div>
+      <pdf-downloader></pdf-downloader>
+      <pdf-printer></pdf-printer>
+      <pdf-editor></pdf-editor>
+    </pdf-application>
+
+    <script type="module">
+      import '../src';
+      import { WebWorkerEngine } from '@unionpdf/engines';
+      import { ConsoleLogger } from '@unionpdf/models';
+
+      const fileInput = document.getElementById('fileInput');
+      const app = document.getElementById('app');
+      const status = document.getElementById('status');
+
+      // Set up the PDF engine using a web worker
+      const logger = new ConsoleLogger();
+      const worker = new Worker(new URL('./webworker.ts', import.meta.url), {
+        type: 'module',
+      });
+      const engine = new WebWorkerEngine(worker, logger);
+      engine.initialize();
+      app.engine = engine;
+
+      // Listen for file selection
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        status.textContent = `Loading: ${file.name}...`;
+
+        const buffer = await file.arrayBuffer();
+        app.file = { id: file.name, name: file.name, content: buffer };
+        app.password = '';
+      });
+
+      // Listen for open events
+      app.addEventListener('pdf-open-success', (e) => {
+        status.textContent = `Loaded: ${e.detail.name} (${e.detail.pageCount} pages)`;
+      });
+
+      app.addEventListener('pdf-open-failure', (e) => {
+        status.textContent = `Error: ${e.detail.message}`;
+      });
+    </script>
+  </body>
+</html>

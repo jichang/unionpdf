@@ -223,7 +223,7 @@ export function PdfThumbnail(props: PdfThumbnailProps) {
     onClick,
     enableCheckbox,
   } = props;
-  const [src, setSrc] = useState('');
+  const [src, setSrc] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!src && engine && doc && page && isVisible) {

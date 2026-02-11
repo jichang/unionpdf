@@ -6,7 +6,8 @@
     "packages/pdfium",
     "packages/models",
     "packages/engines",
-    "packages/react"
+    "packages/react",
+    "packages/webcomponents"
   ],
   "devDependencies": {
     "@parcel/packager-ts": "2.13.3",
