@@ -74,12 +74,23 @@ export class PdfToolbarElement extends PdfBaseElement {
 
   protected onContextReady() {
     this.render();
-    this.listen('plugins', () => this.updateButtons());
+    this.listen('plugins', () => {
+      this.updateButtons();
+      this.emitEvent('pdf-toolbar-plugins-change', {
+        plugins: this._ctx ? { ...this._ctx.plugins } : {},
+      });
+    });
     this.listen('mode', () => this.render());
     this.listen('doc', () => this.updateNavigation());
     this.listen('currPageIndex', () => this.updateNavigation());
     this.listen('scaleFactor', () => this.updateNavigation());
     this.listen('rotation', () => this.updateNavigation());
+  }
+
+  private emitEvent(name: string, detail: Record<string, unknown>) {
+    this.dispatchEvent(
+      new CustomEvent(name, { bubbles: true, composed: true, detail }),
+    );
   }
 
   private render() {
@@ -142,6 +153,7 @@ export class PdfToolbarElement extends PdfBaseElement {
       exitBtn.textContent = ctx.strings.exit;
       exitBtn.addEventListener('click', () => {
         ctx.hidePlugin(PdfApplicatinPluginKey.Editor);
+        this.emitEvent('pdf-toolbar-exit-editor', {});
       });
       editorGroup.appendChild(exitBtn);
 
@@ -170,7 +182,9 @@ export class PdfToolbarElement extends PdfBaseElement {
     }
     rotationSelect.value = String(ctx.rotation);
     rotationSelect.addEventListener('change', () => {
-      ctx.setRotation(parseInt(rotationSelect.value, 10) as Rotation);
+      const rotation = parseInt(rotationSelect.value, 10) as Rotation;
+      ctx.setRotation(rotation);
+      this.emitEvent('pdf-toolbar-rotation-change', { rotation });
     });
     navGroup.appendChild(rotationSelect);
 
@@ -183,7 +197,9 @@ export class PdfToolbarElement extends PdfBaseElement {
     scaleInput.step = '0.25';
     scaleInput.value = String(ctx.scaleFactor);
     scaleInput.addEventListener('change', () => {
-      ctx.setScaleFactor(Number(scaleInput.value));
+      const scaleFactor = Number(scaleInput.value);
+      ctx.setScaleFactor(scaleFactor);
+      this.emitEvent('pdf-toolbar-scale-change', { scaleFactor });
     });
     navGroup.appendChild(scaleInput);
 
@@ -207,6 +223,7 @@ export class PdfToolbarElement extends PdfBaseElement {
           },
           PDF_NAVIGATOR_SOURCE_TOOLBAR,
         );
+        this.emitEvent('pdf-toolbar-page-change', { pageIndex });
       }
     });
     navGroup.appendChild(pageInput);
@@ -257,6 +274,10 @@ export class PdfToolbarElement extends PdfBaseElement {
 
     btn.addEventListener('click', () => {
       ctx.togglePlugin(key);
+      this.emitEvent('pdf-toolbar-plugin-toggle', {
+        pluginKey: key,
+        isVisible: ctx.plugins[key]?.isVisible ?? false,
+      });
     });
 
     container.appendChild(btn);

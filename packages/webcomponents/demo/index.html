@@ -49,6 +49,11 @@
         overflow: auto;
         border-right: 1px solid #ddd;
         background: #fafafa;
+        display: none;
+      }
+
+      .sidebar.visible {
+        display: block;
       }
 
       .main-content {
@@ -99,6 +104,7 @@
       import '../src';
       import { WebWorkerEngine } from '@unionpdf/engines';
       import { ConsoleLogger } from '@unionpdf/models';
+      import { PdfApplicatinPluginKey } from '../src/core/application.configuration';
 
       const fileInput = document.getElementById('fileInput');
       const app = document.getElementById('app');
@@ -123,6 +129,29 @@
         const buffer = await file.arrayBuffer();
         app.file = { id: file.name, name: file.name, content: buffer };
         app.password = '';
+      });
+
+      // Toggle sidebar visibility based on plugin state
+      const sidebar = document.querySelector('.sidebar');
+      const SIDEBAR_PLUGINS = [
+        PdfApplicatinPluginKey.Thumbnails,
+        PdfApplicatinPluginKey.Bookmarks,
+        PdfApplicatinPluginKey.Search,
+        PdfApplicatinPluginKey.Metadata,
+        PdfApplicatinPluginKey.Attachments,
+        PdfApplicatinPluginKey.Signatures,
+      ];
+
+      function updateSidebar(plugins) {
+        const anyVisible = SIDEBAR_PLUGINS.some(
+          (key) => plugins[key]?.isEnabled && plugins[key]?.isVisible,
+        );
+        sidebar.classList.toggle('visible', anyVisible);
+      }
+
+      // Listen for toolbar events (bubble up from pdf-toolbar)
+      app.addEventListener('pdf-toolbar-plugins-change', (e) => {
+        updateSidebar(e.detail.plugins);
       });
 
       // Listen for open events
