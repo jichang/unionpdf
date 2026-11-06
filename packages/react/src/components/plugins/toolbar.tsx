@@ -1,4 +1,11 @@
-import React, { ComponentProps, useCallback } from 'react';
+import React, {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { useUIComponents, useUIStrings } from '../../adapters';
 import './toolbar.css';
 import {
@@ -39,6 +46,7 @@ export function PdfToolbar(props: PdfToolbarProps) {
   const { pluginItems, fileItems, ...rest } = props;
   const { Toolbar } = useUIComponents();
   const { mode } = usePdfApplication();
+  const strings = useUIStrings();
 
   return (
     <PdfPlugin pluginKey={PdfApplicatinPluginKey.Toolbar}>
@@ -48,27 +56,116 @@ export function PdfToolbar(props: PdfToolbarProps) {
         className="pdf__toolbar"
         {...rest}
       >
-        {mode === PdfApplicationMode.View ? (
-          <PdfToolbarPluginItemGroup className="pdf__toolbar__item__group--left">
-            {pluginItems}
-          </PdfToolbarPluginItemGroup>
-        ) : (
-          <PdfToolbarEditorOperationItemGroup>
-            {pluginItems}
-          </PdfToolbarEditorOperationItemGroup>
-        )}
+        <PdfToolbarSide
+          key={`left-${mode}`}
+          side="left"
+          label={strings.toolbarTools ?? 'Tools'}
+        >
+          {mode === PdfApplicationMode.View ? (
+            <PdfToolbarPluginItemGroup className="pdf__toolbar__item__group--left">
+              {pluginItems}
+            </PdfToolbarPluginItemGroup>
+          ) : (
+            <PdfToolbarEditorOperationItemGroup>
+              {pluginItems}
+            </PdfToolbarEditorOperationItemGroup>
+          )}
+        </PdfToolbarSide>
         <PdfToolbarPagesItemGroup className="pdf__toolbar__item__group--center" />
-        {mode === PdfApplicationMode.View ? (
-          <PdfToolbarFileItemGroup className="pdf__toolbar__item__group--right">
-            {fileItems}
-          </PdfToolbarFileItemGroup>
-        ) : (
-          <PdfToolbarEditorFileItemGroup className="pdf__toolbar__item__group--right">
-            {fileItems}
-          </PdfToolbarEditorFileItemGroup>
-        )}
+        <PdfToolbarSide
+          key={`right-${mode}`}
+          side="right"
+          label={strings.toolbarActions ?? 'Actions'}
+        >
+          {mode === PdfApplicationMode.View ? (
+            <PdfToolbarFileItemGroup className="pdf__toolbar__item__group--right">
+              {fileItems}
+            </PdfToolbarFileItemGroup>
+          ) : (
+            <PdfToolbarEditorFileItemGroup className="pdf__toolbar__item__group--right">
+              {fileItems}
+            </PdfToolbarEditorFileItemGroup>
+          )}
+        </PdfToolbarSide>
       </Toolbar>
     </PdfPlugin>
+  );
+}
+
+function PdfToolbarSide({
+  side,
+  label,
+  children,
+}: {
+  side: 'left' | 'right';
+  label: string;
+  children: React.ReactNode;
+}) {
+  const { Button } = useUIComponents();
+  const [isOpen, setIsOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const id = useId();
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const dismiss = (event: PointerEvent) => {
+      if (rootRef.current && !event.composedPath().includes(rootRef.current)) {
+        setIsOpen(false);
+      }
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        rootRef.current
+          ?.querySelector<HTMLButtonElement>('.pdf__toolbar__menu__toggle')
+          ?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', dismiss);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('pointerdown', dismiss);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [isOpen]);
+
+  return (
+    <div
+      ref={rootRef}
+      className={`pdf__toolbar__side pdf__toolbar__side--${side}`}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setIsOpen(false);
+        }
+      }}
+    >
+      <Button
+        type="button"
+        scenario={{ usage: 'toolbar-menu-toggle', side }}
+        className="pdf__toolbar__menu__toggle"
+        aria-expanded={isOpen}
+        aria-controls={id}
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {label}
+      </Button>
+      <div
+        id={id}
+        className="pdf__toolbar__menu__items"
+        data-open={isOpen}
+        onClick={(event) => {
+          if (
+            event.target instanceof Element &&
+            event.target.closest('button, a')
+          ) {
+            setIsOpen(false);
+          }
+        }}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 /**

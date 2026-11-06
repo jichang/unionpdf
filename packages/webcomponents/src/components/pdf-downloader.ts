@@ -1,12 +1,15 @@
 import { ignore, PdfErrorCode } from '@unionpdf/models';
 import { PdfBaseElement } from '../core/base-element';
 import { PdfApplicatinPluginKey } from '../core/application.configuration';
+import { PANEL_STYLES } from '../core/styles';
 
 const STYLES = `
+${PANEL_STYLES}
 :host {
   display: block;
 }
 .pdf__downloader__dialog {
+  padding: 16px;
   display: none;
   position: fixed;
   top: 0;
@@ -25,7 +28,10 @@ const STYLES = `
   background: #fff;
   border-radius: 8px;
   padding: 24px;
-  min-width: 300px;
+  width: 348px;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .pdf__downloader__content h3 {

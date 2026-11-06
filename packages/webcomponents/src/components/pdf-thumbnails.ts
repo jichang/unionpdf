@@ -7,8 +7,10 @@ import {
 } from '@unionpdf/models';
 import { PdfBaseElement } from '../core/base-element';
 import { PdfApplicatinPluginKey } from '../core/application.configuration';
+import { PANEL_STYLES } from '../core/styles';
 
 const STYLES = `
+${PANEL_STYLES}
 :host {
   display: block;
 }
@@ -33,6 +35,7 @@ const STYLES = `
 }
 .pdf__thumbnail {
   position: relative;
+  min-width: 0;
   cursor: pointer;
   border: 2px solid transparent;
   display: flex;
@@ -97,7 +100,9 @@ export class PdfThumbnailsElement extends PdfBaseElement {
     this._gridEl = document.createElement('div');
     this._gridEl.className = 'pdf__thumbnails__grid';
     const cols = parseInt(this.getAttribute('columns') || '1', 10);
-    this._gridEl.style.gridTemplateColumns = Array(cols).fill('1fr').join(' ');
+    this._gridEl.style.gridTemplateColumns = Array(cols)
+      .fill('minmax(0, 1fr)')
+      .join(' ');
     this._panelEl.appendChild(this._gridEl);
 
     this._shadow.appendChild(this._panelEl);

@@ -1,6 +1,8 @@
 import { UIStrings } from '../uistrings.context';
 
 export const strings: UIStrings = {
+  toolbarTools: 'Tools',
+  toolbarActions: 'Actions',
   unknownError: 'Unknown Error',
   rotate0Deg: '0 degree',
   rotate90Deg: '90 degree',

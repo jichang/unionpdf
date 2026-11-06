@@ -18,6 +18,7 @@ body {
   box-shadow: 0 0 1px black;
 
   height: 80%;
+  max-width: 100%;
 
   overflow: auto;
 

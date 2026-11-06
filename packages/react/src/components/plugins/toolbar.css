@@ -1,5 +1,86 @@
+.pdf__toolbar {
+  container: pdf-toolbar / inline-size;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.pdf__toolbar:has(.pdf__toolbar__menu__items[data-open='true']) {
+  z-index: 101;
+}
+
+.pdf__toolbar__side {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pdf__toolbar__menu__toggle {
+  display: none;
+}
+
+.pdf__toolbar__menu__items {
+  display: contents;
+}
+
+.pdf__toolbar > .pdf__toolbar__item__group--center {
+  flex: 0 1 auto;
+}
+
+@container pdf-toolbar (max-width: 48rem) {
+  .pdf__toolbar__side {
+    position: relative;
+    flex: 0 0 auto;
+    align-self: flex-start;
+  }
+
+  .pdf__toolbar__menu__toggle {
+    display: block;
+  }
+
+  .pdf__toolbar > .pdf__toolbar__item__group--center {
+    flex: 1 1 0;
+  }
+
+  .pdf__toolbar__menu__items > .pdf__toolbar__item__group {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: max-content;
+    min-width: 10rem;
+    max-width: calc(100cqw - 1rem);
+    max-height: min(24rem, 60vh);
+    overflow: auto;
+    padding: 0.5rem;
+    border: 1px solid #cccccc;
+    box-sizing: border-box;
+    background: white;
+    box-shadow: 0 0.25rem 0.5rem #0003;
+  }
+
+  .pdf__toolbar__menu__items[data-open='true'] > .pdf__toolbar__item__group {
+    display: flex;
+  }
+
+  .pdf__toolbar__side--right
+    .pdf__toolbar__menu__items
+    > .pdf__toolbar__item__group {
+    left: auto;
+    right: 0;
+  }
+}
+
 .pdf__toolbar__item__group {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .pdf__toolbar__item__group--left {

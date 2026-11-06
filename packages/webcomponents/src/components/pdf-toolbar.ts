@@ -4,12 +4,15 @@ import {
   PdfApplicationMode,
 } from '../core/application.configuration';
 import { PdfZoomMode, Rotation } from '@unionpdf/models';
+import { HOST_STYLES } from '../core/styles';
 
 const STYLES = `
+${HOST_STYLES}
 :host {
   display: block;
 }
 .pdf__toolbar {
+  container: pdf-toolbar / inline-size;
   display: flex;
   align-items: center;
   padding: 4px 8px;
@@ -20,17 +23,20 @@ const STYLES = `
 }
 .pdf__toolbar__item__group {
   display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
   align-items: center;
   gap: 4px;
 }
 .pdf__toolbar__item__group--left {
-  flex: 1;
+  flex: 1 1 auto;
 }
 .pdf__toolbar__item__group--center {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
 }
 .pdf__toolbar__item__group--right {
-  flex: 1;
+  flex: 1 1 auto;
   justify-content: flex-end;
 }
 button {
@@ -56,6 +62,57 @@ select, input {
 input[type="number"] {
   width: 60px;
 }
+.pdf__toolbar__side {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+.pdf__toolbar__menu__toggle {
+  display: none;
+}
+.pdf__toolbar__menu__items {
+  display: contents;
+}
+@container pdf-toolbar (max-width: 48rem) {
+  .pdf__toolbar__side {
+    position: relative;
+    flex: 0 0 auto;
+    align-self: flex-start;
+  }
+  .pdf__toolbar__menu__toggle {
+    display: block;
+  }
+  .pdf__toolbar__item__group--center {
+    flex: 1 1 0;
+  }
+  .pdf__toolbar__menu__items > .pdf__toolbar__item__group {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: max-content;
+    min-width: 10rem;
+    max-width: calc(100cqw - 1rem);
+    max-height: min(24rem, 60vh);
+    overflow: auto;
+    padding: 8px;
+    border: 1px solid #ccc;
+    background: #fff;
+    box-shadow: 0 4px 8px #0003;
+  }
+  .pdf__toolbar__menu__items[data-open="true"] > .pdf__toolbar__item__group {
+    display: flex;
+  }
+  .pdf__toolbar__side--right .pdf__toolbar__menu__items > .pdf__toolbar__item__group {
+    left: auto;
+    right: 0;
+  }
+}
 `;
 
 const PDF_NAVIGATOR_SOURCE_TOOLBAR = 'PdfToolbarPagesItemGroup';
@@ -73,6 +130,8 @@ export class PdfToolbarElement extends PdfBaseElement {
   }
 
   protected onContextReady() {
+    document.addEventListener('pointerdown', this.dismissMenus);
+    document.addEventListener('keydown', this.handleEscape);
     this.render();
     this.listen('plugins', () => {
       this.updateButtons();
@@ -85,6 +144,86 @@ export class PdfToolbarElement extends PdfBaseElement {
     this.listen('currPageIndex', () => this.updateNavigation());
     this.listen('scaleFactor', () => this.updateNavigation());
     this.listen('rotation', () => this.updateNavigation());
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('pointerdown', this.dismissMenus);
+    document.removeEventListener('keydown', this.handleEscape);
+    super.disconnectedCallback();
+  }
+
+  private dismissMenus = (event: PointerEvent) => {
+    if (!event.composedPath().includes(this)) {
+      this.closeMenus();
+    }
+  };
+
+  private handleEscape = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      const toggle = this._shadow.querySelector<HTMLButtonElement>(
+        '.pdf__toolbar__menu__toggle[aria-expanded="true"]',
+      );
+      this.closeMenus();
+      toggle?.focus();
+    }
+  };
+
+  private closeMenus() {
+    for (const toggle of this._shadow.querySelectorAll(
+      '.pdf__toolbar__menu__toggle',
+    )) {
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    for (const items of this._shadow.querySelectorAll<HTMLElement>(
+      '.pdf__toolbar__menu__items',
+    )) {
+      items.dataset.open = 'false';
+    }
+  }
+
+  private createSide(
+    group: HTMLElement,
+    side: 'left' | 'right',
+    label: string,
+  ) {
+    const container = document.createElement('div');
+    container.className = `pdf__toolbar__side pdf__toolbar__side--${side}`;
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'pdf__toolbar__menu__toggle';
+    toggle.textContent = label;
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', `pdf-toolbar-${side}-items`);
+    const items = document.createElement('div');
+    items.id = `pdf-toolbar-${side}-items`;
+    items.className = 'pdf__toolbar__menu__items';
+    items.dataset.open = 'false';
+    items.appendChild(group);
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      this.closeMenus();
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      items.dataset.open = String(!isOpen);
+    });
+    items.addEventListener('click', (event) => {
+      if (
+        event.target instanceof Element &&
+        event.target.closest('button, a')
+      ) {
+        this.closeMenus();
+      }
+    });
+    container.addEventListener('focusout', (event) => {
+      if (
+        !(event.relatedTarget instanceof Node) ||
+        !container.contains(event.relatedTarget)
+      ) {
+        toggle.setAttribute('aria-expanded', 'false');
+        items.dataset.open = 'false';
+      }
+    });
+    container.append(toggle, items);
+    return container;
   }
 
   private emitEvent(name: string, detail: Record<string, unknown>) {
@@ -142,7 +281,13 @@ export class PdfToolbarElement extends PdfBaseElement {
         PdfApplicatinPluginKey.Search,
         ctx.strings.search,
       );
-      toolbar.appendChild(pluginGroup);
+      toolbar.appendChild(
+        this.createSide(
+          pluginGroup,
+          'left',
+          ctx.strings.toolbarTools ?? 'Tools',
+        ),
+      );
     } else {
       // Editor operation group (left)
       const editorGroup = document.createElement('div');
@@ -157,7 +302,13 @@ export class PdfToolbarElement extends PdfBaseElement {
       });
       editorGroup.appendChild(exitBtn);
 
-      toolbar.appendChild(editorGroup);
+      toolbar.appendChild(
+        this.createSide(
+          editorGroup,
+          'left',
+          ctx.strings.toolbarTools ?? 'Tools',
+        ),
+      );
     }
 
     // Page navigation group (center)
@@ -250,7 +401,13 @@ export class PdfToolbarElement extends PdfBaseElement {
         PdfApplicatinPluginKey.Printer,
         ctx.strings.print,
       );
-      toolbar.appendChild(fileGroup);
+      toolbar.appendChild(
+        this.createSide(
+          fileGroup,
+          'right',
+          ctx.strings.toolbarActions ?? 'Actions',
+        ),
+      );
     }
 
     this._shadow.appendChild(toolbar);

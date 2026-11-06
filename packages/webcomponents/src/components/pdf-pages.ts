@@ -10,20 +10,26 @@ import {
 } from '@unionpdf/models';
 import { PdfBaseElement } from '../core/base-element';
 import { PdfNavigatorEvent } from '../core/context';
+import { HOST_STYLES } from '../core/styles';
 
 const STYLES = `
+${HOST_STYLES}
 :host {
   display: block;
   overflow: auto;
   position: relative;
   flex: 1;
+  min-height: 0;
 }
 .pdf__pages__container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: max-content;
+  min-width: 100%;
 }
 .pdf__page {
+  flex-shrink: 0;
   position: relative;
   display: flex;
   justify-content: center;

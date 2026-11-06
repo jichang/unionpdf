@@ -1,5 +1,8 @@
 .pdf__merger__toolbar {
   display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  max-width: 100%;
   padding: 1rem;
 }
 
@@ -25,6 +28,8 @@
 
 .pdf__merger table {
   width: 100%;
+  table-layout: fixed;
+  overflow-wrap: anywhere;
 }
 
 .pdf__merger table {

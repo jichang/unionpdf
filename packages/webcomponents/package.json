@@ -1,6 +1,6 @@
 {
   "name": "@unionpdf/webcomponents",
-  "version": "0.34.1",
+  "version": "0.35.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -21,7 +21,8 @@
     "postbuild": "cpy ./dist/types/* ./dist/cjs --flat && cpy ./dist/types/* ./dist/esm --flat",
     "clean": "rm -rf dist .parcel-cache",
     "purge": "rm -rf dist .parcel-cache node_modules",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "e2e": "playwright test"
   },
   "files": [
     "dist/cjs",
@@ -47,8 +48,9 @@
   },
   "homepage": "https://github.com/jichang/unionpdf#readme",
   "devDependencies": {
-    "@unionpdf/engines": "0.34.1",
-    "@unionpdf/pdfium": "0.34.1",
+    "@playwright/test": "^1.50.1",
+    "@unionpdf/engines": "0.35.0",
+    "@unionpdf/pdfium": "0.35.0",
     "@types/jest": "^29.5.14",
     "cpy-cli": "^5.0.0",
     "jest": "^29.7.0",
@@ -58,6 +60,6 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@unionpdf/models": "0.34.1"
+    "@unionpdf/models": "0.35.0"
   }
 }

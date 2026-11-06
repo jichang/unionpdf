@@ -5,6 +5,8 @@ import { createContext, useContext } from 'react';
  * Strings used in the application
  */
 export interface UIStrings {
+  toolbarTools?: string;
+  toolbarActions?: string;
   unknownError: string;
   rotate0Deg: string;
   rotate90Deg: string;

@@ -7,8 +7,10 @@ import {
 } from '@unionpdf/models';
 import { PdfBaseElement } from '../core/base-element';
 import { PdfApplicatinPluginKey } from '../core/application.configuration';
+import { PANEL_STYLES } from '../core/styles';
 
 const STYLES = `
+${PANEL_STYLES}
 :host {
   display: block;
 }
@@ -33,6 +35,7 @@ const STYLES = `
 }
 .pdf__search__field {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 4px;
 }
@@ -48,6 +51,7 @@ const STYLES = `
 }
 .pdf__search__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
 }
 .pdf__search__actions button {

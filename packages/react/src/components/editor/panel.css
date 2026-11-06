@@ -4,6 +4,8 @@
   top: 10%;
 
   height: 80%;
+  max-width: 100vw;
+  overflow: auto;
 }
 
 .pdf__editor__panel__tools {

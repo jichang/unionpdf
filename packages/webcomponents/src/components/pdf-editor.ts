@@ -3,8 +3,10 @@ import {
   PdfApplicatinPluginKey,
   PdfApplicationMode,
 } from '../core/application.configuration';
+import { PANEL_STYLES } from '../core/styles';
 
 const STYLES = `
+${PANEL_STYLES}
 :host {
   display: block;
 }
@@ -17,6 +19,7 @@ const STYLES = `
 }
 .pdf__editor__toolbar {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 8px;
 }

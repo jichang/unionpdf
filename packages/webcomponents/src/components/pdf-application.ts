@@ -17,11 +17,14 @@ import {
   PdfApplicatinPluginKey,
   MemoryPdfApplicationConfigurationProvider,
 } from '../core/application.configuration';
+import { HOST_STYLES } from '../core/styles';
 
 const STYLES = `
+${HOST_STYLES}
 :host {
   display: block;
   position: relative;
+  min-height: 0;
   font-family: sans-serif;
 }
 :host(.pdf__application--edit) {
@@ -32,6 +35,13 @@ const STYLES = `
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+::slotted(*) {
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
 }
 `;
 

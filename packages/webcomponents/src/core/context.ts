@@ -26,6 +26,8 @@ import {
 // UIStrings – same shape as the React package
 // ------------------------------------------------------------------
 export interface UIStrings {
+  toolbarTools?: string;
+  toolbarActions?: string;
   unknownError: string;
   rotate0Deg: string;
   rotate90Deg: string;
@@ -88,6 +90,8 @@ export interface UIStrings {
 }
 
 export const defaultStrings: UIStrings = {
+  toolbarTools: 'Tools',
+  toolbarActions: 'Actions',
   unknownError: 'Unknown Error',
   rotate0Deg: '0 degree',
   rotate90Deg: '90 degree',

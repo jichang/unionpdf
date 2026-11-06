@@ -83,6 +83,10 @@ export interface LinkProps
 
 export type ButtonScenario =
   | {
+      usage: 'toolbar-menu-toggle';
+      side: 'left' | 'right';
+    }
+  | {
       usage: 'annotation-resizer';
     }
   | {

@@ -1,8 +1,10 @@
 import { ignore, PdfErrorCode, PdfMetadataObject } from '@unionpdf/models';
 import { PdfBaseElement } from '../core/base-element';
 import { PdfApplicatinPluginKey } from '../core/application.configuration';
+import { PANEL_STYLES } from '../core/styles';
 
 const STYLES = `
+${PANEL_STYLES}
 :host {
   display: block;
 }

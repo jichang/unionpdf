@@ -7,6 +7,8 @@
 
   width: 80%;
   height: 80%;
+  min-width: 0;
+  overflow: auto;
 
   box-shadow: 0 0 0.25rem gray;
 
@@ -15,11 +17,14 @@
 
 .pdf__editor__extractor .pdf__thumbnails {
   flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 .pdf__editor__extractor__footer {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   padding: 0.25rem;

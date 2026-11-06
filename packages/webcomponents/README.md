@@ -54,6 +54,23 @@ npm install @unionpdf/webcomponents @unionpdf/models @unionpdf/engines
 </pdf-application>
 ```
 
+## Responsive layout
+
+Components adapt to their container width, including narrow embedded viewers:
+toolbar side controls collapse into Tools and Actions dropdowns at container
+widths up to 48rem, leaving navigation, zoom, and rotation visible. Wider toolbars
+show their controls inline. Dropdowns support Escape and outside-click dismissal;
+customize their labels with the optional `toolbarTools` and `toolbarActions`
+strings. Editor controls wrap, table values wrap, thumbnail columns shrink,
+and download/print dialogs stay within the viewport with scrollable content.
+PDF pages keep their selected zoom and scroll inside `<pdf-pages>` rather than
+stretching the surrounding layout.
+
+Set a width and height on your viewer layout. Flex/grid wrappers around
+`<pdf-pages>` should use `min-width: 0` and `min-height: 0`. Sidebar placement is
+controlled by the host application; the demo stacks it above the pages on
+screens up to 600px wide.
+
 ## Custom Elements
 
 | Element             | Description                                                          |
@@ -70,6 +87,18 @@ npm install @unionpdf/webcomponents @unionpdf/models @unionpdf/engines
 | `<pdf-downloader>`  | Download dialog                                                      |
 | `<pdf-printer>`     | Print dialog                                                         |
 | `<pdf-editor>`      | Editor panel                                                         |
+
+## Testing
+
+Run commands from the repository root:
+
+```bash
+npm run test --workspace=@unionpdf/webcomponents
+npm run e2e --workspace=@unionpdf/webcomponents
+```
+
+Jest discovers unit tests under `src`; Playwright runs browser tests under
+`tests`. The unit test command succeeds when no unit tests exist.
 
 ## License
 

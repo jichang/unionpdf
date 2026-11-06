@@ -1,3 +1,5 @@
 .pdf__document {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }

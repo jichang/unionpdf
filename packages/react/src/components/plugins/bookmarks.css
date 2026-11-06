@@ -24,6 +24,8 @@
 
 .pdf__bookmarks__entry .title {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: inline-block;
 }
 

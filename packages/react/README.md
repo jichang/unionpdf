@@ -8,6 +8,25 @@ This pacakge contains several React components for showing PDF files on Web.
 npm install @unionpdf/react
 ```
 
+### Responsive layout
+
+At container widths up to 48rem, the toolbar collapses its left and right controls
+into Tools and Actions dropdowns, while navigation, zoom, and rotation remain
+visible. Wider containers show the controls inline. The menus support Escape and
+outside-click dismissal. Customize their labels with `toolbarTools` and
+`toolbarActions` in the UI strings.
+
+The native adapter wraps controls to fit the available container width.
+Panels and dialogs are constrained to the viewport, long table
+values wrap, and thumbnails shrink within their configured grid.
+
+PDF pages retain the selected scale factor and scroll horizontally when wider
+than the container; their canvas, text, and annotation layers stay aligned.
+Give the viewer and any custom panel mount point a bounded width (and a height
+when vertical scrolling is needed). Flex/grid parents should use `min-width: 0`
+and `min-height: 0` so the viewer can shrink. Custom UI adapters are responsible
+for responsive styling of their own controls.
+
 ### Usage
 
 ```typescript

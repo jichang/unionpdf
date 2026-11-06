@@ -7,8 +7,10 @@ import {
 } from '@unionpdf/models';
 import { PdfBaseElement } from '../core/base-element';
 import { PdfApplicatinPluginKey } from '../core/application.configuration';
+import { PANEL_STYLES } from '../core/styles';
 
 const STYLES = `
+${PANEL_STYLES}
 :host {
   display: block;
 }
@@ -50,10 +52,12 @@ const STYLES = `
   cursor: pointer;
   user-select: none;
   width: 16px;
+  flex-shrink: 0;
   text-align: center;
   font-size: 10px;
 }
 .pdf__bookmarks__entry__header .title {
+  min-width: 0;
   cursor: pointer;
 }
 .pdf__bookmarks__entry__header .title:hover {

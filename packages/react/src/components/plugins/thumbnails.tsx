@@ -115,7 +115,7 @@ export function PdfThumbnailsContent(props: PdfThumbnailsProps) {
 
   const styleTemplate: string[] = [];
   for (let i = 0; i < layout.itemsCount; i++) {
-    styleTemplate.push('1fr');
+    styleTemplate.push('minmax(0, 1fr)');
   }
 
   return (
